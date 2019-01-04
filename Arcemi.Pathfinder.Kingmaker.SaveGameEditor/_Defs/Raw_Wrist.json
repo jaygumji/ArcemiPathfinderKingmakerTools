@@ -1,0 +1,19 @@
+﻿{
+  "Wrist": [
+		{"className": "BlueprintItemEquipmentWrist", "name": "Artifact_HermitKnightBracersItem", "blueprint": "5992ae48a642c1a4eb2f24c61c233ee8", "isStackable": false, "cost": 21000, "weight": 2, "isNotable": true, "dc": 0},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArchery", "blueprint": "0e7a0b96f67660c4ca74786c187a02d2", "isStackable": false, "cost": 10000, "weight": 2, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArcheryLesser", "blueprint": "01d51ff5f3db2164b88aaa662a9b0f2e", "isStackable": false, "cost": 4000, "weight": 2, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor1", "blueprint": "9482c62934be44044918c3aac3730232", "isStackable": false, "cost": 1000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor2", "blueprint": "bf063663cdb3df34c8ffa05ff1d1c877", "isStackable": false, "cost": 4000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor3", "blueprint": "cc5f45518020a324b8c51d0a231984a3", "isStackable": false, "cost": 9000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor4", "blueprint": "0a8cda1aaee1178419b32722c89dae64", "isStackable": false, "cost": 16000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor5", "blueprint": "33179b698a3264e45bc3495a2181a0ea", "isStackable": false, "cost": 25000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor6", "blueprint": "4811d69bde8fb0243b61c2b41300ebe7", "isStackable": false, "cost": 36000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor7", "blueprint": "a106eeb09f2ef5a48ab8507f39cbabd8", "isStackable": false, "cost": 49000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "BracersOfArmor8", "blueprint": "bade8137f5101834c849c277ba0301a1", "isStackable": false, "cost": 64000, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "EngravedBracelet", "blueprint": "a78b976c8e356b34a9f2d84e42d8c918", "isStackable": true, "cost": 120, "weight": 0.05, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "GearsRuleItem", "blueprint": "c76341cfbc0d0f14ea51ceb30efee432", "isStackable": false, "cost": 80000, "weight": 2, "isNotable": false, "dc": 0},
+		{"className": "BlueprintItemEquipmentWrist", "name": "GoldenHallucinationBracersItem", "blueprint": "c994ba965699973479c0a7c57549ba86", "isStackable": false, "cost": 43250, "weight": 1, "isNotable": false, "dc": 11},
+		{"className": "BlueprintItemEquipmentWrist", "name": "RubyPhoenixItem", "blueprint": "34682af5f1b1a814bb174077dc3b4ee2", "isStackable": false, "cost": 115000, "weight": 2, "isNotable": false, "dc": 11}
+  ]
+}

@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views.PlayerStashView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:models="clr-namespace:Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models"
+             xmlns:views="clr-namespace:Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views"
+             d:DataContext="{d:DesignInstance Type=models:MainModel, IsDesignTimeCreatable=True}"
+        xmlns:mdes="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="Both">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid DataContext="{Binding Player}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" MaxWidth="210" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" MaxWidth="210" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0">Money</Label>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Money, Mode=TwoWay}"></TextBox>
+                </Grid>
+
+                <views:InventoryView Grid.Row="1" DataContext="{Binding SharedStashModel}" />
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

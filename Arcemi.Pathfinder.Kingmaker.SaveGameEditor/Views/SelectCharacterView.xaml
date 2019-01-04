@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views.SelectCharacterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:models="clr-namespace:Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models"
+             d:DataContext="{d:DesignInstance Type=models:MainModel, IsDesignTimeCreatable=True}"
+        xmlns:mdes="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+    <Grid>
+        <ListView ItemsSource="{Binding Characters}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Focusable" Value="false"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"></StackPanel>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <mdes:Card Padding="8" Margin="16" MouseDown="GotoCharacter_MouseDown">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Image Grid.Row="0" Source="{Binding UISettings.PortraitPath}" MinWidth="50" MaxWidth="100" MinHeight="50" MaxHeight="100" />
+                            <Label Grid.Row="1" Content="{Binding Name}" FontWeight="Bold"/>
+                        </Grid>
+                    </mdes:Card>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</UserControl>

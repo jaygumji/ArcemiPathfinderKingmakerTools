@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcemi.Pathfinder.Kingmaker.SaveGameEditor", "Arcemi.Pathfinder.Kingmaker.SaveGameEditor\Arcemi.Pathfinder.Kingmaker.SaveGameEditor.csproj", "{C662F015-917A-4256-8D9D-2B3856400380}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcemi.Pathfinder.Kingmaker", "Arcemi.Pathfinder.Kingmaker\Arcemi.Pathfinder.Kingmaker.csproj", "{CA2B9F1E-3347-4BED-B19C-A10B8584E0A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arcemi.Pathfinder.Kingmaker.Editor", "Arcemi.Pathfinder.Kingmaker.Editor\Arcemi.Pathfinder.Kingmaker.Editor.csproj", "{2AB68665-7DA5-49BF-B1C8-1AD94E5CF9D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{60DEEB5F-5287-408F-9D35-B1E8C0DDD699}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C662F015-917A-4256-8D9D-2B3856400380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C662F015-917A-4256-8D9D-2B3856400380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C662F015-917A-4256-8D9D-2B3856400380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C662F015-917A-4256-8D9D-2B3856400380}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA2B9F1E-3347-4BED-B19C-A10B8584E0A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA2B9F1E-3347-4BED-B19C-A10B8584E0A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA2B9F1E-3347-4BED-B19C-A10B8584E0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA2B9F1E-3347-4BED-B19C-A10B8584E0A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AB68665-7DA5-49BF-B1C8-1AD94E5CF9D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AB68665-7DA5-49BF-B1C8-1AD94E5CF9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AB68665-7DA5-49BF-B1C8-1AD94E5CF9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AB68665-7DA5-49BF-B1C8-1AD94E5CF9D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79B60F07-97FE-4DD8-A6C5-511E5F9790B0}
+	EndGlobalSection
+EndGlobal

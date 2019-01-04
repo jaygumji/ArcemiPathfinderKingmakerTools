@@ -1,0 +1,57 @@
+﻿<Window x:Class="Arcemi.Pathfinder.Kingmaker.SaveGameEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views"
+        mc:Ignorable="d"
+        Title="Pathfinder Kingmaker Save Game Editor" Height="768" Width="1024"
+        xmlns:mdes="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+    <Grid>
+        <DockPanel>
+            <ToolBarPanel DockPanel.Dock="Top">
+                <ToolBar>
+                    <Button Margin="5" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="36" Height="36" Command="{Binding OpenCommand}">
+                        <Viewbox Width="24" Height="24">
+                            <Canvas Width="24" Height="24">
+                                <Path Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z" Fill="Black" />
+                            </Canvas>
+                        </Viewbox>
+                    </Button>
+                    <Button Margin="5" Style="{DynamicResource MaterialDesignFloatingActionButton}" Width="36" Height="36" Command="{Binding SaveCommand}">
+                        <Viewbox Width="24" Height="24">
+                            <Canvas Width="24" Height="24">
+                                <Path Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z" Fill="Black" />
+                            </Canvas>
+                        </Viewbox>
+                    </Button>
+                </ToolBar>
+            </ToolBarPanel>
+
+            <TabControl DockPanel.Dock="Bottom" IsEnabled="{Binding CanEdit}">
+                <TabItem Header="Inventory">
+                    <views:PlayerInventoryView />
+                </TabItem>
+                <TabItem Header="Stash">
+                    <views:PlayerStashView />
+                </TabItem>
+                <TabItem Header="Kingdom">
+                    <views:PlayerKingdomView />
+                </TabItem>
+                <TabItem Header="Attributes">
+                    <views:CharactersView />
+                </TabItem>
+                <TabItem Header="Equipment">
+                    <views:CharacterEquipmentView />
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </Grid>
+</Window>
