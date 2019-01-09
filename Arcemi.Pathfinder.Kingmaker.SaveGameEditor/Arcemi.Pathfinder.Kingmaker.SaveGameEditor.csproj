@@ -60,10 +60,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    </Page>
     <Compile Include="Models\InventoryViewModel.cs" />
     <Compile Include="Models\ListViewScrollingFix.cs" />
     <Compile Include="Models\ViewModel.cs" />
