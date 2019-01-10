@@ -33,7 +33,8 @@ namespace Arcemi.Pathfinder.Kingmaker
                     return _portraits.GetPortraitsUri(Portrait);
                 }
                 var characterName = Mappings.GetCharacterName(_characterBlueprint);
-                return _portraits.GetPortraitsUri(characterName);
+                var characterKey = "_c_" + characterName;
+                return _portraits.GetPortraitsUri(characterKey);
             }
         }
 

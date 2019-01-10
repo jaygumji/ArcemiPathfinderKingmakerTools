@@ -38,7 +38,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                             _available.Add(portrait);
                         }
 
-                        _all.Add(key, portrait);
+                        if (!_all.ContainsKey(key)) {
+                            _all.Add(key, portrait);
+                        }
                     }
                 }
             }
@@ -52,7 +54,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                     var key = Path.GetFileName(folder);
                     var portrait = new Portrait(key, uri, isCustom: true);
                     _available.Add(portrait);
-                    _all.Add(key, portrait);
+                    if (!_all.ContainsKey(key)) {
+                        _all.Add(key, portrait);
+                    }
                 }
             }
         }
@@ -60,7 +64,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         public IReadOnlyList<Portrait> GetAvailableFor(string characterBlueprint)
         {
             var cn = Mappings.GetCharacterName(characterBlueprint);
-            if (_all.TryGetValue(cn, out var portrait)) {
+            var key = "_c_" + cn;
+            if (_all.TryGetValue(key, out var portrait)) {
                 return new[] { portrait }.Concat(_available).ToArray();
             }
             else {
@@ -72,7 +77,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string GetPortraitsUri(string key)
         {
-            return _all.TryGetValue(key, out var portrait) ? portrait.Uri : _all["unknown"].Uri;
+            return _all.TryGetValue(key, out var portrait) ? portrait.Uri : _all["_s_unknown"].Uri;
         }
 
     }
