@@ -66,6 +66,7 @@
     </Page>
     <Compile Include="Models\InventoryViewModel.cs" />
     <Compile Include="Models\ListViewScrollingFix.cs" />
+    <Compile Include="Models\VectorToMarginConverter.cs" />
     <Compile Include="Models\ViewModel.cs" />
     <Compile Include="Views\CharacterEquipmentView.xaml.cs">
       <DependentUpon>CharacterEquipmentView.xaml</DependentUpon>

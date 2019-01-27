@@ -9,6 +9,8 @@ namespace Arcemi.Pathfinder.Kingmaker
     {
         public AlignmentModel(ModelDataAccessor accessor) : base(accessor)
         {
+            N.On(Vector, "X", "Vector");
+            N.On(Vector, "Y", "Vector");
         }
 
         public VectorModel Vector => A.Object<VectorModel>();

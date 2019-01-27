@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -33,6 +34,44 @@ namespace Arcemi.Pathfinder.Kingmaker
                 ? item : null;
         }
 
+        private void SetupComponents(ItemType baseType, params ItemType[] componentTypes)
+        {
+            if (!_items.TryGetValue(baseType, out var baseItems)) {
+                return;
+            }
+
+            foreach (var componentType in componentTypes) {
+                if (!_items.TryGetValue(componentType, out var componentItems)) {
+                    continue;
+                }
+
+                var typeComponent = componentType.ToString();
+
+                foreach (var baseItem in baseItems) {
+                    var nameComponents = baseItem.Name.ToComponents();
+                    var nameAndTypeComponents = nameComponents.Concat(new[] { typeComponent }).OrderBy(n => n).ToArray();
+
+                    for (var i = 0; i < componentItems.Count; i++) {
+                        var it = componentItems[i];
+                        if (!nameComponents.All(n => it.Name.IndexOf(n, StringComparison.Ordinal) >= 0)) {
+                            continue;
+                        }
+                        var itComponents = it.Name.ToComponents();
+                        if (itComponents.OrderBy(n => n).SequenceEqual(nameAndTypeComponents, StringComparer.Ordinal)) {
+                            baseItem.AddComponent(it);
+                            componentItems.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Initialize()
+        {
+            SetupComponents(ItemType.Shield, ItemType.Armor);
+        }
+
         private void Load(string path)
         {
             var data = JsonUtilities.Deserialize<Dictionary<ItemType, List<RawItemData>>>(path);
@@ -51,6 +90,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             foreach (var file in Directory.EnumerateFiles(directory, "Raw_*.json")) {
                 items.Load(file);
             }
+            items.Initialize();
             return items;
         }
 

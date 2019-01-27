@@ -53,6 +53,19 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views
             e.Handled = true;
         }
 
+        private void AlignmentEllipse_MouseDown(object sender, RoutedEventArgs e)
+        {
+            var el = (FrameworkElement)sender;
+            var character = (CharacterModel)el.DataContext;
+
+            var p = Mouse.GetPosition(el);
+            var x = (p.X - 100) / 100;
+            var y = (p.Y - 100) / 100 * -1;
+
+            character.Alignment.Vector.X = x;
+            character.Alignment.Vector.Y = y;
+        }
+
         private void FixScrolling_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             ListViewScrollingFix.PreviewMouseWheel(sender, e);

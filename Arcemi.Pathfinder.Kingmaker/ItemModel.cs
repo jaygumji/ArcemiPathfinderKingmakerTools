@@ -103,6 +103,22 @@ namespace Arcemi.Pathfinder.Kingmaker
             return new ItemModel(accessor);
         }
 
+        private static void AddDefaultItemProperties(JObject jObj)
+        {
+            jObj.Add("m_Count", 1);
+            jObj.Add("Wielder", null);
+            jObj.Add("HoldingSlot", null);
+            jObj.Add("m_Enchantments", null);
+            jObj.Add("m_FactsAppliedToWielder", null);
+            jObj.Add("m_IdentifyRolls", new JArray());
+            jObj.Add("Time", TimeSpan.Zero);
+            jObj.Add("Ability", null);
+            jObj.Add("ActivatableAbility", null);
+            jObj.Add("IsIdentified", true);
+            jObj.Add("SellTime", null);
+            jObj.Add("IsNonRemovable", false);
+        }
+
         public static void Prepare(IReferences refs, JObject jObj, RawItemData rawData, InventoryModel inventory, ListAccessor<ItemModel> list)
         {
             switch (rawData.Type) {
@@ -130,23 +146,40 @@ namespace Arcemi.Pathfinder.Kingmaker
                     jObj.Add("$type", TypeSimple);
                     break;
             }
-            jObj.Add("m_Count", 1);
+            AddDefaultItemProperties(jObj);
             jObj.Add("Charges", rawData.Type == ItemType.UsableWand ? 1 : 0);
             jObj.Add("m_Blueprint", rawData.Blueprint);
-            jObj.Add("Wielder", null);
-            jObj.Add("HoldingSlot", null);
             jObj.Add("Collection", refs.CreateReference(inventory.Id));
-            jObj.Add("m_Enchantments", null);
-            jObj.Add("m_FactsAppliedToWielder", null);
-            jObj.Add("m_IdentifyRolls", new JArray());
-            jObj.Add("Time", TimeSpan.Zero);
-            jObj.Add("Ability", null);
-            jObj.Add("ActivatableAbility", null);
-            jObj.Add("IsIdentified", true);
-            jObj.Add("SellTime", null);
-            jObj.Add("IsNonRemovable", false);
-            jObj.Add("m_InventorySlotIndex", list.Max(i => i.InventorySlotIndex) + 1);
+            jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
 
+            var addArmorComponent = rawData.Type == ItemType.Shield;
+            if (addArmorComponent) {
+                var component = refs.Create();
+                AddDefaultItemProperties(component);
+                component.Add("m_ModifierDescriptor", "Shield");
+                component.Add("m_Modifiers", null);
+                component.Add("m_DexBonusLimeterAC", null);
+                component.Add("m_InventorySlotIndex", -1);
+                component.Add("Collection", null);
+                component.Add("Charges", 0);
+                if (rawData.TryGetComponent(ItemType.Armor, out var item)) {
+                    component.Add("m_Blueprint", item.Blueprint);
+                }
+                jObj.Add("ArmorComponent", component);
+            }
+
+            var addWeaponComponent = rawData.Type == ItemType.Shield;
+            if (addWeaponComponent) {
+                var component = refs.Create();
+                AddDefaultItemProperties(component);
+                component.Add("Second", null);
+                component.Add("ForceSecondary", false);
+                component.Add("IsSecondPartOfDoubleWeapon", false);
+                component.Add("IsShield", true);
+                component.Add("Collection", null);
+                component.Add("Charges", 0);
+                jObj.Add("WeaponComponent", component);
+            }
         }
     }
 }

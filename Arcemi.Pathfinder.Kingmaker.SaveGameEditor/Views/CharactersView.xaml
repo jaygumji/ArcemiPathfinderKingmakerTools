@@ -16,6 +16,9 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}">
+    <UserControl.Resources>
+        <models:VectorToThicknessConverter x:Key="VectorToThickness"/>
+    </UserControl.Resources>
     <Grid>
         <mdes:DialogHost x:Name="DlgSelectPortrait"  Panel.ZIndex="1" >
             <mdes:DialogHost.DialogContent>
@@ -83,6 +86,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="150" />
@@ -108,8 +112,30 @@
                             <TextBox Grid.Row="3" Grid.Column="1" Margin="15 5 5 5" Grid.ColumnSpan="2" Text="{Binding Progression.Experience, Mode=TwoWay}" />
 
                             <Label Grid.Row="4" Grid.Column="0" Margin="15 5 5 5">Alignment</Label>
-                            <TextBox Grid.Row="4" Grid.Column="1" Margin="15 5 5 5" Grid.ColumnSpan="2" Text="{Binding Alignment.Vector.X, Mode=TwoWay}" />
-                            <TextBox Grid.Row="4" Grid.Column="3" Margin="15 5 5 5" Grid.ColumnSpan="2" Text="{Binding Alignment.Vector.Y, Mode=TwoWay}" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="LG" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="30 30 0 0"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="NG" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="CG" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 30 30 0"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="LN" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="CN" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="LE" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="30 0 0 30"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="NE" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Text="CE" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 30 30"/>
+                            <Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Margin="20">
+                                <Ellipse Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Width="200" Height="200" Fill="#FFE1CBE8" Stroke="#FF1E1C1C" MouseDown="AlignmentEllipse_MouseDown" VerticalAlignment="Top" HorizontalAlignment="Left">
+                                    <Ellipse.ToolTip>
+                                        <TextBlock>
+                                        Left &lt;-&gt; Right = Lawful &lt;-&gt; Chaotic
+                                        <LineBreak/>
+                                        Top &lt;-&gt; Bottom = Good &lt;-&gt; Evil
+                                        </TextBlock>
+                                    </Ellipse.ToolTip>
+                                </Ellipse>
+                                <Ellipse Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Width="5" Height="5" Margin="{Binding Alignment.Vector, Mode=OneWay, Converter={StaticResource VectorToThickness}, ConverterParameter=5}" Fill="#FFE1CBE8" Stroke="Black" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                                <Ellipse Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4" Width="1" Height="1" Margin="{Binding Alignment.Vector, Mode=OneWay, Converter={StaticResource VectorToThickness}, ConverterParameter=1}" Fill="Black" Stroke="Black" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                            </Grid>
+                            
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="15 5 5 5" Grid.ColumnSpan="2" Text="{Binding Alignment.Vector.X, Mode=TwoWay}" />
+                            <TextBox Grid.Row="5" Grid.Column="3" Margin="15 5 5 5" Grid.ColumnSpan="2" Text="{Binding Alignment.Vector.Y, Mode=TwoWay}" />
 
                         </Grid>
 
