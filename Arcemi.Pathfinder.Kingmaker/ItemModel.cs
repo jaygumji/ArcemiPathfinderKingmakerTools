@@ -119,9 +119,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             jObj.Add("IsNonRemovable", false);
         }
 
-        public static void Prepare(IReferences refs, JObject jObj, RawItemData rawData, InventoryModel inventory, ListAccessor<ItemModel> list)
+        public static void Prepare(IReferences refs, JObject jObj, RawItemData rawData, ItemType itemType, string blueprint, InventoryModel inventory, ListAccessor<ItemModel> list)
         {
-            switch (rawData.Type) {
+            switch (itemType) {
                 case ItemType.Weapon:
                     jObj.Add("$type", TypeWeapon);
                     break;
@@ -147,12 +147,12 @@ namespace Arcemi.Pathfinder.Kingmaker
                     break;
             }
             AddDefaultItemProperties(jObj);
-            jObj.Add("Charges", rawData.Type == ItemType.UsableWand ? 1 : 0);
-            jObj.Add("m_Blueprint", rawData.Blueprint);
+            jObj.Add("Charges", itemType == ItemType.UsableWand ? 1 : 0);
+            jObj.Add("m_Blueprint", blueprint);
             jObj.Add("Collection", refs.CreateReference(inventory.Id));
             jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
 
-            var addArmorComponent = rawData.Type == ItemType.Shield;
+            var addArmorComponent = itemType == ItemType.Shield;
             if (addArmorComponent) {
                 var component = refs.Create();
                 AddDefaultItemProperties(component);
@@ -162,13 +162,13 @@ namespace Arcemi.Pathfinder.Kingmaker
                 component.Add("m_InventorySlotIndex", -1);
                 component.Add("Collection", null);
                 component.Add("Charges", 0);
-                if (rawData.TryGetComponent(ItemType.Armor, out var item)) {
+                if (rawData != null && rawData.TryGetComponent(ItemType.Armor, out var item)) {
                     component.Add("m_Blueprint", item.Blueprint);
                 }
                 jObj.Add("ArmorComponent", component);
             }
 
-            var addWeaponComponent = rawData.Type == ItemType.Shield;
+            var addWeaponComponent = itemType == ItemType.Shield;
             if (addWeaponComponent) {
                 var component = refs.Create();
                 AddDefaultItemProperties(component);

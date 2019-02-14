@@ -84,6 +84,63 @@
                 </Grid>
             </mdes:DialogHost.DialogContent>
         </mdes:DialogHost>
+        <mdes:DialogHost x:Name="DlgCustomItem" Panel.ZIndex="1">
+            <mdes:DialogHost.DialogContent>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                                        
+                    <Button HorizontalAlignment="Right" Style="{DynamicResource MaterialDesignFlatButton}" Command="{x:Static mdes:DialogHost.CloseDialogCommand}">
+                        <Viewbox Width="24" Height="24">
+                            <Canvas Width="24" Height="24">
+                                <Path Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="Black" />
+                            </Canvas>
+                        </Viewbox>
+                    </Button>
+
+                    <Grid Grid.Row="1">
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="AddCustomItem_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Viewbox Width="32" Height="32">
+                                    <Canvas Width="32" Height="32">
+                                        <Path Data="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" Fill="Black" />
+                                    </Canvas>
+                                </Viewbox>
+                                <Label Grid.Column="1">Add Item</Label>
+                            </Grid>
+                        </Button>
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <ComboBox Margin="20 10" ItemsSource="{Binding ItemTypes}" DisplayMemberPath="Value" SelectedValue="{Binding SelectedItemType}" />
+                    </Grid>
+                    <Grid Grid.Row="3">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Margin="15 5 5 5">Blueprint</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Margin="15 5 5 5" Text="{Binding CustomBlueprint}"></TextBox>
+
+                    </Grid>
+                </Grid>
+            </mdes:DialogHost.DialogContent>
+        </mdes:DialogHost>
 
         <Grid>
             <Grid.RowDefinitions>
@@ -91,22 +148,39 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
-                <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="OpenSelectItem_Click">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="OpenSelectItem_Click">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <Viewbox Width="32" Height="32">
-                            <Canvas Width="32" Height="32">
-                                <Path Data="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" Fill="Black" />
-                            </Canvas>
-                        </Viewbox>
-                        <Label Grid.Column="1">Add Item</Label>
-                    </Grid>
-                </Button>
+                            <Viewbox Width="32" Height="32">
+                                <Canvas Width="32" Height="32">
+                                    <Path Data="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" Fill="Black" />
+                                </Canvas>
+                            </Viewbox>
+                            <Label Grid.Column="1">Add Item</Label>
+                        </Grid>
+                    </Button>
+                    <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="OpenSelectCustomItem_Click">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Viewbox Width="32" Height="32">
+                                <Canvas Width="32" Height="32">
+                                    <Path Data="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" Fill="Black" />
+                                </Canvas>
+                            </Viewbox>
+                            <Label Grid.Column="1">Add Custom Item</Label>
+                        </Grid>
+                    </Button>
+                </StackPanel>
             </Grid>
             <ListView Grid.Row="1" x:Name="lvItems" ItemsSource="{Binding ItemsView}" PreviewMouseWheel="FixScrolling_PreviewMouseWheel">
                 <ListView.ItemContainerStyle>

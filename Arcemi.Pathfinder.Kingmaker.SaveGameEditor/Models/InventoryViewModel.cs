@@ -46,6 +46,9 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             }
         }
 
+        private string _customBlueprint;
+        public string CustomBlueprint { get => _customBlueprint; set { _customBlueprint = value; NotifyPropertyChanged(); } }
+
         private List<ItemViewModel> _items;
         public List<ItemViewModel> Items
         {

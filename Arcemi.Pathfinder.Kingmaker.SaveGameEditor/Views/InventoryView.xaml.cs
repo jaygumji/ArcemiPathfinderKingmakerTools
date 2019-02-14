@@ -39,6 +39,21 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views
             ((InventoryViewModel)DataContext).Inventory.AddItem(item.RawData);
         }
 
+        private void OpenSelectCustomItem_Click(object sender, RoutedEventArgs e)
+        {
+            DlgCustomItem.IsOpen = true;
+            e.Handled = true;
+        }
+
+        private void AddCustomItem_Click(object sender, RoutedEventArgs e)
+        {
+            DlgCustomItem.IsOpen = false;
+            e.Handled = true;
+
+            var vm = (InventoryViewModel)DataContext;
+            vm.Inventory.AddItem(vm.SelectedItemType.Key, vm.CustomBlueprint);
+        }
+
         private void FixScrolling_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             ListViewScrollingFix.PreviewMouseWheel(sender, e);

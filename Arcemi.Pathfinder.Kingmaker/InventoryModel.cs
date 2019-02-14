@@ -23,7 +23,16 @@ namespace Arcemi.Pathfinder.Kingmaker
         public void AddItem(RawItemData rawData)
         {
             var list = A.List<ItemModel>("m_Items");
-            var item = list.Add((refs, jObj) => ItemModel.Prepare(refs, jObj, rawData, this, list));
+            var item = list.Add((refs, jObj) => ItemModel.Prepare(refs, jObj, rawData,
+                rawData.Type, rawData.Blueprint, this, list));
         }
+
+        public void AddItem(ItemType itemType, string blueprint)
+        {
+            var list = A.List<ItemModel>("m_Items");
+            var item = list.Add((refs, jObj) => ItemModel.Prepare(refs, jObj, null,
+                itemType, blueprint, this, list));
+        }
+
     }
 }
