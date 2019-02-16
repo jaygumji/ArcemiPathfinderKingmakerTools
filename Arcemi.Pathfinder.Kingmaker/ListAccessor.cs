@@ -37,7 +37,13 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public T Add(Action<IReferences, JObject> init = null)
         {
-            var obj = _refs.Create();
+            JObject obj;
+            if (typeof(T).IsSubclassOf(typeof(RefModel))) {
+                obj = _refs.Create();
+            }
+            else {
+                obj = new JObject();
+            }
             init?.Invoke(_refs, obj);
             var accessor = new ModelDataAccessor(obj, _refs);
             var item = _factory.Invoke(accessor);

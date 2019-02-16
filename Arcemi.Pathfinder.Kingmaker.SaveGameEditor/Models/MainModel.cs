@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -41,6 +42,36 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             private set {
                 _characters = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        private int _leaderBonus;
+        public int LeaderBonus
+        {
+            get => _leaderBonus;
+            set {
+                _leaderBonus = value;
+                NotifyPropertyChanged();
+                Leader.SetSelectedLeaderBonus(value);
+            }
+        }
+
+        public bool CanEditLeader => _leader != null;
+
+        private PlayerKingdomLeaderModel _leader;
+        public PlayerKingdomLeaderModel Leader
+        {
+            get => _leader;
+            set {
+                _leader = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(CanEditLeader));
+
+                _leaderBonus = _leader?.SpecificBonuses?
+                    .Where(b => string.Equals(b.Key, _leader.LeaderSelection, StringComparison.OrdinalIgnoreCase))
+                    .Select(b => b.Value)
+                    .FirstOrDefault() ?? 0;
+                NotifyPropertyChanged("LeaderBonus");
             }
         }
 
@@ -137,6 +168,7 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
                     return path;
                 }
             }
+
             return null;
         }
 
@@ -180,9 +212,15 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
                     InventoryModel = new InventoryViewModel(character.Inventory);
                 }
             }
+            if (Player.Kingdom?.Leaders != null) {
+                foreach (var leader in Player.Kingdom.Leaders) {
+                    leader.Init(AppData.Portraits);
+                }
+            }
             SharedStashModel = new InventoryViewModel(Player.SharedStash);
             Characters = characters;
             Character = null;
+            Leader = null;
             CanEdit = true;
         }
 
@@ -199,10 +237,12 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             dlg.FileName = fileName;
  
             if (dlg.ShowDialog() == true) {
+                CanEdit = false;
                 var filePath = dlg.FileName;
                 _partyFile.Save();
                 _playerFile.Save();
                 _file.Save(filePath);
+                CanEdit = true;
             }
         }
 

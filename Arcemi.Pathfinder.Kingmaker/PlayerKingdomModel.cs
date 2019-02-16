@@ -2,7 +2,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
+using System.Collections.Generic;
+
 namespace Arcemi.Pathfinder.Kingmaker
 {
     public class PlayerKingdomModel : RefModel
@@ -36,6 +38,14 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Unrest { get => A.Value<string>(); set => A.Value(value); }
         public bool Disabled { get => A.Value<bool>(); set => A.Value(value); }
 
+        public IReadOnlyList<string> AvailableNPCLeaders => A.ListValue<string>();
+
         public PlayerKingdomStatsModel Stats => A.Object(factory: a => new PlayerKingdomStatsModel(a));
+
+        public IReadOnlyList<PlayerKingdomEventModel> ActiveEvents => A.List<PlayerKingdomEventModel>();
+        public IReadOnlyList<PlayerKingdomEventHistoryModel> EventHistory => A.List<PlayerKingdomEventHistoryModel>();
+        public IReadOnlyList<PlayerKingdomEventHistoryModel> FinishedEvents => A.List<PlayerKingdomEventHistoryModel>();
+
+        public IReadOnlyList<PlayerKingdomLeaderModel> Leaders => A.List<PlayerKingdomLeaderModel>();
     }
 }

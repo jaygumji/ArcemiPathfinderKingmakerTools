@@ -20,6 +20,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         private static readonly Dictionary<string, ClassDataMapping> Classes;
         private static readonly Dictionary<string, RaceDataMapping> Races;
         private static readonly Dictionary<string, CharacterDataMapping> Characters;
+        private static readonly Dictionary<string, LeaderDataMapping> Leaders;
 
         //public int Int { get => A.Value<int>(); set => A.Value(value); }
         //public bool Bool { get => A.Value<bool>(); set => A.Value(value); }
@@ -45,6 +46,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             RegisterFactory(ItemModel.Create);
             RegisterFactory(m => new HoldingSlotModel(m));
             RegisterFactory(m => new HandsEquipmentSetModel(m));
+            RegisterFactory(m => new PlayerKingdomLeaderModel(m));
+            RegisterFactory(m => new PlayerKingdomTaskModel(m));
+            RegisterFactory(m => new PlayerKingdomChangeModel(m));
+            RegisterFactory(m => new PlayerKingdomEventHistoryModel(m));
+            RegisterFactory(m => new PlayerKingdomEventModel(m));
+            RegisterFactory(m => new PlayerKingdomRegionModel(m));
+            RegisterFactory(m => new PlayerKingdomLeaderSpecificBonusModel(m));
 
             var dataMappings = DataMappings.LoadFromDefault();
             Classes = dataMappings.Classes
@@ -56,6 +64,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
             Characters = dataMappings.Characters
+                .ToDictionary(x => x.Id, StringComparer.Ordinal);
+
+            Leaders = dataMappings.Leaders
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
             BlueprintTypes = dataMappings.Characters.ToDictionary(x => new BlueprintIdentifier(x.Id), x => typeof(CharacterModel));
@@ -70,6 +81,36 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static string GetCharacterName(string blueprint)
         {
             return Characters.TryGetValue(blueprint, out var character) ? character.Name : "";
+        }
+
+        public static string GetLeaderName(string blueprint)
+        {
+            if (string.IsNullOrEmpty(blueprint)) {
+                return "";
+            }
+
+            if (Leaders.TryGetValue(blueprint, out var leader)) {
+                return leader.Name;
+            }
+            if (Characters.TryGetValue(blueprint, out var character)) {
+                return character.Name;
+            }
+            return "";
+        }
+
+        public static string GetPortraitId(string blueprint)
+        {
+            if (string.IsNullOrEmpty(blueprint)) {
+                return null;
+            }
+
+            if (Leaders.TryGetValue(blueprint, out var leader)) {
+                return leader.Portrait.OrIfEmpty("_c_" + leader.Name);
+            }
+            if (Characters.TryGetValue(blueprint, out var character)) {
+                return "_c_" + character.Name;
+            }
+            return null;
         }
 
         public static bool IsPlayerCharacter(string blueprint)

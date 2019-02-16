@@ -75,9 +75,14 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IReadOnlyList<Portrait> Available => _available;
 
+        public string GetUnknownUri()
+        {
+            return _all["_s_unknown"].Uri;
+        }
+
         public string GetPortraitsUri(string key)
         {
-            return _all.TryGetValue(key, out var portrait) ? portrait.Uri : _all["_s_unknown"].Uri;
+            return _all.TryGetValue(key, out var portrait) ? portrait.Uri : GetUnknownUri();
         }
 
     }

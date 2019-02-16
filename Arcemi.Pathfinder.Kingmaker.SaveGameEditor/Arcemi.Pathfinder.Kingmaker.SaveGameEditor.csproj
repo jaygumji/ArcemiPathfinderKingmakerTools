@@ -46,6 +46,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -76,6 +79,9 @@
     </Compile>
     <Compile Include="Views\InventoryView.xaml.cs">
       <DependentUpon>InventoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayerKingdomLeadersView.xaml.cs">
+      <DependentUpon>PlayerKingdomLeadersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayerKingdomView.xaml.cs">
       <DependentUpon>PlayerKingdomView.xaml</DependentUpon>
@@ -109,6 +115,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InventoryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayerKingdomLeadersView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlayerKingdomView.xaml">
@@ -289,11 +298,18 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Arcemi.Pathfinder.Kingmaker\Arcemi.Pathfinder.Kingmaker.csproj">
       <Project>{ca2b9f1e-3347-4bed-b19c-a10b8584e0a3}</Project>
       <Name>Arcemi.Pathfinder.Kingmaker</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_Res\Portraits\Special\c0230e1fee517664784355441dd5b6e8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_Res\Portraits\Leaders\_c_Storyteller.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

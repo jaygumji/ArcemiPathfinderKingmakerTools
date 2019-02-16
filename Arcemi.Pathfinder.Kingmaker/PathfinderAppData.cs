@@ -24,8 +24,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         public PathfinderAppData(Assembly assembly, string directory)
         {
             Directory = directory;
-            PortraitsDirectory = Path.Combine(directory, "Portraits");
-            SavedGamesDirectory = Path.Combine(directory, "Saved Games");
+            if (!string.IsNullOrEmpty(directory)) {
+                PortraitsDirectory = Path.Combine(directory, "Portraits");
+                SavedGamesDirectory = Path.Combine(directory, "Saved Games");
+            }
 
             Portraits = new Portraits(assembly, PortraitsDirectory);
         }
