@@ -39,7 +39,7 @@
                                 <GridViewColumn Width="250">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Label Content="{Binding Slot.Item.DisplayName}" ToolTip="{Binding Slot.Item.DisplayDescription}"/>
+                                            <TextBox Background="Transparent" BorderThickness="0" IsReadOnly="True" Text="{Binding Slot.Item.DisplayName, Mode=OneWay}" ToolTip="{Binding Slot.Item.DisplayDescription}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

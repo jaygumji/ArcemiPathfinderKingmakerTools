@@ -87,11 +87,15 @@
         <mdes:DialogHost x:Name="DlgCustomItem" Panel.ZIndex="1">
             <mdes:DialogHost.DialogContent>
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="450" />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                                         
                     <Button HorizontalAlignment="Right" Style="{DynamicResource MaterialDesignFlatButton}" Command="{x:Static mdes:DialogHost.CloseDialogCommand}">
@@ -193,7 +197,7 @@
                         <GridViewColumn Width="250">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Label Content="{Binding DisplayName}" />
+                                    <TextBox Text="{Binding DisplayName}" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
