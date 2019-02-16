@@ -197,7 +197,7 @@
                         <GridViewColumn Width="250">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding DisplayName}" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
+                                    <TextBox Text="{Binding DisplayName, Mode=OneWay}" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
