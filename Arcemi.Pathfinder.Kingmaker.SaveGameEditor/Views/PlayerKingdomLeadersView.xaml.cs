@@ -20,6 +20,9 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views
             var model = (MainModel)DataContext;
             var el = (FrameworkElement)sender;
             var leader = (PlayerKingdomLeaderModel)el.DataContext;
+
+            Keyboard.FocusedElement?.RaiseEvent(new RoutedEventArgs(LostFocusEvent));
+
             model.Leader = leader;
         }
 

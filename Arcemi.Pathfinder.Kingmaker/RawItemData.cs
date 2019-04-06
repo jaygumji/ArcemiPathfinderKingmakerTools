@@ -15,6 +15,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Name { get; set; }
         public string Blueprint { get; set; }
         public bool IsStackable { get; set; }
+        public bool IsChargable { get; set; }
         public int Cost { get; set; }
         public double Weight { get; set; }
         public bool IsNotable { get; set; }

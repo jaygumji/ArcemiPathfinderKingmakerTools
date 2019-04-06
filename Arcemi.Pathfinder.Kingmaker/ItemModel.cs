@@ -72,7 +72,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string DisplayDescription => (DescriptiveData?.Description).OrIfEmpty(null);
 
         public bool IsStackable => RawData?.IsStackable ?? false;
-        public bool IsChargable => RawData?.Type == ItemType.UsableWand;
+        public bool IsChargable => RawData?.IsChargable ?? false;
 
         public string Type { get => A.Value<string>("$type"); }
         public string Blueprint { get => A.Value<string>("m_Blueprint"); set => A.Value(value, "m_Blueprint"); }

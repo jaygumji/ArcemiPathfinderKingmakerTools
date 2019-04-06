@@ -14,6 +14,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public IReadOnlyList<ClassModel> Classes => A.List(factory: a => new ClassModel(a));
+        public FeaturesModel Features => A.Object(factory: a => new FeaturesModel(a));
         public int CharacterLevel { get => A.Value<int>(); set => A.Value(value); }
         public int Experience { get => A.Value<int>(); set => A.Value(value); }
         public string Race { get => A.Value<string>("m_Race"); set => A.Value(value, "m_Race"); }

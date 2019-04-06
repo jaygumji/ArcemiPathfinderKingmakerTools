@@ -30,7 +30,8 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             if (!File.Exists(path)) {
                 return new UserSettings();
             }
-            return JsonUtilities.Deserialize<UserSettings>(path);
+            return JsonUtilities.Deserialize<UserSettings>(path)
+                ?? new UserSettings();
         }
 
         public static UserSettings FromDefaultPath()

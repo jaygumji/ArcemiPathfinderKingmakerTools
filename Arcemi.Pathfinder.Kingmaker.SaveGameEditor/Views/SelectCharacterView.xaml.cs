@@ -6,6 +6,7 @@
 using Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views
 {
@@ -24,6 +25,9 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Views
             var model = (MainModel)DataContext;
             var el = (FrameworkElement)sender;
             var character = (CharacterModel)el.DataContext;
+
+            Keyboard.FocusedElement?.RaiseEvent(new RoutedEventArgs(LostFocusEvent));
+
             model.Character = character;
         }
 

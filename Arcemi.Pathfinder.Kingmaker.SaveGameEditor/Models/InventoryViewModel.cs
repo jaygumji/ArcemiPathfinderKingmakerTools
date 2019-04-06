@@ -30,6 +30,19 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             }
         }
 
+        private string _searchTerm;
+        public string SearchTerm {
+            get { return _searchTerm; }
+            set {
+                _searchTerm = value;
+                NotifyPropertyChanged();
+                Items = AllItems.Values.SelectMany(l => l).Where(i => i.DisplayName?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0
+                            || i.DisplayDescription?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0
+                            || i.RawData.Name?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0)
+                            .ToList();
+            }
+        }
+
         public InventoryModel Inventory { get; }
         public ListCollectionView ItemsView { get; }
 
@@ -64,7 +77,10 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             Inventory = inventory;
             SelectedItemType = ItemTypes.FirstOrDefault(kv => kv.Key == ItemType.Armor);
             ItemsView = new ListCollectionView((System.Collections.IList)inventory.Items) {
-                Filter = i => ((ItemModel)i).InventorySlotIndex >= 0
+                Filter = i => {
+                    var item = (ItemModel)i;
+                    return item.InventorySlotIndex >= 0;
+                }
             };
 
         }

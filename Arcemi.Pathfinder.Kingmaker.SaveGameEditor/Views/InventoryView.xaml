@@ -34,7 +34,20 @@
                         </Viewbox>
                     </Button>
                     <Grid Grid.Row="1">
-                        <ComboBox Margin="20 10" ItemsSource="{Binding ItemTypes}" DisplayMemberPath="Value" SelectedValue="{Binding SelectedItemType}" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Margin="20 10">Search</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Margin="20 10" Text="{Binding SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Label Grid.Row="1" Grid.Column="0" Margin="20 10">Type</Label>
+                        <ComboBox Grid.Row="1" Grid.Column="1" Margin="20 10" ItemsSource="{Binding ItemTypes}" DisplayMemberPath="Value" SelectedValue="{Binding SelectedItemType}" />
                     </Grid>
                     <ListView Grid.Row="2" ItemsSource="{Binding Items}" Width="870" Height="450" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                         <ListView.ItemContainerStyle>
@@ -194,31 +207,39 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="250">
+                        <GridViewColumn Width="250" Header="Name">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBox Text="{Binding DisplayName, Mode=OneWay}" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="100">
+                        <GridViewColumn Width="100" Header="Type">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Label Content="{Binding DisplayType}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="50">
+                        <GridViewColumn Width="100" Header="Stacks">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid Width="50">
                                         <TextBox Visibility="{Binding IsStackable, Converter={StaticResource BooleanToVisibilityConverter}}" Text="{Binding Count}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="100" Header="Charges">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid Width="50">
                                         <TextBox Visibility="{Binding IsChargable, Converter={StaticResource BooleanToVisibilityConverter}}" Text="{Binding Charges}"/>
                                     </Grid>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="400">
+                        <GridViewColumn Width="400" Header="Description">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Margin="5" Text="{Binding DisplayDescription}" TextWrapping="Wrap" />
