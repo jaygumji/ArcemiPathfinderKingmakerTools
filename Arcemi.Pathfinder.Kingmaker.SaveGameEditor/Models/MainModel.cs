@@ -202,16 +202,31 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             _partyFile = _file.GetParty();
             _playerFile = _file.GetPlayer();
             Player = _playerFile.GetRoot<PlayerModel>();
+            var party = _partyFile.GetRoot<PartyModel>();
 
             var characters = _partyFile.GetAllOf<CharacterModel>();
 
+            var playerUnit = party.Find(Player.MainCharacter.UniqueId);
+            if (playerUnit != null) {
+                playerUnit.Descriptor.UISettings.Init(AppData.Portraits);
+                PlayerCharacter = playerUnit.Descriptor;
+                InventoryModel = new InventoryViewModel(playerUnit.Descriptor.Inventory);
+            }
+
+            var isMainCharacterFound = false;
             foreach (var character in characters) {
                 character.UISettings.Init(AppData.Portraits);
-                if (character.IsPlayer) {
-                    PlayerCharacter = character;
-                    InventoryModel = new InventoryViewModel(character.Inventory);
+                var isMainCharacter = string.Equals(character.Id, playerUnit.Descriptor.Id, StringComparison.Ordinal);
+                if (isMainCharacter) {
+                    isMainCharacterFound = true;
                 }
             }
+            if (playerUnit != null && !isMainCharacterFound) {
+                var newCharacters = characters.ToList();
+                newCharacters.Insert(0, playerUnit.Descriptor);
+                characters = newCharacters;
+            }
+
             if (Player.Kingdom?.Leaders != null) {
                 foreach (var leader in Player.Kingdom.Leaders) {
                     leader.Init(AppData.Portraits);

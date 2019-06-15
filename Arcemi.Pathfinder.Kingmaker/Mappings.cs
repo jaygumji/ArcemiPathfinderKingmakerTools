@@ -36,6 +36,8 @@ namespace Arcemi.Pathfinder.Kingmaker
             UntypedFactories = new Dictionary<Type, Func<ModelDataAccessor, object>>();
             Factories = new Dictionary<Type, object>();
 
+            RegisterFactory(m => new PartyModel(m));
+            RegisterFactory(m => new UnitEntityModel(m));
             RegisterFactory(m => new CharacterModel(m));
             RegisterFactory(m => new VectorModel(m));
             RegisterFactory(m => new CharacterAttributeModel(m));
@@ -76,6 +78,12 @@ namespace Arcemi.Pathfinder.Kingmaker
 
             RawItems = RawItems.LoadFromDefault();
             DescriptiveItems = DescriptiveItems.LoadFromDefault();
+        }
+
+        public static string GetCharacterPotraitIdentifier(string blueprint) {
+            var characterName = GetCharacterName(blueprint);
+            var characterKey = "_c_" + characterName;
+            return characterKey;
         }
 
         public static string GetCharacterName(string blueprint)
