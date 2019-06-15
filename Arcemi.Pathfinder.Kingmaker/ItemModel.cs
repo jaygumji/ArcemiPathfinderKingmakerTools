@@ -146,8 +146,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                     jObj.Add("$type", TypeSimple);
                     break;
             }
+
             AddDefaultItemProperties(jObj);
-            jObj.Add("Charges", itemType == ItemType.UsableWand ? 1 : 0);
+            jObj.Add("Charges",  rawData.IsChargable ? 1 : 0);
             jObj.Add("m_Blueprint", blueprint);
             jObj.Add("Collection", refs.CreateReference(inventory.Id));
             jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);

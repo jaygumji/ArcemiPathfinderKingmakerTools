@@ -68,7 +68,7 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
                 NotifyPropertyChanged(nameof(CanEditLeader));
 
                 _leaderBonus = _leader?.SpecificBonuses?
-                    .Where(b => string.Equals(b.Key, _leader.LeaderSelection, StringComparison.OrdinalIgnoreCase))
+                    .Where(b => string.Equals(b.Key, _leader.LeaderSelection?.Blueprint, StringComparison.OrdinalIgnoreCase))
                     .Select(b => b.Value)
                     .FirstOrDefault() ?? 0;
                 NotifyPropertyChanged("LeaderBonus");

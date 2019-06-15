@@ -14,17 +14,17 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string Type { get => A.Value<string>(); set => A.Value(value); }
         public string Role => Type?.AsDisplayable();
-        public string Name => Mappings.GetLeaderName(LeaderSelection);
-        public bool IsAssigned => !string.IsNullOrEmpty(LeaderSelection);
+        public string Name => Mappings.GetLeaderName(LeaderSelection?.Blueprint);
+        public bool IsAssigned => !string.IsNullOrEmpty(LeaderSelection?.Blueprint);
         public string PortraitPath {
             get {
-                if (string.IsNullOrEmpty(LeaderSelection)) {
+                if (string.IsNullOrEmpty(LeaderSelection?.Blueprint)) {
                     return _portraits.GetUnknownUri();
                 }
-                return _portraits.GetPortraitsUri(Mappings.GetPortraitId(LeaderSelection));
+                return _portraits.GetPortraitsUri(Mappings.GetPortraitId(LeaderSelection.Blueprint));
             }
         }
-        public string LeaderSelection { get => A.Value<string>(); set => A.Value(value); }
+        public PlayerKingdomLeaderSelectionModel LeaderSelection { get => A.Object(factory: a => new PlayerKingdomLeaderSelectionModel(a)); }
         public IReadOnlyList<string> PossibleLeaders => A.ListValue<string>();
         public PlayerKingdomTaskModel AssignedTask => A.Object<PlayerKingdomTaskModel>();
 
@@ -35,12 +35,12 @@ namespace Arcemi.Pathfinder.Kingmaker
         public void SetSelectedLeaderBonus(int value)
         {
             var bonus = SpecificBonuses
-                .FirstOrDefault(b => string.Equals(b.Key, LeaderSelection, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(b => string.Equals(b.Key, LeaderSelection?.Blueprint, StringComparison.OrdinalIgnoreCase));
 
             if (bonus == null) {
                 var list = A.List<PlayerKingdomLeaderSpecificBonusModel>("SpecificBonuses");
                 bonus = list.Add((r, o) => {
-                    o.Add("Key", LeaderSelection);
+                    o.Add("Key", LeaderSelection?.Blueprint);
                     o.Add("Value", 0);
                 });
             }
