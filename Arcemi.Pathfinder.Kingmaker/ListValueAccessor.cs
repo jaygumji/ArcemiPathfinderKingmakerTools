@@ -2,12 +2,12 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using Newtonsoft.Json.Linq;
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -23,6 +23,8 @@ namespace Arcemi.Pathfinder.Kingmaker
                 .Select(t => t.Value<T>())
                 .ToList() ?? new List<T>();
         }
+
+        public JArray UnderlyingStructure => _array;
 
         public T this[int index] => _items[index];
 

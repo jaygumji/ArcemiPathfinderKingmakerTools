@@ -1,5 +1,6 @@
 ﻿namespace Arcemi.Pathfinder.Kingmaker
 {
+    [SaveFileType("Kingmaker.EntitySystem.Entities.UnitEntityData, Assembly-CSharp")]
     public class UnitEntityModel : RefModel
     {
         public UnitEntityModel(ModelDataAccessor accessor) : base(accessor)

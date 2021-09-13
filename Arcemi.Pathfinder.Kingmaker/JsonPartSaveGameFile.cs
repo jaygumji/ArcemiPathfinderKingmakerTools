@@ -2,7 +2,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -16,11 +16,24 @@ namespace Arcemi.Pathfinder.Kingmaker
 
     public class JsonPartSaveGameFile
     {
+        private static readonly IEnumerable<SaveFileTypeMetadata> Metadatas =
+            typeof(JsonPartSaveGameFile).Assembly.GetTypes()
+            .Select(x => new SaveFileTypeMetadata(x))
+            .Where(x => x.Attribute != null)
+            .ToArray();
+
+        private static readonly Dictionary<string, SaveFileTypeMetadata> TypeIdLookup = Metadatas
+            .ToDictionary(x => x.Attribute.Id, StringComparer.Ordinal);
+
+        private static readonly Dictionary<Type, SaveFileTypeMetadata> TypesLookup = Metadatas
+            .ToDictionary(x => x.Type);
+
         private readonly string _path;
         private readonly JObject _json;
 
-        private readonly References _refs;
         private readonly Dictionary<BlueprintIdentifier, List<Model>> _blueprintRefs;
+        private readonly References _refs;
+        private readonly Dictionary<string, List<Model>> _types;
 
         private Model _root;
 
@@ -29,6 +42,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             _path = path;
             _json = json;
             _refs = new References();
+            _types = new Dictionary<string, List<Model>>(StringComparer.Ordinal);
             _blueprintRefs = new Dictionary<BlueprintIdentifier, List<Model>>();
             VisitTree(json);
         }
@@ -48,13 +62,27 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IReadOnlyList<T> GetAllOf<T>()
         {
-            var blueprintIds = Mappings.GetBlueprintId<T>();
-            return blueprintIds
-                .SelectMany(id => _blueprintRefs.TryGetValue(id, out var models)
-                    ? models
-                    : (IEnumerable<Model>)new Model[0])
-                .Cast<T>()
-                .ToArray();
+            if (!TypesLookup.TryGetValue(typeof(T), out var metadata)) {
+                throw new ArgumentException("Type is not registered");
+            }
+            if (!_types.TryGetValue(metadata.Attribute.Id, out var list)) return Array.Empty<T>();
+
+            return list.Cast<T>().ToArray();
+        }
+
+        private void AddTypeRef(string typeId, JObject obj)
+        {
+            if (!TypeIdLookup.TryGetValue(typeId, out var metadata)) {
+                return;
+            }
+
+            if (!_types.TryGetValue(typeId, out var list)) {
+                list = new List<Model>();
+                _types.Add(typeId, list);
+            }
+
+            var model = (Model)_refs.CreateObject(obj, metadata.CreateInstance);
+            list.Add(model);
         }
 
         private void AddBlueprintRef(BlueprintIdentifier blueprintId, JObject obj)
@@ -82,6 +110,11 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             if (node is JObject obj) {
+                var type = obj.Property("$type");
+                if (type != null && type.Value != null) {
+                    var typeValue = type.Value.Value<string>();
+                    AddTypeRef(typeValue, obj);
+                }
                 foreach (var property in obj.Properties()) {
                     if (string.Equals(property.Name, "$id", StringComparison.Ordinal)) {
                         var id = property.Value.Value<string>();

@@ -1,0 +1,16 @@
+﻿{
+  "Feet": [
+		{"name": "Sure Step", "type": "Feet", "description": "These boots grant the wearer a +4 bonus to CMD, a +4 enhancement bonus to Constitution, and immunity to forced movement effect, slow and tripping.", "rawName": "StabilityStanceItem", "blueprint": "1efbe2ef6e22cf34eaa24ab7b6c061ad", "cost": 108000},
+		{"name": "Owlbear Skin Boots", "type": "Feet", "description": "These boots grants their wearer immunity to slowing and paralyzing effects, entanglement, and difficult terrain.", "rawName": "PermanentFreedomItem", "blueprint": "29ec0781b00678541acd9d0f30043967", "cost": 87000},
+		{"name": "Swamp Dweller's Boots", "type": "Feet", "description": "These boots grant the wearer immunity to ability damage and ability drain.", "rawName": "BootsOfTheSwampItem", "blueprint": "1ccb68fd1e0f6d141b739e3744e5af4e", "cost": 75000},
+		{"name": "Easy Stride", "type": "Feet", "description": "These boots grant the wearer a +5 competence bonus on all Stealth checks and the ability to cast dimension door spell once per day.", "rawName": "EvadingStepsItem", "blueprint": "91b1162500bb78545b0f802e33dfd8d6", "cost": 72000},
+		{"name": "Manticore Skin Boots", "type": "Feet", "description": "Grant +10 bonus to speed and +4 bonus to natural armor.", "rawName": "BootsOfManticoreItem", "blueprint": "f52308050f98ebe4a8e22f05024ddc94", "cost": 67000},
+		{"name": "Bonethreader Boots", "type": "Feet", "description": "These boots grant their wearer DR 5/bludgeoning.", "rawName": "BonethreaderBootsItem", "blueprint": "591b91f6bd5b7d841a6cf3a9d401f4eb", "cost": 60000},
+		{"name": "Hellstrider Boots", "type": "Feet", "description": "These boots grant its wearer fire resistance 30 and immunity to poison.", "rawName": "DevilsBootsItem", "blueprint": "0da402fcbd1ab3d4e852a4a831c3f468", "cost": 53000},
+		{"name": "Boots of the Light Step", "type": "Feet", "description": "These boots grant the wearer a constant effect of the feather step spell.", "rawName": "BootsOfTheLightStepItem", "blueprint": "815cc85ce13ab64428253aea3b6708a8", "cost": 44000},
+		{"name": "Earth's Children", "type": "Feet", "description": "These boots add +4 to the wearer's caster level when they cast the following spells: barkskin, entangle, obsidian flow, sickening entanglement, soothing mud, stone call.", "rawName": "ConnectiontoEarthBoostItem", "blueprint": "57d89d9340dedb449a279622ec0541be", "cost": 35000},
+		{"name": "Opportunist's Boots", "type": "Feet", "description": "These boots grant their wearer the ability two make two additional attacks of opportunity per round.", "rawName": "OpportunistsBoots", "blueprint": "05996c33b27ac4849ab3d02b5cb460a2", "cost": 13670},
+		{"name": "Swiftfoot Boots", "type": "Feet", "description": "These boots increase the wearer's movement speed by 10. That's a enhancement bonus and it does not stack with other enhancement bonuses.", "rawName": "BootsOfSwiftFoot", "blueprint": "8644bca1c3bf6f64ab4d89be643a8850", "cost": 3500},
+		{"name": "Boots of Elvenkind", "type": "Feet", "description": "These boots grant its wearer a +5 competence bonus on Mobility checks.", "rawName": "BootsOfElvenKind", "blueprint": "1223ceb45ed647b44a04b44a9312328b", "cost": 2500}
+  ]
+}

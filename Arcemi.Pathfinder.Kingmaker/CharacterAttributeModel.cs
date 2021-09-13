@@ -2,7 +2,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,10 +29,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         public int BaseValue { get => A.Value<int>("m_BaseValue"); set => A.Value(value, "m_BaseValue"); }
         public int PermanentValue { get => A.Value<int>(); set => A.Value(value); }
         public int PairedValue { get => PermanentValue; set => PermanentValue = BaseValue = value; }
+        public int TotalValue => PairedValue + (PersistentModifiers?.Sum(x => x.ModValue) ?? 0);
         public string ModifiersSum
         {
             get {
-                var sum = PersistentModifiers.Sum(x => x.ModValue);
+                var sum = PersistentModifiers?.Sum(x => x.ModValue) ?? 0;
                 if (sum < 0) return sum.ToString();
                 if (sum > 0) return "+" + sum;
                 return "";
@@ -50,7 +51,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 return null;
             }
         }
-        public ClassSkillModel ClassSkill => A.Object<ClassSkillModel>();
+        //public ClassSkillModel ClassSkill => A.Object<ClassSkillModel>();
         public IReadOnlyList<PersistentModifierModel> PersistentModifiers => A.List<PersistentModifierModel>("PersistentModifierList");
     }
 }

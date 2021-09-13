@@ -265,20 +265,20 @@
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
-                                    <GridViewColumn Width="50">
+                                    <!--<GridViewColumn Width="50">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <CheckBox Width="50" IsChecked="{Binding ClassSkill.IsSet}"/>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
-                                    <GridViewColumn Width="50">
+                                    </GridViewColumn>-->
+                                    <!--<GridViewColumn Width="50">
                                         <GridViewColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Label Content="{Binding ModifiersSum}" ToolTip="{Binding ModifiersDescription}" />
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>
-                                    </GridViewColumn>
+                                    </GridViewColumn>-->
                                 </GridView>
                             </ListView.View>
                         </ListView>

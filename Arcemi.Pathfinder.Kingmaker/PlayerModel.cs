@@ -2,7 +2,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using System;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -24,6 +24,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public PlayerDifficultyModel Difficulty => A.Object(factory: a => new PlayerDifficultyModel(a));
         public PlayerKingdomModel Kingdom => A.Object(factory: a => new PlayerKingdomModel(a));
         public InventoryModel SharedStash => A.Object<InventoryModel>();
-        public PlayerMainCharacterModel MainCharacter => A.Object("m_MainCharacter", a => new PlayerMainCharacterModel(a));
+        public string MainCharacterId => A.Value<string>("m_MainCharacter");
     }
 }

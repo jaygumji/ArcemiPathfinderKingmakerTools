@@ -42,12 +42,12 @@
                 <TabItem Header="Stash">
                     <views:PlayerStashView />
                 </TabItem>
-                <TabItem Header="Kingdom">
+                <!--<TabItem Header="Kingdom">
                     <views:PlayerKingdomView />
-                </TabItem>
-                <TabItem Header="Advisors">
+                </TabItem>-->
+                <!--<TabItem Header="Advisors">
                     <views:PlayerKingdomLeadersView />
-                </TabItem>
+                </TabItem>-->
                 <TabItem Header="Attributes">
                     <views:CharactersView />
                 </TabItem>

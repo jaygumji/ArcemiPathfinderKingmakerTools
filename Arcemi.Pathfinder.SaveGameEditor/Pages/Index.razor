@@ -1,0 +1,72 @@
+@page "/"
+@inject MainViewModel Context
+
+<fieldset class="form-controller" disabled="@IsBusy">
+
+<p>Start by selecting the save game file you want to edit.</p>
+<div>
+    <button class="btn btn-info" @onclick="OpenFile">
+        <span class="oi oi-file"></span>
+        Open
+    </button>
+    <button class="btn btn-info" @onclick="SaveFile">
+        <span class="oi oi-data-transfer-download"></span>
+        Save
+    </button>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-12">
+        <label class="form-label">Path</label>
+        <input class="form-control" type="text" readonly="readonly" value="@Context.CurrentPath" />
+    </div>
+
+@if (Context.CanEdit) {
+    <div class="col-md-4">
+        <label class="form-label">Money</label>
+        <input class="form-control" type="number" @bind="@Context.Player.Money" />
+    </div>
+}
+</div>
+</fieldset>
+
+@code {
+    private bool IsBusy = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsBusy = false;
+    }
+
+    async Task OpenFile()
+    {
+        IsBusy = true;
+        var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+        var options = new ElectronNET.API.Entities.OpenDialogOptions {
+            Title = "Select the save game file",
+            Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openFile},
+            Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } }
+        };
+        var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+        var file = files?.FirstOrDefault();
+        if (!string.IsNullOrEmpty(file)) {
+            await Context.OpenAsync(file);
+        }
+        IsBusy = false;
+    }
+
+    async Task SaveFile()
+    {
+        IsBusy = true;
+        var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+        var options = new ElectronNET.API.SaveDialogOptions {
+            Title = "Save the game file",
+            Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } }
+        };
+        var file = await ElectronNET.API.Electron.Dialog.ShowSaveDialogAsync(window, options);
+        if (!string.IsNullOrEmpty(file)) {
+            await Context.SaveAsync(file);
+        }
+        IsBusy = false;
+    }
+}

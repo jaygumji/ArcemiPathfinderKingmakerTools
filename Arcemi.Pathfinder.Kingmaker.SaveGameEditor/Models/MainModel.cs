@@ -2,14 +2,12 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
@@ -28,7 +26,8 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
         public PathfinderAppData AppData { get; }
 
         private PlayerModel _player;
-        public PlayerModel Player {
+        public PlayerModel Player
+        {
             get => _player;
             private set {
                 _player = value;
@@ -37,7 +36,8 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
         }
 
         private IReadOnlyList<CharacterModel> _characters;
-        public IReadOnlyList<CharacterModel> Characters {
+        public IReadOnlyList<CharacterModel> Characters
+        {
             get => _characters;
             private set {
                 _characters = value;
@@ -136,7 +136,7 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             OpenCommand = new RelayCommand(Open);
             SaveCommand = new RelayCommand(Save, s => _file != null);
             UserSettings = UserSettings.FromDefaultPath();
-            AppData = new PathfinderAppData(typeof(MainModel), FindDefaultFolder());
+            AppData = new PathfinderAppData(new AssemblyResourceProvider(typeof(MainModel), FindDefaultFolder()));
         }
 
         private static string FindDefaultFolder()
@@ -204,9 +204,10 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             Player = _playerFile.GetRoot<PlayerModel>();
             var party = _partyFile.GetRoot<PartyModel>();
 
-            var characters = _partyFile.GetAllOf<CharacterModel>();
+            var characters = _partyFile.GetAllOf<CharacterModel>()
+                .Where(c => c.UISettings != null).ToList();
 
-            var playerUnit = party.Find(Player.MainCharacter.UniqueId);
+            var playerUnit = party.Find(Player.MainCharacterId);
             if (playerUnit != null) {
                 playerUnit.Descriptor.UISettings.Init(AppData.Portraits);
                 PlayerCharacter = playerUnit.Descriptor;
@@ -250,7 +251,7 @@ namespace Arcemi.Pathfinder.Kingmaker.SaveGameEditor.Models
             var fileName = Path.GetFileName(_file.Filepath);
             dlg.InitialDirectory = dir;
             dlg.FileName = fileName;
- 
+
             if (dlg.ShowDialog() == true) {
                 CanEdit = false;
                 var filePath = dlg.FileName;

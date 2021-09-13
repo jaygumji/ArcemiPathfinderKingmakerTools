@@ -2,7 +2,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly ObjectCache _objects;
         private readonly ObjectCache _lists;
         private readonly ObjectCache _valueLists;
+        private readonly ObjectCache _dictionaryOfValueLists;
 
         private readonly IReferences _refs;
 
@@ -27,6 +28,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             _objects = new ObjectCache();
             _lists = new ObjectCache();
             _valueLists = new ObjectCache();
+            _dictionaryOfValueLists = new ObjectCache();
             _refs = this;
         }
 
@@ -116,7 +118,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             if (property == null) {
                 if (createIfNull) {
                     var jObj = _refs.Create();
-                    if (parent.ContainsKey(name)) {
+                    if (parent.Property(name) != null) {
                         parent[name] = jObj;
                     }
                     else {
@@ -133,15 +135,16 @@ namespace Arcemi.Pathfinder.Kingmaker
             return obj;
         }
 
-        ListAccessor<T> IReferences.GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory)
+        ListAccessor<T> IReferences.GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNull)
         {
-            
+
             if (_lists.TryGet(parent, name, out ListAccessor<T> list)) {
                 return list;
             }
 
             var property = parent.Property(name);
             if (property == null) {
+                if (!createIfNull) return null;
                 throw new ArgumentException($"Parameter {name} does not reference a valid array.");
             }
 
@@ -158,7 +161,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             return listAccessor;
         }
 
-        ListValueAccessor<T> IReferences.GetOrCreateListValue<T>(JObject parent, string name)
+        ListValueAccessor<T> IReferences.GetOrCreateListValue<T>(JObject parent, string name, bool createIfNull)
         {
             if (_valueLists.TryGet(parent, name, out ListValueAccessor<T> list)) {
                 return list;
@@ -166,6 +169,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
             var property = parent.Property(name);
             if (property == null) {
+                if (!createIfNull) return null;
                 throw new ArgumentException($"Parameter {name} does not reference a valid array.");
             }
 
@@ -182,6 +186,31 @@ namespace Arcemi.Pathfinder.Kingmaker
             return listAccessor;
         }
 
+        public DictionaryOfValueListAccessor<TValue> GetOrCreateDictionaryOfValueList<TValue>(JObject parent, string name, bool createIfNull = false)
+        {
+            if (_dictionaryOfValueLists.TryGet(parent, name, out DictionaryOfValueListAccessor<TValue> dict)) {
+                return dict;
+            }
+
+            var property = parent.Property(name);
+            if (property == null) {
+                if (!createIfNull) return null;
+                throw new ArgumentException($"Parameter {name} does not reference a valid object.");
+            }
+
+            if (!(property.Value is JObject dictObj)) {
+                if (property.Value is null) {
+                    throw new ArgumentException($"Parameter {name} does not reference a valid object.");
+                }
+                dictObj = new JObject();
+                property.Value = dictObj;
+            }
+
+            dict = new DictionaryOfValueListAccessor<TValue>(dictObj);
+            _dictionaryOfValueLists.Add(parent, name, dict);
+            return dict;
+        }
+
         bool IReferences.RemoveObject(JObject parent, string name)
         {
             return _objects.Remove(parent, name);
@@ -196,6 +225,5 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             return _valueLists.Remove(parent, name);
         }
-
     }
 }

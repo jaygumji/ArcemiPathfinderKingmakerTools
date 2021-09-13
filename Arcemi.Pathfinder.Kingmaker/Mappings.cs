@@ -2,7 +2,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +80,8 @@ namespace Arcemi.Pathfinder.Kingmaker
             DescriptiveItems = DescriptiveItems.LoadFromDefault();
         }
 
-        public static string GetCharacterPotraitIdentifier(string blueprint) {
+        public static string GetCharacterPotraitIdentifier(string blueprint)
+        {
             var characterName = GetCharacterName(blueprint);
             var characterKey = "_c_" + characterName;
             return characterKey;
@@ -173,9 +174,30 @@ namespace Arcemi.Pathfinder.Kingmaker
             return Races.TryGetValue(id, out var m) ? m.Name : id;
         }
 
+        public static string GetClassTypeName(string id)
+        {
+            return Classes.TryGetValue(id, out var mapping)
+                ? mapping.Name
+                : id;
+        }
+
+        public static string GetClassArchetypeName(IReadOnlyList<string> archetypes)
+        {
+            if (archetypes == null || archetypes.Count == 0) return null;
+
+            var name = archetypes
+                .Select(a => Classes.TryGetValue(a, out var cls) ? cls.Name : null)
+                .Where(a => a != null)
+                .FirstOrDefault();
+
+            if (name != null) return name;
+
+            return archetypes.First();
+        }
+
         public static string GetClassName(string id, IReadOnlyList<string> archetypes)
         {
-            var name = archetypes
+            var name = archetypes?
                 .Select(a => Classes.TryGetValue(a, out var cls) ? cls.Name : null)
                 .Where(a => a != null)
                 .FirstOrDefault();

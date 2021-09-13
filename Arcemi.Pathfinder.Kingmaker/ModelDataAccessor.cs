@@ -2,11 +2,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -47,18 +45,25 @@ namespace Arcemi.Pathfinder.Kingmaker
             return obj;
         }
 
-        public ListValueAccessor<T> ListValue<T>([CallerMemberName] string name = null, [CallerMemberName] string propertyName = null)
+        public ListValueAccessor<T> ListValue<T>([CallerMemberName] string name = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
         {
-            var listAccessor = _refs.GetOrCreateListValue<T>(_obj, name);
+            var listAccessor = _refs.GetOrCreateListValue<T>(_obj, name, createIfNull);
             _changeTracker?.On(name, propertyName);
             return listAccessor;
         }
 
-        public ListAccessor<T> List<T>([CallerMemberName] string name = null, Func<ModelDataAccessor, T> factory = null, [CallerMemberName] string propertyName = null)
+        public ListAccessor<T> List<T>([CallerMemberName] string name = null, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
         {
-            var listAccessor = _refs.GetOrCreateList(_obj, name, factory);
+            var listAccessor = _refs.GetOrCreateList(_obj, name, factory, createIfNull);
             _changeTracker?.On(name, propertyName);
             return listAccessor;
+        }
+
+        public DictionaryOfValueListAccessor<TValue> DictionaryOfValueList<TValue>([CallerMemberName] string name = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
+        {
+            var dictAccessor = _refs.GetOrCreateDictionaryOfValueList<TValue>(_obj, name, createIfNull);
+            _changeTracker?.On(name, propertyName);
+            return dictAccessor;
         }
 
         public T Value<T>([CallerMemberName] string name = null, [CallerMemberName] string propertyName = null)
@@ -73,7 +78,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public void Value(JToken value, [CallerMemberName] string name = null)
         {
-            if (_obj.ContainsKey(name)) {
+            if (_obj.Property(name) != null) {
                 _obj.Property(name).Value = value;
             }
             else {
