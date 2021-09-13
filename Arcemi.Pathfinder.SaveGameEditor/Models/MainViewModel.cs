@@ -1,4 +1,5 @@
 ﻿using Arcemi.Pathfinder.Kingmaker;
+using ElectronNET.API;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,32 +15,35 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private JsonPartSaveGameFile _playerFile;
 
         public string CurrentPath { get; private set; }
-        public List<CharacterModel> Characters { get; private set; }
+        public List<UnitEntityModel> Characters { get; private set; }
 
         public bool CanEdit { get; private set; }
         public PlayerModel Player { get; private set; }
 
-        public CharacterModel PlayerCharacter { get; private set; }
-        public InventoryViewModel InventoryModel { get; private set; }
+        public UnitEntityModel PlayerEntity { get; private set; }
         public InventoryViewModel SharedStashModel { get; private set; }
 
-        public PathfinderAppData AppData { get; }
+        public PathfinderAppData AppData { get; private set; }
 
         public MainViewModel()
         {
+        }
+
+        public async Task InitializeAsync()
+        {
+            var defaultFolder = await FindDefaultFolderAsync();
             var wwwRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
-            AppData = new PathfinderAppData(new WwwRootResourceProvider(wwwRoot, FindDefaultFolder()));
+            AppData = new PathfinderAppData(new WwwRootResourceProvider(wwwRoot, defaultFolder));
         }
 
         private const string KeyAppData = "%appdata%";
         private static readonly string[] ProfilePaths = new[] {
-            KeyAppData + @"\Owlcat Games\Pathfinder Kingmaker",
-            KeyAppData + @"\Owlcat Games\Pathfinder Wrath Of The Righteous"
+            KeyAppData + @"\Owlcat Games\Pathfinder Wrath Of The Righteous",
+            KeyAppData + @"\Owlcat Games\Pathfinder Kingmaker"
         };
-        private static string FindDefaultFolder()
+        private static async Task<string> FindDefaultFolderAsync()
         {
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var appDataPath = await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.AppData);
             var localLowAppDataPath = Path.Combine(Path.GetDirectoryName(appDataPath), "LocalLow");
 
             foreach (var dir in ProfilePaths) {
@@ -51,11 +55,6 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 }
 
                 var path = dir.Replace("%appdata%", localLowAppDataPath);
-                if (Directory.Exists(path)) {
-                    return path;
-                }
-
-                path = dir.Replace("%appdata%", localAppDataPath);
                 if (Directory.Exists(path)) {
                     return path;
                 }
@@ -79,35 +78,15 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
             var characters = party.UnitEntities
                 .Where(u => u.Descriptor != null)
-                .Select(u => u.Descriptor)
                 .ToList();
 
-            var playerUnit = party.Find(Player.MainCharacterId);
-            if (playerUnit != null) {
-                playerUnit.Descriptor.UISettings.Init(AppData.Portraits);
-                PlayerCharacter = playerUnit.Descriptor;
-                InventoryModel = new InventoryViewModel(playerUnit.Descriptor.Inventory);
-            }
-
-            var isMainCharacterFound = false;
             foreach (var character in characters) {
-                character.UISettings.Init(AppData.Portraits);
-                var isMainCharacter = string.Equals(character.Id, playerUnit.Descriptor.Id, StringComparison.Ordinal);
-                if (isMainCharacter) {
-                    isMainCharacterFound = true;
-                }
-            }
-            if (playerUnit != null && !isMainCharacterFound) {
-                var newCharacters = characters.ToList();
-                newCharacters.Insert(0, playerUnit.Descriptor);
-                characters = newCharacters;
+                character.Descriptor.UISettings.Init(AppData.Portraits);
             }
 
             CurrentPath = path;
             SharedStashModel = new InventoryViewModel(Player.SharedStash);
             Characters = characters;
-            //Character = null;
-            //Leader = null;
             CanEdit = true;
         }
 

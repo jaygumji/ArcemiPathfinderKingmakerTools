@@ -1,21 +1,19 @@
 @page "/Characters"
-@inject MainViewModel Context
+@inject CharacterViewModel Model
 
-@if (Context.Characters == null) {
+@if (Model.Characters == null) {
     <p><em>Save file not loaded.</em></p>
 }
 else {
     <p>Select the character you want to edit.</p>
-    <div class="top-row px-4">
-        <ul class="portraits">
-            @foreach (var character in Context.Characters) {
-            <li @onclick="() => SelectCharacter(character)" class="@(Character == character ? "toggled" : "")">
-                <img src="@character.UISettings.PortraitPath" alt="Portrait" />
-                <span>@(character.CustomName ?? character.Name)</span>
-            </li>
-            }
-        </ul>
-    </div>
+    <ul class="portraits">
+        @foreach (var unit in Model.Characters) {
+        <li @onclick="() => SelectCharacter(unit)" class="@(Unit == unit ? "toggled" : "")">
+            <img src="@unit.Descriptor.UISettings.PortraitPath" alt="Portrait" />
+            <span>@(unit.Descriptor.CustomName ?? unit.Descriptor.Name)</span>
+        </li>
+        }
+    </ul>
     @if (Character != null) {
         <div class="row g-3">
             <div class="col-md-6">
@@ -210,20 +208,20 @@ else {
 }
 
 @code {
-    private CharacterModel Character;
+    private CharacterModel Character => Unit?.Descriptor;
+    private UnitEntityModel Unit;
 
     protected override async Task OnInitializedAsync()
     {
     }
 
-    public async Task SelectCharacter(CharacterModel character)
+    public async Task SelectCharacter(UnitEntityModel unit)
     {
-        Character = character;
+        Unit = unit;
     }
 
     public async Task DowngradeClass(ClassModel cls)
     {
-        if (cls.Level <= 1) return;
-        Character.Progression.DowngradeClass(cls);
+        Model.DowngradeClass(Unit, cls);
     }
 }

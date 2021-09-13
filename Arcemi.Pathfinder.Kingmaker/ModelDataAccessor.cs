@@ -16,6 +16,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly IReferences _refs;
         private NotifyChangeTracker _changeTracker;
 
+        public string TypeValue()
+        {
+            return Value<string>("Type", "$type");
+        }
+
         public void SetChangeTracker(NotifyChangeTracker changeTracker)
         {
             _changeTracker = changeTracker;

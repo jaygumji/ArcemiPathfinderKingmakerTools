@@ -10,5 +10,6 @@
         public string UniqueId => A.Value<string>();
 
         public CharacterModel Descriptor => A.Object<CharacterModel>();
+        public FactsContainerModel Facts => A.Object(factory: a => new FactsContainerModel(a));
     }
 }

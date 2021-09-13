@@ -14,8 +14,13 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
+.main {
+    overflow: hidden;
+}
+
 .content {
     padding-top: 1.1rem;
+    overflow: hidden;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -42,6 +47,9 @@ ul.portraits {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    overflow-x: auto !important;
 
     li.toggled {
         box-shadow: 1px 1px inset;
@@ -50,14 +58,17 @@ ul.portraits {
     li {
         border-radius: 3px 4px;
         margin: 5px;
-        display: flex;
+        display: inline-flex;
         flex-direction: column;
         align-items: center;
         box-shadow: 1px 1px;
         border: solid 1px gray;
 
         img {
-            object-fit: contain;
+            object-fit: scale-down;
+            width: 85px;
+            height: 115px;
+
         }
 
         span {

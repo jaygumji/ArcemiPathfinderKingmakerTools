@@ -1,4 +1,5 @@
-﻿<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+﻿@inject MainViewModel Model
+<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
@@ -8,3 +9,9 @@
         </LayoutView>
     </NotFound>
 </Router>
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await Model.InitializeAsync();
+    }
+}
