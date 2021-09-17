@@ -33,13 +33,19 @@ else {
 
             <!-- TODO: Portrait -->
 
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label class="form-label">Experience</label>
                 <input class="form-control" type="number" @bind="@Character.Progression.Experience" />
             </div>
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label class="form-label">Level</label>
                 <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.CurrentLevel" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Mythic Level</label>
+                <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.MythicLevel" />
+            </div>
+            <div class="col-md-3">
             </div>
 
             <!-- TODO: Alignment -->
@@ -68,9 +74,11 @@ else {
                 <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
             </div>
             <div class="col-md-2">
+                @if (!cls.IsMythic){
                 <button class="btn btn-warning" @onclick="() => DowngradeClass(cls)">
                     <span class="oi oi-arrow-thick-bottom"></span>
                 </button>
+                }
             </div>
             }
 

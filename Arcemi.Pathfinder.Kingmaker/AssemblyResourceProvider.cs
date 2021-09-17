@@ -22,7 +22,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public AssemblyResourceProvider(Assembly assembly, string directory)
-            : base(directory)
+            : base(() => directory)
         {
             this.assembly = assembly;
         }

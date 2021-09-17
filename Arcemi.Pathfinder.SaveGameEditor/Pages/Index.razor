@@ -1,5 +1,6 @@
 @page "/"
-@inject MainViewModel Context
+@using System.IO
+@inject MainViewModel Model
 
 <fieldset class="form-controller" disabled="@IsBusy">
 
@@ -18,13 +19,13 @@
 <div class="row g-3">
     <div class="col-md-12">
         <label class="form-label">Path</label>
-        <input class="form-control" type="text" readonly="readonly" value="@Context.CurrentPath" />
+        <input class="form-control" type="text" readonly="readonly" value="@Model.CurrentPath" />
     </div>
 
-@if (Context.CanEdit) {
+@if (Model.CanEdit) {
     <div class="col-md-4">
         <label class="form-label">Money</label>
-        <input class="form-control" type="number" @bind="@Context.Player.Money" />
+        <input class="form-control" type="number" @bind="@Model.Player.Money" />
     </div>
 }
 </div>
@@ -42,15 +43,23 @@
     {
         IsBusy = true;
         var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+        string folder = null;
+        if (Model.Config.AppDataFolder != null) {
+            folder = Path.Combine(Model.Config.AppDataFolder, "Saved Games");
+            if (!Directory.Exists(folder)) folder = Model.Config.AppDataFolder;
+            if (!Directory.Exists(folder)) folder = null;
+        }
+
         var options = new ElectronNET.API.Entities.OpenDialogOptions {
             Title = "Select the save game file",
             Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openFile},
-            Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } }
+            Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } },
+            DefaultPath = folder
         };
         var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
         var file = files?.FirstOrDefault();
         if (!string.IsNullOrEmpty(file)) {
-            await Context.OpenAsync(file);
+            await Model.OpenAsync(file);
         }
         IsBusy = false;
     }
@@ -65,7 +74,7 @@
         };
         var file = await ElectronNET.API.Electron.Dialog.ShowSaveDialogAsync(window, options);
         if (!string.IsNullOrEmpty(file)) {
-            await Context.SaveAsync(file);
+            await Model.SaveAsync(file);
         }
         IsBusy = false;
     }

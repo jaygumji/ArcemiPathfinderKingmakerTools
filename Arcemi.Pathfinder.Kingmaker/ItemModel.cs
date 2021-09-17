@@ -2,11 +2,10 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
-using System;
-using System.Collections.Generic;
-using System.Linq;
+#endregion
 using Newtonsoft.Json.Linq;
+using System;
+using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -76,10 +75,10 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string Type { get => A.Value<string>("$type"); }
         public string Blueprint { get => A.Value<string>("m_Blueprint"); set => A.Value(value, "m_Blueprint"); }
-        public int Count { get => A.Value<int>("m_Count"); set => A.Value(value, "m_Count"); }
+        public int Count { get => A.Value<int?>("m_Count") ?? 1; set => A.Value(value, "m_Count"); }
         public int InventorySlotIndex { get => A.Value<int>("m_InventorySlotIndex"); set => A.Value(value, "m_InventorySlotIndex"); }
         public TimeSpan Time { get => A.Value<TimeSpan>(); set => A.Value(value); }
-        public int Charges { get => A.Value<int>(); set => A.Value(value); }
+        public int Charges { get => A.Value<int?>() ?? 1; set => A.Value(value); }
         public bool IsIdentified { get => A.Value<bool>(); set => A.Value(value); }
         public TimeSpan? SellTime { get => A.Value<TimeSpan?>(); set => A.Value(value); }
         public bool IsNonRemovable { get => A.Value<bool>(); set => A.Value(value); }
@@ -148,7 +147,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             AddDefaultItemProperties(jObj);
-            jObj.Add("Charges",  rawData.IsChargable ? 1 : 0);
+            jObj.Add("Charges", rawData.IsChargable ? 1 : 0);
             jObj.Add("m_Blueprint", blueprint);
             jObj.Add("Collection", refs.CreateReference(inventory.Id));
             jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);

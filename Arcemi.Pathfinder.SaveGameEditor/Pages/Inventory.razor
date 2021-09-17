@@ -1,0 +1,56 @@
+﻿@page "/Inventory"
+@inject MainViewModel Model
+
+@if (!Model.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else if (Inv == null) {
+    <p><em>Inventory was not found.</em></p>
+}
+else {
+    <div class="row g-3">
+    @if (Inv.Inventory.Items.Count == 0) {
+        <p><em>Stash is empty.</em></p>
+    }
+    else {
+        <div class="col-md-4 form-list-header">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-4 form-list-header">
+            <label class="form-label">Type</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+            <label class="form-label">Stack</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+            <label class="form-label">Charges</label>
+        </div>
+        @foreach (var item in Inv.Inventory.Items) {
+        <div class="col-md-4">
+            <label class="form-label">@item.DisplayName</label>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">@item.DisplayType</label>
+        </div>
+        <div class="col-md-2">
+            @if (item.IsStackable || item.Count > 1) {
+            <input class="form-control" type="number" @bind="item.Count" />
+            }
+        </div>
+        <div class="col-md-2">
+            @if (item.IsChargable || item.Charges > 1){
+            <input class="form-control" type="number" @bind="item.Charges" />
+            }
+        </div>
+        }
+    }
+    </div>
+}
+
+@code {
+    protected InventoryViewModel Inv => Model.Inventory;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+}

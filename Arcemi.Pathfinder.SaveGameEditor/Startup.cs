@@ -64,7 +64,8 @@ namespace Arcemi.Pathfinder.SaveGameEditor
                 Width = 1024,
                 Height = 768,
                 WebPreferences = new WebPreferences {
-                    WebSecurity = false
+                    WebSecurity = false,
+                    NodeIntegration = false
                 }
             };
             var window = await Electron.WindowManager.CreateWindowAsync(options);

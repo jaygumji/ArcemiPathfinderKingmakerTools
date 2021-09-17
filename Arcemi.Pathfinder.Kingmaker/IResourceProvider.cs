@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,17 +21,14 @@ namespace Arcemi.Pathfinder.Kingmaker
 
     public abstract class ResourceProvider : IResourceProvider
     {
-        public string Directory { get; }
-        public string PortraitsDirectory { get; }
-        public string SavedGamesDirectory { get; }
+        private readonly Func<string> _directoryGetter;
+        public string Directory => _directoryGetter.Invoke();
+        public string PortraitsDirectory => Directory == null ? null : Path.Combine(Directory, "Portraits");
+        public string SavedGamesDirectory => Directory == null ? null : Path.Combine(Directory, "Saved Games");
 
-        public ResourceProvider(string directory)
+        public ResourceProvider(Func<string> directory)
         {
-            Directory = directory;
-            if (!string.IsNullOrEmpty(directory)) {
-                PortraitsDirectory = Path.Combine(directory, "Portraits");
-                SavedGamesDirectory = Path.Combine(directory, "Saved Games");
-            }
+            _directoryGetter = directory;
         }
 
         protected void AppendCustomPortraits(Dictionary<string, Portrait> all, List<Portrait> available)

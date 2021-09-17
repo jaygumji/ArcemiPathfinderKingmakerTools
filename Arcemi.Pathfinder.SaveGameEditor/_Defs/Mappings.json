@@ -105,6 +105,10 @@
       ]
     },
     {"id": "20ce9bf8af32bee4c8557a045ab499b1", "name": "Oracle", "archetypes": []
+    },  
+    {"id": "247aa787806d5da4f89cfc3dff0b217f", "name": "Mythic", "archetypes": [] // Player mythic blueprint
+    },
+    {"id": "530b6a79cb691c24ba99e1577b4beb6d", "name": "Mythic", "archetypes": [] // Companion mythic blueprint
     }
     //{"id": "", "name": "", "archetypes":  [{"id": "", "name": ""}]},
     //{"id": "", "name": "", "archetypes":  [{"id": "", "name": ""}]},

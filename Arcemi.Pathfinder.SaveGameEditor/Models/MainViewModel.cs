@@ -14,6 +14,8 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private JsonPartSaveGameFile _partyFile;
         private JsonPartSaveGameFile _playerFile;
 
+        private bool _isInitialized;
+
         public string CurrentPath { get; private set; }
         public List<UnitEntityModel> Characters { get; private set; }
 
@@ -21,7 +23,11 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         public PlayerModel Player { get; private set; }
 
         public UnitEntityModel PlayerEntity { get; private set; }
-        public InventoryViewModel SharedStashModel { get; private set; }
+        public InventoryViewModel Inventory { get; private set; }
+        public InventoryViewModel SharedStash { get; private set; }
+
+        private string ConfigPath { get; set; }
+        public AppUserConfiguration Config { get; private set; }
 
         public PathfinderAppData AppData { get; private set; }
 
@@ -31,41 +37,19 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public async Task InitializeAsync()
         {
-            var defaultFolder = await FindDefaultFolderAsync();
+            if (_isInitialized) return;
+            _isInitialized = true;
+            var appPath = await Electron.App.GetAppPathAsync();
+            ConfigPath = Path.Combine(appPath, "user.config");
+            Config = await AppUserConfiguration.LoadAsync(ConfigPath);
+
             var wwwRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
-            AppData = new PathfinderAppData(new WwwRootResourceProvider(wwwRoot, defaultFolder));
+            AppData = new PathfinderAppData(new WwwRootResourceProvider(wwwRoot, () => Config.AppDataFolder));
         }
 
-        private const string KeyAppData = "%appdata%";
-        private static readonly string[] ProfilePaths = new[] {
-            KeyAppData + @"\Owlcat Games\Pathfinder Wrath Of The Righteous",
-            KeyAppData + @"\Owlcat Games\Pathfinder Kingmaker"
-        };
-        private static async Task<string> FindDefaultFolderAsync()
+        public async Task SaveConfigAsync()
         {
-            var appDataPath = await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.AppData);
-            var localLowAppDataPath = Path.Combine(Path.GetDirectoryName(appDataPath), "LocalLow");
-
-            foreach (var dir in ProfilePaths) {
-                if (dir[0] != '%') {
-                    if (Directory.Exists(dir)) {
-                        return dir;
-                    }
-                    continue;
-                }
-
-                var path = dir.Replace("%appdata%", localLowAppDataPath);
-                if (Directory.Exists(path)) {
-                    return path;
-                }
-
-                path = dir.Replace("%appdata%", appDataPath);
-                if (Directory.Exists(path)) {
-                    return path;
-                }
-            }
-
-            return null;
+            await Config.SaveAsync(ConfigPath);
         }
 
         public async Task OpenAsync(string path)
@@ -80,12 +64,17 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 .Where(u => u.Descriptor != null)
                 .ToList();
 
+            UnitEntityModel mainCharacter = null;
             foreach (var character in characters) {
+                if (string.Equals(character.UniqueId, Player.MainCharacterId, StringComparison.Ordinal)) {
+                    mainCharacter = character;
+                }
                 character.Descriptor.UISettings.Init(AppData.Portraits);
             }
 
             CurrentPath = path;
-            SharedStashModel = new InventoryViewModel(Player.SharedStash);
+            Inventory = mainCharacter == null ? null : new InventoryViewModel(mainCharacter.Descriptor.Inventory);
+            SharedStash = new InventoryViewModel(Player.SharedStash);
             Characters = characters;
             CanEdit = true;
         }

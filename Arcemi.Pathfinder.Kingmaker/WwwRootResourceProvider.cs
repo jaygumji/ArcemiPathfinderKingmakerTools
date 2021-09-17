@@ -17,7 +17,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         };
         private readonly string wwwDirectory;
 
-        public WwwRootResourceProvider(string wwwDirectory, string appDataDirectory)
+        public WwwRootResourceProvider(string wwwDirectory, Func<string> appDataDirectory)
             : base(appDataDirectory)
         {
             this.wwwDirectory = wwwDirectory;

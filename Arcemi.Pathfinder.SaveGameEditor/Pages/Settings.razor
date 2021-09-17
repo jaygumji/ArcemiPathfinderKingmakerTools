@@ -1,0 +1,65 @@
+﻿@page "/Settings"
+@inject MainViewModel Model
+
+<fieldset class="form-controller" disabled="@IsBusy">
+
+<div>
+    <p>Requires a program restart to take effect.</p>
+</div>
+<div>
+    <button class="btn btn-info" @onclick="SaveFile">
+        <span class="oi oi-data-transfer-download"></span>
+        Save
+    </button>
+</div>
+<hr />
+
+<div class="row g-3">
+    <div class="col-md-12">
+        <h3>File System</h3>
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">App Data Folder</label>
+        <div class="input-group">
+            <input class="form-control" type="text" @bind="@Model.Config.AppDataFolder" />
+            <button class="btn btn-info" @onclick="SelectAppDataFolder">...</button>
+        </div>
+        <p>The path to the application data folder. There should be 2 folders inside ("Saved Games" and "Portraits").</p>
+    </div>
+</div>
+
+</fieldset>
+
+@code {
+    private bool IsBusy = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Model.InitializeAsync();
+        IsBusy = false;
+    }
+
+    async Task SelectAppDataFolder()
+    {
+        IsBusy = true;
+        var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+        var options = new ElectronNET.API.Entities.OpenDialogOptions {
+            Title = "Select the app data folder",
+            Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory},
+            DefaultPath = Model.Config.AppDataFolder
+        };
+        var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+        var file = files?.FirstOrDefault();
+        if (!string.IsNullOrEmpty(file)) {
+            Model.Config.AppDataFolder = file;
+        }
+        IsBusy = false;
+    }
+
+    async Task SaveFile()
+    {
+        IsBusy = true;
+        await Model.SaveConfigAsync();
+        IsBusy = false;
+    }
+}
