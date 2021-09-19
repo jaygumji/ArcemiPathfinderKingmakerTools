@@ -21,6 +21,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         private static readonly Dictionary<string, RaceDataMapping> Races;
         private static readonly Dictionary<string, CharacterDataMapping> Characters;
         private static readonly Dictionary<string, LeaderDataMapping> Leaders;
+        private static readonly Dictionary<string, ArmyUnitMapping> ArmyUnits;
 
         //public int Int { get => A.Value<int>(); set => A.Value(value); }
         //public bool Bool { get => A.Value<bool>(); set => A.Value(value); }
@@ -71,6 +72,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             Leaders = dataMappings.Leaders
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
+            ArmyUnits = dataMappings.ArmyUnits
+                .ToDictionary(x => x.Id, StringComparer.Ordinal);
+
             BlueprintTypes = dataMappings.Characters.ToDictionary(x => new BlueprintIdentifier(x.Id), x => typeof(CharacterModel));
             TypeToBlueprint = BlueprintTypes
                 .GroupBy(kv => kv.Value)
@@ -90,6 +94,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static string GetCharacterName(string blueprint)
         {
             return Characters.TryGetValue(blueprint, out var character) ? character.Name : "";
+        }
+
+        public static string GetArmyUnitName(string blueprint)
+        {
+            return ArmyUnits.TryGetValue(blueprint, out var armyUnit) ? armyUnit.Name : blueprint;
         }
 
         public static string GetLeaderName(string blueprint)

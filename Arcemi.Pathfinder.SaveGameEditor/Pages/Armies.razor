@@ -1,0 +1,97 @@
+﻿@page "/Armies"
+@using System.IO
+@inject ArmiesViewModel Model
+
+@if (!Model.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else if (!Model.HasArmies) {
+    <p><em>No armies found.</em></p>
+}
+else {
+    <p>Select the army you want to edit.</p>
+    <ul class="portraits leaders">
+        @foreach (var unit in Model.Armies) {
+        <li @onclick="() => SelectArmy(unit)" class="@(Unit == unit ? "toggled" : "")">
+            <img src="@Model.Portraits.GetUnknownUri()" alt="Portrait" />
+            <span>@unit.Data.ArmyName.Name</span>
+        </li>
+        }
+    </ul>
+    @if (Unit != null) {
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input class="form-control" type="text" @bind="@Unit.Data.ArmyName.Name" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Type</label>
+                <input class="form-control" type="text" readonly="readonly" value="@Unit.ArmyType" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Leader</label>
+                <input class="form-control" type="text" readonly="readonly" value="@Unit.Data.LeaderGuid" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Movement points</label>
+                <input class="form-control" type="number" @bind="@Unit.MovementPointsRounded" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Morale</label>
+                <input class="form-control" type="number" @bind="@Unit.Data.ArmyMorale.Value" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Max squad count</label>
+                <input class="form-control" type="number" @bind="@Unit.Data.MaxSquadsCount.BaseValue" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <h3 class="col-md-12">Squads</h3>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Number</label>
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+        @foreach (var squad in Unit.Data.Squads) {
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">@squad.DisplayName</label>
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="number" @bind="@squad.Count" />
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+    private bool IsBusy = true;
+    private PlayerArmyModel Unit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsBusy = false;
+    }
+
+    public async Task SelectArmy(PlayerArmyModel unit)
+    {
+        Unit = unit;
+    }
+}

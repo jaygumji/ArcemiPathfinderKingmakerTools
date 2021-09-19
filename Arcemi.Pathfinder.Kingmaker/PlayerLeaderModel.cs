@@ -1,6 +1,6 @@
 ﻿namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class PlayerLeaderModel : RefModel
+    public class PlayerLeaderModel : RefModel, IModelWithFaction
     {
         private Portraits _portraits;
 
@@ -35,8 +35,5 @@
         public PlayerLeaderStatsModel Stats => A.Object("m_Stats", a => new PlayerLeaderStatsModel(a));
         public string Faction { get => A.Value<string>("m_Faction"); set => A.Value(value, "m_Faction"); }
         public string NextAvailableTime { get => A.Value<string>("m_NextAvailableTime"); set => A.Value(value, "m_NextAvailableTime"); }
-
-        public bool IsFactionCrusaders => string.Equals(Faction, "Crusaders", System.StringComparison.Ordinal);
-        public bool IsFactionDemons => string.Equals(Faction, "Demons", System.StringComparison.Ordinal);
     }
 }

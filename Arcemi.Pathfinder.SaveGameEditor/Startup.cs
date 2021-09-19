@@ -25,6 +25,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor
             services.AddServerSideBlazor();
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<CharacterViewModel>();
+            services.AddSingleton<ArmiesViewModel>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

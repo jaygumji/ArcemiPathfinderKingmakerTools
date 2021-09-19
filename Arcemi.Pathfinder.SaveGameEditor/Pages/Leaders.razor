@@ -11,7 +11,7 @@ else if (Model.Player.LeadersManager?.Leaders?.Count <= 0) {
 else {
     <p>Select the leader you want to edit.</p>
     <ul class="portraits leaders">
-        @foreach (var unit in Model.Player.LeadersManager.Leaders.Where(l => l.IsFactionCrusaders)) {
+        @foreach (var unit in Model.Player.LeadersManager.Leaders.Where(l => l.IsFactionCrusaders())) {
         <li @onclick="() => SelectLeader(unit)" class="@(Unit == unit ? "toggled" : "")">
             <img src="@unit.PortraitPath" alt="Portrait" />
             <span>@unit.DisplayName</span>
@@ -36,7 +36,7 @@ else {
             </div>
             <div class="col-md-3">
                 <label class="form-label">Level</label>
-                <input class="form-control" type="number" @bind="@Unit.Level" />
+                <input class="form-control" type="number" min="1" @bind="@Unit.Level" />
             </div>
             <div class="col-md-3">
                 <label class="form-label">Current Mana</label>
@@ -64,7 +64,7 @@ else {
                     <label class="form-label">@attr.Name</label>
                 </div>
                 <div class="col-md-2">
-                    <input class="form-control" type="number" @bind="@attr.BaseValue" />
+                    <input class="form-control" type="number" readonly="readonly" @bind="@attr.BaseValue" />
                 </div>
                 <div class="col-md-2">
                 </div>

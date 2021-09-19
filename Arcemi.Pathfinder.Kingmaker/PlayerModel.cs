@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
 using System;
+using System.Collections.Generic;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -25,6 +26,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         public PlayerKingdomModel Kingdom => A.Object(factory: a => new PlayerKingdomModel(a));
         public PlayerLeadersManagerModel LeadersManager => A.Object("m_LeadersManager", a => new PlayerLeadersManagerModel(a));
         public PlayerCorruptionModel Corruption => A.Object(factory: a => new PlayerCorruptionModel(a));
+
+        public IReadOnlyList<PlayerGlobalMapsModel> GlobalMaps => A.List("m_GlobalMaps", a => new PlayerGlobalMapsModel(a));
 
         public InventoryModel SharedStash => A.Object<InventoryModel>();
         public string MainCharacterId => A.Value<string>("m_MainCharacter");

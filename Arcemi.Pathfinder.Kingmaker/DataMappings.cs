@@ -16,6 +16,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public List<RaceDataMapping> Races { get; set; }
         public List<CharacterDataMapping> Characters { get; set; }
         public List<LeaderDataMapping> Leaders { get; set; }
+        public List<ArmyUnitMapping> ArmyUnits { get; set; }
 
         public static DataMappings LoadFrom(string path)
         {

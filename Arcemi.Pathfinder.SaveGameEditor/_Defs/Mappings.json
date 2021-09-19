@@ -172,9 +172,17 @@
     { "id": "740dd241aec5a314aa08f806348422a6", "name": "Kesten Garess", "portrait": "f51ff39fb951c1241944e49ea438ccdd" },
     { "id": "c8d4913edee594749b706de35924617e", "name": "Jhod Kavken", "portrait": "3a664504f1764d040ba3340eb580253e" },
     { "id": "fcdea41a3c8720143988560ba6d4a3de", "name": "Storyteller" },
-    { "id": "1de0dac203bc90f45a6178c8f76ca65a", "name": "Magister Pilkwell" }
+    { "id": "1de0dac203bc90f45a6178c8f76ca65a", "name": "Magister Pilkwell" },
+    { "id": "ed6df9e9a47a4e22ab41443c43d25e57", "name": "Soravielle Evenmist" }
     //{ "id": "", "name": "" },
     //{ "id": "", "name": "" },
     //{ "id": "", "name": "" },
+  ],
+  "armyUnits": [
+    { "id": "34800b32867af5e4f9cdcb328470be16", "name": "Footmen" },
+    { "id": "adee0dc84ed3f254fa5da3c90d1e8e3c", "name": "Archers" },
+    { "id": "ff408898eb9e8694cb849869d1dbfa05", "name": "Clerics" },
+    { "id": "24ad1a10190de5c459a4521996dcec4b", "name": "Shield Bearers" },
+    { "id": "5f0d3d1d58db0524bada47fee54b41e3", "name": "Rangers" }
   ]
 }
