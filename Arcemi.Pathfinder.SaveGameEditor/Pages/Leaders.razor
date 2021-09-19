@@ -1,0 +1,91 @@
+﻿@page "/Leaders"
+@using System.IO
+@inject MainViewModel Model
+
+@if (!Model.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else if (Model.Player.LeadersManager?.Leaders?.Count <= 0) {
+    <p><em>No leaders found.</em></p>
+}
+else {
+    <p>Select the leader you want to edit.</p>
+    <ul class="portraits leaders">
+        @foreach (var unit in Model.Player.LeadersManager.Leaders.Where(l => l.IsFactionCrusaders)) {
+        <li @onclick="() => SelectLeader(unit)" class="@(Unit == unit ? "toggled" : "")">
+            <img src="@unit.PortraitPath" alt="Portrait" />
+            <span>@unit.DisplayName</span>
+        </li>
+        }
+    </ul>
+    @if (Unit != null) {
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Blueprint</label>
+                <input class="form-control" type="text" readonly="readonly" value="@Unit.BlueprintRef" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Identifier</label>
+                <input class="form-control" type="text" readonly="readonly" value="@Unit.LeaderGuid" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Experience</label>
+                <input class="form-control" type="number" @bind="@Unit.Experience" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Level</label>
+                <input class="form-control" type="number" @bind="@Unit.Level" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Current Mana</label>
+                <input class="form-control" type="number" @bind="@Unit.Stats.CurrentMana" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <h3 class="col-md-12">Attributes</h3>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Value</label>
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+        @foreach (var attr in Unit.Stats) {
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">@attr.Name</label>
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="number" @bind="@attr.BaseValue" />
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+    private bool IsBusy = true;
+    private PlayerLeaderModel Unit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsBusy = false;
+    }
+
+    public async Task SelectLeader(PlayerLeaderModel unit)
+    {
+        Unit = unit;
+    }
+}

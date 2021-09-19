@@ -74,7 +74,7 @@ else {
                 <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
             </div>
             <div class="col-md-2">
-                @if (!cls.IsMythic){
+                @if (!cls.IsMythic && cls.Level > 1){
                 <button class="btn btn-warning" @onclick="() => DowngradeClass(cls)">
                     <span class="oi oi-arrow-thick-bottom"></span>
                 </button>

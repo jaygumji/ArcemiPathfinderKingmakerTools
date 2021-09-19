@@ -2,11 +2,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
-using System;
+#endregion
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -31,6 +28,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                 }
                 if (!string.IsNullOrEmpty(Portrait)) {
                     return _portraits.GetPortraitsUri(Portrait);
+                }
+                if (_portraits.TryGetPortraitsUri(_characterBlueprint, out var uri)) {
+                    return uri;
                 }
                 var portraitId = Mappings.GetCharacterPotraitIdentifier(_characterBlueprint);
                 return _portraits.GetPortraitsUri(portraitId);

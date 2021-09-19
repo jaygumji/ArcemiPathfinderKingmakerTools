@@ -27,6 +27,12 @@
         <label class="form-label">Money</label>
         <input class="form-control" type="number" @bind="@Model.Player.Money" />
     </div>
+    @if (Model.Player.Corruption != null) {
+    <div class="col-md-2">
+        <label class="form-label">Corruption</label>
+        <input class="form-control" type="number" @bind="@Model.Player.Corruption.CurrentValue" />
+    </div>
+    }
 }
 </div>
 </fieldset>

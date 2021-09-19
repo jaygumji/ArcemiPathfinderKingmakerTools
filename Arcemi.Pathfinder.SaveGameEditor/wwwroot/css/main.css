@@ -43,6 +43,9 @@ ul.portraits {
   flex-wrap: nowrap;
   overflow-x: auto !important;
 }
+ul.portraits.leaders span {
+  font-size: 10px;
+}
 ul.portraits li.toggled {
   box-shadow: 1px 1px inset;
 }

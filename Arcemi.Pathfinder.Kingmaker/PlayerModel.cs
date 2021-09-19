@@ -23,6 +23,9 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public PlayerDifficultyModel Difficulty => A.Object(factory: a => new PlayerDifficultyModel(a));
         public PlayerKingdomModel Kingdom => A.Object(factory: a => new PlayerKingdomModel(a));
+        public PlayerLeadersManagerModel LeadersManager => A.Object("m_LeadersManager", a => new PlayerLeadersManagerModel(a));
+        public PlayerCorruptionModel Corruption => A.Object(factory: a => new PlayerCorruptionModel(a));
+
         public InventoryModel SharedStash => A.Object<InventoryModel>();
         public string MainCharacterId => A.Value<string>("m_MainCharacter");
     }

@@ -3,7 +3,8 @@
     {"id": "610d836f3a3a9ed42a4349b62f002e96", "name": "Druid", "archetypes": [
         {"id": "35a3b7bfc663ac74aa8bb50adfe70813", "name": "Blight Druid"},
         {"id": "782c46afacd88d448afba6178471a744", "name": "Defender of the True World"},
-        {"id": "da69747aa3dd0044ebff5f3d701cdde3", "name": "Feyspeaker"}
+        {"id": "da69747aa3dd0044ebff5f3d701cdde3", "name": "Feyspeaker"},
+        {"id": "c1c86e2997fd4257a13ef5601b5dc6dd", "name": "Primal Druid"}
       ]
     },
     {"id": "45a4607686d96a1498891b3286121780", "name": "Magus", "archetypes": [
@@ -105,7 +106,11 @@
       ]
     },
     {"id": "20ce9bf8af32bee4c8557a045ab499b1", "name": "Oracle", "archetypes": []
-    },  
+    },
+    {"id": "26b10d4340839004f960f9816f6109fe", "name": "Animal", "archetypes": [
+        {"id": "b56b64f13a2b4c0ea507e86e1620aa98", "name": "Bulwark"}
+      ]
+    },
     {"id": "247aa787806d5da4f89cfc3dff0b217f", "name": "Mythic", "archetypes": [] // Player mythic blueprint
     },
     {"id": "530b6a79cb691c24ba99e1577b4beb6d", "name": "Mythic", "archetypes": [] // Companion mythic blueprint
@@ -124,7 +129,8 @@
     {"id": "1dc20e195581a804890ddc74218bfd8e", "name": "Half-Orc"},
     {"id": "5c4e42124dc2b4647af6e36cf2590500", "name": "Tiefling"},
     {"id": "9d168ca7100e9314385ce66852385451", "name": "Goblin"},
-    {"id": "daca06a3f3355664bba1e87e67f3b5b3", "name": "Mongrel"}
+    {"id": "daca06a3f3355664bba1e87e67f3b5b3", "name": "Mongrel"},
+    {"id": "fd188bb7bb0002e49863aec93bfb9d99", "name": "Kitsune"}
     //{"id": "", "name": ""},
     //{"id": "", "name": ""},
   ],
@@ -138,7 +144,8 @@
     { "id": "766435873b1361c4287c351de194e5f9", "name": "Woljif" },
     { "id": "2779754eecffd044fbd4842dba55312c", "name": "Ember" },
     { "id": "1b893f7cf2b150e4f8bc2b3c389ba71d", "name": "Nenio" },
-    { "id": "096fc4a96d675bb45a0396bcaa7aa993", "name": "Daeran" }
+    { "id": "096fc4a96d675bb45a0396bcaa7aa993", "name": "Daeran" },
+    { "id": "1cbbbb892f93c3d439f8417ad7cbb6aa", "name": "Sosiel" }
     //{ "id": "77c11edb92ce0fd408ad96b40fd27121", "name": "Linzi" },
     //{ "id": "32d2801eddf236b499d42e4a7d34de23", "name": "Jaethal" },
     //{ "id": "b3f29faef0a82b941af04f08ceb47fa2", "name": "Amiri" },
@@ -164,7 +171,8 @@
     { "id": "04ae2a6c293c15e4f96dbbd78e062fe2", "name": "Maegar Varn", "portrait": "2dd54e7a2506faa4d9b817cf13df0c77" },
     { "id": "740dd241aec5a314aa08f806348422a6", "name": "Kesten Garess", "portrait": "f51ff39fb951c1241944e49ea438ccdd" },
     { "id": "c8d4913edee594749b706de35924617e", "name": "Jhod Kavken", "portrait": "3a664504f1764d040ba3340eb580253e" },
-    { "id": "fcdea41a3c8720143988560ba6d4a3de", "name": "Storyteller" }
+    { "id": "fcdea41a3c8720143988560ba6d4a3de", "name": "Storyteller" },
+    { "id": "1de0dac203bc90f45a6178c8f76ca65a", "name": "Magister Pilkwell" }
     //{ "id": "", "name": "" },
     //{ "id": "", "name": "" },
     //{ "id": "", "name": "" },

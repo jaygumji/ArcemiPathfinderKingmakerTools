@@ -41,5 +41,15 @@ namespace Arcemi.Pathfinder.Kingmaker
             return _resources.AllPortraits.TryGetValue(key, out var portrait) ? portrait.Uri : GetUnknownUri();
         }
 
+        public bool TryGetPortraitsUri(string key, out string uri)
+        {
+            if (_resources.AllPortraits.TryGetValue(key, out var portrait)) {
+                uri = portrait.Uri;
+                return true;
+            }
+            uri = null;
+            return false;
+        }
+
     }
 }

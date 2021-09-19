@@ -72,6 +72,12 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 character.Descriptor.UISettings.Init(AppData.Portraits);
             }
 
+            if (Player.LeadersManager?.Leaders?.Count > 0) {
+                foreach (var leader in Player.LeadersManager.Leaders) {
+                    leader.Init(AppData.Portraits);
+                }
+            }
+
             CurrentPath = path;
             Inventory = mainCharacter == null ? null : new InventoryViewModel(mainCharacter.Descriptor.Inventory);
             SharedStash = new InventoryViewModel(Player.SharedStash);

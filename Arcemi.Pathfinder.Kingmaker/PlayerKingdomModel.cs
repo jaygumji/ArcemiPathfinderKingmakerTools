@@ -13,7 +13,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
         }
 
-        public string Name {
+        public string Name
+        {
             get => KingdomName;
             set {
                 KingdomName = value;
@@ -47,5 +48,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public IReadOnlyList<PlayerKingdomEventHistoryModel> FinishedEvents => A.List<PlayerKingdomEventHistoryModel>();
 
         public IReadOnlyList<PlayerKingdomLeaderModel> Leaders => A.List<PlayerKingdomLeaderModel>();
+        public PlayerKingdomResources Resources => A.Object(factory: a => new PlayerKingdomResources(a));
     }
 }
