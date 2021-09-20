@@ -61,6 +61,7 @@
     {"id": "d5917881586ff1d4d96d5b7cebda9464", "name": "Stalwart Defender"},
     {"id": "0920ea7e4fd7a404282e3d8b0ac41838", "name": "Mystic Theurge"},
     {"id": "4e0ea99612ae87a499c7fb0588e31828", "name": "Duelist"},
+    {"id": "ed246f1680e667b47b7427d51e651059", "name": "Hellknight"},
     {"id": "0937bec61c0dabc468428f496580c721", "name": "Alchemist", "archetypes": [
         {"id": "6af888a7800b3e949a40f558ff204aae", "name": "Grenadier"},
         {"id": "68cbcd9fbf1fb1d489562f829bb97e38", "name": "Vivisectionist"},
@@ -82,7 +83,8 @@
     {"id": "48ac8db94d5de7645906c7d0ad3bcfbd", "name": "Fighter", "archetypes": [
         {"id": "a599da9a8a6b9e54083b0a4d2a25db59", "name": "Tower Shield Specialist"},
         {"id": "84643e02a764bff4a9c1aba333a53c89", "name": "Two-Handed Fighter"},
-        {"id": "d80a67a264f206e4b8d2fcf7e560d48f", "name": "Aldori Defender"}
+        {"id": "d80a67a264f206e4b8d2fcf7e560d48f", "name": "Aldori Defender"},
+        {"id": "fdee5f25a5d0fe0448d093b462435c0c", "name": "Armiger"}
       ]
     },
     {"id": "bfa11238e7ae3544bbeb4d0b92e897ec", "name": "Paladin", "archetypes": [
@@ -145,7 +147,8 @@
     { "id": "2779754eecffd044fbd4842dba55312c", "name": "Ember" },
     { "id": "1b893f7cf2b150e4f8bc2b3c389ba71d", "name": "Nenio" },
     { "id": "096fc4a96d675bb45a0396bcaa7aa993", "name": "Daeran" },
-    { "id": "1cbbbb892f93c3d439f8417ad7cbb6aa", "name": "Sosiel" }
+    { "id": "1cbbbb892f93c3d439f8417ad7cbb6aa", "name": "Sosiel" },
+    { "id": "0d37024170b172346b3769df92a971f5", "name": "Regill" }
     //{ "id": "77c11edb92ce0fd408ad96b40fd27121", "name": "Linzi" },
     //{ "id": "32d2801eddf236b499d42e4a7d34de23", "name": "Jaethal" },
     //{ "id": "b3f29faef0a82b941af04f08ceb47fa2", "name": "Amiri" },
@@ -183,6 +186,7 @@
     { "id": "adee0dc84ed3f254fa5da3c90d1e8e3c", "name": "Archers" },
     { "id": "ff408898eb9e8694cb849869d1dbfa05", "name": "Clerics" },
     { "id": "24ad1a10190de5c459a4521996dcec4b", "name": "Shield Bearers" },
-    { "id": "5f0d3d1d58db0524bada47fee54b41e3", "name": "Rangers" }
+    { "id": "5f0d3d1d58db0524bada47fee54b41e3", "name": "Rangers" },
+    { "id": "61e12d43771a40241ac05471a60ddb38", "name": "Hellknights" }
   ]
 }

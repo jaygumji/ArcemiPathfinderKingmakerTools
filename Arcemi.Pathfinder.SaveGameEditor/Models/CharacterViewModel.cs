@@ -7,9 +7,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 {
     public class CharacterViewModel
     {
-        private readonly MainViewModel main;
+        private readonly ISaveDataProvider main;
 
-        public CharacterViewModel(MainViewModel main)
+        public CharacterViewModel(ISaveDataProvider main)
         {
             this.main = main;
         }
@@ -38,6 +38,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                     .Where(f => string.Equals(f.Source, pitem.Key, StringComparison.Ordinal));
 
                 foreach (var fact in facts) {
+                    if (fact.RankToSource == null) continue;
                     for (var i = fact.RankToSource.Count - 1; i >= 0; i--) {
                         var rank = fact.RankToSource[i];
                         if (rank.Level == clsLevel) {
@@ -57,7 +58,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 if (!(item.Value.Archetypes?.Any() ?? false)) {
                     // If the item doesn't have any archetype coupled, then we base it on the total character level
                     if (item.Value.Level == level) {
-                        RemoveProgression(item, i, verifyFacts: false);
+                        RemoveProgression(item, i, verifyFacts: true);
                     }
                     continue;
                 }

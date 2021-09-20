@@ -18,7 +18,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string TypeValue()
         {
-            return Value<string>("Type", "$type");
+            return Value<string>("$type", "Type");
         }
 
         public void SetChangeTracker(NotifyChangeTracker changeTracker)

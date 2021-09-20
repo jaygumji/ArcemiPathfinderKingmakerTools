@@ -24,6 +24,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<MainViewModel>();
+            services.AddSingleton<ISaveDataProvider>(p => p.GetService<MainViewModel>());
             services.AddSingleton<CharacterViewModel>();
             services.AddSingleton<ArmiesViewModel>();
         }

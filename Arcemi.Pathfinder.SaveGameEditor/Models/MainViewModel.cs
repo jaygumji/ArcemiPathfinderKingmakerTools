@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arcemi.Pathfinder.SaveGameEditor.Models
 {
-    public class MainViewModel
+    public class MainViewModel : ISaveDataProvider
     {
         private SaveGameFile _file;
         private JsonPartSaveGameFile _partyFile;
@@ -17,7 +17,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private bool _isInitialized;
 
         public string CurrentPath { get; private set; }
-        public List<UnitEntityModel> Characters { get; private set; }
+        public IEnumerable<UnitEntityModel> Characters { get; private set; }
 
         public bool CanEdit { get; private set; }
         public PlayerModel Player { get; private set; }
