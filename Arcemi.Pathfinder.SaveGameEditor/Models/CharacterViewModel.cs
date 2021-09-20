@@ -16,6 +16,18 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public IEnumerable<UnitEntityModel> Characters => main.Characters;
 
+        public bool IsPlayerButNotMainCharacter(UnitEntityModel unit)
+        {
+            if (!unit.Descriptor.IsPlayer) return false;
+            if (string.IsNullOrEmpty(unit.UniqueId)) return false;
+            return !string.Equals(main.Player.MainCharacterId, unit.UniqueId, StringComparison.Ordinal);
+        }
+
+        public void SetAsHero(UnitEntityModel unit)
+        {
+            main.Player.MainCharacterId = unit.UniqueId;
+        }
+
         public void DowngradeClass(UnitEntityModel unit, ClassModel cls)
         {
             if (cls.Level <= 1) return;

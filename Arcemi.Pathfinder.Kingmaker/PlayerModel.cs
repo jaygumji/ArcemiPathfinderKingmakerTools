@@ -30,6 +30,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public IReadOnlyList<PlayerGlobalMapsModel> GlobalMaps => A.List("m_GlobalMaps", a => new PlayerGlobalMapsModel(a));
 
         public InventoryModel SharedStash => A.Object<InventoryModel>();
-        public string MainCharacterId => A.Value<string>("m_MainCharacter");
+        public string MainCharacterId { get => A.Value<string>("m_MainCharacter"); set => A.Value(value, "m_MainCharacter"); }
     }
 }

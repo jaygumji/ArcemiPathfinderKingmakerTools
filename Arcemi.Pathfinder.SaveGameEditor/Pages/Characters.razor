@@ -29,6 +29,14 @@ else {
                 <input class="form-control" type="text" readonly="readonly" value="@Character.Blueprint" />
             </div>
             <div class="col-md-6">
+                @if (Model.IsPlayerButNotMainCharacter(Unit)) {
+                <div>
+                    <label class="form-label">Sidekick</label>
+                </div>
+               <div>
+                    <button class="btn btn-info" @onclick="() => Model.SetAsHero(Unit)">Set as hero</button>
+               </div>
+                }
             </div>
 
             <!-- TODO: Portrait -->
