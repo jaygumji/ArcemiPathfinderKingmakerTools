@@ -1,9 +1,9 @@
 {
-  "executable": "Arcemi.Pathfinder.SaveGameEditor",
+  "executable": "ArcemiPathfinderSaveGameEditor",
   "splashscreen": {
     "imageFile": ""
   },
-  "name": "Arcemi.Pathfinder.SaveGameEditor",
+  "name": "ArcemiPathfinderSaveGameEditor",
   "author": "",
   "singleInstance": false,
   "environment": "Production",
