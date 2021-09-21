@@ -39,8 +39,8 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         {
             if (_isInitialized) return;
             _isInitialized = true;
-            var appPath = await Electron.App.GetAppPathAsync();
-            ConfigPath = Path.Combine(appPath, "user.config");
+            var userConfigPath = await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.UserData);
+            ConfigPath = Path.Combine(userConfigPath, "user.config");
             Config = await AppUserConfiguration.LoadAsync(ConfigPath);
 
             var wwwRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");

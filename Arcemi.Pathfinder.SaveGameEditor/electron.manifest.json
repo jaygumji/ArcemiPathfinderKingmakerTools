@@ -1,5 +1,5 @@
 {
-  "executable": "ArcemiPathfinderSaveGameEditor",
+  "executable": "Arcemi.Pathfinder.SaveGameEditor",
   "splashscreen": {
     "imageFile": ""
   },
