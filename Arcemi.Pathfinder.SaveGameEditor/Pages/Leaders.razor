@@ -13,7 +13,7 @@ else {
     <ul class="portraits leaders">
         @foreach (var unit in Model.Player.LeadersManager.Leaders.Where(l => l.IsFactionCrusaders())) {
         <li @onclick="() => SelectLeader(unit)" class="@(Unit == unit ? "toggled" : "")">
-            <img src="@unit.PortraitPath" alt="Portrait" />
+            <img src="file://@unit.PortraitPath" alt="Portrait" />
             <span>@unit.DisplayName</span>
         </li>
         }
