@@ -32,6 +32,28 @@ namespace Arcemi.Pathfinder.Kingmaker
             _refs = refs;
         }
 
+        public void ShallowMerge(JObject target)
+        {
+            foreach (var property in _obj.Properties()) {
+                if (property.Name == "$id") continue;
+
+                var tp = target.Property(property.Name);
+                if (tp != null && !tp.Value.IsNullOrEmpty()) {
+                    continue;
+                }
+
+                if (tp != null) {
+                    if (tp.Value.Type == JTokenType.Array) continue;
+                    if (tp.Value.Type == JTokenType.Object) continue;
+                    if (!tp.Value.IsNullOrEmpty()) continue;
+                    tp.Value = property.Value;
+                }
+                else {
+                    target.Add(property.Name, property.Value);
+                }
+            }
+        }
+
         public void SetObjectToNull(string name)
         {
             var property = _obj.Property(name);

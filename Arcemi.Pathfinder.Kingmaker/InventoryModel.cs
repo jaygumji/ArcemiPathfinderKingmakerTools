@@ -2,10 +2,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
-using System;
+#endregion
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -32,6 +30,12 @@ namespace Arcemi.Pathfinder.Kingmaker
             var list = A.List<ItemModel>("m_Items");
             var item = list.Add((refs, jObj) => ItemModel.Prepare(refs, jObj, null,
                 itemType, blueprint, this, list));
+        }
+
+        public ItemModel Duplicate(ItemModel item)
+        {
+            var list = A.List<ItemModel>("m_Items");
+            return list.Add((refs, jObj) => ItemModel.PrepareDuplicate(refs, jObj, item, list));
         }
 
     }

@@ -16,7 +16,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Name
         {
             get => KingdomName;
-            set {
+            set
+            {
                 KingdomName = value;
                 KingdomNameIsSet = true;
             }
@@ -38,6 +39,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Alignment { get => A.Value<string>(); set => A.Value(value); }
         public string Unrest { get => A.Value<string>(); set => A.Value(value); }
         public bool Disabled { get => A.Value<bool>(); set => A.Value(value); }
+        public PlayerKingdomMoraleStateModel MoraleState => A.Object(factory: a => new PlayerKingdomMoraleStateModel(a));
 
         public IReadOnlyList<string> AvailableNPCLeaders => A.ListValue<string>();
 

@@ -21,13 +21,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         private static readonly Dictionary<string, RaceDataMapping> Races;
         private static readonly Dictionary<string, CharacterDataMapping> Characters;
         private static readonly Dictionary<string, LeaderDataMapping> Leaders;
-        private static readonly Dictionary<string, ArmyUnitMapping> ArmyUnits;
-
-        //public int Int { get => A.Value<int>(); set => A.Value(value); }
-        //public bool Bool { get => A.Value<bool>(); set => A.Value(value); }
-        //public double Double { get => A.Value<double>(); set => A.Value(value); }
-        //public string String { get => A.Value<string>(); set => A.Value(value); }
-        //public TimeSpan TimeSpan { get => A.Value<TimeSpan>(); set => A.Value(value); }
+        private static readonly Dictionary<string, ResourceMapping> Resources;
 
         public static RawItems RawItems { get; }
         public static DescriptiveItems DescriptiveItems { get; }
@@ -72,7 +66,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             Leaders = dataMappings.Leaders
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
-            ArmyUnits = dataMappings.ArmyUnits
+            Resources = dataMappings.Resources
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
             BlueprintTypes = dataMappings.Characters.ToDictionary(x => new BlueprintIdentifier(x.Id), x => typeof(CharacterModel));
@@ -98,7 +92,12 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public static string GetArmyUnitName(string blueprint)
         {
-            return ArmyUnits.TryGetValue(blueprint, out var armyUnit) ? armyUnit.Name : blueprint;
+            return Resources.TryGetValue(blueprint, out var armyUnit) ? armyUnit.Name : blueprint;
+        }
+
+        public static string GetFactName(string blueprint)
+        {
+            return Resources.TryGetValue(blueprint, out var res) ? res.Name : blueprint;
         }
 
         public static string GetLeaderName(string blueprint)

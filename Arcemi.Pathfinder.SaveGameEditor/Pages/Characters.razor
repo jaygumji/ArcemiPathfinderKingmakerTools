@@ -1,5 +1,7 @@
 @page "/Characters"
 @inject CharacterViewModel Model
+@inject Portraits Portraits
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 
 @if (Model.Characters == null) {
     <p><em>Save file not loaded.</em></p>
@@ -39,7 +41,27 @@ else {
                 }
             </div>
 
-            <!-- TODO: Portrait -->
+            <h3 class="col-md-12">Tools</h3>
+            <div class="col-md-12">
+                <button class="btn btn-info" @onclick="() => modalChosePortrait.OpenAsync()">Change Portrait</button>
+                <Modal @ref="modalChosePortrait">
+                    <Title>Select new portrait</Title>
+                    <Body>
+                        <ul class="portraits">
+                            @foreach (var portrait in Portraits.Available) {
+                            <li @onclick="() => SelectPortrait(portrait)">
+                                <img src="file://@portrait.Uri" alt="Portrait" />
+                            </li>
+                            }
+                        </ul>
+                        This is the body
+                    </Body>
+                    <Footer>
+                        @*<button type="button" class="btn btn-primary">Save changes</button>*@
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalChosePortrait.CloseAsync()">Cancel</button>
+                    </Footer>
+                </Modal>
+            </div>
 
             <div class="col-md-3">
                 <label class="form-label">Experience</label>
@@ -72,10 +94,10 @@ else {
             </div>
 
             @foreach (var cls in Character.Progression.Classes) {
-            <div class="col-md-4">
+            <div class="col-md-4 overflow-hidden">
                 <label class="form-label">@cls.TypeName</label>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 overflow-hidden">
                 <label class="form-label">@cls.ArchetypeName</label>
             </div>
             <div class="col-md-2">
@@ -87,6 +109,39 @@ else {
                     <span class="oi oi-arrow-thick-bottom"></span>
                 </button>
                 }
+            </div>
+            }
+
+            <h3 class="col-md-12">Ranked Feats</h3>
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Rank</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Gained Level</label>
+            </div>
+            <div class="col-md-4">
+            </div>
+
+            @foreach (var feature in RankedFeatures) {
+            <div class="col-md-4 overflow-hidden">
+                <label class="form-label">@feature.DisplayName</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@feature.Rank</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@feature.SourceLevel</label>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-warning" @onclick="() => DownrankFeature(feature)">
+                    <span class="oi oi-arrow-thick-bottom"></span>
+                </button>
+                <button class="btn btn-warning" @onclick="() => UprankFeature(feature)">
+                    <span class="oi oi-arrow-thick-top"></span>
+                </button>
             </div>
             }
 
@@ -226,6 +281,8 @@ else {
 @code {
     private CharacterModel Character => Unit?.Descriptor;
     private UnitEntityModel Unit;
+    private Modal modalChosePortrait;
+    private IEnumerable<FeatureFactItemModel> RankedFeatures;
 
     protected override async Task OnInitializedAsync()
     {
@@ -234,10 +291,39 @@ else {
     public async Task SelectCharacter(UnitEntityModel unit)
     {
         Unit = unit;
+        RankedFeatures = unit.FindRankedFeatures();
+    }
+
+    public async Task SelectPortrait(Portrait portrait)
+    {
+        Unit.Descriptor.UISettings.SetPortrait(portrait);
+        await modalChosePortrait.CloseAsync();
     }
 
     public async Task DowngradeClass(ClassModel cls)
     {
         Model.DowngradeClass(Unit, cls);
+    }
+
+    public void UprankFeature(FeatureFactItemModel feature)
+    {
+        feature.Rank += 1;
+        var rankToSource = feature.RankToSource.Insert(0);
+        rankToSource.Blueprint = feature.Blueprint;
+        rankToSource.Level = 1;
+    }
+
+    public void DownrankFeature(FeatureFactItemModel feature)
+    {
+        feature.Rank -= 1;
+        if (feature.RankToSource.Count == 0) return;
+
+        var duplicate = feature.RankToSource.GroupBy(rs => rs.Level).Where(g => g.Count() > 1).SelectMany(g => g).FirstOrDefault();
+        if (duplicate != null) {
+            feature.RankToSource.Remove(duplicate);
+            return;
+        }
+
+        feature.RankToSource.RemoveAt(feature.RankToSource.Count - 1);
     }
 }

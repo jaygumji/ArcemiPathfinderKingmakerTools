@@ -2,13 +2,13 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using Newtonsoft.Json.Linq;
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -35,7 +35,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 .ToList() ?? new List<T>();
         }
 
-        public T Add(Action<IReferences, JObject> init = null)
+        private T InitAndInsert(int index = -1, Action<IReferences, JObject> init = null)
         {
             JObject obj;
             if (typeof(T).IsSubclassOf(typeof(RefModel))) {
@@ -47,10 +47,26 @@ namespace Arcemi.Pathfinder.Kingmaker
             init?.Invoke(_refs, obj);
             var accessor = new ModelDataAccessor(obj, _refs);
             var item = _factory.Invoke(accessor);
-            _array.Add(obj);
-            _items.Add(item);
+            if (index < 0) {
+                _array.Add(obj);
+                _items.Add(item);
+            }
+            else {
+                _array.Insert(index, obj);
+                _items.Insert(index, item);
+            }
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
             return item;
+        }
+
+        public T Insert(int index, Action<IReferences, JObject> init = null)
+        {
+            return InitAndInsert(index, init);
+        }
+
+        public T Add(Action<IReferences, JObject> init = null)
+        {
+            return InitAndInsert(-1, init);
         }
 
         public T this[int index] => _items[index];
@@ -107,7 +123,15 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         void IList.Remove(object value)
         {
-            throw new NotImplementedException();
+            Remove((T)value);
+        }
+
+        public bool Remove(T item)
+        {
+            var idx = _items.IndexOf(item);
+            if (idx < 0) return false;
+            RemoveAt(idx);
+            return true;
         }
 
         public void RemoveAt(int index)

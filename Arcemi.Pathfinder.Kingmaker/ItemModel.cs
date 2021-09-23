@@ -116,41 +116,26 @@ namespace Arcemi.Pathfinder.Kingmaker
             jObj.Add("IsIdentified", true);
             jObj.Add("SellTime", null);
             jObj.Add("IsNonRemovable", false);
+            jObj.Add("UniqueId", System.Guid.NewGuid().ToString());
+        }
+
+        public static void PrepareDuplicate(IReferences refs, JObject jObj, ItemModel item, ListAccessor<ItemModel> list)
+        {
+            jObj.Add("UniqueId", Guid.NewGuid().ToString());
+            jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
+            jObj.Add("Collection", refs.CreateReference(item.Collection.Id));
+            item.A.ShallowMerge(jObj);
+            jObj.Remove("m_WielderRef");
         }
 
         public static void Prepare(IReferences refs, JObject jObj, RawItemData rawData, ItemType itemType, string blueprint, InventoryModel inventory, ListAccessor<ItemModel> list)
         {
-            switch (itemType) {
-                case ItemType.Weapon:
-                    jObj.Add("$type", TypeWeapon);
-                    break;
-                case ItemType.Armor:
-                    jObj.Add("$type", TypeArmor);
-                    break;
-                case ItemType.Shield:
-                    jObj.Add("$type", TypeShield);
-                    break;
-                case ItemType.UsableLantern:
-                case ItemType.UsableMisc:
-                case ItemType.UsableOil:
-                case ItemType.UsablePotion:
-                case ItemType.UsableQuiverItem:
-                case ItemType.UsableRod:
-                case ItemType.UsableRodMetamagic:
-                case ItemType.UsableScroll:
-                case ItemType.UsableWand:
-                    jObj.Add("$type", TypeUsable);
-                    break;
-                default:
-                    jObj.Add("$type", TypeSimple);
-                    break;
-            }
-
             AddDefaultItemProperties(jObj);
             jObj.Add("Charges", rawData.IsChargable ? 1 : 0);
             jObj.Add("m_Blueprint", blueprint);
             jObj.Add("Collection", refs.CreateReference(inventory.Id));
             jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
+            jObj.Add("UniqueId", System.Guid.NewGuid().ToString());
 
             var addArmorComponent = itemType == ItemType.Shield;
             if (addArmorComponent) {

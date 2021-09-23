@@ -1,0 +1,49 @@
+﻿<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Type</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Stack</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Charges</label>
+    </div>
+</div>
+@foreach (var item in Inventory.Items) {
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">@item.DisplayName</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">@item.DisplayType</label>
+    </div>
+    <div class="col-md-2">
+        @if (item.IsStackable || item.Count > 1) {
+            <input class="form-control" type="number" @bind="item.Count" />
+        }
+    </div>
+    <div class="col-md-2">
+        @if (item.IsChargable || item.Charges > 1) {
+            <input class="form-control" type="number" @bind="item.Charges" />
+        }
+    </div>
+    <div class=col-md-2>
+        <button class="btn btn-info" @onclick="() => Duplicate(item)">
+            <span class="oi oi-copywriting"></span>
+        </button>
+    </div>
+</div>
+}
+
+@code {
+    [Parameter]
+    public InventoryModel Inventory { get; set; }
+
+    private void Duplicate(ItemModel item)
+    {
+        Inventory.Duplicate(item);
+    }
+}
