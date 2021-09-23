@@ -3,7 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
-using System;
 using System.Collections.Generic;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -11,7 +10,7 @@ namespace Arcemi.Pathfinder.Kingmaker
     public class RawItemData
     {
         public ItemType Type { get; set; }
-        public string ClassName { get; set; }
+        public string SubType { get; set; }
         public string Name { get; set; }
         public string Blueprint { get; set; }
         public bool IsStackable { get; set; }
@@ -20,7 +19,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public double Weight { get; set; }
         public bool IsNotable { get; set; }
         public int? DC { get; set; }
-        public string TypeName => Type.AsDisplayable();
+        public string TypeName => SubType.OrIfEmpty(Type.AsDisplayable());
 
         private readonly Dictionary<ItemType, RawItemData> _components = new Dictionary<ItemType, RawItemData>();
 

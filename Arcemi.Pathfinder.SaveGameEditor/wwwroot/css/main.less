@@ -56,6 +56,16 @@ ul.portraits {
     flex-wrap: nowrap;
     overflow-x: auto !important;
 
+    &.portraits-selection {
+        flex-wrap: wrap;
+        height: 250px;
+
+        li {
+            width: 85px;
+            height: 115px;
+        }
+    }
+
     &.leaders {
         span {
             font-size: 10px;
@@ -79,12 +89,20 @@ ul.portraits {
             object-fit: scale-down;
             width: 85px;
             height: 115px;
-
         }
 
         span {
+            overflow-x: hidden;
+            width: 100%;
+            display: block;
+            text-align: center;
         }
     }
+}
+
+.top-toolbar
+{
+    margin-bottom: 20px;
 }
 
 #blazor-error-ui {

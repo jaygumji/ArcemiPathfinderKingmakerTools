@@ -47,17 +47,15 @@ else {
                 <Modal @ref="modalChosePortrait">
                     <Title>Select new portrait</Title>
                     <Body>
-                        <ul class="portraits">
+                        <ul class="portraits portraits-selection">
                             @foreach (var portrait in Portraits.Available) {
                             <li @onclick="() => SelectPortrait(portrait)">
                                 <img src="file://@portrait.Uri" alt="Portrait" />
                             </li>
                             }
                         </ul>
-                        This is the body
                     </Body>
                     <Footer>
-                        @*<button type="button" class="btn btn-primary">Save changes</button>*@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalChosePortrait.CloseAsync()">Cancel</button>
                     </Footer>
                 </Modal>
@@ -105,7 +103,7 @@ else {
             </div>
             <div class="col-md-2">
                 @if (!cls.IsMythic && cls.Level > 1){
-                <button class="btn btn-warning" @onclick="() => DowngradeClass(cls)">
+                <button class="btn btn-sm btn-warning" @onclick="() => DowngradeClass(cls)">
                     <span class="oi oi-arrow-thick-bottom"></span>
                 </button>
                 }
@@ -136,10 +134,10 @@ else {
                 <label class="form-label">@feature.SourceLevel</label>
             </div>
             <div class="col-md-4">
-                <button class="btn btn-warning" @onclick="() => DownrankFeature(feature)">
+                <button class="btn btn-sm btn-warning" @onclick="() => DownrankFeature(feature)">
                     <span class="oi oi-arrow-thick-bottom"></span>
                 </button>
-                <button class="btn btn-warning" @onclick="() => UprankFeature(feature)">
+                <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
                     <span class="oi oi-arrow-thick-top"></span>
                 </button>
             </div>

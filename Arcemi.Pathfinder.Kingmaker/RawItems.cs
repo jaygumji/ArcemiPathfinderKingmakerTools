@@ -2,7 +2,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,10 +15,25 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly Dictionary<ItemType, List<RawItemData>> _items;
         private readonly Dictionary<string, RawItemData> _lookup;
 
-        public RawItems()
+        public RawItems(IEnumerable<RawItemData> items)
         {
             _items = new Dictionary<ItemType, List<RawItemData>>();
             _lookup = new Dictionary<string, RawItemData>(StringComparer.Ordinal);
+
+            ItemType ct = default;
+            List<RawItemData> list = null;
+            foreach (var item in items) {
+                if (list == null || ct != item.Type) {
+                    ct = item.Type;
+                    if (!_items.TryGetValue(item.Type, out list)) {
+                        list = new List<RawItemData>();
+                        _items.Add(ct, list);
+                    }
+                }
+                list.Add(item);
+                _lookup.Add(item.Blueprint, item);
+            }
+            SetupComponents(ItemType.Shield, ItemType.Armor);
         }
 
         public IReadOnlyList<RawItemData> GetByType(ItemType type)
@@ -67,36 +82,15 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
         }
 
-        private void Initialize()
+        public static RawItems LoadFrom(string path)
         {
-            SetupComponents(ItemType.Shield, ItemType.Armor);
-        }
-
-        private void Load(string path)
-        {
-            var data = JsonUtilities.Deserialize<Dictionary<ItemType, List<RawItemData>>>(path);
-            foreach (var kv in data) {
-                _items.Add(kv.Key, kv.Value);
-                foreach (var item in kv.Value) {
-                    item.Type = kv.Key;
-                    _lookup.Add(item.Blueprint, item);
-                }
-            }
-        }
-
-        public static RawItems LoadFrom(string directory)
-        {
-            var items = new RawItems();
-            foreach (var file in Directory.EnumerateFiles(directory, "Raw_*.json")) {
-                items.Load(file);
-            }
-            items.Initialize();
-            return items;
+            var data = JsonUtilities.Deserialize<List<RawItemData>>(path);
+            return new RawItems(data);
         }
 
         public static RawItems LoadFromDefault()
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs", "RawItems.json");
             return LoadFrom(path);
         }
     }

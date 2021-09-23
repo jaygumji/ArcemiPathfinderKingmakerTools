@@ -67,12 +67,30 @@ namespace Arcemi.Pathfinder.Kingmaker
         public DescriptiveItemData DescriptiveData => Mappings.DescriptiveItems.GetByBlueprint(Blueprint);
 
         public string DisplayName => (DescriptiveData?.Name).OrIfEmpty(RawData?.Name.AsDisplayable()).OrIfEmpty(Blueprint);
-        public string DisplayType => (DescriptiveData?.Type).OrIfEmpty(RawData?.TypeName).OrIfEmpty(null);
+        public string DisplayType => (DescriptiveData?.SubType)
+            .OrIfEmpty(DescriptiveData?.Type)
+            .OrIfEmpty(RawData?.TypeName)
+            .OrIfEmpty(ItemType?.AsDisplayable())
+            .OrIfEmpty(null);
+
         public string DisplayDescription => (DescriptiveData?.Description).OrIfEmpty(null);
 
         public bool IsStackable => RawData?.IsStackable ?? false;
         public bool IsChargable => RawData?.IsChargable ?? false;
 
+        public ItemType? ItemType
+        {
+            get {
+                switch (Type) {
+                    case TypeWeapon: return Kingmaker.ItemType.Weapon;
+                    case TypeArmor: return Kingmaker.ItemType.Armor;
+                    case TypeShield: return Kingmaker.ItemType.Shield;
+                    case TypeUsable: return Kingmaker.ItemType.Usable;
+                    case TypeSimple: return Kingmaker.ItemType.Simple;
+                }
+                return null;
+            }
+        }
         public string Type { get => A.Value<string>("$type"); }
         public string Blueprint { get => A.Value<string>("m_Blueprint"); set => A.Value(value, "m_Blueprint"); }
         public int Count { get => A.Value<int?>("m_Count") ?? 1; set => A.Value(value, "m_Count"); }
@@ -86,7 +104,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         //public object Ability => A.Object();
         //public object ActivatableAbility => A.Object();
         //public object Enchantments => A.Object("m_Enchantments");
-        public CharacterModel Wielder => A.Object<CharacterModel>();
+        public string WielderRef => A.Value<string>("m_WielderRef");
         public HoldingSlotModel HoldingSlot => A.Object(factory: a => new HoldingSlotModel(a));
 
         public static ItemModel Create(ModelDataAccessor accessor)
@@ -105,7 +123,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         private static void AddDefaultItemProperties(JObject jObj)
         {
             jObj.Add("m_Count", 1);
-            jObj.Add("Wielder", null);
             jObj.Add("HoldingSlot", null);
             jObj.Add("m_Enchantments", null);
             jObj.Add("m_FactsAppliedToWielder", null);
@@ -116,11 +133,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             jObj.Add("IsIdentified", true);
             jObj.Add("SellTime", null);
             jObj.Add("IsNonRemovable", false);
-            jObj.Add("UniqueId", System.Guid.NewGuid().ToString());
+            jObj.Add("UniqueId", Guid.NewGuid().ToString());
         }
 
         public static void PrepareDuplicate(IReferences refs, JObject jObj, ItemModel item, ListAccessor<ItemModel> list)
         {
+            // $type is a reserved value and used by the serializer, it must be the second after the $id field.
+            jObj.Add("$type", item.Type);
             jObj.Add("UniqueId", Guid.NewGuid().ToString());
             jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
             jObj.Add("Collection", refs.CreateReference(item.Collection.Id));
@@ -130,41 +149,58 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public static void Prepare(IReferences refs, JObject jObj, RawItemData rawData, ItemType itemType, string blueprint, InventoryModel inventory, ListAccessor<ItemModel> list)
         {
+            switch (itemType) {
+                case Kingmaker.ItemType.Weapon:
+                    jObj.Add("$type", TypeWeapon);
+                    break;
+                case Kingmaker.ItemType.Armor:
+                    jObj.Add("$type", TypeArmor);
+                    break;
+                case Kingmaker.ItemType.Shield:
+                    jObj.Add("$type", TypeShield);
+                    break;
+                case Kingmaker.ItemType.Usable:
+                    jObj.Add("$type", TypeUsable);
+                    break;
+                default:
+                    jObj.Add("$type", TypeSimple);
+                    break;
+            }
+
             AddDefaultItemProperties(jObj);
-            jObj.Add("Charges", rawData.IsChargable ? 1 : 0);
+            jObj.Add("Charges", (rawData?.IsChargable ?? false) ? 1 : 0);
             jObj.Add("m_Blueprint", blueprint);
             jObj.Add("Collection", refs.CreateReference(inventory.Id));
             jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
-            jObj.Add("UniqueId", System.Guid.NewGuid().ToString());
 
-            var addArmorComponent = itemType == ItemType.Shield;
-            if (addArmorComponent) {
-                var component = refs.Create();
-                AddDefaultItemProperties(component);
-                component.Add("m_ModifierDescriptor", "Shield");
-                component.Add("m_Modifiers", null);
-                component.Add("m_DexBonusLimeterAC", null);
-                component.Add("m_InventorySlotIndex", -1);
-                component.Add("Collection", null);
-                component.Add("Charges", 0);
-                if (rawData != null && rawData.TryGetComponent(ItemType.Armor, out var item)) {
-                    component.Add("m_Blueprint", item.Blueprint);
-                }
-                jObj.Add("ArmorComponent", component);
-            }
+            //var addArmorComponent = itemType == ItemType.Shield;
+            //if (addArmorComponent) {
+            //    var component = refs.Create();
+            //    AddDefaultItemProperties(component);
+            //    component.Add("m_ModifierDescriptor", "Shield");
+            //    component.Add("m_Modifiers", null);
+            //    component.Add("m_DexBonusLimeterAC", null);
+            //    component.Add("m_InventorySlotIndex", -1);
+            //    component.Add("Collection", null);
+            //    component.Add("Charges", 0);
+            //    if (rawData != null && rawData.TryGetComponent(ItemType.Armor, out var item)) {
+            //        component.Add("m_Blueprint", item.Blueprint);
+            //    }
+            //    jObj.Add("ArmorComponent", component);
+            //}
 
-            var addWeaponComponent = itemType == ItemType.Shield;
-            if (addWeaponComponent) {
-                var component = refs.Create();
-                AddDefaultItemProperties(component);
-                component.Add("Second", null);
-                component.Add("ForceSecondary", false);
-                component.Add("IsSecondPartOfDoubleWeapon", false);
-                component.Add("IsShield", true);
-                component.Add("Collection", null);
-                component.Add("Charges", 0);
-                jObj.Add("WeaponComponent", component);
-            }
+            //var addWeaponComponent = itemType == ItemType.Weapon;
+            //if (addWeaponComponent) {
+            //    var component = refs.Create();
+            //    AddDefaultItemProperties(component);
+            //    component.Add("Second", null);
+            //    component.Add("ForceSecondary", false);
+            //    component.Add("IsSecondPartOfDoubleWeapon", false);
+            //    component.Add("IsShield", true);
+            //    component.Add("Collection", null);
+            //    component.Add("Charges", 0);
+            //    jObj.Add("WeaponComponent", component);
+            //}
         }
     }
 }

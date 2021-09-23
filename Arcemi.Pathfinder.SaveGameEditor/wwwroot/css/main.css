@@ -47,6 +47,14 @@ ul.portraits {
   flex-wrap: nowrap;
   overflow-x: auto !important;
 }
+ul.portraits.portraits-selection {
+  flex-wrap: wrap;
+  height: 250px;
+}
+ul.portraits.portraits-selection li {
+  width: 85px;
+  height: 115px;
+}
 ul.portraits.leaders span {
   font-size: 10px;
 }
@@ -66,6 +74,15 @@ ul.portraits li img {
   object-fit: scale-down;
   width: 85px;
   height: 115px;
+}
+ul.portraits li span {
+  overflow-x: hidden;
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+.top-toolbar {
+  margin-bottom: 20px;
 }
 #blazor-error-ui {
   background: lightyellow;

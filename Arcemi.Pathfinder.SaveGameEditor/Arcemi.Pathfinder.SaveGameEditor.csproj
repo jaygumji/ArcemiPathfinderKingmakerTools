@@ -56,35 +56,10 @@
     <Content Remove="wwwroot\_Res\Portraits\Special\8134f34ef1cc67c498f1ae616995023d.png" />
     <Content Remove="wwwroot\_Res\Portraits\Special\c0230e1fee517664784355441dd5b6e8.png" />
     <Content Remove="wwwroot\_Res\Portraits\Special\_s_Unknown.jpg" />
+    <Content Remove="_Defs\DescItems.json" />
     <Content Remove="_Defs\Feats.json" />
-    <Content Remove="_Defs\Item_Armor.json" />
-    <Content Remove="_Defs\Item_Belt.json" />
-    <Content Remove="_Defs\Item_Feet.json" />
-    <Content Remove="_Defs\Item_Gloves.json" />
-    <Content Remove="_Defs\Item_Head.json" />
-    <Content Remove="_Defs\Item_Neck.json" />
-    <Content Remove="_Defs\Item_Ring.json" />
-    <Content Remove="_Defs\Item_Shield.json" />
-    <Content Remove="_Defs\Item_Shoulders.json" />
-    <Content Remove="_Defs\Item_Weapons.json" />
-    <Content Remove="_Defs\Item_Wrist.json" />
     <Content Remove="_Defs\Mappings.json" />
-    <Content Remove="_Defs\Raw_Armor.json" />
-    <Content Remove="_Defs\Raw_Belt.json" />
-    <Content Remove="_Defs\Raw_Feet.json" />
-    <Content Remove="_Defs\Raw_Gloves.json" />
-    <Content Remove="_Defs\Raw_HandSimple.json" />
-    <Content Remove="_Defs\Raw_Head.json" />
-    <Content Remove="_Defs\Raw_Key.json" />
-    <Content Remove="_Defs\Raw_Misc.json" />
-    <Content Remove="_Defs\Raw_Neck.json" />
-    <Content Remove="_Defs\Raw_Note.json" />
-    <Content Remove="_Defs\Raw_Ring.json" />
-    <Content Remove="_Defs\Raw_Shield.json" />
-    <Content Remove="_Defs\Raw_Shoulders.json" />
-    <Content Remove="_Defs\Raw_Usable.json" />
-    <Content Remove="_Defs\Raw_Weapon.json" />
-    <Content Remove="_Defs\Raw_Wrist.json" />
+    <Content Remove="_Defs\RawItems.json" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="_Res\Portraits\Available\06ba18885cd66c943b6ec9ca8f05f619.png" />
@@ -144,88 +119,13 @@
     <None Include="_Defs\Feats.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="_Defs\Item_Armor.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Belt.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Feet.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Gloves.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Head.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Neck.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Ring.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Shield.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Shoulders.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Weapons.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Item_Wrist.json">
+    <None Include="_Defs\DescItems.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="_Defs\Mappings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="_Defs\Raw_Armor.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Belt.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Feet.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Gloves.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_HandSimple.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Head.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Key.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Misc.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Neck.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Note.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Ring.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Shield.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Shoulders.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Usable.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Weapon.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="_Defs\Raw_Wrist.json">
+    <None Include="_Defs\RawItems.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

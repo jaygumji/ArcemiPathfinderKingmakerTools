@@ -36,6 +36,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             foreach (var property in _obj.Properties()) {
                 if (property.Name == "$id") continue;
+                if (property.Value.Type == JTokenType.Array) continue;
+                if (property.Value.Type == JTokenType.Object) continue;
 
                 var tp = target.Property(property.Name);
                 if (tp != null && !tp.Value.IsNullOrEmpty()) {
@@ -43,8 +45,6 @@ namespace Arcemi.Pathfinder.Kingmaker
                 }
 
                 if (tp != null) {
-                    if (tp.Value.Type == JTokenType.Array) continue;
-                    if (tp.Value.Type == JTokenType.Object) continue;
                     if (!tp.Value.IsNullOrEmpty()) continue;
                     tp.Value = property.Value;
                 }
