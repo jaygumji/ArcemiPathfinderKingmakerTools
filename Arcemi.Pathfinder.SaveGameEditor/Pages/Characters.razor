@@ -41,7 +41,7 @@ else {
                 }
             </div>
 
-            <h3 class="col-md-12">Tools</h3>
+            <h3 class="col-md-12">Utilities</h3>
             <div class="col-md-12">
                 <button class="btn btn-info" @onclick="() => modalChosePortrait.OpenAsync()">Change Portrait</button>
                 <Modal @ref="modalChosePortrait">
@@ -79,16 +79,16 @@ else {
             <!-- TODO: Alignment -->
 
             <h3 class="col-md-12">Classes</h3>
-            <div class="col-md-4">
+            <div class="col-md-4 form-list-header">
                 <label class="form-label">Name</label>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 form-list-header">
                 <label class="form-label">Specialization</label>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 form-list-header">
                 <label class="form-label">Level</label>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 form-list-header">
             </div>
 
             @foreach (var cls in Character.Progression.Classes) {
@@ -102,45 +102,45 @@ else {
                 <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
             </div>
             <div class="col-md-2">
-                @if (!cls.IsMythic && cls.Level > 1){
-                <button class="btn btn-sm btn-warning" @onclick="() => DowngradeClass(cls)">
+                <button class="btn btn-sm btn-warning" disabled="@(cls.IsMythic || cls.Level <= 1)" @onclick="() => DowngradeClass(cls)">
                     <span class="oi oi-arrow-thick-bottom"></span>
                 </button>
-                }
             </div>
             }
 
-            <h3 class="col-md-12">Ranked Feats</h3>
-            <div class="col-md-4">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Rank</label>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Gained Level</label>
-            </div>
-            <div class="col-md-4">
-            </div>
+            @if (RankedFeatures.Any()) {
+                <h3 class="col-md-12">Ranked Feats</h3>
+                <div class="col-md-4 form-list-header">
+                    <label class="form-label">Name</label>
+                </div>
+                <div class="col-md-2 form-list-header">
+                    <label class="form-label">Rank</label>
+                </div>
+                <div class="col-md-2 form-list-header">
+                    <label class="form-label" title="The level the last rank was gained">Level</label>
+                </div>
+                <div class="col-md-4 form-list-header">
+                </div>
 
-            @foreach (var feature in RankedFeatures) {
-            <div class="col-md-4 overflow-hidden">
-                <label class="form-label">@feature.DisplayName</label>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">@feature.Rank</label>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">@feature.SourceLevel</label>
-            </div>
-            <div class="col-md-4">
-                <button class="btn btn-sm btn-warning" @onclick="() => DownrankFeature(feature)">
-                    <span class="oi oi-arrow-thick-bottom"></span>
-                </button>
-                <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
-                    <span class="oi oi-arrow-thick-top"></span>
-                </button>
-            </div>
+                @foreach (var feature in RankedFeatures) {
+                    <div class="col-md-4 overflow-hidden">
+                        <label class="form-label">@feature.DisplayName</label>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">@feature.Rank</label>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label" title="The level the last rank was gained">@feature.SourceLevel</label>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-sm btn-warning" @onclick="() => DownrankFeature(feature)">
+                            <span class="oi oi-arrow-thick-bottom"></span>
+                        </button>
+                        <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
+                            <span class="oi oi-arrow-thick-top"></span>
+                        </button>
+                    </div>
+                }
             }
 
             <h3 class="col-md-12">General</h3>
