@@ -34,7 +34,6 @@ namespace Arcemi.Pathfinder.Kingmaker
             RegisterFactory(m => new PartyModel(m));
             RegisterFactory(m => new UnitEntityModel(m));
             RegisterFactory(m => new CharacterModel(m));
-            RegisterFactory(m => new VectorModel(m));
             RegisterFactory(m => new CharacterAttributeModel(m));
             RegisterFactory(m => new ClassSkillModel(m));
             RegisterFactory(m => new PlayerModel(m));

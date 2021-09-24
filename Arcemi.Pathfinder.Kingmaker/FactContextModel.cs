@@ -15,6 +15,5 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string SpellDescriptor { get => A.Value<string>(); set => A.Value(value); }
         public string SpellSchool { get => A.Value<string>(); set => A.Value(value); }
         public int SpellLevel { get => A.Value<int>(); set => A.Value(value); }
-        public VectorModel Direction => A.Object<VectorModel>();
     }
 }

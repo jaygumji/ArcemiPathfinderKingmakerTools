@@ -75,6 +75,27 @@ else {
 
         <div class="row g-3">
             <div class="col-md-3">
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">X-Axis</label>
+                        <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentX" />
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Y-Axis</label>
+                        <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentY" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9 alignment">
+                <img class="alignment-map" src="/images/alignment-map.png" alt="Alignment" />
+                <img class="alignment-dot" src="/images/alignment-dot.png" style="left: @(AlignmentX)px; top: @(AlignmentY)px" />
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-3">
                 <label class="form-label">Experience</label>
                 <input class="form-control" type="number" @bind="@Character.Progression.Experience" />
             </div>
@@ -334,6 +355,13 @@ else {
     private UnitEntityModel Unit;
     private Modal modalChosePortrait;
     private IEnumerable<FeatureFactItemModel> RankedFeatures;
+
+    private const int OffsetX = 20;
+    private const int OffsetY = 6;
+    private int AlignmentX => (Unit?.Descriptor?.Alignment?.Vector?.X ?? 0) + 100 + OffsetX;
+    private int AlignmentY => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0) *-1 + 100 + OffsetY;
+    private int EditAlignmentX { get => Unit?.Descriptor?.Alignment?.Vector?.X ?? 0; set => Unit.Descriptor.Alignment.Vector.X = value; }
+    private int EditAlignmentY { get => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0)*-1; set => Unit.Descriptor.Alignment.Vector.Y = value*-1; }
 
     protected override async Task OnInitializedAsync()
     {
