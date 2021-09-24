@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Arcemi.Pathfinder.SaveGameEditor.Models
 {
-    public class InventoryViewModel
+    public static class InventoryViewModel
     {
         public static readonly Dictionary<ItemType, List<ItemViewModel>> AllItems;
         public static readonly List<KeyValuePair<ItemType, string>> ItemTypeStaticList;
@@ -23,13 +23,5 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 ItemTypeStaticList.Add(new KeyValuePair<ItemType, string>(itemType, itemType.AsDisplayable()));
             }
         }
-
-        public InventoryModel Inventory { get; }
-
-        public InventoryViewModel(InventoryModel inventory)
-        {
-            Inventory = inventory;
-        }
-
     }
 }

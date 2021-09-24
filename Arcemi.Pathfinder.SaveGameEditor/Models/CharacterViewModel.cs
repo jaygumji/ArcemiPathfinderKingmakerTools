@@ -26,6 +26,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         public void SetAsHero(UnitEntityModel unit)
         {
             main.Player.MainCharacterId = unit.UniqueId;
+            main.PlayerEntity = unit;
         }
 
         public void DowngradeClass(UnitEntityModel unit, ClassModel cls)

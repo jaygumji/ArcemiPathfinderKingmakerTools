@@ -19,9 +19,9 @@ namespace Arcemi.Pathfinder.Kingmaker
         public ListAccessor<ProgressionItemModel> Items => A.List("m_Progressions", a => new ProgressionItemModel(a));
         public ListAccessor<ProgressionSelectionModel> Selections => A.List("m_Selections", a => new ProgressionSelectionModel(a));
         public int Experience { get => A.Value<int>(); set => A.Value(value); }
+        public int MythicExperience { get => A.Value<int>(); set => A.Value(value); }
         public string Race { get => A.Value<string>("m_Race"); set => A.Value(value, "m_Race"); }
         public string RaceName => Mappings.GetRaceName(Race);
         public int CurrentLevel => Classes?.Where(c => !c.IsMythic).Sum(c => c.Level) ?? 0;
-        public int MythicLevel => Classes?.Where(c => c.IsMythic).Sum(c => c.Level) ?? 0;
     }
 }

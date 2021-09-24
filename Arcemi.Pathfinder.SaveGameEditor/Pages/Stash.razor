@@ -9,16 +9,16 @@ else if (Inv == null) {
     <p><em>Stash was not found.</em></p>
 }
 else {
-    @if (Inv.Inventory.Items.Count == 0) {
+    @if (Inv.Items.Count == 0) {
         <p><em>Stash is empty.</em></p>
     }
     else {
-        <InventoryView Inventory="Inv.Inventory"></InventoryView>
+        <InventoryView Inventory="Inv"></InventoryView>
     }
 }
 
 @code {
-    protected InventoryViewModel Inv => Model.SharedStash;
+    protected InventoryModel Inv => Model.SharedStash;
 
     protected override async Task OnInitializedAsync()
     {

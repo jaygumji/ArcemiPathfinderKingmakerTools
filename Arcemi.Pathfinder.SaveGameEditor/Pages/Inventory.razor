@@ -9,16 +9,16 @@ else if (Inv == null) {
     <p><em>Inventory was not found.</em></p>
 }
 else {
-    @if (Inv.Inventory.Items.Count == 0) {
+    @if (Inv.Items.Count == 0) {
         <p><em>Inventory is empty.</em></p>
     }
     else {
-        <InventoryView Inventory="Inv.Inventory"></InventoryView>
+        <InventoryView Inventory="Inv"></InventoryView>
     }
 }
 
 @code {
-    protected InventoryViewModel Inv => Model.Inventory;
+    protected InventoryModel Inv => Model.Inventory;
 
     protected override async Task OnInitializedAsync()
     {

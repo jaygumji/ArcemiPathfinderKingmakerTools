@@ -55,15 +55,15 @@ else {
     <div class="row g-3">
         <div class="col-md-3">
             <label class="form-label">Current</label>
-            <input class="form-control" type="number" @bind="Data.MoraleState.CurrentValue" />
+            <input class="form-control" type="number" @bind="Data.MoraleState.CurrentValue" min="@Data.MoraleState.MinValue" max="@Data.MoraleState.MaxValue" />
         </div>
         <div class="col-md-3">
             <label class="form-label">Min</label>
-            <input class="form-control" type="number" @bind="Data.MoraleState.MinValue" />
+            <input class="form-control" type="number" readonly="readonly" @bind="Data.MoraleState.MinValue" />
         </div>
         <div class="col-md-3">
             <label class="form-label">Max</label>
-            <input class="form-control" type="number" @bind="Data.MoraleState.MaxValue" />
+            <input class="form-control" type="number" readonly="readonly" @bind="Data.MoraleState.MaxValue" />
         </div>
     </div>
     }

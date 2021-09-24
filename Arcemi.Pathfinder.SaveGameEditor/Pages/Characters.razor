@@ -23,27 +23,24 @@ else {
                 <input class="form-control" type="text" @bind="@Character.CustomName" placeholder="@Character.Name" />
             </div>
             <div class="col-md-6">
-                <label class="form-label">Race</label>
-                <input class="form-control" type="text" readonly="readonly" value="@Character.Progression.RaceName" />
-            </div>
-            <div class="col-md-6">
                 <label class="form-label">Blueprint</label>
                 <input class="form-control" type="text" readonly="readonly" value="@Character.Blueprint" />
             </div>
-            <div class="col-md-6">
-                @if (Model.IsPlayerButNotMainCharacter(Unit)) {
-                <div>
-                    <label class="form-label">Sidekick</label>
-                </div>
-               <div>
-                    <button class="btn btn-info" @onclick="() => Model.SetAsHero(Unit)">Set as hero</button>
-               </div>
-                }
+        </div>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Race</label>
+                <input class="form-control" type="text" readonly="readonly" value="@Character.Progression.RaceName" />
             </div>
-
-            <h3 class="col-md-12">Utilities</h3>
-            <div class="col-md-12">
-                <button class="btn btn-info" @onclick="() => modalChosePortrait.OpenAsync()">Change Portrait</button>
+            <div class="col-md-3">
+                <div>
+                    <label>&nbsp;</label>
+                </div>
+                <div>
+                <button class="btn btn-info w-100" @onclick="() => modalChosePortrait.OpenAsync()">
+                    <span class="oi oi-person"></span>
+                    Portrait
+                </button>
                 <Modal @ref="modalChosePortrait">
                     <Title>Select new portrait</Title>
                     <Body>
@@ -59,8 +56,24 @@ else {
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalChosePortrait.CloseAsync()">Cancel</button>
                     </Footer>
                 </Modal>
+                </div>
             </div>
+            <div class="col-md-3">
+                <div>
+                    <label>&nbsp;</label>
+                </div>
+                <div>
+                @if (Model.IsPlayerButNotMainCharacter(Unit)) {
+                <button class="btn btn-info w-100" @onclick="() => Model.SetAsHero(Unit)" title="You are not set as the main character, fix it by pressing this button">
+                    <span class="oi oi-wrench"></span>
+                    Main Char
+                </button>
+                }
+                </div>
+            </div>
+        </div>
 
+        <div class="row g-3">
             <div class="col-md-3">
                 <label class="form-label">Experience</label>
                 <input class="form-control" type="number" @bind="@Character.Progression.Experience" />
@@ -71,14 +84,14 @@ else {
             </div>
             <div class="col-md-3">
                 <label class="form-label">Mythic Level</label>
-                <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.MythicLevel" />
+                <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.MythicExperience" />
             </div>
-            <div class="col-md-3">
-            </div>
+        </div>
 
-            <!-- TODO: Alignment -->
-
+        <div class="row g-3">
             <h3 class="col-md-12">Classes</h3>
+        </div>
+        <div class="row g-3">
             <div class="col-md-4 form-list-header">
                 <label class="form-label">Name</label>
             </div>
@@ -90,8 +103,10 @@ else {
             </div>
             <div class="col-md-2 form-list-header">
             </div>
+        </div>
 
-            @foreach (var cls in Character.Progression.Classes) {
+        @foreach (var cls in Character.Progression.Classes) {
+        <div class="row g-3">
             <div class="col-md-4 overflow-hidden">
                 <label class="form-label">@cls.TypeName</label>
             </div>
@@ -102,14 +117,20 @@ else {
                 <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
             </div>
             <div class="col-md-2">
-                <button class="btn btn-sm btn-warning" disabled="@(cls.IsMythic || cls.Level <= 1)" @onclick="() => DowngradeClass(cls)">
+                @if (!cls.IsMythic) {
+                <button class="btn btn-sm btn-warning" disabled="@(cls.Level <= 1)" @onclick="() => DowngradeClass(cls)">
                     <span class="oi oi-arrow-thick-bottom"></span>
                 </button>
+                }
             </div>
-            }
+        </div>
+        }
 
-            @if (RankedFeatures.Any()) {
+        @if (RankedFeatures.Any()) {
+            <div class="row g-3">
                 <h3 class="col-md-12">Ranked Feats</h3>
+            </div>
+            <div class="row g-3">
                 <div class="col-md-4 form-list-header">
                     <label class="form-label">Name</label>
                 </div>
@@ -121,29 +142,35 @@ else {
                 </div>
                 <div class="col-md-4 form-list-header">
                 </div>
+            </div>
 
-                @foreach (var feature in RankedFeatures) {
-                    <div class="col-md-4 overflow-hidden">
-                        <label class="form-label">@feature.DisplayName</label>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">@feature.Rank</label>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label" title="The level the last rank was gained">@feature.SourceLevel</label>
-                    </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-sm btn-warning" @onclick="() => DownrankFeature(feature)">
-                            <span class="oi oi-arrow-thick-bottom"></span>
-                        </button>
-                        <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
-                            <span class="oi oi-arrow-thick-top"></span>
-                        </button>
-                    </div>
-                }
+            @foreach (var feature in RankedFeatures) {
+            <div class="row g-3">
+                <div class="col-md-4 overflow-hidden">
+                    <label class="form-label">@feature.DisplayName</label>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">@feature.Rank</label>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" title="The level the last rank was gained">@feature.SourceLevel</label>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
+                        <span class="oi oi-arrow-thick-bottom"></span>
+                    </button>
+                    <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
+                        <span class="oi oi-arrow-thick-top"></span>
+                    </button>
+                </div>
+            </div>
             }
+        }
 
+        <div class="row g-3">
             <h3 class="col-md-12">General</h3>
+        </div>
+        <div class="row g-3">
             <div class="col-md-4 form-list-header">
                 <label class="form-label">Name</label>
             </div>
@@ -155,7 +182,9 @@ else {
             </div>
             <div class="col-md-4">
             </div>
-            @foreach (var attr in Character.Stats.General) {
+        </div>
+        @foreach (var attr in Character.Stats.General) {
+        <div class="row g-3">
             <div class="col-md-4">
                 <label class="form-label">@attr.Name</label>
             </div>
@@ -167,9 +196,13 @@ else {
             </div>
             <div class="col-md-4">
             </div>
-            }
+        </div>
+        }
 
+        <div class="row g-3">
             <h3 class="col-md-12">Attributes</h3>
+        </div>
+        <div class="row g-3">
             <div class="col-md-4 form-list-header">
                 <label class="form-label">Name</label>
             </div>
@@ -181,7 +214,9 @@ else {
             </div>
             <div class="col-md-4">
             </div>
-            @foreach (var attr in Character.Stats.Attributes) {
+        </div>
+        @foreach (var attr in Character.Stats.Attributes) {
+        <div class="row g-3">
             <div class="col-md-4">
                 <label class="form-label">@attr.Name</label>
             </div>
@@ -193,86 +228,104 @@ else {
             </div>
             <div class="col-md-4">
             </div>
-            }
-
-            <h3 class="col-md-12">Skills</h3>
-            <div class="col-md-4 form-list-header">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-2 form-list-header">
-                <label class="form-label">Value</label>
-            </div>
-            <div class="col-md-2 form-list-header">
-                <label class="form-label">Total</label>
-            </div>
-            <div class="col-md-4">
-            </div>
-            @foreach (var attr in Character.Stats.Skills) {
-            <div class="col-md-4">
-                <label class="form-label">@attr.Name</label>
-            </div>
-            <div class="col-md-2">
-                <input class="form-control" type="number" @bind="@attr.BaseValue" />
-            </div>
-            <div class="col-md-2">
-                <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
-            </div>
-            <div class="col-md-4">
-            </div>
-            }
-
-            <h3 class="col-md-12">Combat</h3>
-            <div class="col-md-4 form-list-header">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-2 form-list-header">
-                <label class="form-label">Value</label>
-            </div>
-            <div class="col-md-2 form-list-header">
-                <label class="form-label">Total</label>
-            </div>
-            <div class="col-md-4">
-            </div>
-            @foreach (var attr in Character.Stats.Combat) {
-            <div class="col-md-4">
-                <label class="form-label">@attr.Name</label>
-            </div>
-            <div class="col-md-2">
-                <input class="form-control" type="number" @bind="@attr.BaseValue" />
-            </div>
-            <div class="col-md-2">
-                <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
-            </div>
-            <div class="col-md-4">
-            </div>
-            }
-
-            <h3 class="col-md-12">Saves</h3>
-            <div class="col-md-4 form-list-header">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-2 form-list-header">
-                <label class="form-label">Value</label>
-            </div>
-            <div class="col-md-2 form-list-header">
-                <label class="form-label">Total</label>
-            </div>
-            <div class="col-md-4">
-            </div>
-            @foreach (var attr in Character.Stats.Saves) {
-            <div class="col-md-4">
-                <label class="form-label">@attr.Name</label>
-            </div>
-            <div class="col-md-2">
-                <input class="form-control" type="number" @bind="@attr.BaseValue" />
-            </div>
-            <div class="col-md-2">
-                <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
-            </div>
-            <div class="col-md-4">
-            </div>
-            }
         </div>
+        }
+
+        <div class="row g-3">
+            <h3 class="col-md-12">Skills</h3>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4 form-list-header">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2 form-list-header">
+                <label class="form-label">Value</label>
+            </div>
+            <div class="col-md-2 form-list-header">
+                <label class="form-label">Total</label>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        @foreach (var attr in Character.Stats.Skills) {
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">@attr.Name</label>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" @bind="@attr.BaseValue" />
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        }
+
+        <div class="row g-3">
+            <h3 class="col-md-12">Combat</h3>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4 form-list-header">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2 form-list-header">
+                <label class="form-label">Value</label>
+            </div>
+            <div class="col-md-2 form-list-header">
+                <label class="form-label">Total</label>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        @foreach (var attr in Character.Stats.Combat) {
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">@attr.Name</label>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" @bind="@attr.BaseValue" />
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        }
+
+        <div class="row g-3">
+            <h3 class="col-md-12">Saves</h3>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4 form-list-header">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2 form-list-header">
+                <label class="form-label">Value</label>
+            </div>
+            <div class="col-md-2 form-list-header">
+                <label class="form-label">Total</label>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        @foreach (var attr in Character.Stats.Saves) {
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">@attr.Name</label>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" @bind="@attr.BaseValue" />
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        }
     }
 }
 

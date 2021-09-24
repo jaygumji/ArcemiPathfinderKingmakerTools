@@ -23,8 +23,17 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         public PlayerModel Player { get; private set; }
 
         public UnitEntityModel PlayerEntity { get; private set; }
-        public InventoryViewModel Inventory { get; private set; }
-        public InventoryViewModel SharedStash { get; private set; }
+        UnitEntityModel ISaveDataProvider.PlayerEntity
+        {
+            get => PlayerEntity;
+            set {
+                PlayerEntity = value;
+                Inventory = value.Descriptor.Inventory;
+            }
+        }
+
+        public InventoryModel Inventory { get; private set; }
+        public InventoryModel SharedStash { get; private set; }
 
         private string ConfigPath { get; set; }
         public AppUserConfiguration Config { get; private set; }
@@ -79,8 +88,8 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             }
 
             CurrentPath = path;
-            Inventory = mainCharacter == null ? null : new InventoryViewModel(mainCharacter.Descriptor.Inventory);
-            SharedStash = new InventoryViewModel(Player.SharedStash);
+            Inventory = mainCharacter?.Descriptor?.Inventory;
+            SharedStash = Player.SharedStash;
             Characters = characters;
             CanEdit = true;
         }
