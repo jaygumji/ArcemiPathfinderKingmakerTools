@@ -5,7 +5,6 @@
 #endregion
 using Newtonsoft.Json.Linq;
 using System;
-using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -14,12 +13,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public WeaponItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
-
-        //public object Second => null;
-        public bool ForceSecondary { get => A.Value<bool>(); set => A.Value(value); }
-        public bool IsSecondPartOfDoubleWeapon { get => A.Value<bool>(); set => A.Value(value); }
-        public bool IsShield { get => A.Value<bool>(); set => A.Value(value); }
-
     }
 
     public class UsableItemModel : ItemModel
@@ -58,6 +51,15 @@ namespace Arcemi.Pathfinder.Kingmaker
         private const string TypeArmor = "Kingmaker.Items.ItemEntityArmor, Assembly-CSharp";
         private const string TypeUsable = "Kingmaker.Items.ItemEntityUsable, Assembly-CSharp";
 
+        public void SetEnhancementLevel(int enchantmentLevel)
+        {
+            var enchantment = (EnchantmentFactItemModel)Facts.Items.Add((refs, jobj) => jobj.Add("$type", EnchantmentFactItemModel.TypeRef));
+            enchantment.Level = enchantmentLevel;
+            enchantment.AttachTime = TimeSpan.Zero;
+            enchantment.IsActive = false;
+            enchantment.UniqueId = Guid.NewGuid().ToString();
+        }
+
         public ItemModel(ModelDataAccessor accessor) : base(accessor)
         {
             N.On(nameof(Blueprint), nameof(RawData));
@@ -91,6 +93,8 @@ namespace Arcemi.Pathfinder.Kingmaker
                 return null;
             }
         }
+        public PartsContainerModel Parts => A.Object(factory: a => new PartsContainerModel(a), createIfNull: true);
+        public FactsContainerModel Facts => A.Object(factory: a => new FactsContainerModel(a), createIfNull: true);
         public string Type { get => A.Value<string>("$type"); }
         public string Blueprint { get => A.Value<string>("m_Blueprint"); set => A.Value(value, "m_Blueprint"); }
         public int Count { get => A.Value<int?>("m_Count") ?? 1; set => A.Value(value, "m_Count"); }
@@ -98,7 +102,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public TimeSpan Time { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public int Charges { get => A.Value<int?>() ?? 1; set => A.Value(value); }
         public bool IsIdentified { get => A.Value<bool>(); set => A.Value(value); }
-        public TimeSpan? SellTime { get => A.Value<TimeSpan?>(); set => A.Value(value); }
+        //public TimeSpan? SellTime { get => A.Value<TimeSpan?>(); set => A.Value(value); }
         public bool IsNonRemovable { get => A.Value<bool>(); set => A.Value(value); }
         public InventoryModel Collection => A.Object<InventoryModel>();
         //public object Ability => A.Object();
@@ -120,34 +124,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             return new ItemModel(accessor);
         }
 
-        private static void AddDefaultItemProperties(JObject jObj)
-        {
-            jObj.Add("m_Count", 1);
-            jObj.Add("HoldingSlot", null);
-            jObj.Add("m_Enchantments", null);
-            jObj.Add("m_FactsAppliedToWielder", null);
-            jObj.Add("m_IdentifyRolls", new JArray());
-            jObj.Add("Time", TimeSpan.Zero);
-            jObj.Add("Ability", null);
-            jObj.Add("ActivatableAbility", null);
-            jObj.Add("IsIdentified", true);
-            jObj.Add("SellTime", null);
-            jObj.Add("IsNonRemovable", false);
-            jObj.Add("UniqueId", Guid.NewGuid().ToString());
-        }
-
-        public static void PrepareDuplicate(IReferences refs, JObject jObj, ItemModel item, ListAccessor<ItemModel> list)
-        {
-            // $type is a reserved value and used by the serializer, it must be the second after the $id field.
-            jObj.Add("$type", item.Type);
-            jObj.Add("UniqueId", Guid.NewGuid().ToString());
-            jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
-            jObj.Add("Collection", refs.CreateReference(item.Collection.Id));
-            item.A.ShallowMerge(jObj);
-            jObj.Remove("m_WielderRef");
-        }
-
-        public static void Prepare(IReferences refs, JObject jObj, RawItemData rawData, ItemType itemType, string blueprint, InventoryModel inventory, ListAccessor<ItemModel> list)
+        private static void AddRequiredItemProperties(JObject jObj, ItemType itemType)
         {
             switch (itemType) {
                 case Kingmaker.ItemType.Weapon:
@@ -166,12 +143,25 @@ namespace Arcemi.Pathfinder.Kingmaker
                     jObj.Add("$type", TypeSimple);
                     break;
             }
+            jObj.Add("Time", TimeSpan.Zero);
+            jObj.Add("IsIdentified", true);
+            jObj.Add("UniqueId", Guid.NewGuid().ToString());
+        }
 
-            AddDefaultItemProperties(jObj);
-            jObj.Add("Charges", (rawData?.IsChargable ?? false) ? 1 : 0);
-            jObj.Add("m_Blueprint", blueprint);
+        public static void Duplicate(IReferences refs, JObject jObj, ItemModel item)
+        {
+            // $type is a reserved value and used by the serializer, it must be the second after the $id field.
+            jObj.Add("$type", item.Type);
+            jObj.Add("UniqueId", Guid.NewGuid().ToString());
+            jObj.Add("Collection", refs.CreateReference(item.Collection.Id));
+            item.A.ShallowMerge(jObj);
+            jObj.Remove("m_WielderRef");
+        }
+
+        public static void Prepare(InventoryModel inventory, IReferences refs, JObject jObj, ItemType itemType)
+        {
+            AddRequiredItemProperties(jObj, itemType);
             jObj.Add("Collection", refs.CreateReference(inventory.Id));
-            jObj.Add("m_InventorySlotIndex", list.Count > 0 ? list.Max(i => i.InventorySlotIndex) + 1 : 0);
 
             //var addArmorComponent = itemType == ItemType.Shield;
             //if (addArmorComponent) {

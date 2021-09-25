@@ -19,6 +19,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly ObjectCache _lists;
         private readonly ObjectCache _valueLists;
         private readonly ObjectCache _dictionaryOfValueLists;
+        private readonly ObjectCache _dictionaryOfValues;
 
         private readonly IReferences _refs;
 
@@ -29,6 +30,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             _lists = new ObjectCache();
             _valueLists = new ObjectCache();
             _dictionaryOfValueLists = new ObjectCache();
+            _dictionaryOfValues = new ObjectCache();
             _refs = this;
         }
 
@@ -135,25 +137,24 @@ namespace Arcemi.Pathfinder.Kingmaker
             return obj;
         }
 
-        ListAccessor<T> IReferences.GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNull)
+        ListAccessor<T> IReferences.GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNotDefined)
         {
-
             if (_lists.TryGet(parent, name, out ListAccessor<T> list)) {
                 return list;
             }
 
             var property = parent.Property(name);
             if (property == null) {
-                if (!createIfNull) return null;
-                throw new ArgumentException($"Parameter {name} does not reference a valid array.");
+                if (!createIfNotDefined) return null;
+                parent.Add(name, new JArray());
+                property = parent.Property(name);
+            }
+            if (property.Value is null || property.Value.Type == JTokenType.Null) {
+                return null;
             }
 
             if (!(property.Value is JArray arr)) {
-                if (property.Value is null) {
-                    throw new ArgumentException($"Parameter {name} does not reference a valid array.");
-                }
-                arr = new JArray();
-                property.Value = arr;
+                throw new ArgumentException($"Parameter {name} does not reference a valid array.");
             }
 
             var listAccessor = new ListAccessor<T>(arr, _refs, factory ?? Mappings.GetFactory<T>());
@@ -184,6 +185,31 @@ namespace Arcemi.Pathfinder.Kingmaker
             var listAccessor = new ListValueAccessor<T>(arr);
             _valueLists.Add(parent, name, listAccessor);
             return listAccessor;
+        }
+
+        public DictionaryOfValueAccessor<TValue> GetOrCreateDictionaryOfValue<TValue>(JObject parent, string name, bool createIfNull = false)
+        {
+            if (_dictionaryOfValues.TryGet(parent, name, out DictionaryOfValueAccessor<TValue> dict)) {
+                return dict;
+            }
+
+            var property = parent.Property(name);
+            if (property == null) {
+                if (!createIfNull) return null;
+                throw new ArgumentException($"Parameter {name} does not reference a valid object.");
+            }
+
+            if (!(property.Value is JObject dictObj)) {
+                if (property.Value is null) {
+                    throw new ArgumentException($"Parameter {name} does not reference a valid object.");
+                }
+                dictObj = new JObject();
+                property.Value = dictObj;
+            }
+
+            dict = new DictionaryOfValueAccessor<TValue>(dictObj);
+            _dictionaryOfValueLists.Add(parent, name, dict);
+            return dict;
         }
 
         public DictionaryOfValueListAccessor<TValue> GetOrCreateDictionaryOfValueList<TValue>(JObject parent, string name, bool createIfNull = false)

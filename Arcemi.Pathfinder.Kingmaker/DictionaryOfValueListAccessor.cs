@@ -133,5 +133,4 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
         }
     }
-
 }

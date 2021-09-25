@@ -96,7 +96,8 @@
     {"id": "cda0615668a6df14eb36ba19ee881af6", "name": "Ranger", "archetypes": [
         {"id": "4fd9705f1aebf614f9500bb0e7341179", "name": "Freebooter"},
         {"id": "300917c3479d27d47b4b4b52b1762e8d", "name": "Flamewarden"},
-        {"id": "a330c05e484d98748a462acd43654a3a", "name": "Stormwalker"}
+        {"id": "a330c05e484d98748a462acd43654a3a", "name": "Stormwalker"},
+        {"id": "7888187acfd26b7499cf255b0d6dcb0e", "name": "Espionage Expert"}
       ]
     },
     {"id": "145f1d3d360a7ad48bd95d392c81b38e", "name": "Shaman", "archetypes": [
@@ -132,7 +133,8 @@
     {"id": "5c4e42124dc2b4647af6e36cf2590500", "name": "Tiefling"},
     {"id": "9d168ca7100e9314385ce66852385451", "name": "Goblin"},
     {"id": "daca06a3f3355664bba1e87e67f3b5b3", "name": "Mongrel"},
-    {"id": "fd188bb7bb0002e49863aec93bfb9d99", "name": "Kitsune"}
+    {"id": "fd188bb7bb0002e49863aec93bfb9d99", "name": "Kitsune"},
+    {"id": "5e464d1d5fd0e7a4380b6ce60ef2c83b", "name": "Ascending Succubus"}
     //{"id": "", "name": ""},
     //{"id": "", "name": ""},
   ],
@@ -148,7 +150,8 @@
     { "id": "1b893f7cf2b150e4f8bc2b3c389ba71d", "name": "Nenio" },
     { "id": "096fc4a96d675bb45a0396bcaa7aa993", "name": "Daeran" },
     { "id": "1cbbbb892f93c3d439f8417ad7cbb6aa", "name": "Sosiel" },
-    { "id": "0d37024170b172346b3769df92a971f5", "name": "Regill" }
+    { "id": "0d37024170b172346b3769df92a971f5", "name": "Regill" },
+    { "id": "a352873d37ec6c54c9fa8f6da3a6b3e1", "name": "Arueshalae" }
     //{ "id": "77c11edb92ce0fd408ad96b40fd27121", "name": "Linzi" },
     //{ "id": "32d2801eddf236b499d42e4a7d34de23", "name": "Jaethal" },
     //{ "id": "b3f29faef0a82b941af04f08ceb47fa2", "name": "Amiri" },
@@ -184,15 +187,17 @@
   ],
   "resources": [
     // Army units
-    { "id": "34800b32867af5e4f9cdcb328470be16", "name": "Footmen" },
-    { "id": "adee0dc84ed3f254fa5da3c90d1e8e3c", "name": "Archers" },
-    { "id": "ff408898eb9e8694cb849869d1dbfa05", "name": "Clerics" },
-    { "id": "24ad1a10190de5c459a4521996dcec4b", "name": "Shield Bearers" },
-    { "id": "5f0d3d1d58db0524bada47fee54b41e3", "name": "Rangers" },
-    { "id": "61e12d43771a40241ac05471a60ddb38", "name": "Hellknights" },
-    { "id": "fc63f902eab24ad0a3d58b44cf514316", "name": "Mounted Scouts" },
+    { "id": "34800b32867af5e4f9cdcb328470be16", "type": "ArmyUnit", "name": "Footmen" },
+    { "id": "adee0dc84ed3f254fa5da3c90d1e8e3c", "type": "ArmyUnit", "name": "Archers" },
+    { "id": "ff408898eb9e8694cb849869d1dbfa05", "type": "ArmyUnit", "name": "Clerics" },
+    { "id": "24ad1a10190de5c459a4521996dcec4b", "type": "ArmyUnit", "name": "Shield Bearers" },
+    { "id": "5f0d3d1d58db0524bada47fee54b41e3", "type": "ArmyUnit", "name": "Rangers" },
+    { "id": "61e12d43771a40241ac05471a60ddb38", "type": "ArmyUnit", "name": "Hellknights" },
+    { "id": "fc63f902eab24ad0a3d58b44cf514316", "type": "ArmyUnit", "name": "Mounted Scouts" },
+    { "id": "80db9a672f3bcf04f9f8de6023dae1fc", "type": "ArmyUnit", "name": "Champions" },
+    { "id": "73801f2040063b848be8431cca5d3573", "type": "ArmyUnit", "name": "Paladins" },
   
     // Facts
-    { "id": "93efbde2764b5504e98e6824cab3d27c", "name": "Kinetic Blast" }
+    { "id": "93efbde2764b5504e98e6824cab3d27c", "type": "Feature", "name": "Kinetic Blast" }
   ]
 }

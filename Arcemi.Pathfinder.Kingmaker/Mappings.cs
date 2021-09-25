@@ -94,6 +94,11 @@ namespace Arcemi.Pathfinder.Kingmaker
             return Resources.TryGetValue(blueprint, out var armyUnit) ? armyUnit.Name : blueprint;
         }
 
+        public static IEnumerable<ResourceMapping> GetResources(ResourceMappingType type)
+        {
+            return Resources.Values.Where(x => x.Type == type).ToArray();
+        }
+
         public static string GetFactName(string blueprint)
         {
             return Resources.TryGetValue(blueprint, out var res) ? res.Name : blueprint;

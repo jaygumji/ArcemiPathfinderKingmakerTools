@@ -80,10 +80,18 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public ListAccessor<T> List<T>([CallerMemberName] string name = null, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
+            where T : Model
         {
             var listAccessor = _refs.GetOrCreateList(_obj, name, factory, createIfNull);
             _changeTracker?.On(name, propertyName);
             return listAccessor;
+        }
+
+        public DictionaryOfValueAccessor<TValue> DictionaryOfValue<TValue>([CallerMemberName] string name = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
+        {
+            var dictAccessor = _refs.GetOrCreateDictionaryOfValue<TValue>(_obj, name, createIfNull);
+            _changeTracker?.On(name, propertyName);
+            return dictAccessor;
         }
 
         public DictionaryOfValueListAccessor<TValue> DictionaryOfValueList<TValue>([CallerMemberName] string name = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)

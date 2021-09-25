@@ -13,6 +13,7 @@ using System.Linq;
 namespace Arcemi.Pathfinder.Kingmaker
 {
     public class ListAccessor<T> : IList, IReadOnlyList<T>, INotifyCollectionChanged
+        where T : Model
     {
         private readonly JArray _array;
         private readonly IReferences _refs;
@@ -28,6 +29,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             _factory = factory;
             _items = array
                 .Select(t => {
+                    if (t == null || t.Type == JTokenType.Null) {
+                        return null;
+                    }
                     var obj = refs.GetReferred((JObject)t);
                     var accessor = new ModelDataAccessor(obj, _refs);
                     return factory.Invoke(accessor);
@@ -59,6 +63,10 @@ namespace Arcemi.Pathfinder.Kingmaker
             return item;
         }
 
+        public void Touch()
+        {
+        }
+
         public T Insert(int index, Action<IReferences, JObject> init = null)
         {
             return InitAndInsert(index, init);
@@ -67,6 +75,28 @@ namespace Arcemi.Pathfinder.Kingmaker
         public T Add(Action<IReferences, JObject> init = null)
         {
             return InitAndInsert(-1, init);
+        }
+
+        public void AddRef<TRef>(TRef item)
+            where TRef : RefModel, T
+        {
+            _items.Add(item);
+            _array.Add(_refs.CreateReference(item.Id));
+        }
+
+        public void SetRef<TRef>(int index, TRef item)
+            where TRef : RefModel, T
+        {
+            _items[index] = item;
+            _array[index] = _refs.CreateReference(item.Id);
+        }
+
+        public int FirstEmptyIndex()
+        {
+            for (var i = 0; i < _items.Count; i++) {
+                if (_items[i] == null) return i;
+            }
+            return -1;
         }
 
         public T this[int index] => _items[index];

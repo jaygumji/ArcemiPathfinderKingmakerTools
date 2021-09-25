@@ -1,5 +1,6 @@
 ﻿@page "/Armies"
 @using System.IO
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 @inject ArmiesViewModel Model
 
 @if (!Model.CanEdit) {
@@ -50,7 +51,38 @@ else {
             </div>
         </div>
         <div class="row g-3">
-            <h3 class="col-md-12">Squads</h3>
+            <h3 class="col-md-2">Squads</h3>
+            <div class="col-md-2 header-toolbar">
+                <button class="btn btn-info" disabled="@(Unit.Data.Squads.Count >= MaxSquadCount)" @onclick="() => modalAddArmyUnit.OpenAsync()">
+                    <span class="oi oi-plus"></span>
+                </button>
+                <Modal @ref="modalAddArmyUnit">
+                    <Title>Add army unit</Title>
+                    <Body>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="add-unit-type" class="form-label">Known Types</label>
+                                <select id="add-unit-type" class="form-control" @bind="KnownArmyUnitBlueprint">
+                                    <option value="X">Custom</option>
+                                    @foreach (var type in AllArmyUnitTypes) {
+                                        <option value="@type.Id">@type.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="add-item-blueprint" class="form-label">Custom Blueprint</label>
+                                <input id="add-item-blueprint" type="text" class="form-control" disabled="@(KnownArmyUnitBlueprint != "X")" @bind="CustomArmyUnitBlueprint" />
+                            </div>
+                        </div>
+                    </Body>
+                    <Footer>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(!IsArmyUnitInputValid)" @onclick="() => AddArmyUnitAsync()">Confirm</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddArmyUnit.CloseAsync()">Cancel</button>
+                    </Footer>
+                </Modal>
+            </div>
         </div>
         <div class="row g-3">
             <div class="col-md-4 form-list-header">
@@ -84,6 +116,34 @@ else {
 @code {
     private bool IsBusy = true;
     private PlayerArmyModel Unit;
+
+    private Modal modalAddArmyUnit;
+    private const int MaxSquadCount = 14;
+
+    private static IEnumerable<ResourceMapping> AllArmyUnitTypes = Mappings.GetResources(ResourceMappingType.ArmyUnit);
+
+    private string KnownArmyUnitBlueprint = "X";
+    private string CustomArmyUnitBlueprint;
+    private bool IsArmyUnitInputValid => KnownArmyUnitBlueprint != "X" || !string.IsNullOrEmpty(CustomArmyUnitBlueprint);
+
+    private async Task AddArmyUnitAsync()
+    {
+        var squad = Unit.Data.Squads.Add();
+        squad.Guid = Guid.NewGuid().ToString();
+        squad.Count = 10;
+        if (KnownArmyUnitBlueprint == "X") {
+            squad.Unit = CustomArmyUnitBlueprint;
+        }
+        else {
+            squad.Unit = KnownArmyUnitBlueprint;
+        }
+
+        var emptyIndex = Unit.Data.SquadsPosition.FirstEmptyIndex();
+        Unit.Data.SquadsPosition.SetRef(emptyIndex, squad);
+        await modalAddArmyUnit.CloseAsync();
+        KnownArmyUnitBlueprint = "X";
+        CustomArmyUnitBlueprint = "";
+    }
 
     protected override async Task OnInitializedAsync()
     {
