@@ -4,6 +4,12 @@
     <Version>1.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="wwwroot\images\Portraits\kingmaker-overrides\**" />
+    <Content Remove="wwwroot\images\Portraits\kingmaker-overrides\**" />
+    <EmbeddedResource Remove="wwwroot\images\Portraits\kingmaker-overrides\**" />
+    <None Remove="wwwroot\images\Portraits\kingmaker-overrides\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="wwwroot\_Res\Portraits\Available\06ba18885cd66c943b6ec9ca8f05f619.png" />
     <Content Remove="wwwroot\_Res\Portraits\Available\13340a3c79e90004a9730bfeb9c7ad1d.png" />

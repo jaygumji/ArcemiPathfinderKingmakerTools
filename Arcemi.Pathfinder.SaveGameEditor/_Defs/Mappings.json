@@ -4,55 +4,85 @@
         {"id": "35a3b7bfc663ac74aa8bb50adfe70813", "name": "Blight Druid"},
         {"id": "782c46afacd88d448afba6178471a744", "name": "Defender of the True World"},
         {"id": "da69747aa3dd0044ebff5f3d701cdde3", "name": "Feyspeaker"},
-        {"id": "c1c86e2997fd4257a13ef5601b5dc6dd", "name": "Primal Druid"}
+        {"id": "c1c86e2997fd4257a13ef5601b5dc6dd", "name": "Primal Druid"},
+        {"id": "a6bf603aa4d666f4f86dab0289e2048c", "name": "Drovier"},
+        {"id": "f815594bd1e3454182022d375bf70fd1", "name": "Elemental Rampager"}
       ]
     },
     {"id": "45a4607686d96a1498891b3286121780", "name": "Magus", "archetypes": [
         {"id": "d078b2ef073f2814c9e338a789d97b73", "name": "Eldritch Scion"},
         {"id": "7d6678f2160018049814838af2ab4236", "name": "Sword Saint"},
-        {"id": "44388c01eb4a29d4d90a25cc0574320d", "name": "Eldritch Archer"}
+        {"id": "44388c01eb4a29d4d90a25cc0574320d", "name": "Eldritch Archer"},
+        {"id": "2dff80a045794cb9b5452fe7b66b79d7", "name": "Arcane Rider"},
+        {"id": "79ccf7a306a5d5547bebd97299f6fc89", "name": "Hexcrafter"},
+        {"id": "1125145639129cf45b6b9b674cbd62b1", "name": "Spell Dancer"},
+        {"id": "67ec8dcae6fb3d3439e5ae874ddc7b9b", "name": "Armored Battlemage"}
       ]
     },
     {"id": "42a455d9ec1ad924d889272429eb8391", "name": "Kineticist", "archetypes": [
         {"id": "f2847dd4b12fffd41beaa3d7120d27ad", "name": "Psychokineticist"},
         {"id": "f12f18ae8842425489d29f302e69134c", "name": "Dark Elementalist"},
-        {"id": "7d61d9b2250260a45b18c5634524a8fb", "name": "Kinetic Knight"}
+        {"id": "7d61d9b2250260a45b18c5634524a8fb", "name": "Kinetic Knight"},
+        {"id": "365b50dba54efb74fa24c07e9b7a838c", "name": "Blood Kineticist"},
+        {"id": "4a8324d676d642c99edcdda6988ca3b1", "name": "Elemental Engine"},
+        {"id": "aa11888104d17f7459851e8d559ffa98", "name": "Overwhelming Soul"}
       ]
     },
     {"id": "f1a70d9e1b0b41e49874e1fa9052a1ce", "name": "Inquisitor", "archetypes": [
         {"id": "46eb929c8b6d7164188eb4d9bcd0a012", "name": "Sacred Huntmaster"},
         {"id": "639b74fd2f48d474e965c596b1649095", "name": "Tactical Leader"},
-        {"id": "cdaabf4b146c9ba42ab7d05abe3b48c4", "name": "Monster Tactician"}
+        {"id": "cdaabf4b146c9ba42ab7d05abe3b48c4", "name": "Monster Tactician"},
+        {"id": "ac87f40932cfd324c90b441f93857c40", "name": "Faith Hunter"},
+        {"id": "0e5e91c17f114d358910e0da4ae29b50", "name": "Judge"},
+        {"id": "19b4a243d9a4bd34887d03c3dea03ced", "name": "Sanctified Slayer"}
       ]
     },
     {"id": "ba34257984f4c41408ce1dc2004e342e", "name": "Wizard", "archetypes":  [
       {"id": "17b26d5302cd3e243a281a0beec6256b", "name": "Arcane Bomber"},
       {"id": "55a8ce15e30d71547a44c69bb2e8a84f", "name": "Thassilonian Specialist"},
-      {"id": "f43c78692a4e10d43a38bd6aedf53c1b", "name": "Scroll Savant"}
+      {"id": "f43c78692a4e10d43a38bd6aedf53c1b", "name": "Scroll Savant"},
+      {"id": "8789dcfc6f8e4fe49d80b90472ea6993", "name": "Cruoromancer"},
+      {"id": "c4a866cef5134632a8a3ef5696f45a5b", "name": "Elemental Specialist"},
+      {"id": "6d2027b4eec590c41adb5caeb7bb026d", "name": "Exploiter Wizard"},
+      {"id": "bb571f1b6cea462e99db7893685a0982", "name": "Spell Master"}
      ]},
     {"id": "e8f21e5b58e0569468e420ebea456124", "name": "Monk", "archetypes": [
         {"id": "f8767821ec805bf479706392fcc3394c", "name": "Sensei"},
         {"id": "5868fc82eb11a4244926363983897279", "name": "Scaled Fist"},
         {"id": "8f3242d209994884bbb6c0999660f4df", "name": "Traditional Monk"},
-        {"id": "2b1a58a7917084f49b097e86271df21c", "name": "Zen Archer"}
+        {"id": "2b1a58a7917084f49b097e86271df21c", "name": "Zen Archer"},
+        {"id": "dde7724382ae4f63aa9786cb9b3b64b2", "name": "Quarterstaff Master"},
+        {"id": "fad7c56737ed12e42aacc330acc86428", "name": "Sohei"},
+        {"id": "3b81e57a75299b74ab6b144e830864e9", "name": "Student of Stone"}
       ]
     },
     {"id": "b3a505fb61437dc4097f43c3f8f9a4cf", "name": "Sorcerer", "archetypes": [
         {"id": "aa00d945f7cf6c34c909a29a25f2df38", "name": "Empyreal Sorcerer"},
         {"id": "711d5024ecc75f346b9cda609c3a1f83", "name": "Sylvan Sorcerer"},
-        {"id": "00b990c8be2117e45ae6514ee4ef561c", "name": "Sage Sorcerer"}
+        {"id": "00b990c8be2117e45ae6514ee4ef561c", "name": "Sage Sorcerer"},
+        {"id": "e66a112ab57f69e418f1f11d5d2f3248", "name": "Crossblooded"},
+        {"id": "65a630aa291f65047b90a2af5df75d83", "name": "Nine Tailed Heir"},
+        {"id": "734917ec8b8542378c1d35519439d67f", "name": "Overwhelming Mage"},
+        {"id": "7229db6fc0b07af4180e783eed43c4d9", "name": "Seeker"}
       ]
     },
     {"id": "67819271767a9dd4fbfd4ae700befea0", "name": "Cleric", "archetypes": [
         {"id": "472af8cb3de628f4a805dc4a038971bc", "name": "Ecclesitheurge"},
         {"id": "6bfb7e74b530f3749b590286dd2b9b30", "name": "Crusader"},
-        {"id": "c4a02990f15c0bb4d8749a90a5ed46b3", "name": "Herald Caller"}
+        {"id": "c4a02990f15c0bb4d8749a90a5ed46b3", "name": "Herald Caller"},
+        {"id": "857bc9fadf70f294795a9cba974a48b8", "name": "Angelfire Apostle"},
+        {"id": "2537d1312a462834aadbd1153a2a0d54", "name": "Devilbane Priest"},
+        {"id": "a4560e3fb5d247d68fb1a2738fcc0855", "name": "Priest of Balance"}
       ]
     },
     {"id": "299aa766dee3cbf4790da4efb8c72484", "name": "Rogue", "archetypes": [
         {"id": "9e94d1847e6f331478e5a714659220ce", "name": "Knife Master"},
         {"id": "57f93dd8423c97c49989501281296c4a", "name": "Eldritch Scoundrel"},
-        {"id": "b5f0b25e1519d27479018353b51fd349", "name": "Thug"}
+        {"id": "b5f0b25e1519d27479018353b51fd349", "name": "Thug"},
+        {"id": "b4f5741d42c4cb04abf5ab3fe33f6fc5", "name": "Underground Chemist"},
+        {"id": "bd4e70bfb89a452b876713d61b9b8eb2", "name": "Master of All"},
+        {"id": "4dbc4b7f2d5149ce83854bffa72035ce", "name": "Rowdy"},
+        {"id": "490394869f666c141bf8647b1a365220", "name": "Sylvan Trickster"}
       ]
     },
     {"id": "de52b73972f0ed74c87f8f6a8e20b542", "name": "Eldritch Knight"},
@@ -62,64 +92,180 @@
     {"id": "0920ea7e4fd7a404282e3d8b0ac41838", "name": "Mystic Theurge"},
     {"id": "4e0ea99612ae87a499c7fb0588e31828", "name": "Duelist"},
     {"id": "ed246f1680e667b47b7427d51e651059", "name": "Hellknight"},
+    {"id": "90e4d7da3ccd1a8478411e07e91d5750", "name": "Aldori Swordlord"},
+    {"id": "46b1fe9759ea01f4d883b23d8f0aecbb", "name": "Student of War"},
+    {"id": "ee6425d6392101843af35f756ce7fefd", "name": "Hellknight Signifier"},
+    {"id": "4a7c05adfbaf05446a6bf664d28fb103", "name": "Loremaster"},
+    {"id": "eb284ea8d40a2d045911f525eb96c43d", "name": "Assassin"},
+    {"id": "eb24ca44debf6714aabe1af1fd905a07", "name": "Winter Witch"},
     {"id": "0937bec61c0dabc468428f496580c721", "name": "Alchemist", "archetypes": [
         {"id": "6af888a7800b3e949a40f558ff204aae", "name": "Grenadier"},
         {"id": "68cbcd9fbf1fb1d489562f829bb97e38", "name": "Vivisectionist"},
-        {"id": "063440d550b25524abcb8dc2590d0168", "name": "Chirurgeon"}
+        {"id": "063440d550b25524abcb8dc2590d0168", "name": "Chirurgeon"},
+        {"id": "6faf49766d8156c419d08f556a40374f", "name": "Incense Synthesizer"},
+        {"id": "ac242ddeaa05af449bfc5230231fab84", "name": "Metamorph"},
+        {"id": "d218568445cf0524e889a2dfce97d76f", "name": "Preservationist"}
       ]
     },
     {"id": "f7d7eb166b3dd594fb330d085df41853", "name": "Barbarian", "archetypes": [
         {"id": "48277b221b6ba6e40affb1e9b49faf36", "name": "Armored Hulk"},
         {"id": "063da4c77fa59454a9828c9ece407ea1", "name": "Mad Dog"},
-        {"id": "a2ccb759dc6f1f94d9aae8061509bf87", "name": "Invulnerable Rager"}
+        {"id": "a2ccb759dc6f1f94d9aae8061509bf87", "name": "Invulnerable Rager"},
+        {"id": "3f0a548044dbad04b82535237584772b", "name": "Pack Rager"},
+        {"id": "adffdd8a99094a89823a79292a503ee9", "name": "Instinctual Warrior"},
+        {"id": "e791f31b7fd225645ae709958afe2e91", "name": "Beastkin Berserker"}
       ]
     },
     {"id": "772c83a25e2268e448e841dcd548235f", "name": "Bard", "archetypes": [
         {"id": "38384e0c1e99c2e42ac6ed70a04aca46", "name": "Archaeologist"},
         {"id": "e7914f2adcdb8fc46af5b65d1e06c539", "name": "Flame Dancer"},
-        {"id": "3c67fb6458752a1419fb8cd4efaf8eaa", "name": "Thundercaller"}
+        {"id": "3c67fb6458752a1419fb8cd4efaf8eaa", "name": "Thundercaller"},
+        {"id": "f128f6cd9c140284caa244da069f250c", "name": "Dirge Bard"},
+        {"id": "912b0495d9485124bb2c0e4aa6ac2efd", "name": "Beast Tamer"},
+        {"id": "bed077eaa12834b4495cf481ee721810", "name": "Tranquil Whisperer"}
       ]
     },
     {"id": "48ac8db94d5de7645906c7d0ad3bcfbd", "name": "Fighter", "archetypes": [
         {"id": "a599da9a8a6b9e54083b0a4d2a25db59", "name": "Tower Shield Specialist"},
         {"id": "84643e02a764bff4a9c1aba333a53c89", "name": "Two-Handed Fighter"},
         {"id": "d80a67a264f206e4b8d2fcf7e560d48f", "name": "Aldori Defender"},
-        {"id": "fdee5f25a5d0fe0448d093b462435c0c", "name": "Armiger"}
+        {"id": "fdee5f25a5d0fe0448d093b462435c0c", "name": "Armiger"},
+        {"id": "8dff97413c63c1147be8a5ca229abefc", "name": "Dragonheir Scion"},
+        {"id": "758e0061a077e54409a3bf0eb51511e5", "name": "Mutation Warrior"}
       ]
     },
     {"id": "bfa11238e7ae3544bbeb4d0b92e897ec", "name": "Paladin", "archetypes": [
         {"id": "fec08c1a3187da549abd6b85f27e4432", "name": "Divine Hunter"},
         {"id": "fcdb27e1a6cef834ea1d7fab7c6e2b61", "name": "Hospitaler"},
-        {"id": "5693945afac189a469ef970eac8f71d9", "name": "Divine Guardian"}
+        {"id": "5693945afac189a469ef970eac8f71d9", "name": "Divine Guardian"},
+        {"id": "5ce3a2f8eae64cf2ba83865711e53e27", "name": "Divine Scion"},
+        {"id": "4d9a864eae278744aafa7ff23f2a6466", "name": "Martyr"},
+        {"id": "cf0f99b3cd7444a48681b1c1c4aa2a41", "name": "Stonelord"},
+        {"id": "cc70a9fdcd8781a4ca2f0e594f066964", "name": "Warrior of the Holy Light"}
       ]
     },
     {"id": "cda0615668a6df14eb36ba19ee881af6", "name": "Ranger", "archetypes": [
         {"id": "4fd9705f1aebf614f9500bb0e7341179", "name": "Freebooter"},
         {"id": "300917c3479d27d47b4b4b52b1762e8d", "name": "Flamewarden"},
         {"id": "a330c05e484d98748a462acd43654a3a", "name": "Stormwalker"},
-        {"id": "7888187acfd26b7499cf255b0d6dcb0e", "name": "Espionage Expert"}
+        {"id": "7888187acfd26b7499cf255b0d6dcb0e", "name": "Espionage Expert"},
+        {"id": "fd8c915590dcc5b41b73b80c3c0da8ee", "name": "Demonslayer"},
+        {"id": "9f147dbae4a34cda9f0e6091dc1a4a7c", "name": "Nomad"}
       ]
     },
     {"id": "145f1d3d360a7ad48bd95d392c81b38e", "name": "Shaman", "archetypes": [
-        {"id": "39b2fd5000e5eb142bfde2afa6c83f76", "name": "Spirit Hunter"}
+        {"id": "39b2fd5000e5eb142bfde2afa6c83f76", "name": "Spirit Hunter"},
+        {"id": "7939ff57cc2ce104693ea2f5afa595b6", "name": "Possessed Shaman"},
+        {"id": "5086aef2b76c433584160f7b49aef95b", "name": "Shadow Shaman"},
+        {"id": "a6ab54dbe2cc9314a8ad62863fbc64c4", "name": "Spirit Warden"},
+        {"id": "556590a43467a27459ac1a80324c9f9f", "name": "Unsworn Shaman"},
+        {"id": "bb14b164c2ce4e2bb05434a3218ff73d", "name": "Wildland Shaman"},
+        {"id": "96c2b16450cc98548a0e82f743fbee80", "name": "Witch Doctor"}
       ]
     },
     {"id": "1b9873f1e7bfe5449bc84d03e9c8e3cc", "name": "Witch", "archetypes": [
-        {"id": "c5f6e53e71059fb4d802ce81a277a12d", "name": "Stigmatized Witch"}
+        {"id": "c5f6e53e71059fb4d802ce81a277a12d", "name": "Stigmatized Witch"},
+        {"id": "d7c7cdbc760041fabaedc1623a53a431", "name": "Elemental Witch"},
+        {"id": "96e4c06b6add0a64a8ad8976f9c38c37", "name": "Hagbound"},
+        {"id": "191b4be2152fde541ac8984c7f36e91d", "name": "Hex Channeler"},
+        {"id": "ee92a9813c04b1440a3af3c766b6b02d", "name": "Ley Line Guardian"},
+        {"id": "08045a390a764d71b2150fd122e05e19", "name": "Witch of the Veil"}
       ]
     },
-    {"id": "20ce9bf8af32bee4c8557a045ab499b1", "name": "Oracle", "archetypes": []
+    {"id": "20ce9bf8af32bee4c8557a045ab499b1", "name": "Oracle", "archetypes": [
+        {"id": "204117c48168f2a41a8e155419e6e880", "name": "Divine Herbalist"},
+        {"id": "4f2698f04fa63e34b8153fa3a9795649", "name": "Enlightened Philosopher"},
+        {"id": "8f205adfab73b3c4c8c93d251a3cef02", "name": "Lone Strider"},
+        {"id": "09035bb5dbb714645bb08ea7db47884c", "name": "Possessed Oracle"},
+        {"id": "c9df67160a77ecd4a97928f2455545d7", "name": "Purifier"},
+        {"id": "c539d65b7682c8d469e6f122922f1dee", "name": "Seeker"},
+        {"id": "77769e43e63647c2b32298efcc577aca", "name": "Wind Whisperer"}
+      ]
     },
     {"id": "26b10d4340839004f960f9816f6109fe", "name": "Animal", "archetypes": [
-        {"id": "b56b64f13a2b4c0ea507e86e1620aa98", "name": "Bulwark"}
+        {"id": "b56b64f13a2b4c0ea507e86e1620aa98", "name": "Bulwark"},
+        {"id": "0a146638c22af254895f332dc865cdca", "name": "Wrecker"},
+        {"id": "98ce0856db141964ebb3ad46379c66b5", "name": "Racer"},
+        {"id": "3ae8abeef5615294c85a2d0f92f592de", "name": "Deathtouched"},
+        {"id": "c0408f7c61c3f934abb5d98e3eece6c3", "name": "Bully"},
+        {"id": "380903f7a2424e11b89b7e1f15930fe2", "name": "Aggressor"},
+        {"id": "2f3eb33b70e86d14787f62fd584fa4f2", "name": "Daredevil"}
       ]
     },
-    {"id": "247aa787806d5da4f89cfc3dff0b217f", "name": "Mythic", "archetypes": [] // Player mythic blueprint
+    {"id": "247aa787806d5da4f89cfc3dff0b217f", "name": "Mythic", "archetypes": []}, // Player mythic champion blueprint
+    {"id": "530b6a79cb691c24ba99e1577b4beb6d", "name": "Mythic", "archetypes": []}, // Companion mythic blueprint
+    {"id": "a5a9fe8f663d701488bd1db8ea40484e", "name": "Mythic Angel", "archetypes": []},
+    {"id": "9a3b2c63afa79744cbca46bea0da9a16", "name": "Mythic Azata", "archetypes": []},
+    {"id": "52dbfd8505e22f84fad8d702611f60b7", "name": "Arcanist", "archetypes": [
+        {"id": "ce63b2df8c6c12649b02c278e73d8bfa", "name": "Brown-Fur Transmuter"},
+        {"id": "2f35608fc073c04448a9c162a20852ce", "name": "Eldritch Font"},
+        {"id": "26185cfb81b34e778ad370407300de9a", "name": "Nature Mage"},
+        {"id": "e9d0ee69305049fe8400a066010dbcd1", "name": "Phantasmal Mage"},
+        {"id": "44f3ba33839a87f48a66b2b9b2f7c69b", "name": "Unlettered Arcanist"},
+        {"id": "5f2fa2e0d1cf1ca428af7e24c443d868", "name": "White Mage"}
+      ]
     },
-    {"id": "530b6a79cb691c24ba99e1577b4beb6d", "name": "Mythic", "archetypes": [] // Companion mythic blueprint
+    {"id": "d77e67a814d686842802c9cfd8ef8499", "name": "Bloodrager", "archetypes": [
+        {"id": "32a5dff92373a9641b43e97d453b9369", "name": "Steelblood"},
+        {"id": "afe79636228fdd64ea8d9bf3644838a3", "name": "Spelleater"},
+        {"id": "d55163eed9214367820654f0ebe0ff69", "name": "Reformed Fiend"},
+        {"id": "4d588290ed0736e4f8cd3f4c3beacd69", "name": "Primalist"},
+        {"id": "10d92d54d19e4a59b5bbd4259ec0974f", "name": "Mixed-Blood Rager"},
+        {"id": "5648585af75596f4a9fa3ae385127f57", "name": "Greenrager"},
+        {"id": "9a8b323e5559dab45a23e0dc0b8e9c52", "name": "Bloodrider"}
+      ]
+    },
+    {"id": "3adc3439f98cb534ba98df59838f02c7", "name": "Cavalier", "archetypes": [
+        {"id": "d287fbf2495ff2e4d88d5c49217bf173", "name": "Beast Rider"},
+        {"id": "4c4c3f9df00a5e04680d172a290111c4", "name": "Disciple of the Pike"},
+        {"id": "13cc5ccd5cef4c98a5806f033e19a8bb", "name": "Fearsome Leader"},
+        {"id": "48fd69254e9e5c540bd65101d3252184", "name": "Gendarme"},
+        {"id": "112dd0e61f95c3a459ac0a565472e685", "name": "Knight of the Wall"},
+        {"id": "07db3fec753209546a792a7942288998", "name": "Standard Bearer"},
+        {"id": "8d95dc9edd5740aeadb5906198a9925a", "name": "Cavalier of the Paw"}
+      ]
+    },
+    {"id": "34ecd1b5e1b90b9498795791b0855239", "name": "Hunter", "archetypes": [
+        {"id": "34963fc6d87354c4fa85eb76f122c41c", "name": "Colluding Scoundrel"},
+        {"id": "339659f6b09b4136bf8c2b2c3df87c65", "name": "Divine Hound"},
+        {"id": "f996f0a18e5d945459e710ee3a6dd485", "name": "Divine Hunter"},
+        {"id": "74ee8172df6782f4792ea0f8647dea34", "name": "Forester"},
+        {"id": "f1341c61c77092643ae63d7cb52f83f8", "name": "Urban Hunter"},
+        {"id": "0be343c549776574286730b33ae5c676", "name": "Wandering Marksman"}
+      ]
+    },
+    {"id": "6afa347d804838b48bda16acb0573dc0", "name": "Skald", "archetypes": [
+        {"id": "71d41dd6309ea994886908c34c87ccd9", "name": "Battle Scion"},
+        {"id": "db942e7040084ea289c6be2bfeb3d0a8", "name": "Battle Singer"},
+        {"id": "5e63586bebd229649bdafe0fde4caaec", "name": "Court Poet"},
+        {"id": "9c46c4e4303e5da40b63faa6df18e2c2", "name": "Demon Dancer"},
+        {"id": "72fa7b1c7a6ede44eb490080bf4a2f90", "name": "Herald of the Horn"},
+        {"id": "67daa4f4f2b62f54cb3ec56bdc85dea6", "name": "Hunt Caller"}
+      ]
+    },
+    {"id": "c75e0971973957d4dbad24bc7957e4fb", "name": "Slayer", "archetypes": [
+        {"id": "23a5d0ca607f6094097d509b2b1f4a10", "name": "Arcane Enforcer"},
+        {"id": "738c5666f8ef46c45942df9100a0d254", "name": "Deliverer"},
+        {"id": "8040e66d2724c754f85dd3026a1f0cee", "name": "Executioner"},
+        {"id": "5947427f10bc497dbc24f66129b43e5d", "name": "Imitator"},
+        {"id": "f6e304de008939d46960a2ebb075e150", "name": "Spawn Slayer"},
+        {"id": "598f461cd7885304e8bae040122cb249", "name": "Stygian Slayer"},
+        {"id": "67bbc0dcd471ea0428a362f6e94f3a51", "name": "Vanguard"}
+      ]
+    },
+    {"id": "30b5e47d47a0e37438cc5a80c96cfb99", "name": "Warpriest", "archetypes": [
+        {"id": "ad56b5819c4072345bff9aff6f1df13c", "name": "Champion of the Faith"},
+        {"id": "cd2d419961bb019438b77d4aecc2fc04", "name": "Cult Leader"},
+        {"id": "384a9d0c3f1b0634ba183b77d75618c0", "name": "Disenchanter"},
+        {"id": "f68ca492c9c15e241ab73735fbd0fb9f", "name": "Feral Champion"},
+        {"id": "aaf7ace9642192d4389eab95e6cd04fd", "name": "Proclaimer"},
+        {"id": "d34dcc10e74961f44a81f72b54377b24", "name": "Shieldbearer"}
+      ]
     }
-    //{"id": "", "name": "", "archetypes":  [{"id": "", "name": ""}]},
-    //{"id": "", "name": "", "archetypes":  [{"id": "", "name": ""}]},
+    //{"id": "", "name": "", "archetypes": [
+    //    {"id": "", "name": ""}
+    //  ]
+    //},
   ],
   "races": [
     {"id": "25a5878d125338244896ebd3238226c8", "name": "Elf"},
@@ -134,9 +280,9 @@
     {"id": "9d168ca7100e9314385ce66852385451", "name": "Goblin"},
     {"id": "daca06a3f3355664bba1e87e67f3b5b3", "name": "Mongrel"},
     {"id": "fd188bb7bb0002e49863aec93bfb9d99", "name": "Kitsune"},
-    {"id": "5e464d1d5fd0e7a4380b6ce60ef2c83b", "name": "Ascending Succubus"}
-    //{"id": "", "name": ""},
-    //{"id": "", "name": ""},
+    {"id": "5e464d1d5fd0e7a4380b6ce60ef2c83b", "name": "Ascending Succubus"},
+    {"id": "4d4555326b9b7144f93be1ea61337cd7", "name": "Oread"},
+    {"id": "64e8b7d5f1ae91d45bbf1e56a3fdff01", "name": "Dhampir"}
   ],
   "characters": [
     { "id": "4391e8b9afbb0cf43aeba700c089f56d", "name": "Player" },
@@ -178,10 +324,18 @@
     { "id": "740dd241aec5a314aa08f806348422a6", "name": "Kesten Garess", "portrait": "f51ff39fb951c1241944e49ea438ccdd" },
     { "id": "c8d4913edee594749b706de35924617e", "name": "Jhod Kavken", "portrait": "3a664504f1764d040ba3340eb580253e" },
     { "id": "fcdea41a3c8720143988560ba6d4a3de", "name": "Storyteller" },
-    { "id": "1de0dac203bc90f45a6178c8f76ca65a", "name": "Magister Pilkwell" },
-    { "id": "ed6df9e9a47a4e22ab41443c43d25e57", "name": "Soravielle Evenmist" },
-    { "id": "2035bb240ae2456ebc7e5a7525bfa80d", "name": "Setsuna Shy" }
-    //{ "id": "", "name": "" },
+    { "id": "1de0dac203bc90f45a6178c8f76ca65a", "name": "Magister Pilkwell", "portrait": "682d98537972a724ba0a16816fff9536" },
+    { "id": "ed6df9e9a47a4e22ab41443c43d25e57", "name": "Soravielle Evenmist", "portrait": "8325d794cd3ba33408b6edc557329b7b" },
+    { "id": "2035bb240ae2456ebc7e5a7525bfa80d", "name": "Setsuna Shy", "portrait": "d29d80163400420693e5abf10bb96467" },
+    { "id": "88a293b6bba340ffb72bfc15282cde97", "name": "Al'Mahti Grinning Wolf", "portrait": "06ba18885cd66c943b6ec9ca8f05f619" },
+    { "id": "536e91278aa24dcaa13bdf49acdca288", "name": "Chief Ageboya", "portrait": "ae8bebdec27caad4cb2065cb0a4bfcd9" },
+    { "id": "0de7b88084ec473793a1870e378e9b7b", "name": "Furio Solaretti", "portrait": "fffa210b164ce9549bf8ecc7f6a3fa34" },
+    { "id": "efcfe6c0473741d6b01bbfbf46eba22a", "name": "Iron Bregweld", "portrait": "facfa6a8a9902324899f0a9447e9e46b" },
+    { "id": "2fc6b46c7b29434e8950553f2ee71c79", "name": "White Nysa", "portrait": "6eba8ba521d3469f8e487db4a6e5a893" },
+    { "id": "79b676054124429ab097123e3e971903", "name": "Vigard the Raider", "portrait": "f8f47775302b43bf84c7dedac45941f2" },
+    { "id": "c2f459f7de4a463bb9673030bd8443b8", "name": "Lodvig the Swordman", "portrait": "ce1cdff29d1f4650a843890c8caf71bc" },
+    { "id": "16670966ec49427a849157ec3a89cf77", "name": "Sir Tector Silverhill", "portrait": "61029b6221200864c87a0b29565c6c86" },
+    { "id": "12d26ece33984e7387ce9094dd0737b1", "name": "Baroness Gaunther", "portrait": "37b60641d5545b642ae4d3699298d3f5" }
     //{ "id": "", "name": "" },
     //{ "id": "", "name": "" },
   ],
