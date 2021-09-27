@@ -36,6 +36,14 @@ namespace Arcemi.Pathfinder.Kingmaker
             return _resources.AllPortraits["_s_unknown"].Uri;
         }
 
+        public string GetLeaderPortraitUri(string blueprint)
+        {
+            if (Mappings.TryGetLeader(blueprint, out var leader)) {
+                return GetPortraitsUri(leader.Portrait);
+            }
+            return GetPortraitsUri(blueprint);
+        }
+
         public string GetPortraitsUri(string key)
         {
             return _resources.AllPortraits.TryGetValue(key, out var portrait) ? portrait.Uri : GetUnknownUri();

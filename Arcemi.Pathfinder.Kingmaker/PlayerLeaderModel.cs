@@ -21,7 +21,7 @@
                 if (string.IsNullOrEmpty(BlueprintRef)) {
                     return _portraits.GetUnknownUri();
                 }
-                return _portraits.GetPortraitsUri(BlueprintRef);
+                return _portraits.GetLeaderPortraitUri(BlueprintRef);
             }
         }
 

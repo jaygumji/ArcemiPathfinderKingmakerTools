@@ -104,6 +104,11 @@ namespace Arcemi.Pathfinder.Kingmaker
             return Resources.TryGetValue(blueprint, out var res) ? res.Name : blueprint;
         }
 
+        public static bool TryGetLeader(string blueprint, out LeaderDataMapping leader)
+        {
+            return Leaders.TryGetValue(blueprint, out leader);
+        }
+
         public static string GetLeaderName(string blueprint)
         {
             if (string.IsNullOrEmpty(blueprint)) {

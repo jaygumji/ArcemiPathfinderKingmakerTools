@@ -18,5 +18,13 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public IEnumerable<PlayerArmyModel> Armies => main.Player?.GlobalMaps?.SelectMany(m => m.Armies).Where(a => a.Data.IsFactionCrusaders());
         public bool HasArmies => Armies?.Any() ?? false;
+
+        public string FindLeaderPortrait(PlayerArmyModel unit)
+        {
+            if (string.IsNullOrEmpty(unit.Data.LeaderGuid)) return Portraits.GetUnknownUri();
+            var leader = main.Player.LeadersManager?.Leaders?.FirstOrDefault(l => string.Equals(l.LeaderGuid, unit.Data.LeaderGuid));
+            if (leader == null) return Portraits.GetUnknownUri();
+            return leader.PortraitPath;
+        }
     }
 }
