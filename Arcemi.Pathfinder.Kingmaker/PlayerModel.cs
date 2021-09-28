@@ -10,6 +10,8 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public class PlayerModel : RefModel
     {
+        private TimeParts _gameTimeParts;
+
         public PlayerModel(ModelDataAccessor accessor) : base(accessor)
         {
             N.On(Kingdom, nameof(Kingdom.Disabled), nameof(IsKingdomEnabled));
@@ -20,6 +22,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public int Money { get => A.Value<int>(); set => A.Value(value); }
         public int Chapter { get => A.Value<int>(); set => A.Value(value); }
         public TimeSpan GameTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
+        public TimeParts GameTimeParts => _gameTimeParts ?? (_gameTimeParts = new TimeParts(() => GameTime, v => GameTime = v));
         public TimeSpan RealTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
 
         public PlayerDifficultyModel Difficulty => A.Object(factory: a => new PlayerDifficultyModel(a));

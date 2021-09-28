@@ -31,6 +31,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             UntypedFactories = new Dictionary<Type, Func<ModelDataAccessor, object>>();
             Factories = new Dictionary<Type, object>();
 
+            RegisterFactory(m => new HeaderModel(m));
             RegisterFactory(m => new PartyModel(m));
             RegisterFactory(m => new UnitEntityModel(m));
             RegisterFactory(m => new CharacterModel(m));

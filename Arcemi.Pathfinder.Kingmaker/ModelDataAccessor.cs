@@ -108,6 +108,10 @@ namespace Arcemi.Pathfinder.Kingmaker
             if (property == null || property.Value is null) {
                 return default(T);
             }
+            if (typeof(T) == typeof(TimeSpan)) {
+                var str = _obj.Property(name).Value.Value<string>();
+                return string.IsNullOrEmpty(str) ? default(T) : (T)(object)TimeSpan.Parse(str);
+            }
             return _obj.Property(name).Value.Value<T>();
         }
 

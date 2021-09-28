@@ -16,13 +16,14 @@
     </button>
 </div>
 
+@if (Model.CanEdit) {
 <div class="row g-3">
     <div class="col-md-12">
         <label class="form-label">Path</label>
         <input class="form-control" type="text" readonly="readonly" value="@Model.CurrentPath" />
     </div>
-
-@if (Model.CanEdit) {
+</div>
+<div class="row g-3">
     <div class="col-md-4">
         <label class="form-label">Money</label>
         <input class="form-control" type="number" @bind="@Model.Player.Money" />
@@ -33,8 +34,25 @@
         <input class="form-control" type="number" @bind="@Model.Player.Corruption.CurrentValue" />
     </div>
     }
-}
 </div>
+<div class="row g-3">
+    <h4 class="col-md-12">Game Time</h4>
+</div>
+<div class="row g-3">
+    <div class="col-md-2">
+        <label class="form-label">Days</label>
+        <input class="form-control" type="text" @bind="Model.Player.GameTimeParts.Days" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Hours</label>
+        <input class="form-control" type="text" @bind="Model.Player.GameTimeParts.Hours" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Minutes</label>
+        <input class="form-control" type="text" @bind="Model.Player.GameTimeParts.Minutes" />
+    </div>
+</div>
+}
 </fieldset>
 
 @code {
