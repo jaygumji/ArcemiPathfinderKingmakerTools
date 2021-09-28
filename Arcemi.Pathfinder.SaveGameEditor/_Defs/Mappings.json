@@ -297,7 +297,9 @@
     { "id": "096fc4a96d675bb45a0396bcaa7aa993", "name": "Daeran" },
     { "id": "1cbbbb892f93c3d439f8417ad7cbb6aa", "name": "Sosiel" },
     { "id": "0d37024170b172346b3769df92a971f5", "name": "Regill" },
-    { "id": "a352873d37ec6c54c9fa8f6da3a6b3e1", "name": "Arueshalae" }
+    { "id": "a352873d37ec6c54c9fa8f6da3a6b3e1", "name": "Arueshalae" },
+    { "id": "f72bb7c48bb3e45458f866045448fb58", "name": "Greybor" },
+    { "id": "32a037e97c3d5c54b85da8f639616c57", "name": "Aivu" }
     //{ "id": "77c11edb92ce0fd408ad96b40fd27121", "name": "Linzi" },
     //{ "id": "32d2801eddf236b499d42e4a7d34de23", "name": "Jaethal" },
     //{ "id": "b3f29faef0a82b941af04f08ceb47fa2", "name": "Amiri" },
