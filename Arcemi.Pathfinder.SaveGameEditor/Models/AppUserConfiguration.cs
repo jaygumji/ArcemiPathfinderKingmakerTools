@@ -8,6 +8,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
     public class AppUserConfiguration
     {
         public string AppDataFolder { get; set; }
+        public string GameFolder { get; set; }
 
         public async Task SaveAsync(string path)
         {

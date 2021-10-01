@@ -63,19 +63,21 @@ else {
                             <div class="col-md-12">
                                 <label for="add-unit-type" class="form-label">Known Types</label>
                                 <select id="add-unit-type" class="form-control" @bind="KnownArmyUnitBlueprint">
-                                    <option value="X">Custom</option>
+                                    <option value="X">@(Model.Resources.Blueprints.IsEmpty ? "Custom" : "Select Army Unit...")</option>
                                     @foreach (var type in AllArmyUnitTypes) {
-                                        <option value="@type.Id">@type.Name</option>
+                                        <option value="@type.Id">@type.DisplayName</option>
                                     }
                                 </select>
                             </div>
                         </div>
+                        @if (Model.Resources.Blueprints.IsEmpty) {
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label for="add-item-blueprint" class="form-label">Custom Blueprint</label>
                                 <input id="add-item-blueprint" type="text" class="form-control" disabled="@(KnownArmyUnitBlueprint != "X")" @bind="CustomArmyUnitBlueprint" />
                             </div>
                         </div>
+                        }
                     </Body>
                     <Footer>
                         <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(!IsArmyUnitInputValid)" @onclick="() => AddArmyUnitAsync()">Confirm</button>
@@ -120,7 +122,7 @@ else {
     private Modal modalAddArmyUnit;
     private const int MaxSquadCount = 14;
 
-    private static IEnumerable<ResourceMapping> AllArmyUnitTypes = Mappings.GetResources(ResourceMappingType.ArmyUnit);
+    private IEnumerable<IBlueprint> AllArmyUnitTypes;
 
     private string KnownArmyUnitBlueprint = "X";
     private string CustomArmyUnitBlueprint;
@@ -147,6 +149,7 @@ else {
 
     protected override async Task OnInitializedAsync()
     {
+        AllArmyUnitTypes = Model.Resources.GetAvailableArmyUnits().OrderBy(x => x.DisplayName);
         IsBusy = false;
     }
 

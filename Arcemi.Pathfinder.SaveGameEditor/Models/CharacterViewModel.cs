@@ -29,6 +29,11 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             main.PlayerEntity = unit;
         }
 
+        public void DeleteCharacter(UnitEntityModel unit)
+        {
+            main.Party.UnitEntities.Remove(unit);
+        }
+
         public void DowngradeClass(UnitEntityModel unit, ClassModel cls)
         {
             if (cls.Level <= 1) return;

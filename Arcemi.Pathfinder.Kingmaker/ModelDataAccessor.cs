@@ -16,6 +16,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly IReferences _refs;
         private NotifyChangeTracker _changeTracker;
 
+        public IGameResourcesProvider Res { get; }
+
         public string TypeValue()
         {
             return Value<string>("$type", "Type");
@@ -26,10 +28,11 @@ namespace Arcemi.Pathfinder.Kingmaker
             _changeTracker = changeTracker;
         }
 
-        public ModelDataAccessor(JObject obj, IReferences refs)
+        public ModelDataAccessor(JObject obj, IReferences refs, IGameResourcesProvider res)
         {
             _obj = obj;
             _refs = refs;
+            Res = res;
         }
 
         public void ShallowMerge(JObject target)

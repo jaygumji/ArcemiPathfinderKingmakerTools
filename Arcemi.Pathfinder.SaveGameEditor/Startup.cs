@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Arcemi.Pathfinder.SaveGameEditor
 {
@@ -27,22 +26,22 @@ namespace Arcemi.Pathfinder.SaveGameEditor
             services.AddSingleton<ISaveDataProvider>(p => p.GetService<MainViewModel>());
             services.AddSingleton<CharacterViewModel>();
             services.AddSingleton<ArmiesViewModel>();
-            services.AddTransient(p => p.GetService<MainViewModel>().AppData.Portraits);
+            services.AddSingleton<TasksViewModel>();
+            services.AddTransient(p => p.GetService<MainViewModel>().Resources);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            app.UseDeveloperExceptionPage();
+            //if (env.IsDevelopment()) {
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else {
+            //    app.UseExceptionHandler("/Error");
+            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            //    app.UseHsts();
+            //}
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -51,28 +50,24 @@ namespace Arcemi.Pathfinder.SaveGameEditor
 
             //app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
+            app.UseEndpoints(endpoints => {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
                 //endpoints.MapRazorPages();
             });
 
-            if (HybridSupport.IsElectronActive)
-            {
+            if (HybridSupport.IsElectronActive) {
                 SetupElectron();
             }
         }
 
         private async void SetupElectron()
         {
-            var options = new BrowserWindowOptions
-            {
+            var options = new BrowserWindowOptions {
                 Show = true,
                 Width = 1024,
                 Height = 768,
-                WebPreferences = new WebPreferences
-                {
+                WebPreferences = new WebPreferences {
                     WebSecurity = false,
                     NodeIntegration = false
                 }
@@ -101,8 +96,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor
             //};
             //Electron.Menu.SetApplicationMenu(menu);
 
-            window.OnClosed += () =>
-            {
+            window.OnClosed += () => {
                 Electron.App.Quit();
             };
         }

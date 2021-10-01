@@ -1,4 +1,5 @@
 ﻿@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
+@inject Arcemi.Pathfinder.Kingmaker.IGameResourcesProvider Resources;
 
 <div class="row g-3 top-toolbar">
     <div class="col-md-6 btn-group">
@@ -7,6 +8,7 @@
         </label>
         <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
     </div>
+    @if (Resources.Blueprints.IsEmpty) {
     <div class="col-md-2">
         <button class="btn btn-primary" @onclick="() => addItemModal.OpenAsync()">
             <span class="oi oi-plus"></span>
@@ -38,7 +40,45 @@
             </Footer>
         </Modal>
     </div>
-
+    }
+    else {
+    <div class="col-md-2">
+        <button class="btn btn-primary" @onclick="() => addBlueprintItemModal.OpenAsync()">
+            <span class="oi oi-plus"></span>
+        </button>
+        <Modal @ref="addBlueprintItemModal">
+            <Title>Add a new item</Title>
+            <Body>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label for="add-blueprint-item-type" class="form-label">Item type</label>
+                        <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
+                            <option value="-1">Select item type...</option>
+                            @foreach (var type in BlueprintType.AddableItems) {
+                                <option value="@type.Type">@type.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
+                        <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
+                            <option value="-1">Select item...</option>
+                            @foreach (var blueprint in Resources.GetBlueprints(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
+                                <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </Body>
+            <Footer>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsBlueprintItemInputInvalid" @onclick="() => AddBlueprintItemAsync()">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addBlueprintItemModal.CloseAsync()">Cancel</button>
+            </Footer>
+        </Modal>
+    </div>
+    }
 </div>
 
 <div class="row g-3">
@@ -90,11 +130,24 @@
     [Parameter]
     public InventoryModel Inventory { get; set; }
 
+    private string _AddBlueprintItemType;
+    private string AddBlueprintItemType {
+        get {
+            return _AddBlueprintItemType;
+        }
+        set {
+            _AddBlueprintItemType = value;
+            AddBlueprintItemBlueprint = "-1";
+        }
+    }
+    private string AddBlueprintItemBlueprint;
+
     private string SearchTerm;
     private IEnumerable<ItemModel> Items => Inventory.Items.Where(i => string.IsNullOrEmpty(i.WielderRef) && i.HoldingSlot == null)
         .OrderByDescending(i => CalculateScore(i)).ThenBy(i => i.InventorySlotIndex);
 
     private Modal addItemModal;
+    private Modal addBlueprintItemModal;
     private string AddItemBlueprint;
     private ItemType? AddItemType;
 
@@ -102,6 +155,7 @@
         .Where(x => !IsDisabledType(x.Key)).ToList();
 
     private bool IsItemInputInvalid => string.IsNullOrEmpty(AddItemBlueprint) || AddItemType == null;
+    private bool IsBlueprintItemInputInvalid => AddBlueprintItemType != "-1" && AddBlueprintItemBlueprint != "-1";
 
     private static bool IsDisabledType(ItemType? itemType)
     {
@@ -141,6 +195,14 @@
         await addItemModal.CloseAsync();
         AddItemType = null;
         AddItemBlueprint = null;
+    }
+
+    private async Task AddBlueprintItemAsync()
+    {
+        var type = BlueprintType.GetItemType(AddBlueprintItemType);
+        Inventory.AddItem(type, AddBlueprintItemBlueprint);
+        await addItemModal.CloseAsync();
+        AddBlueprintItemType = "-1";
     }
 
     private void Duplicate(ItemModel item)

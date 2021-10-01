@@ -6,22 +6,21 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public class PlayerKingdomLeaderModel : RefModel
     {
-        private Portraits _portraits;
-
         public PlayerKingdomLeaderModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
 
         public string Type { get => A.Value<string>(); set => A.Value(value); }
         public string Role => Type?.AsDisplayable();
-        public string Name => Mappings.GetLeaderName(LeaderSelection?.Blueprint);
+        public string Name => A.Res.GetLeaderName(LeaderSelection?.Blueprint);
         public bool IsAssigned => !string.IsNullOrEmpty(LeaderSelection?.Blueprint);
-        public string PortraitPath {
+        public string PortraitPath
+        {
             get {
                 if (string.IsNullOrEmpty(LeaderSelection?.Blueprint)) {
-                    return _portraits.GetUnknownUri();
+                    return A.Res.AppData.Portraits.GetUnknownUri();
                 }
-                return _portraits.GetPortraitsUri(Mappings.GetPortraitId(LeaderSelection.Blueprint));
+                return A.Res.AppData.Portraits.GetPortraitsUri(A.Res.GetPortraitId(LeaderSelection.Blueprint));
             }
         }
         public PlayerKingdomLeaderSelectionModel LeaderSelection { get => A.Object(factory: a => new PlayerKingdomLeaderSelectionModel(a)); }
@@ -46,11 +45,6 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             bonus.Value = value;
-        }
-
-        public void Init(Portraits portraits)
-        {
-            _portraits = portraits;
         }
     }
 }

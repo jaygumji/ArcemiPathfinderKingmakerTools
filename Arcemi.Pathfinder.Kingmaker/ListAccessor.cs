@@ -18,22 +18,24 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly JArray _array;
         private readonly IReferences _refs;
         private readonly Func<ModelDataAccessor, T> _factory;
+        private readonly IGameResourcesProvider _res;
         private readonly List<T> _items;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public ListAccessor(JArray array, IReferences refs, Func<ModelDataAccessor, T> factory)
+        public ListAccessor(JArray array, IReferences refs, IGameResourcesProvider res, Func<ModelDataAccessor, T> factory)
         {
             _array = array;
             _refs = refs;
             _factory = factory;
+            _res = res;
             _items = array
                 .Select(t => {
                     if (t == null || t.Type == JTokenType.Null) {
                         return null;
                     }
                     var obj = refs.GetReferred((JObject)t);
-                    var accessor = new ModelDataAccessor(obj, _refs);
+                    var accessor = new ModelDataAccessor(obj, _refs, res);
                     return factory.Invoke(accessor);
                 })
                 .ToList() ?? new List<T>();
@@ -49,7 +51,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 obj = new JObject();
             }
             init?.Invoke(_refs, obj);
-            var accessor = new ModelDataAccessor(obj, _refs);
+            var accessor = new ModelDataAccessor(obj, _refs, _res);
             var item = _factory.Invoke(accessor);
             if (index < 0) {
                 _array.Add(obj);

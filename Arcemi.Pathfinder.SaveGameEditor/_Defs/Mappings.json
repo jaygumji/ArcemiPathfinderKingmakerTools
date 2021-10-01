@@ -192,10 +192,22 @@
         {"id": "2f3eb33b70e86d14787f62fd584fa4f2", "name": "Daredevil"}
       ]
     },
-    {"id": "247aa787806d5da4f89cfc3dff0b217f", "name": "Mythic", "archetypes": []}, // Player mythic champion blueprint
-    {"id": "530b6a79cb691c24ba99e1577b4beb6d", "name": "Mythic", "archetypes": []}, // Companion mythic blueprint
-    {"id": "a5a9fe8f663d701488bd1db8ea40484e", "name": "Mythic Angel", "archetypes": []},
-    {"id": "9a3b2c63afa79744cbca46bea0da9a16", "name": "Mythic Azata", "archetypes": []},
+    {"id": "247aa787806d5da4f89cfc3dff0b217f", "name": "Mythic Champion", "flags": "M", "archetypes": []}, // Player mythic champion blueprint
+    {"id": "530b6a79cb691c24ba99e1577b4beb6d", "name": "Mythic Companion", "flags": "M", "archetypes": []}, // Companion mythic blueprint
+    {"id": "a5a9fe8f663d701488bd1db8ea40484e", "name": "Mythic Angel", "flags": "M", "archetypes": []},
+    {"id": "9a3b2c63afa79744cbca46bea0da9a16", "name": "Mythic Azata", "flags": "M", "archetypes": []},
+    {"id": "15a85e67b7d69554cab9ed5830d0268e", "name": "Mythic Aeon", "flags": "M", "archetypes": []},
+    {"id": "8e19495ea576a8641964102d177e34b7", "name": "Mythic Demon", "flags": "M", "archetypes": []},
+    {"id": "211f49705f478b3468db6daa802452a2", "name": "Mythic Devil", "flags": "M", "archetypes": []},
+    {"id": "daf1235b6217787499c14e4e32142523", "name": "Mythic Golden Dragon", "flags": "M", "archetypes": []},
+    {"id": "b82f1fbd191e1f2498266ca41f05027f", "name": "Mythic Fake Legend", "flags": "M", "archetypes": []},
+    {"id": "3d420403f3e7340499931324640efe96", "name": "Mythic Legend", "flags": "M", "archetypes": []},
+    {"id": "5d501618a28bdc24c80007a5c937dcb7", "name": "Mythic Lich", "flags": "M", "archetypes": []},
+    {"id": "5295b8e13c2303f4c88bdb3d7760a757", "name": "Mythic Swarm That Walks", "flags": "M", "archetypes": []},
+    {"id": "8df873a8c6e48294abdb78c45834aa0a", "name": "Mythic Trickster", "flags": "M", "archetypes": []},
+    {"id": "01a754e7c1b7c5946ba895a5ff0faffc", "name": "Dragon", "archetypes": [
+        {"id": "6e6135c91c2f84e46b7bb49f2158a9ce", "name": "Havoc Dragon"}
+    ]},
     {"id": "52dbfd8505e22f84fad8d702611f60b7", "name": "Arcanist", "archetypes": [
         {"id": "ce63b2df8c6c12649b02c278e73d8bfa", "name": "Brown-Fur Transmuter"},
         {"id": "2f35608fc073c04448a9c162a20852ce", "name": "Eldritch Font"},
@@ -352,6 +364,7 @@
     { "id": "fc63f902eab24ad0a3d58b44cf514316", "type": "ArmyUnit", "name": "Mounted Scouts" },
     { "id": "80db9a672f3bcf04f9f8de6023dae1fc", "type": "ArmyUnit", "name": "Champions" },
     { "id": "73801f2040063b848be8431cca5d3573", "type": "ArmyUnit", "name": "Paladins" },
+    { "id": "fdfac936b98f7cf4788e7550c30a079b", "type": "ArmyUnit", "name": "Sorcerers" },
   
     // Facts
     { "id": "93efbde2764b5504e98e6824cab3d27c", "type": "Feature", "name": "Kinetic Blast" }

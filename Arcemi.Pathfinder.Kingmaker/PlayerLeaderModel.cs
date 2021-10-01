@@ -2,26 +2,19 @@
 {
     public class PlayerLeaderModel : RefModel, IModelWithFaction
     {
-        private Portraits _portraits;
-
         public PlayerLeaderModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
 
-        public string DisplayName => Mappings.GetLeaderName(BlueprintRef);
-
-        public void Init(Portraits portraits)
-        {
-            _portraits = portraits;
-        }
+        public string DisplayName => A.Res.GetLeaderName(BlueprintRef);
 
         public string PortraitPath
         {
             get {
                 if (string.IsNullOrEmpty(BlueprintRef)) {
-                    return _portraits.GetUnknownUri();
+                    return A.Res.AppData.Portraits.GetUnknownUri();
                 }
-                return _portraits.GetLeaderPortraitUri(BlueprintRef);
+                return A.Res.GetLeaderPortraitUri(BlueprintRef);
             }
         }
 

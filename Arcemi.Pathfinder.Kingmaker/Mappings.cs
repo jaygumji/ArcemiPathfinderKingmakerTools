@@ -17,11 +17,11 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         private static readonly Dictionary<BlueprintIdentifier, Type> BlueprintTypes;
         private static readonly Dictionary<Type, List<BlueprintIdentifier>> TypeToBlueprint;
-        private static readonly Dictionary<string, ClassDataMapping> Classes;
-        private static readonly Dictionary<string, RaceDataMapping> Races;
-        private static readonly Dictionary<string, CharacterDataMapping> Characters;
-        private static readonly Dictionary<string, LeaderDataMapping> Leaders;
-        private static readonly Dictionary<string, ResourceMapping> Resources;
+        public static readonly Dictionary<string, ClassDataMapping> Classes;
+        public static readonly Dictionary<string, RaceDataMapping> Races;
+        public static readonly Dictionary<string, CharacterDataMapping> Characters;
+        public static readonly Dictionary<string, LeaderDataMapping> Leaders;
+        public static readonly Dictionary<string, ResourceMapping> Resources;
 
         public static RawItems RawItems { get; }
         public static DescriptiveItems DescriptiveItems { get; }
@@ -78,85 +78,6 @@ namespace Arcemi.Pathfinder.Kingmaker
             DescriptiveItems = DescriptiveItems.LoadFromDefault();
         }
 
-        public static string GetCharacterPotraitIdentifier(string blueprint)
-        {
-            var characterName = GetCharacterName(blueprint);
-            var characterKey = "_c_" + characterName;
-            return characterKey;
-        }
-
-        public static string GetCharacterName(string blueprint)
-        {
-            return Characters.TryGetValue(blueprint, out var character) ? character.Name : "";
-        }
-
-        public static string GetArmyUnitName(string blueprint)
-        {
-            return Resources.TryGetValue(blueprint, out var armyUnit) ? armyUnit.Name : blueprint;
-        }
-
-        public static IEnumerable<ResourceMapping> GetResources(ResourceMappingType type)
-        {
-            return Resources.Values.Where(x => x.Type == type).ToArray();
-        }
-
-        public static string GetFactName(string blueprint)
-        {
-            return Resources.TryGetValue(blueprint, out var res) ? res.Name : blueprint;
-        }
-
-        public static bool TryGetLeader(string blueprint, out LeaderDataMapping leader)
-        {
-            return Leaders.TryGetValue(blueprint, out leader);
-        }
-
-        public static string GetLeaderName(string blueprint)
-        {
-            if (string.IsNullOrEmpty(blueprint)) {
-                return "";
-            }
-
-            if (Leaders.TryGetValue(blueprint, out var leader)) {
-                return leader.Name;
-            }
-            if (Characters.TryGetValue(blueprint, out var character)) {
-                return character.Name;
-            }
-            return "";
-        }
-
-        public static string GetPortraitId(string blueprint)
-        {
-            if (string.IsNullOrEmpty(blueprint)) {
-                return null;
-            }
-
-            if (Leaders.TryGetValue(blueprint, out var leader)) {
-                return leader.Portrait.OrIfEmpty("_c_" + leader.Name);
-            }
-            if (Characters.TryGetValue(blueprint, out var character)) {
-                return "_c_" + character.Name;
-            }
-            return null;
-        }
-
-        public static bool IsPlayerCharacter(string blueprint)
-        {
-            var cn = GetCharacterName(blueprint);
-            return string.Equals(cn, "Player", StringComparison.Ordinal);
-        }
-
-        public static bool IsCustomCharacter(string blueprint)
-        {
-            var cn = GetCharacterName(blueprint);
-            return string.Equals(cn, "Custom", StringComparison.Ordinal);
-        }
-
-        public static bool IsCompanionCharacter(string blueprint)
-        {
-            return !IsPlayerCharacter(blueprint) && !IsCustomCharacter(blueprint);
-        }
-
         public static IReadOnlyCollection<BlueprintIdentifier> GetBlueprintId<T>()
         {
             return TypeToBlueprint.TryGetValue(typeof(T), out var identifier)
@@ -185,47 +106,5 @@ namespace Arcemi.Pathfinder.Kingmaker
             factory = null;
             return false;
         }
-
-        public static string GetRaceName(string id)
-        {
-            if (string.IsNullOrEmpty(id)) return "N/A";
-            return Races.TryGetValue(id, out var m) ? m.Name : id;
-        }
-
-        public static string GetClassTypeName(string id)
-        {
-            return Classes.TryGetValue(id, out var mapping)
-                ? mapping.Name
-                : id;
-        }
-
-        public static string GetClassArchetypeName(IReadOnlyList<string> archetypes)
-        {
-            if (archetypes == null || archetypes.Count == 0) return null;
-
-            var name = archetypes
-                .Select(a => Classes.TryGetValue(a, out var cls) ? cls.Name : null)
-                .Where(a => a != null)
-                .FirstOrDefault();
-
-            if (name != null) return name;
-
-            return archetypes.First();
-        }
-
-        public static string GetClassName(string id, IReadOnlyList<string> archetypes)
-        {
-            var name = archetypes?
-                .Select(a => Classes.TryGetValue(a, out var cls) ? cls.Name : null)
-                .Where(a => a != null)
-                .FirstOrDefault();
-
-            if (name != null) return name;
-
-            return Classes.TryGetValue(id, out var mapping)
-                ? mapping.Name
-                : id;
-        }
-
     }
 }

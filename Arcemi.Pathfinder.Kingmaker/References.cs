@@ -12,6 +12,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
     public class References : IReferences
     {
+        private readonly IGameResourcesProvider _res;
         private readonly Dictionary<string, JObject> _lookup;
         private int _maxId;
 
@@ -23,8 +24,9 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         private readonly IReferences _refs;
 
-        public References()
+        public References(IGameResourcesProvider res)
         {
+            _res = res;
             _lookup = new Dictionary<string, JObject>(StringComparer.Ordinal);
             _objects = new ObjectCache();
             _lists = new ObjectCache();
@@ -47,7 +49,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public object CreateObject(JObject jObj, Func<ModelDataAccessor, object> factory)
         {
-            var accessor = new ModelDataAccessor(jObj, this);
+            var accessor = new ModelDataAccessor(jObj, this, _res);
             var obj = factory.Invoke(accessor);
             var id = jObj.Property("$id").Value.Value<string>();
             _objects.Add(id, obj);
@@ -107,7 +109,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             obj = _refs.GetReferred(obj);
-            return new ModelDataAccessor(obj, this);
+            return new ModelDataAccessor(obj, this, _res);
         }
 
         T IReferences.GetOrCreateObject<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNull)
@@ -126,7 +128,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                     else {
                         parent.Add(name, jObj);
                     }
-                    property = new ModelDataAccessor(jObj, this);
+                    property = new ModelDataAccessor(jObj, this, _res);
                 }
                 else {
                     return default(T);
@@ -157,7 +159,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 throw new ArgumentException($"Parameter {name} does not reference a valid array.");
             }
 
-            var listAccessor = new ListAccessor<T>(arr, _refs, factory ?? Mappings.GetFactory<T>());
+            var listAccessor = new ListAccessor<T>(arr, _refs, _res, factory ?? Mappings.GetFactory<T>());
             _lists.Add(parent, name, listAccessor);
             return listAccessor;
         }

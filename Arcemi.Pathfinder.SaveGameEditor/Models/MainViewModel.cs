@@ -19,10 +19,11 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private string _playerCharacterName;
 
         public string CurrentPath { get; private set; }
-        public IEnumerable<UnitEntityModel> Characters { get; private set; }
+        public IEnumerable<UnitEntityModel> Characters => Party.UnitEntities.Where(x => x.Descriptor != null);
 
         public bool CanEdit { get; private set; }
         public PlayerModel Player { get; private set; }
+        public PartyModel Party { get; private set; }
         public HeaderModel Header { get; private set; }
 
         public UnitEntityModel MainCharacter { get; private set; }
@@ -41,10 +42,12 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private string ConfigPath { get; set; }
         public AppUserConfiguration Config { get; private set; }
 
-        public PathfinderAppData AppData { get; private set; }
+        private readonly GameResources _resources;
+        public IGameResourcesProvider Resources => _resources;
 
         public MainViewModel()
         {
+            _resources = new GameResources();
         }
 
         public async Task InitializeAsync()
@@ -55,47 +58,57 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             ConfigPath = Path.Combine(userConfigPath, "user.config");
             Config = await AppUserConfiguration.LoadAsync(ConfigPath);
 
+            LoadConfigResources();
+        }
+
+        public bool ValidateAppDataFolder()
+        {
+            if (string.IsNullOrEmpty(Config.AppDataFolder)) return false;
+            var folder = Path.Combine(Config.AppDataFolder, "Saved Games");
+            return Directory.Exists(folder);
+        }
+
+        public bool ValidateGameFolder()
+        {
+            if (string.IsNullOrEmpty(Config.GameFolder)) return false;
+            var cheatdataPath = Path.Combine(Config.GameFolder, "Bundles", "cheatdata.json");
+            return File.Exists(cheatdataPath);
+        }
+
+        private void LoadConfigResources()
+        {
+            _resources.Blueprints = BlueprintData.Load(Config.GameFolder);
+
             var wwwRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
-            AppData = new PathfinderAppData(new WwwRootResourceProvider(wwwRoot, () => Config.AppDataFolder));
+            _resources.AppData = new PathfinderAppData(new WwwRootResourceProvider(wwwRoot, () => Config.AppDataFolder));
         }
 
         public async Task SaveConfigAsync()
         {
             await Config.SaveAsync(ConfigPath);
+            LoadConfigResources();
         }
 
         public async Task OpenAsync(string path)
         {
-            _file = new SaveGameFile(path);
+            _file = new SaveGameFile(path, Resources);
             _partyFile = _file.GetParty();
             _playerFile = _file.GetPlayer();
             _headerFile = _file.GetHeader();
             Player = _playerFile.GetRoot<PlayerModel>();
-            var party = _partyFile.GetRoot<PartyModel>();
-
+            Party = _partyFile.GetRoot<PartyModel>();
             Header = _headerFile.GetRoot<HeaderModel>();
 
-            var characters = party.UnitEntities
-                .Where(u => u.Descriptor != null)
-                .ToList();
-
-            foreach (var character in characters) {
+            foreach (var character in Characters) {
+                if (character.Descriptor == null) continue;
                 if (string.Equals(character.UniqueId, Player.MainCharacterId, StringComparison.Ordinal)) {
                     MainCharacter = character;
-                }
-                character.Descriptor.UISettings.Init(AppData.Portraits);
-            }
-
-            if (Player.LeadersManager?.Leaders?.Count > 0) {
-                foreach (var leader in Player.LeadersManager.Leaders) {
-                    leader.Init(AppData.Portraits);
                 }
             }
 
             CurrentPath = path;
             Inventory = MainCharacter?.Descriptor?.Inventory;
             SharedStash = Player.SharedStash;
-            Characters = characters;
             _playerCharacterName = GetMainCharacterName();
             CanEdit = true;
         }

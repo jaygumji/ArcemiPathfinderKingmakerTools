@@ -4,7 +4,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -17,31 +16,11 @@ namespace Arcemi.Pathfinder.Kingmaker
             _resources = resourceProvider.GetResources();
         }
 
-        public IReadOnlyList<Portrait> GetAvailableFor(string characterBlueprint)
-        {
-            var cn = Mappings.GetCharacterName(characterBlueprint);
-            var key = "_c_" + cn;
-            if (_resources.AllPortraits.TryGetValue(key, out var portrait)) {
-                return new[] { portrait }.Concat(_resources.AvailablePortraits).ToArray();
-            }
-            else {
-                return _resources.AvailablePortraits;
-            }
-        }
-
         public IReadOnlyList<Portrait> Available => _resources.AvailablePortraits;
 
         public string GetUnknownUri()
         {
             return _resources.AllPortraits["_s_unknown"].Uri;
-        }
-
-        public string GetLeaderPortraitUri(string blueprint)
-        {
-            if (Mappings.TryGetLeader(blueprint, out var leader)) {
-                return GetPortraitsUri(leader.Portrait);
-            }
-            return GetPortraitsUri(blueprint);
         }
 
         public string GetPortraitsUri(string key)
@@ -59,5 +38,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             return false;
         }
 
+        public bool TryGetPortrait(string key, out Portrait portrait)
+        {
+            return _resources.AllPortraits.TryGetValue(key, out portrait);
+        }
     }
 }

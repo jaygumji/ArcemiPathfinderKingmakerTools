@@ -11,7 +11,6 @@ namespace Arcemi.Pathfinder.Kingmaker
     {
 
         private readonly string _characterBlueprint;
-        private Portraits _portraits;
 
         public UISettingsModel(ModelDataAccessor accessor, string characterBlueprint) : base(accessor)
         {
@@ -21,19 +20,17 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string PortraitPath
         {
             get {
-                if (_portraits == null) return null;
-
                 if (!string.IsNullOrEmpty(CustomPortrait?.CustomPortraitId)) {
-                    return _portraits.GetPortraitsUri(CustomPortrait.CustomPortraitId);
+                    return A.Res.GetPortraitsUri(CustomPortrait.CustomPortraitId);
                 }
                 if (!string.IsNullOrEmpty(Portrait)) {
-                    return _portraits.GetPortraitsUri(Portrait);
+                    return A.Res.GetPortraitsUri(Portrait);
                 }
-                if (_portraits.TryGetPortraitsUri(_characterBlueprint, out var uri)) {
+                if (A.Res.TryGetPortraitsUri(_characterBlueprint, out var uri)) {
                     return uri;
                 }
-                var portraitId = Mappings.GetCharacterPotraitIdentifier(_characterBlueprint);
-                return _portraits.GetPortraitsUri(portraitId);
+                var portraitId = A.Res.GetCharacterPotraitIdentifier(_characterBlueprint);
+                return A.Res.GetPortraitsUri(portraitId);
             }
         }
 
@@ -41,7 +38,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         private CustomPortraitModel CustomPortrait => A.Object("m_CustomPortrait", a => new CustomPortraitModel(a));
 
-        public IReadOnlyList<Portrait> AvailablePortraits => _portraits.GetAvailableFor(_characterBlueprint);
+        public IReadOnlyList<Portrait> AvailablePortraits => A.Res.GetAvailableFor(_characterBlueprint);
 
         public void SetPortrait(Portrait portrait)
         {
@@ -61,11 +58,6 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
             N.Resume();
             N.Notify(nameof(PortraitPath));
-        }
-
-        public void Init(Portraits portraits)
-        {
-            _portraits = portraits;
         }
     }
 }

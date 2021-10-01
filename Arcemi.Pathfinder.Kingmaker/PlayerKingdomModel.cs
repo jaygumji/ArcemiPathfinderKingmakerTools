@@ -16,8 +16,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Name
         {
             get => KingdomName;
-            set
-            {
+            set {
                 KingdomName = value;
                 KingdomNameIsSet = true;
             }
@@ -49,7 +48,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public IReadOnlyList<PlayerKingdomEventHistoryModel> EventHistory => A.List<PlayerKingdomEventHistoryModel>();
         public IReadOnlyList<PlayerKingdomEventHistoryModel> FinishedEvents => A.List<PlayerKingdomEventHistoryModel>();
 
-        public IReadOnlyList<PlayerKingdomLeaderModel> Leaders => A.List<PlayerKingdomLeaderModel>();
+        public IReadOnlyList<PlayerKingdomLeaderModel> Leaders => A.List<PlayerKingdomLeaderModel>("m_Leaders");
         public PlayerKingdomResources Resources => A.Object(factory: a => new PlayerKingdomResources(a));
     }
 }

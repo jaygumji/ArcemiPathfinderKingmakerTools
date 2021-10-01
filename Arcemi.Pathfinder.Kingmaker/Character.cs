@@ -25,12 +25,12 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string CustomName { get => A.Value<string>(); set => A.Value(value); }
         public string Name
         {
-            get => CustomName.OrIfEmpty(Mappings.GetCharacterName(Blueprint));
+            get => CustomName.OrIfEmpty(A.Res.GetCharacterName(Blueprint));
             set => CustomName = value;
         }
-        public bool IsPlayer => Mappings.IsPlayerCharacter(Blueprint);
-        public bool IsCustom => Mappings.IsCustomCharacter(Blueprint);
-        public bool IsCompanion => Mappings.IsCompanionCharacter(Blueprint);
+        public bool IsPlayer => A.Res.IsPlayerCharacter(Blueprint);
+        public bool IsCustom => A.Res.IsCustomCharacter(Blueprint);
+        public bool IsCompanion => A.Res.IsCompanionCharacter(Blueprint);
 
     }
 }

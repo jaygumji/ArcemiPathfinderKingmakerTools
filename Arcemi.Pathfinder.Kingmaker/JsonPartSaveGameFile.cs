@@ -30,18 +30,19 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         private readonly string _path;
         private readonly JObject _json;
-
+        private readonly IGameResourcesProvider _res;
         private readonly Dictionary<BlueprintIdentifier, List<Model>> _blueprintRefs;
         private readonly References _refs;
         private readonly Dictionary<string, List<Model>> _types;
 
         private Model _root;
 
-        public JsonPartSaveGameFile(string path, JObject json)
+        public JsonPartSaveGameFile(string path, JObject json, IGameResourcesProvider res)
         {
             _path = path;
             _json = json;
-            _refs = new References();
+            _res = res;
+            _refs = new References(res);
             _types = new Dictionary<string, List<Model>>(StringComparer.Ordinal);
             _blueprintRefs = new Dictionary<BlueprintIdentifier, List<Model>>();
             VisitTree(json);
@@ -54,7 +55,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 return (T)_root;
             }
 
-            var accessor = new ModelDataAccessor(_json, _refs);
+            var accessor = new ModelDataAccessor(_json, _refs, _res);
             var root = (factory ?? Mappings.GetFactory<T>()).Invoke(accessor);
             _root = root;
             return root;

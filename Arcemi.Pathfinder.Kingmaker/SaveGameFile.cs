@@ -15,13 +15,16 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public class SaveGameFile
     {
+        private readonly IGameResourcesProvider _res;
+
         public string Filepath { get; private set; }
         public string WorkingPath { get; }
 
         private readonly Dictionary<string, string> _lookup;
 
-        public SaveGameFile(string path)
+        public SaveGameFile(string path, IGameResourcesProvider res)
         {
+            _res = res;
             Filepath = path;
             WorkingPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
 
@@ -53,17 +56,17 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public JsonPartSaveGameFile GetParty()
         {
-            return new JsonPartSaveGameFile(GetWorkingPath("party.json"), GetJson("party.json"));
+            return new JsonPartSaveGameFile(GetWorkingPath("party.json"), GetJson("party.json"), _res);
         }
 
         public JsonPartSaveGameFile GetPlayer()
         {
-            return new JsonPartSaveGameFile(GetWorkingPath("player.json"), GetJson("player.json"));
+            return new JsonPartSaveGameFile(GetWorkingPath("player.json"), GetJson("player.json"), _res);
         }
 
         public JsonPartSaveGameFile GetHeader()
         {
-            return new JsonPartSaveGameFile(GetWorkingPath("header.json"), GetJson("header.json"));
+            return new JsonPartSaveGameFile(GetWorkingPath("header.json"), GetJson("header.json"), _res);
         }
 
         public void Close()

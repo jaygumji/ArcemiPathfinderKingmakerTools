@@ -44,6 +44,9 @@ h4 {
   display: flex;
   align-items: center;
 }
+.overflow-cut {
+  text-overflow: ellipsis;
+}
 ul.portraits {
   text-decoration: none;
   display: flex;

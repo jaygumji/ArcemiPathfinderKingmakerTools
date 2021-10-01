@@ -68,11 +68,14 @@ namespace Arcemi.Pathfinder.Kingmaker
         public RawItemData RawData => Mappings.RawItems.GetByBlueprint(Blueprint);
         public DescriptiveItemData DescriptiveData => Mappings.DescriptiveItems.GetByBlueprint(Blueprint);
 
-        public string DisplayName => (DescriptiveData?.Name).OrIfEmpty(RawData?.Name.AsDisplayable()).OrIfEmpty(Blueprint);
+        public string DisplayName => (DescriptiveData?.Name)
+            .OrIfEmpty(A.Res.GetItemName(Blueprint))
+            .OrIfEmpty(RawData?.Name.AsDisplayable())
+            .OrIfEmpty(Blueprint);
         public string DisplayType => (DescriptiveData?.SubType)
             .OrIfEmpty(DescriptiveData?.Type)
-            .OrIfEmpty(RawData?.TypeName)
             .OrIfEmpty(ItemType?.AsDisplayable())
+            .OrIfEmpty(RawData?.TypeName)
             .OrIfEmpty(null);
 
         public string DisplayDescription => (DescriptiveData?.Description).OrIfEmpty(null);
