@@ -26,7 +26,7 @@
                     <div class="col-md-12">
                         <label for="add-item-type" class="form-label">Item type</label>
                         <select id="add-item-type" class="form-control" @bind="AddItemType">
-                            <option value="-1">Select item type...</option>
+                            <option value="">Select item type...</option>
                             @foreach (var type in AllItemTypes) {
                                 <option value="@type.Key">@type.Value</option>
                             }
@@ -137,7 +137,7 @@
         }
         set {
             _AddBlueprintItemType = value;
-            AddBlueprintItemBlueprint = "-1";
+            AddBlueprintItemBlueprint = null;
         }
     }
     private string AddBlueprintItemBlueprint;
