@@ -14,6 +14,10 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public async Task SaveAsync(string path)
         {
+            var bckPath = Path.ChangeExtension(path, ".bck.config");
+            if (File.Exists(bckPath)) File.Delete(bckPath);
+            if (File.Exists(path)) File.Move(path, bckPath);
+
             using (var stream = File.OpenWrite(path)) {
                 await JsonSerializer.SerializeAsync(stream, this);
             }
