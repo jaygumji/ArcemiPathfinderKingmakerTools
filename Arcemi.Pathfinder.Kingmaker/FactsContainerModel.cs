@@ -74,7 +74,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public const string TypeRef = "Kingmaker.UnitLogic.Feature, Assembly-CSharp";
         public FeatureFactItemModel(ModelDataAccessor accessor) : base(accessor) { }
 
-        public int Rank { get => A.Value<int>(); set => A.Value(value); }
+        public int Rank { get => A.Value<int>() > 0 ? A.Value<int>() : RankToSource?.Count > 0 ? 1 : 0; set => A.Value(value); }
         public int SourceLevel { get => A.Value<int>(); set => A.Value(value); }
         public string Source { get => A.Value<string>(); set => A.Value(value); }
         public ListAccessor<FeatureRankToSourceModel> RankToSource => A.List("m_RankToSource", a => new FeatureRankToSourceModel(a));
