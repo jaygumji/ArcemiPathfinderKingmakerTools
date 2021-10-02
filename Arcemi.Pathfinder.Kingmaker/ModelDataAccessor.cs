@@ -118,6 +118,12 @@ namespace Arcemi.Pathfinder.Kingmaker
             return _obj.Property(name).Value.Value<T>();
         }
 
+        public void Value(TimeSpan value, [CallerMemberName] string name = null)
+        {
+            var token = (JToken)value.ToString();
+            Value(token, name);
+        }
+
         public void Value(JToken value, [CallerMemberName] string name = null)
         {
             if (_obj.Property(name) != null) {
