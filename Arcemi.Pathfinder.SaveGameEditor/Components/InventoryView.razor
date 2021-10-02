@@ -53,7 +53,7 @@
                     <div class="col-md-12">
                         <label for="add-blueprint-item-type" class="form-label">Item type</label>
                         <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
-                            <option value="-1">Select item type...</option>
+                            <option value="">Select item type...</option>
                             @foreach (var type in BlueprintType.AddableItems) {
                                 <option value="@type.Type">@type.Name</option>
                             }
@@ -64,7 +64,7 @@
                     <div class="col-md-12">
                         <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
                         <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
-                            <option value="-1">Select item...</option>
+                            <option value="">Select item...</option>
                             @foreach (var blueprint in Resources.GetBlueprints(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
                                 <option value="@blueprint.Id">@blueprint.DisplayName</option>
                             }
@@ -155,7 +155,7 @@
         .Where(x => !IsDisabledType(x.Key)).ToList();
 
     private bool IsItemInputInvalid => string.IsNullOrEmpty(AddItemBlueprint) || AddItemType == null;
-    private bool IsBlueprintItemInputInvalid => AddBlueprintItemType != "-1" && AddBlueprintItemBlueprint != "-1";
+    private bool IsBlueprintItemInputInvalid => string.IsNullOrEmpty(AddBlueprintItemType) || string.IsNullOrEmpty(AddBlueprintItemBlueprint);
 
     private static bool IsDisabledType(ItemType? itemType)
     {
@@ -202,7 +202,7 @@
         var type = BlueprintType.GetItemType(AddBlueprintItemType);
         Inventory.AddItem(type, AddBlueprintItemBlueprint);
         await addItemModal.CloseAsync();
-        AddBlueprintItemType = "-1";
+        AddBlueprintItemType = null;
     }
 
     private void Duplicate(ItemModel item)
