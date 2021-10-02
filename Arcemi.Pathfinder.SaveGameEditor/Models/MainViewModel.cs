@@ -132,6 +132,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 Header.PlayerCharacterName = currentMainCharacterName;
                 Header.GameId = Guid.NewGuid().ToString("N");
             }
+            if (Header.GameSaveTime != Player.GameTime) {
+                Header.GameSaveTime = Player.GameTime;
+            }
             CanEdit = false;
             _headerFile.Save();
             _partyFile.Save();

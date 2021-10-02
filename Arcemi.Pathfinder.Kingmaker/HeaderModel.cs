@@ -1,4 +1,6 @@
-﻿namespace Arcemi.Pathfinder.Kingmaker
+﻿using System;
+
+namespace Arcemi.Pathfinder.Kingmaker
 {
     public class HeaderModel : RefModel
     {
@@ -10,5 +12,6 @@
         public string Type { get => A.Value<string>(); set => A.Value(value); }
         public string PlayerCharacterName { get => A.Value<string>(); set => A.Value(value); }
         public string Name { get => A.Value<string>(); set => A.Value(value); }
+        public TimeSpan GameSaveTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
     }
 }
