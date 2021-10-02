@@ -19,7 +19,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private string _playerCharacterName;
 
         public string CurrentPath { get; private set; }
-        public IEnumerable<UnitEntityModel> Characters => Party.UnitEntities.Where(x => x.Descriptor != null);
+        public IEnumerable<UnitEntityModel> Characters => (Party?.UnitEntities?.Where(x => x.Descriptor != null)) ?? Array.Empty<UnitEntityModel>();
 
         public bool CanEdit { get; private set; }
         public PlayerModel Player { get; private set; }

@@ -14,6 +14,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             this.main = main;
         }
 
+        public bool CanEdit => main.CanEdit;
         public IEnumerable<UnitEntityModel> Characters => main.Characters;
 
         public bool IsPlayerButNotMainCharacter(UnitEntityModel unit)

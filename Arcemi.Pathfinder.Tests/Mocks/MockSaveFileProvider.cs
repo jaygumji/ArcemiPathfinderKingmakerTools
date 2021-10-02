@@ -9,6 +9,7 @@ namespace Arcemi.Pathfinder.Tests.Mocks
 {
     public class MockSaveFileProvider : ISaveDataProvider
     {
+        public bool CanEdit => true;
         public PlayerModel Player { get; set; }
         public PartyModel Party { get; set; }
         public UnitEntityModel PlayerEntity { get; set; }

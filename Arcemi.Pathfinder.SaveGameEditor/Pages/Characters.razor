@@ -3,7 +3,7 @@
 @inject IGameResourcesProvider Resources
 @using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 
-@if (Model.Characters == null) {
+@if (!Model.CanEdit) {
     <p><em>Save file not loaded.</em></p>
 }
 else {

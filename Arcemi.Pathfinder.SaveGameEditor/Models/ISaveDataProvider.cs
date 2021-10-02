@@ -5,6 +5,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 {
     public interface ISaveDataProvider
     {
+        bool CanEdit { get; }
         PlayerModel Player { get; }
         PartyModel Party { get; }
         UnitEntityModel PlayerEntity { get; set; }
