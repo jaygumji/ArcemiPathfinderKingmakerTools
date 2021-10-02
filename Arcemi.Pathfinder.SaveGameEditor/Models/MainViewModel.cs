@@ -56,9 +56,19 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             _isInitialized = true;
             var userConfigPath = await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.UserData);
             ConfigPath = Path.Combine(userConfigPath, "user.config");
-            Config = await AppUserConfiguration.LoadAsync(ConfigPath);
-
+            try {
+                Config = await AppUserConfiguration.LoadAsync(ConfigPath);
+            }
+            catch (Exception ex) {
+                Config = await AppUserConfiguration.DetectAsync();
+                Electron.Dialog.ShowErrorBox("Configuration error", $"Failed to load the configuration file. Please go to settings page and setup your settings again. Error was '{FormatError(ex)}'");
+            }
             LoadConfigResources();
+        }
+
+        private string FormatError(Exception ex)
+        {
+            return string.Concat(ex.Message, Environment.NewLine, ex.StackTrace.CutAt(500));
         }
 
         public bool ValidateAppDataFolder()

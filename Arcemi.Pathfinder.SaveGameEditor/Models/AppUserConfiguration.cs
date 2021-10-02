@@ -1,5 +1,7 @@
 ﻿using ElectronNET.API;
+using System;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -20,12 +22,24 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         public static async Task<AppUserConfiguration> LoadAsync(string path)
         {
             if (!File.Exists(path)) return await DetectAsync();
-            using (var stream = File.OpenRead(path)) {
-                return await JsonSerializer.DeserializeAsync<AppUserConfiguration>(stream);
+            Exception lastException = null;
+            for (var i = 0; i < 3; i++) {
+                try {
+                    using (var stream = File.OpenRead(path)) {
+                        return await JsonSerializer.DeserializeAsync<AppUserConfiguration>(stream);
+                    }
+                }
+                catch (Exception ex) {
+                    lastException = ex;
+                }
             }
+            if (lastException != null) {
+                ExceptionDispatchInfo.Capture(lastException).Throw();
+            }
+            return await DetectAsync();
         }
 
-        private static async Task<AppUserConfiguration> DetectAsync()
+        public static async Task<AppUserConfiguration> DetectAsync()
         {
             return new AppUserConfiguration {
                 AppDataFolder = await DetectAppDataFolderAsync()
