@@ -1,18 +1,16 @@
-# Arcemi Pathfinder Kingmaker Editor
-A save game editor for the game Pathfinder Kingmaker.
+# Arcemi Pathfinder Wrath of the Righteous Editor
+A save game editor for the game Pathfinder Wrath of the Righteous Editor.
 
-Compiled files are available at https://www.nexusmods.com/pathfinderkingmaker where you can also find other neat mods.
+Inventory items are now loaded from the game resources, provided the path to the game installation folder has been configured in the settings.
+
+Compiled files are available at https://www.nexusmods.com/pathfinderwrathoftherighteous/mods/91/ where you can also find other neat mods.
 
 # Structure
 - Arcemi.Pathfinder.Kingmaker is a library project.
 - Arcemi.Pathfinder.Kingmaker.Editor is an experiment project and can be ignored.
-- Arcemi.Pathfinder.Kingmaker.SaveGameEditor is a WPF project which currently hosts the main ui of the editor.
+- Arcemi.Pathfinder.Kingmaker.SaveGameEditor is a WPF project which currently hosts the main ui of the old editor, can be ignored.
+- Arcemi.Pathfinder.SaveGameEditor is the new project for the new editor using Electron.NET in an attempt to make it cross platform
 
 # Credits
 
-Material Design for WPF by http://materialdesigninxaml.net/
-
-Inventory items was mined from community resources on the web. Mainly:
-- https://wiki.fireundubh.com/kingmaker (https://www.patreon.com/fireundubh)
-- https://docs.google.com/spreadsheets/d/e/2PACX-1vSUpOZwVpOeNUjcUEWSPrXKyx-j6A4o1BHQD2c5THLenTet7141EOlFxbFH65C2TjBOXmXd7IcbXsk1/pubhtml#
-
+Electron.NET https://github.com/ElectronNET/Electron.NET
