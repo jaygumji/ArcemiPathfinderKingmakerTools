@@ -1,0 +1,83 @@
+﻿@page "/State"
+@using System.IO
+@using Arcemi.Pathfinder.SaveGameEditor.Components
+@inject MainViewModel Model
+
+@if (!Model.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else {
+<TabControl StartIndex="0">
+    @if (Model.Player.UnlockableFlags?.Items?.Count > 0) {
+    <Tab Name="Flags">
+        <Content>
+            <p class="alert alert-warning">Be very careful if you are considering to change any of these values.
+                They may very well break the save game for you.</p>
+            <div class="row">
+                <div class="col-md-6 form-list-header">
+                    <label class="form-label">Name</label>
+                </div>
+                <div class="col-md-6 form-list-header">
+                    <label class="form-label">Value</label>
+                </div>
+            </div>
+            @foreach (var flag in Model.Player.UnlockableFlags.Items) {
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">@flag.Name</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" @bind="flag.Value" />
+                </div>
+            </div>
+            }
+        </Content>
+    </Tab>
+    }
+    <Tab Name="Quests Started">
+        <Content>
+            <QuestView EnableSpoilerAlert="true" Quests="Model.Player.QuestBook.Facts.Items.OfType<QuestFactItemModel>().Where(q => !q.IsCompleted)" />
+        </Content>
+    </Tab>
+    <Tab Name="Quests Completed">
+        <Content>
+            <QuestView EnableSpoilerAlert="false" Quests="Model.Player.QuestBook.Facts.Items.OfType<QuestFactItemModel>().Where(q => q.IsCompleted)" />
+        </Content>
+    </Tab>
+    <Tab Name="Vendors">
+        <Content>
+            <div class="row">
+                <div class="col-md-6 form-list-header">
+                    <label class="form-label">Name</label>
+                </div>
+                <div class="col-md-2 form-list-header">
+                    <label class="form-label" title="Number of entries on this vendor">Entries</label>
+                </div>
+                <div class="col-md-2 form-list-header">
+                    <label class="form-label" title="Number of known items">Known</label>
+                </div>
+                <div class="col-md-2 form-list-header">
+                </div>
+            </div>
+            @foreach (var table in Model.Player.SharedVendorTables.PersistentTables) {
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">@table.DisplayName</label>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">@table.Entries.Count</label>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">@table.KnownItems.Count</label>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-sm btn-danger">
+                        <span class="oi oi-trash" title="Remove all items"></span>
+                    </button>
+                </div>
+            </div>
+            }
+        </Content>
+    </Tab>
+</TabControl>
+}

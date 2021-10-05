@@ -8,6 +8,7 @@ namespace Arcemi.Pathfinder.Kingmaker
     public class BlueprintData
     {
         private readonly Dictionary<string, BlueprintEntry> _lookup;
+
         private readonly Dictionary<string, List<BlueprintEntry>> _byType;
 
         public static BlueprintData Empty { get; } = new BlueprintData(Array.Empty<BlueprintEntry>());
@@ -34,6 +35,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public bool IsEmpty => _lookup.Count == 0;
+
+        public string GetNameOrBlueprint(string blueprint)
+        {
+            return TryGetName(blueprint, out var name) ? name : blueprint;
+        }
 
         public bool TryGetName(string blueprint, out string name)
         {

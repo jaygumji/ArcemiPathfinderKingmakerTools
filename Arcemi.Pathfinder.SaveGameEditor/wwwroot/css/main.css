@@ -47,6 +47,12 @@ h4 {
 .overflow-cut {
   text-overflow: ellipsis;
 }
+ul.nav-tabs li.nav-item button {
+  outline: none;
+}
+.tab-content {
+  padding-top: 20px;
+}
 ul.portraits {
   text-decoration: none;
   display: flex;

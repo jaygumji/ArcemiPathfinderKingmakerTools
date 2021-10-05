@@ -1,0 +1,53 @@
+﻿@implements ITabController
+
+<CascadingValue Value="(ITabController)this">
+    @ChildContent
+    <ul class="nav nav-tabs" role="tablist">
+        @foreach (var tab in Tabs) {
+            <li class="nav-item" role="tab">
+                <button class="nav-link @(tab.Index == CurrentIndex ? "active" : "")" @onclick="() => SelectTab(tab)">@tab.Name</button>
+            </li>
+        }
+    </ul>
+    <div class="tab-content">
+        @foreach (var tab in Tabs) {
+            <div class="tab-pane @(tab.Index == CurrentIndex ? "show active" : "fade")">
+                @tab.Content
+            </div>
+        }
+    </div>
+</CascadingValue>
+
+@code{
+    private readonly List<ITabControl> Tabs = new List<ITabControl>();
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public int StartIndex { get; set; } = -1;
+
+    public int CurrentIndex { get; set; } = -1;
+
+    protected override void OnInitialized()
+    {
+        CurrentIndex = StartIndex;
+    }
+
+    private void SelectTab(ITabControl tab)
+    {
+        CurrentIndex = tab.Index;
+    }
+
+    void ITabController.Attach(ITabControl tab)
+    {
+        tab.Index = Tabs.Count;
+        Tabs.Add(tab);
+        StateHasChanged();
+    }
+
+    void ITabController.Detach(ITabControl tab)
+    {
+        Tabs.Remove(tab);
+    }
+}

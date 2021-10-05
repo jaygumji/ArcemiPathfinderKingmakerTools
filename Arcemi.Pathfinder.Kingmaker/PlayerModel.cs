@@ -32,6 +32,10 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IReadOnlyList<PlayerGlobalMapsModel> GlobalMaps => A.List("m_GlobalMaps", a => new PlayerGlobalMapsModel(a));
 
+        public FlagsContainerModel UnlockableFlags => A.Object("m_UnlockableFlags", a => new FlagsContainerModel(a));
+        public QuestBookModel QuestBook => A.Object("m_QuestBook", a => new QuestBookModel(a));
+        public VendorTablesModel SharedVendorTables => A.Object(factory: a => new VendorTablesModel(a));
+
         public InventoryModel SharedStash => A.Object<InventoryModel>();
         public string MainCharacterId { get => A.Value<string>("m_MainCharacter"); set => A.Value(value, "m_MainCharacter"); }
     }

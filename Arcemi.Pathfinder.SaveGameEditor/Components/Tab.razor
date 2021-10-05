@@ -1,0 +1,25 @@
+﻿@implements IDisposable
+@implements ITabControl
+
+@code{
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public RenderFragment Content { get; set; }
+
+    int ITabControl.Index { get; set; }
+
+    [CascadingParameter]
+    protected ITabController Controller { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Controller.Attach(this);
+    }
+
+    void IDisposable.Dispose()
+    {
+        Controller.Detach(this);
+    }
+}
