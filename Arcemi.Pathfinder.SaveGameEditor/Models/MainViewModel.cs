@@ -18,7 +18,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private bool _isInitialized;
         private string _playerCharacterName;
 
-        public string CurrentPath { get; private set; }
+        public SaveFileLocation Location { get; private set; }
         public IEnumerable<UnitEntityModel> Characters => (Party?.UnitEntities?.Where(x => x.Descriptor != null)) ?? Array.Empty<UnitEntityModel>();
 
         public bool CanEdit { get; private set; }
@@ -64,6 +64,13 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 Electron.Dialog.ShowErrorBox("Configuration error", $"Failed to load the configuration file. Please go to settings page and setup your settings again. Error was '{FormatError(ex)}'");
             }
             LoadConfigResources();
+            Electron.App.BeforeQuit += App_BeforeQuit;
+        }
+
+        private Task App_BeforeQuit(QuitEventArgs arg)
+        {
+            _file?.Close();
+            return Task.CompletedTask;
         }
 
         private string FormatError(Exception ex)
@@ -101,6 +108,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public async Task OpenAsync(string path)
         {
+            _file?.Close();
             _file = new SaveGameFile(path, Resources);
             _partyFile = _file.GetParty();
             _playerFile = _file.GetPlayer();
@@ -116,14 +124,32 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 }
             }
 
-            CurrentPath = path;
+            Location = new SaveFileLocation(path);
             Inventory = MainCharacter?.Descriptor?.Inventory;
             SharedStash = Player.SharedStash;
             _playerCharacterName = GetMainCharacterName();
             CanEdit = true;
         }
 
-        public async Task SaveAsync(string path)
+        public async Task RestoreAsync()
+        {
+            var tmp = Path.ChangeExtension(Location.FilePath, ".zks.tmp");
+            try {
+                File.Move(Location.FilePath, tmp);
+                File.Move(Location.BackupFilePath, Location.FilePath);
+                File.Delete(tmp);
+            }
+            catch (Exception) {
+                if (!File.Exists(Location.FilePath) && File.Exists(tmp)) {
+                    File.Move(tmp, Location.FilePath);
+                }
+                throw;
+            }
+            Location = Location.Refresh();
+            await OpenAsync(Location.FilePath);
+        }
+
+        public async Task SaveAsync(SaveFileLocation location)
         {
             var currentMainCharacterName = GetMainCharacterName();
             if (!string.IsNullOrEmpty(_playerCharacterName) && !string.IsNullOrEmpty(currentMainCharacterName)
@@ -135,12 +161,39 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             if (Header.GameSaveTime != Player.GameTime) {
                 Header.GameSaveTime = Player.GameTime;
             }
+
+            if (string.Equals(Location.FilePath, location.FilePath, StringComparison.Ordinal)) {
+                // Overwriting the same file. No metadata needs to be changed.
+            }
+            else if (location.FileExists) {
+                // We're overwriting another file than the one we opened.
+                var oldFile = new SaveGameFile(location.FilePath, Resources);
+                var oldHeaderFile = oldFile.GetHeader();
+                var oldHeader = oldHeaderFile.GetRoot<HeaderModel>();
+                Header.Type = oldHeader.Type;
+                Header.Name = oldHeader.Name;
+                Header.QuickSaveNumber = oldHeader.QuickSaveNumber;
+                oldFile.Close();
+            }
+            else {
+                Header.Type = SaveFileType.Manual;
+                Header.QuickSaveNumber = 0;
+                Header.Name = location.Name;
+            }
+
             CanEdit = false;
             _headerFile.Save();
             _partyFile.Save();
             _playerFile.Save();
-            _file.Save(path);
-            CurrentPath = path;
+
+            if (location.BackupExists) {
+                File.Delete(location.BackupFilePath);
+            }
+            if (location.FileExists) {
+                File.Move(location.FilePath, location.BackupFilePath);
+            }
+            _file.Save(location.FilePath);
+            Location = location.Refresh();
             CanEdit = true;
         }
 

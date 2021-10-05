@@ -1,5 +1,6 @@
 @page "/"
 @using System.IO
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals
 @inject MainViewModel Model
 
 <fieldset class="form-controller" disabled="@IsBusy">
@@ -8,22 +9,40 @@
     Start by selecting the save game file you want to edit.<br />
     For a better experience with the editor, select the game folder under settings at any time.
 </p>
-<div>
-    <button class="btn btn-info" @onclick="OpenFile">
-        <span class="oi oi-file"></span>
-        Open
-    </button>
-    <button class="btn btn-info" @onclick="SaveFile">
-        <span class="oi oi-data-transfer-download"></span>
-        Save
-    </button>
+<p>The editor automatically backups any replaced files during save.
+    If there are any backup file for the open file, the "Restore" button will be enabled.</p>
+<div class="row">
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <button class="btn btn-sm btn-info w-100" @onclick="OpenFile">
+            <span class="oi oi-file"></span>
+            Open
+        </button>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <button class="btn btn-sm btn-info w-100" disabled="@(!Model.CanEdit)" @onclick="ReplaceFile">
+            <span class="oi oi-data-transfer-download"></span>
+            Replace
+        </button>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <button class="btn btn-sm btn-info w-100" disabled="@(!Model.CanEdit)" @onclick="SaveFile">
+            <span class="oi oi-data-transfer-download"></span>
+            Save As
+        </button>
+    </div>
+    <div class="col-sm-6 col-md-3 col-lg-2">
+        <button class="btn btn-sm btn-info w-100" disabled="@(!(Model.Location?.BackupExists ?? false))" title="Restores previous backuped file" @onclick="RestoreFile">
+            <span class="oi oi-action-undo"></span>
+            Restore
+        </button>
+    </div>
 </div>
 
 @if (Model.CanEdit) {
 <div class="row g-3">
     <div class="col-md-12">
         <label class="form-label">Path</label>
-        <input class="form-control" type="text" readonly="readonly" value="@Model.CurrentPath" />
+        <input class="form-control" type="text" readonly="readonly" value="@Model.Location?.FilePath" />
     </div>
 </div>
 <div class="row g-3">
@@ -58,12 +77,35 @@
 }
 </fieldset>
 
+<Modal @ref="modalConfirm">
+    <Title>Confirm</Title>
+    <Body>
+        <p>@ConfirmMessage</p>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="() => ConfirmAsync()">Confirm</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalConfirm.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
 @code {
     private bool IsBusy = true;
+    private string ConfirmMessage;
+    private Func<Task> ConfirmActionAsync;
+    private Modal modalConfirm;
+    private SaveFileLocation Location;
 
     protected override async Task OnInitializedAsync()
     {
         IsBusy = false;
+    }
+
+    private async Task ConfirmAsync()
+    {
+        await modalConfirm.CloseAsync();
+        if (ConfirmActionAsync != null) {
+            await ConfirmActionAsync();
+        }
     }
 
     async Task OpenFile()
@@ -91,18 +133,35 @@
         IsBusy = false;
     }
 
+    async Task ReplaceFile()
+    {
+        IsBusy = true;
+        await Model.SaveAsync(Model.Location.Refresh());
+        IsBusy = false;
+    }
+
     async Task SaveFile()
     {
         IsBusy = true;
         var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
         var options = new ElectronNET.API.SaveDialogOptions {
             Title = "Save the game file",
-            Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } }
+            Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } },
+            DefaultPath = Model.Location.FilePath
         };
         var file = await ElectronNET.API.Electron.Dialog.ShowSaveDialogAsync(window, options);
         if (!string.IsNullOrEmpty(file)) {
-            await Model.SaveAsync(file);
+            await Model.SaveAsync(new SaveFileLocation(file));
         }
+        IsBusy = false;
+    }
+
+    async Task RestoreFile()
+    {
+        IsBusy = true;
+
+        await Model.RestoreAsync();
+
         IsBusy = false;
     }
 }

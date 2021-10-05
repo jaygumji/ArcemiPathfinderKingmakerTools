@@ -32,4 +32,13 @@
     <ProjectReference Include="..\Arcemi.Pathfinder.SaveGameEditor\Arcemi.Pathfinder.SaveGameEditor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestAreaDirectory\Manual_1_NameOne.zks">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestAreaDirectory\Manual_2_NameOne.zks">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
