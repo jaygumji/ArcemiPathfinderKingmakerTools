@@ -6,6 +6,15 @@ namespace Arcemi.Pathfinder.Kingmaker
     public class UnitExtraSpellsPerDayPartItemModel : PartItemModel
     {
         public const string TypeRef = "Kingmaker.UnitLogic.Parts.UnitPartExtraSpellsPerDay, Assembly-CSharp";
+
+        public static UnitExtraSpellsPerDayPartItemModel AddTo(PartsContainerModel parts)
+        {
+            return (UnitExtraSpellsPerDayPartItemModel)parts.Items.Add((refs, obj) => {
+                obj.Add("$type", TypeRef);
+                obj.Add("BonusSpells", new Newtonsoft.Json.Linq.JArray { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            });
+        }
+
         public UnitExtraSpellsPerDayPartItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
@@ -25,7 +34,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             {
                 _list = list;
                 Index = index;
-                Level = index + 1;
+                Level = index;
             }
         }
     }

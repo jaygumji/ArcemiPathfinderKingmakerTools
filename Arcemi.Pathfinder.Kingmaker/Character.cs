@@ -4,6 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
 
+using System.Collections.Generic;
+
 namespace Arcemi.Pathfinder.Kingmaker
 {
     public class CharacterModel : RefModel
@@ -21,6 +23,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public InventoryModel Inventory => A.Object<InventoryModel>("m_Inventory");
         public BodyModel Body => A.Object(factory: a => new BodyModel(a));
         public CharacterResourceContainerModel Resources => A.Object(factory: a => new CharacterResourceContainerModel(a));
+        public IReadOnlyList<KeyValuePairModel<CharacterSpellBookModel>> SpellBooks => A.List("m_Spellbooks", a => new KeyValuePairModel<CharacterSpellBookModel>(a));
 
         public string Blueprint => A.Value<string>();
         public string CustomName { get => A.Value<string>(); set => A.Value(string.IsNullOrEmpty(value) ? null : value); }

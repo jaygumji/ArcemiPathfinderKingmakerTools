@@ -7,20 +7,28 @@
     <div class="row g-3">
         <h3 class="col-md-12">Parts</h3>
     </div>
-    @if (UnitExtraSpellsPerDayPart != null) {
-    <div class="row">
-        <div class="col-md-12">
-            Bonus Spells
+    @if (Character.SpellBooks?.Count > 0) {
+        <div class="row">
+            <div class="col-md-12">
+                Bonus Spells
+            </div>
         </div>
-    </div>
-    <div class="row">
-        @foreach (var acc in UnitExtraSpellsPerDayPart.BonusSpellsAccessors) {
-        <div class="col-md-1">
-            <label class="form-label">@acc.Level</label>
-            <input class="form-control" type="number" @bind="acc.Value" />
-        </div>
+        @if (UnitExtraSpellsPerDayPart == null) {
+            <button class="btn btn-info" @onclick="() => UnlockUnitExtraSpellsPerDay()">
+                <span class="oi oi-lock-locked"></span>
+                Unlock
+            </button>
         }
-    </div>
+        else {
+            <div class="row">
+                @foreach (var acc in UnitExtraSpellsPerDayPart.BonusSpellsAccessors) {
+                <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">
+                    <label class="form-label">@acc.Level</label>
+                    <input class="form-control" type="number" @bind="acc.Value" />
+                </div>
+                }
+            </div>
+        }
     }
 }
 
@@ -71,5 +79,10 @@
         .OfType<UnitExtraSpellsPerDayPartItemModel>()
         .FirstOrDefault();
 
-    private bool HasParts => UnitExtraSpellsPerDayPart != null;
+    private bool HasParts => UnitExtraSpellsPerDayPart != null || Character.SpellBooks?.Count > 0;
+
+    private void UnlockUnitExtraSpellsPerDay()
+    {
+        UnitExtraSpellsPerDayPartItemModel.AddTo(Unit.Parts);
+    }
 }
