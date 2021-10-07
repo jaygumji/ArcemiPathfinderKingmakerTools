@@ -1,16 +1,12 @@
-﻿@page "/Armies"
-@using System.IO
+﻿@using System.IO
 @using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 @inject ArmiesViewModel Model
 
-@if (!Model.CanEdit) {
-    <p><em>Save file not loaded.</em></p>
-}
-else if (!Model.HasArmies) {
-    <p><em>No armies found.</em></p>
+@if (!Model.HasArmies) {
+    <p class="alert alert-info">No armies found.</p>
 }
 else {
-    <p>Select the army you want to edit.</p>
+    <p class="alert alert-info">Select the army you want to edit.</p>
     <ul class="portraits leaders">
         @foreach (var unit in Model.Armies) {
         <li @onclick="() => SelectArmy(unit)" class="@(Unit == unit ? "toggled" : "")">

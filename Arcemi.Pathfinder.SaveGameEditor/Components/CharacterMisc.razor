@@ -1,0 +1,75 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+@using Arcemi.Pathfinder.SaveGameEditor.Components
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
+
+@if (HasParts) {
+    <div class="row g-3">
+        <h3 class="col-md-12">Parts</h3>
+    </div>
+    @if (UnitExtraSpellsPerDayPart != null) {
+    <div class="row">
+        <div class="col-md-12">
+            Bonus Spells
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var acc in UnitExtraSpellsPerDayPart.BonusSpellsAccessors) {
+        <div class="col-md-1">
+            <label class="form-label">@acc.Level</label>
+            <input class="form-control" type="number" @bind="acc.Value" />
+        </div>
+        }
+    </div>
+    }
+}
+
+@if (Character?.Resources?.PersistantResources?.Count > 0) {
+    <div class="row g-3">
+        <h3 class="col-md-12">Resources</h3>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-4 form-list-header">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+            <label class="form-label">Amount</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+            <label class="form-label">Retain</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+        </div>
+        <div class="col-md-2 form-list-header">
+        </div>
+    </div>
+    @foreach (var res in Character.Resources.PersistantResources) {
+    <div class="row g-3">
+        <div class="col-md-4 overflow-hidden">
+            <label class="form-label">@res.DisplayName</label>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control" @bind="res.Amount" />
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control" @bind="res.RetainCount" />
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+    private CharacterModel Character => Unit?.Descriptor;
+
+    private UnitExtraSpellsPerDayPartItemModel UnitExtraSpellsPerDayPart => Unit.Parts.Items
+        .OfType<UnitExtraSpellsPerDayPartItemModel>()
+        .FirstOrDefault();
+
+    private bool HasParts => UnitExtraSpellsPerDayPart != null;
+}

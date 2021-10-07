@@ -1,17 +1,13 @@
-﻿@page "/Leaders"
-@using System.IO
+﻿@using System.IO
 @inject MainViewModel Model
 
-@if (!Model.CanEdit) {
-    <p><em>Save file not loaded.</em></p>
-}
-else if (Model.Player.LeadersManager?.Leaders?.Count <= 0) {
-    <p><em>No leaders found.</em></p>
+@if (!Leaders.Any()) {
+    <p class="alert alert-info">No generals found.</p>
 }
 else {
-    <p>Select the leader you want to edit.</p>
+    <p class="alert alert-info">Select the General you want to edit.</p>
     <ul class="portraits leaders">
-        @foreach (var unit in Model.Player.LeadersManager.Leaders.Where(l => l.IsFactionCrusaders())) {
+        @foreach (var unit in Leaders) {
         <li @onclick="() => SelectLeader(unit)" class="@(Unit == unit ? "toggled" : "")">
             <img src="file://@unit.PortraitPath" alt="Portrait" />
             <span>@unit.DisplayName</span>
@@ -76,15 +72,11 @@ else {
 }
 
 @code {
-    private bool IsBusy = true;
     private PlayerLeaderModel Unit;
 
-    protected override async Task OnInitializedAsync()
-    {
-        IsBusy = false;
-    }
+    private IEnumerable<PlayerLeaderModel> Leaders => Model.Player.LeadersManager?.Leaders?.Where(l => l.IsFactionCrusaders()) ?? Array.Empty<PlayerLeaderModel>();
 
-    public async Task SelectLeader(PlayerLeaderModel unit)
+    private void SelectLeader(PlayerLeaderModel unit)
     {
         Unit = unit;
     }

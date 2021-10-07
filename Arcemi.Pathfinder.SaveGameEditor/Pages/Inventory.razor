@@ -5,22 +5,20 @@
 @if (!Model.CanEdit) {
     <p><em>Save file not loaded.</em></p>
 }
-else if (Inv == null) {
-    <p><em>Inventory was not found.</em></p>
-}
 else {
-    @if (Inv.Items.Count == 0) {
-        <p><em>Inventory is empty.</em></p>
-    }
-    else {
-        <InventoryView Inventory="Inv"></InventoryView>
-    }
+    <TabControl StartIndex="0">
+        <Tab Name="Party">
+            <Content>
+                <InventoryView Inventory="Model.Inventory"></InventoryView>
+            </Content>
+        </Tab>
+        <Tab Name="Stash">
+            <Content>
+                <InventoryView Inventory="Model.SharedStash"></InventoryView>
+            </Content>
+        </Tab>
+    </TabControl>
 }
 
 @code {
-    protected InventoryModel Inv => Model.Inventory;
-
-    protected override async Task OnInitializedAsync()
-    {
-    }
 }

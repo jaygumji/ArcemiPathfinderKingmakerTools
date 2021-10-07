@@ -1,0 +1,62 @@
+﻿@inject MainViewModel Model
+@inject IGameResourcesProvider Resources
+
+<div class="accordion" id="save-games">
+@foreach (var game in Games){
+    <div class="accordion-item">
+    <h4 class="accordion-header">
+        <button class="accordion-button w-100" type="button" @onclick:stopPropagation="true" @onclick="() => game.ToggleExpansion()">
+        @game.PlayerCharacterName
+        </button>
+    </h4>
+    <div class="accordion-collapse collapse @(game.IsExpanded ? "show" : "")">
+        <div class="accordion-body">
+        @foreach (var header in game.Headers) {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card save-file">
+                        <div class="card-body">
+                            <h5 class="card-title">@header.Header.Name</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="card-text">@header.Header.AreaDisplayName</p>
+                                </div>
+                                <div class="col-md-5">
+                                    <p class="card-text">Game time: @header.Header.GameSaveTime.AsDisplayableDayHourMinute()</p>
+                                    <p class="card-text">Real time: @header.Header.GameTotalTime.AsDisplayableDayHourMinute()</p>
+                                </div>
+                                <div class="col-md-3">
+                                    @SaveFileToolbar(header)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+    </div>
+}
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment<SaveFileHeader> SaveFileToolbar { get; set; }
+
+    private bool IsValidAppData;
+    private AppUserConfiguration Config => Model.Config;
+    private IEnumerable<SaveFileGroup> _games;
+    private IEnumerable<SaveFileGroup> Games
+    {
+        get {
+            if (Config == null) return Array.Empty<SaveFileGroup>();
+            if (!Model.ValidateAppDataFolder()) return Array.Empty<SaveFileGroup>();
+            if (_games == null) {
+                _games = SaveFileGroup.All(Model.Config.GetSaveGamesFolder(), Resources);
+            }
+            return _games;
+        }
+    }
+
+}

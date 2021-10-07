@@ -41,6 +41,24 @@ namespace Arcemi.Pathfinder.Kingmaker
             return TryGetName(blueprint, out var name) ? name : blueprint;
         }
 
+        public IBlueprint Get(string blueprintId)
+        {
+            if (_lookup.TryGetValue(blueprintId, out var entry)) {
+                return entry;
+            }
+            throw new ArgumentException("Blueprint could not be found");
+        }
+
+        public bool TryGet(string blueprintId, out IBlueprint blueprint)
+        {
+            if (_lookup.TryGetValue(blueprintId, out var entry)) {
+                blueprint = entry;
+                return true;
+            }
+            blueprint = default;
+            return false;
+        }
+
         public bool TryGetName(string blueprint, out string name)
         {
             if (_lookup.TryGetValue(blueprint, out var entry)) {

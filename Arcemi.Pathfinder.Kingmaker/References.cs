@@ -19,6 +19,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly ObjectCache _objects;
         private readonly ObjectCache _lists;
         private readonly ObjectCache _valueLists;
+        private readonly ObjectCache _dictionary;
         private readonly ObjectCache _dictionaryOfValueLists;
         private readonly ObjectCache _dictionaryOfValues;
 
@@ -31,6 +32,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             _objects = new ObjectCache();
             _lists = new ObjectCache();
             _valueLists = new ObjectCache();
+            _dictionary = new ObjectCache();
             _dictionaryOfValueLists = new ObjectCache();
             _dictionaryOfValues = new ObjectCache();
             _refs = this;
@@ -210,7 +212,33 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             dict = new DictionaryOfValueAccessor<TValue>(dictObj);
-            _dictionaryOfValueLists.Add(parent, name, dict);
+            _dictionaryOfValues.Add(parent, name, dict);
+            return dict;
+        }
+
+        public DictionaryAccessor<T> GetOrCreateDictionary<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false)
+            where T : Model
+        {
+            if (_dictionary.TryGet(parent, name, out DictionaryAccessor<T> dict)) {
+                return dict;
+            }
+
+            var property = parent.Property(name);
+            if (property == null) {
+                if (!createIfNull) return null;
+                throw new ArgumentException($"Parameter {name} does not reference a valid object.");
+            }
+
+            if (!(property.Value is JObject dictObj)) {
+                if (property.Value is null) {
+                    throw new ArgumentException($"Parameter {name} does not reference a valid object.");
+                }
+                dictObj = new JObject();
+                property.Value = dictObj;
+            }
+
+            dict = new DictionaryAccessor<T>(dictObj, _refs, _res, factory ?? Mappings.GetFactory<T>());
+            _dictionary.Add(parent, name, dict);
             return dict;
         }
 

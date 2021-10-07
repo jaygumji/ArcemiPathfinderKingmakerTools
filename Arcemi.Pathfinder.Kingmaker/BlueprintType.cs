@@ -14,6 +14,26 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Type { get; }
         public string Name { get; }
 
+        public static IReadOnlyList<BlueprintType> AllVendorItems = new[] {
+            new BlueprintType(BlueprintTypes.ItemArmor, "Armor"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentBelt, "Belt"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentFeet, "Feet"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentGlasses, "Glasses"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentGloves, "Gloves"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentHead, "Head"),
+            new BlueprintType(BlueprintTypes.Ingredient, "Ingredient"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentNeck, "Neck"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentRing, "Ring"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentShirt, "Shirt"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentShoulders, "Shoulders"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentUsable, "Usable"),
+            new BlueprintType(BlueprintTypes.ItemEquipmentWrist, "Wrist"),
+            new BlueprintType(BlueprintTypes.ItemShield, "Shield"),
+            new BlueprintType(BlueprintTypes.ItemThiefTool, "Thief Tool"),
+            new BlueprintType(BlueprintTypes.ItemWeapon, "Weapon"),
+            new BlueprintType(BlueprintTypes.Item, "Other")
+        };
+
         public static IReadOnlyList<BlueprintType> AddableItems = new[] {
             //new BlueprintType(BlueprintTypes.ItemArmor, "Armor"),
             new BlueprintType(BlueprintTypes.ItemEquipmentBelt, "Belt"),

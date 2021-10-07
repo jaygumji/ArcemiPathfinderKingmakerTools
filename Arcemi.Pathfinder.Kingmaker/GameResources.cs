@@ -11,9 +11,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IReadOnlyList<Portrait> GetAvailableFor(string characterBlueprint)
         {
-            var cn = GetCharacterName(characterBlueprint);
-            var key = "_c_" + cn;
-            if (AppData.Portraits.TryGetPortrait(key, out var portrait)) {
+            if (AppData.Portraits.TryGetPortrait(characterBlueprint, out var portrait)) {
                 return new[] { portrait }.Concat(AppData.Portraits.Available).ToArray();
             }
             else {

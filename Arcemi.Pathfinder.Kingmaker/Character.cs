@@ -20,9 +20,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         public UnitModel Unit => A.Object(factory: a => new UnitModel(a));
         public InventoryModel Inventory => A.Object<InventoryModel>("m_Inventory");
         public BodyModel Body => A.Object(factory: a => new BodyModel(a));
+        public CharacterResourceContainerModel Resources => A.Object(factory: a => new CharacterResourceContainerModel(a));
 
         public string Blueprint => A.Value<string>();
-        public string CustomName { get => A.Value<string>(); set => A.Value(value); }
+        public string CustomName { get => A.Value<string>(); set => A.Value(string.IsNullOrEmpty(value) ? null : value); }
         public string Name
         {
             get => CustomName.OrIfEmpty(A.Res.GetCharacterName(Blueprint));

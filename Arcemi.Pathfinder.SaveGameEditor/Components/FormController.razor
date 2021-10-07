@@ -1,0 +1,22 @@
+﻿<fieldset class="form-controller" disabled=@IsDisabled>
+    @ChildContent
+</fieldset>
+
+@code {
+    private bool _IsEnabled;
+
+    [Parameter]
+    public bool IsEnabled
+    {
+        get => _IsEnabled;
+        set {
+            _IsEnabled = value;
+        }
+    }
+
+    [Parameter]
+    public bool IsDisabled { get => !IsEnabled; set => IsEnabled = !value; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

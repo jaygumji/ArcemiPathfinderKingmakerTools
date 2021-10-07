@@ -6,6 +6,6 @@
         {
         }
 
-        public ListAccessor<PartModel> Items => A.List<PartModel>("m_Parts", a => new PartModel(a), createIfNull: true);
+        public ListAccessor<PartItemModel> Items => A.List("m_Parts", PartItemModel.Factory, createIfNull: true);
     }
 }

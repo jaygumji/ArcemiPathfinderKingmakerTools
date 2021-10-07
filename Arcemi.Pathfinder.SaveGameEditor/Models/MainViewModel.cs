@@ -106,7 +106,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             LoadConfigResources();
         }
 
-        public async Task OpenAsync(string path)
+        public async Task OpenAsync(string path, string originalPath = null)
         {
             _file?.Close();
             _file = new SaveGameFile(path, Resources);
@@ -124,7 +124,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 }
             }
 
-            Location = new SaveFileLocation(path);
+            Location = string.IsNullOrEmpty(originalPath)
+                ? new SaveFileLocation(path)
+                : new SaveFileLocation(originalPath);
             Inventory = MainCharacter?.Descriptor?.Inventory;
             SharedStash = Player.SharedStash;
             _playerCharacterName = GetMainCharacterName();
@@ -167,13 +169,10 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             }
             else if (location.FileExists) {
                 // We're overwriting another file than the one we opened.
-                var oldFile = new SaveGameFile(location.FilePath, Resources);
-                var oldHeaderFile = oldFile.GetHeader();
-                var oldHeader = oldHeaderFile.GetRoot<HeaderModel>();
+                var oldHeader = SaveGameFile.ReadHeader(location.FilePath, Resources); ;
                 Header.Type = oldHeader.Type;
                 Header.Name = oldHeader.Name;
                 Header.QuickSaveNumber = oldHeader.QuickSaveNumber;
-                oldFile.Close();
             }
             else {
                 Header.Type = SaveFileType.Manual;

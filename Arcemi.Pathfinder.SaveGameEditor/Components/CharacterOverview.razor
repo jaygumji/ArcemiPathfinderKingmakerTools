@@ -1,0 +1,150 @@
+﻿@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals
+@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <label class="form-label">Race</label>
+        <input class="form-control" type="text" readonly="readonly" value="@Character.Progression.RaceName" />
+    </div>
+    @if (Model.IsPlayerButNotMainCharacter(Unit)) {
+    <div class="col-md-3">
+        <div>
+            <label>&nbsp;</label>
+        </div>
+        <div>
+        <button class="btn btn-info w-100" @onclick="() => Model.SetAsHero(Unit)" title="You are not set as the main character, fix it by pressing this button">
+            <span class="oi oi-wrench"></span>
+            Main Char
+        </button>
+        </div>
+    </div>
+    }
+    @if (Unit.Descriptor.IsCustom) {
+    <div class="col-md-3">
+        <div>
+            <label>&nbsp;</label>
+        </div>
+        <div>
+        <button class="btn btn-danger w-100" @onclick="() => modalConfirmDelete.OpenAsync()">
+            <span class="oi oi-trash"></span>
+            Delete
+        </button>
+        <Modal @ref="modalConfirmDelete">
+            <Title>Confirm Delete</Title>
+            <Body>
+                <p>This is a destructive action. It can also potentially corrupt your save file,
+                    so make sure you have a backup to load.</p>
+            </Body>
+            <Footer>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="DeleteCharacter">
+                    <span class="oi oi-trash"></span>
+                    Delete
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalConfirmDelete.CloseAsync()">Cancel</button>
+            </Footer>
+        </Modal>
+        </div>
+    </div>
+    }
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label class="form-label">Alignment X-Axis</label>
+                <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentX" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label class="form-label">Alignment Y-Axis</label>
+                <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentY" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9 alignment">
+        <img class="alignment-map" src="/images/alignment-map.png" alt="Alignment" />
+        <img class="alignment-dot" src="/images/alignment-dot.png" style="left: @(AlignmentX)px; top: @(AlignmentY)px" />
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <label class="form-label">Experience</label>
+        <input class="form-control" type="number" @bind="@Character.Progression.Experience" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Level</label>
+        <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.CurrentLevel" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Mythic Level</label>
+        <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.MythicExperience" />
+    </div>
+</div>
+
+<div class="row g-3">
+    <h3 class="col-md-12">Classes</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Specialization</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Level</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+    </div>
+</div>
+
+@foreach (var cls in Character.Progression.Classes) {
+<div class="row g-3">
+    <div class="col-md-4 overflow-hidden">
+        <label class="form-label">@cls.TypeName</label>
+    </div>
+    <div class="col-md-4 overflow-hidden">
+        <label class="form-label">@cls.ArchetypeName</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
+    </div>
+    <div class="col-md-2">
+        @if (!cls.IsMythic) {
+        <button class="btn btn-sm btn-warning" disabled="@(cls.Level <= 1)" @onclick="() => DowngradeClass(cls)">
+            <span class="oi oi-arrow-thick-bottom"></span>
+        </button>
+        }
+    </div>
+</div>
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+
+    private Modal modalConfirmDelete;
+    private CharacterModel Character => Unit?.Descriptor;
+
+    private const int OffsetX = 20;
+    private const int OffsetY = 6;
+    private int AlignmentX => (Unit?.Descriptor?.Alignment?.Vector?.X ?? 0) + 100 + OffsetX;
+    private int AlignmentY => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0) *-1 + 100 + OffsetY;
+    private int EditAlignmentX { get => Unit?.Descriptor?.Alignment?.Vector?.X ?? 0; set => Unit.Descriptor.Alignment.Vector.X = value; }
+    private int EditAlignmentY { get => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0)*-1; set => Unit.Descriptor.Alignment.Vector.Y = value*-1; }
+
+    private void DowngradeClass(ClassModel cls)
+    {
+        Model.DowngradeClass(Unit, cls);
+    }
+
+    private async Task DeleteCharacter()
+    {
+        Model.DeleteCharacter(Unit);
+        await modalConfirmDelete.CloseAsync();
+    }
+}

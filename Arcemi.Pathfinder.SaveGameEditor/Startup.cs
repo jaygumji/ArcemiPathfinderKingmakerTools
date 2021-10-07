@@ -23,11 +23,12 @@ namespace Arcemi.Pathfinder.SaveGameEditor
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<MainViewModel>();
+            services.AddTransient(p => p.GetService<MainViewModel>().Resources);
             services.AddSingleton<ISaveDataProvider>(p => p.GetService<MainViewModel>());
             services.AddSingleton<CharacterViewModel>();
             services.AddSingleton<ArmiesViewModel>();
             services.AddSingleton<TasksViewModel>();
-            services.AddTransient(p => p.GetService<MainViewModel>().Resources);
+            services.AddSingleton<StateManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

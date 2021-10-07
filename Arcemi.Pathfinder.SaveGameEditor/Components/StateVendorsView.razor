@@ -1,0 +1,121 @@
+﻿@inject MainViewModel Model
+@inject IGameResourcesProvider Resources
+
+<div class="row">
+    <div class="col-md-5 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label" title="Number of entries on this vendor">Entries</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label" title="Number of known items">Known</label>
+    </div>
+    <div class="col-md-3 form-list-header">
+    </div>
+</div>
+@foreach (var table in Model.Player.SharedVendorTables.PersistentTables) {
+<div class="row">
+    <div class="col-md-5">
+        <label class="form-label">@table.DisplayName</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">@table.Entries.Count</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">@table.KnownItems.Count</label>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-sm btn-info" @onclick="() => ShowAddItemAsync(table)" title="Reset all items">
+            <span class="oi oi-plus"></span>
+        </button>
+        <button class="btn btn-sm btn-warning" @onclick="() => ResetAllItems(table)" title="Reset all items">
+            <span class="oi oi-reload"></span>
+        </button>
+        <button class="btn btn-sm btn-danger" @onclick="() => RemoveAllItems(table)" title="Remove all items">
+            <span class="oi oi-trash"></span>
+        </button>
+    </div>
+</div>
+}
+
+<Modal @ref="modalAddItem">
+    <Title>Add a new item</Title>
+    <Body>
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label for="add-item-type" class="form-label">Item type</label>
+                <select id="add-item-type" class="form-control" @bind="AddItemType">
+                    <option value="">Select item type...</option>
+                    @foreach (var type in BlueprintType.AllVendorItems) {
+                        <option value="@type.Type">@type.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label for="add-item-blueprint" class="form-label">Item</label>
+                <select id="add-item-blueprint" class="form-control" @bind="AddItemBlueprint">
+                    <option value="">Select item...</option>
+                    @foreach (var blueprint in Resources.GetBlueprints(AddItemType).Where(b => !AddItemTable.HasItem(b.Id)).OrderBy(x => x.DisplayName)) {
+                        <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsAddItemInvalid" @onclick="() => AddItemAsync()">Confirm</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddItem.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+
+@code {
+    private VendorTableModel AddItemTable;
+    private string _AddItemType;
+    private string AddItemType {
+        get {
+            return _AddItemType;
+        }
+        set {
+            _AddItemType = value;
+            AddItemBlueprint = null;
+        }
+    }
+    private string AddItemBlueprint;
+    private bool IsAddItemInvalid => string.IsNullOrEmpty(AddItemType) || string.IsNullOrEmpty(AddItemBlueprint);
+
+    private Modal modalAddItem;
+
+    private async Task ShowAddItemAsync(VendorTableModel table)
+    {
+        AddItemTable = table;
+        await modalAddItem.OpenAsync();
+    }
+
+    private async Task AddItemAsync()
+    {
+        var entry = AddItemTable.Entries.Add();
+        entry.Item = AddItemBlueprint;
+        entry.Count = 1;
+        await modalAddItem.CloseAsync();
+        AddItemType = null;
+        AddItemBlueprint = null;
+    }
+
+    private void ResetAllItems(VendorTableModel table)
+    {
+        table.Entries.Clear();
+        foreach (var knownItem in table.KnownItems) {
+            var entry = table.Entries.Add();
+            entry.Item = knownItem.Key;
+            entry.Count = knownItem.Value;
+        }
+    }
+    private void RemoveAllItems(VendorTableModel table)
+    {
+        table.Entries.Clear();
+    }
+}

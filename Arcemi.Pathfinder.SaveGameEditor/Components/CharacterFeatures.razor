@@ -1,0 +1,80 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+@using Arcemi.Pathfinder.SaveGameEditor.Components
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
+
+<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Rank</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label" title="Last level feat was updated">Level</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Components</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+    </div>
+</div>
+
+@foreach (var feature in Feats) {
+<div class="row g-3">
+    <div class="col-md-4 overflow-hidden">
+        <label class="form-label">@feature.DisplayName</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">@feature.Components.Count</label>
+    </div>
+    <div class="col-md-2">
+        @if (feature.IsRanked) {
+        <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
+            <span class="oi oi-arrow-thick-bottom"></span>
+        </button>
+        <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
+            <span class="oi oi-arrow-thick-top"></span>
+        </button>
+        }
+    </div>
+</div>
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+    private CharacterModel Character => Unit?.Descriptor;
+    private IEnumerable<FeatureFactItemModel> Feats => Unit.Facts.Items
+        .OfType<FeatureFactItemModel>()
+        .Where(f => f.Context?.ParentContext?.SourceItemRef == null)
+        .OrderBy(f => f.DisplayName);
+
+    private void UprankFeature(FeatureFactItemModel feature)
+    {
+        feature.Rank += 1;
+        var rankToSource = feature.RankToSource.Insert(0);
+        rankToSource.Blueprint = feature.Blueprint;
+        rankToSource.Level = 1;
+    }
+
+    private void DownrankFeature(FeatureFactItemModel feature)
+    {
+        feature.Rank -= 1;
+        if (feature.RankToSource.Count == 0) return;
+
+        var duplicate = feature.RankToSource.GroupBy(rs => rs.Level).Where(g => g.Count() > 1).SelectMany(g => g).FirstOrDefault();
+        if (duplicate != null) {
+            feature.RankToSource.Remove(duplicate);
+            return;
+        }
+
+        feature.RankToSource.RemoveAt(feature.RankToSource.Count - 1);
+    }
+}

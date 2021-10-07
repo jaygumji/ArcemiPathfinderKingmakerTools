@@ -26,7 +26,16 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public JArray UnderlyingStructure => _array;
 
-        public T this[int index] => _items[index];
+        public T this[int index]
+        {
+            get {
+                return _items[index];
+            }
+            set {
+                _items[index] = value;
+                _array[index] = JToken.FromObject(value);
+            }
+        }
 
         object IList.this[int index] { get => _items[index]; set => throw new NotImplementedException(); }
 

@@ -1,7 +1,8 @@
 ﻿@page "/Settings"
 @inject MainViewModel Model
+@inject StateManager State
 
-<fieldset class="form-controller" disabled="@IsBusy">
+<fieldset class="form-controller" disabled="@State.IsBusy">
 
 <div>
     <p>Changing the settings will take effect immediately after your save.</p>
@@ -52,56 +53,55 @@
 </fieldset>
 
 @code {
-    private bool IsBusy = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await Model.InitializeAsync();
-        IsBusy = false;
+        await State.ExecuteAsync(async () => {
+            await Model.InitializeAsync();
+        });
     }
 
     async Task SelectAppDataFolder()
     {
-        IsBusy = true;
-        var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
-        var options = new ElectronNET.API.Entities.OpenDialogOptions {
-            Title = "Select the app data folder",
-            Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory},
-            DefaultPath = Model.Config.AppDataFolder
-        };
-        var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
-        var file = files?.FirstOrDefault();
-        if (!string.IsNullOrEmpty(file)) {
-            Model.Config.AppDataFolder = file;
-        }
-        IsBusy = false;
+        await State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+            var options = new ElectronNET.API.Entities.OpenDialogOptions {
+                Title = "Select the app data folder",
+                Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory},
+                DefaultPath = Model.Config.AppDataFolder
+            };
+            var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+            var file = files?.FirstOrDefault();
+            if (!string.IsNullOrEmpty(file)) {
+                Model.Config.AppDataFolder = file;
+            }
+        });
     }
 
     async Task SelectGameFolder()
     {
-        IsBusy = true;
-        var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
-        var options = new ElectronNET.API.Entities.OpenDialogOptions {
-            Title = "Select the game folder",
-            Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory},
-            DefaultPath = Model.Config.GameFolder
-        };
-        var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
-        var file = files?.FirstOrDefault();
-        if (!string.IsNullOrEmpty(file)) {
-            Model.Config.GameFolder = file;
-        }
-        IsBusy = false;
+        await State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+            var options = new ElectronNET.API.Entities.OpenDialogOptions {
+                Title = "Select the game folder",
+                Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory},
+                DefaultPath = Model.Config.GameFolder
+            };
+            var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+            var file = files?.FirstOrDefault();
+            if (!string.IsNullOrEmpty(file)) {
+                Model.Config.GameFolder = file;
+            }
+        });
     }
 
     private bool IsValidGameFolder => Model.ValidateGameFolder();
     private bool IsValidAppDataFolder => Model.ValidateAppDataFolder();
 
-
     async Task SaveFile()
     {
-        IsBusy = true;
-        await Model.SaveConfigAsync();
-        IsBusy = false;
+        await State.ExecuteAsync(async () => {
+            await Model.SaveConfigAsync();
+        });
     }
 }

@@ -50,6 +50,9 @@ h4 {
 ul.nav-tabs li.nav-item button {
   outline: none;
 }
+.card.save-file {
+  margin-bottom: 10px;
+}
 .tab-content {
   padding-top: 20px;
 }

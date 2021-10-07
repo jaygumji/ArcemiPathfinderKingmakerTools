@@ -1,0 +1,170 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+@using Arcemi.Pathfinder.SaveGameEditor.Components
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
+
+<div class="row g-3">
+    <h3 class="col-md-12">General</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Value</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Total</label>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+@foreach (var attr in Character.Stats.General) {
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">@attr.Name</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" @bind="@attr.PairedValue" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" readonly="readonly" value="@attr.TotalValue" />
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+}
+
+<div class="row g-3">
+    <h3 class="col-md-12">Attributes</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Value</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Modifiers</label>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+@foreach (var attr in Character.Stats.Attributes) {
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">@attr.Name</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" @bind="@attr.PairedValue" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="text" readonly="readonly" value="@attr.ModifiersSum" />
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+}
+
+<div class="row g-3">
+    <h3 class="col-md-12">Skills</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Value</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Total</label>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+@foreach (var attr in Character.Stats.Skills) {
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">@attr.Name</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" @bind="@attr.BaseValue" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+}
+
+<div class="row g-3">
+    <h3 class="col-md-12">Combat</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Value</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Total</label>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+@foreach (var attr in Character.Stats.Combat) {
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">@attr.Name</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" @bind="@attr.BaseValue" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+}
+
+<div class="row g-3">
+    <h3 class="col-md-12">Saves</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-4 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Value</label>
+    </div>
+    <div class="col-md-2 form-list-header">
+        <label class="form-label">Total</label>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+@foreach (var attr in Character.Stats.Saves) {
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">@attr.Name</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" @bind="@attr.BaseValue" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" readonly="readonly" value="@attr.PermanentValue" />
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+    private CharacterModel Character => Unit?.Descriptor;
+}

@@ -21,9 +21,6 @@ namespace Arcemi.Pathfinder.Kingmaker
             _obj = obj;
             _dict = new Dictionary<string, TValue>(StringComparer.Ordinal);
             foreach (var property in obj.Properties()) {
-                var propertyValue = property.Value;
-                if (propertyValue == null || !(propertyValue is JArray arr)) continue;
-
                 _dict.Add(property.Name, property.Value.Value<TValue>());
             }
         }

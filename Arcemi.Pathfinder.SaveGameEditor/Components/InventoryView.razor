@@ -1,129 +1,144 @@
 ﻿@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 @inject Arcemi.Pathfinder.Kingmaker.IGameResourcesProvider Resources;
 
-<div class="row g-3 top-toolbar">
-    <div class="col-md-6 btn-group">
-        <label class="btn btn-info" for="search">
-            <span class="oi oi-magnifying-glass"></span>
-        </label>
-        <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
-    </div>
-    @if (Resources.Blueprints.IsEmpty) {
-    <div class="col-md-2">
-        <button class="btn btn-primary" @onclick="() => addItemModal.OpenAsync()">
-            <span class="oi oi-plus"></span>
-        </button>
-        <Modal @ref="addItemModal">
-            <Title>Add a new item</Title>
-            <Body>
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <label for="add-item-blueprint" class="form-label">Blueprint</label>
-                        <input id="add-item-blueprint" type="text" class="form-control" @bind="AddItemBlueprint" />
-                    </div>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <label for="add-item-type" class="form-label">Item type</label>
-                        <select id="add-item-type" class="form-control" @bind="AddItemType">
-                            <option value="">Select item type...</option>
-                            @foreach (var type in AllItemTypes) {
-                                <option value="@type.Key">@type.Value</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </Body>
-            <Footer>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsItemInputInvalid" @onclick="() => AddItemAsync()">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addItemModal.CloseAsync()">Cancel</button>
-            </Footer>
-        </Modal>
-    </div>
-    }
-    else {
-    <div class="col-md-2">
-        <button class="btn btn-primary" @onclick="() => addBlueprintItemModal.OpenAsync()">
-            <span class="oi oi-plus"></span>
-        </button>
-        <Modal @ref="addBlueprintItemModal">
-            <Title>Add a new item</Title>
-            <Body>
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <label for="add-blueprint-item-type" class="form-label">Item type</label>
-                        <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
-                            <option value="">Select item type...</option>
-                            @foreach (var type in BlueprintType.AddableItems) {
-                                <option value="@type.Type">@type.Name</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
-                        <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
-                            <option value="">Select item...</option>
-                            @foreach (var blueprint in Resources.GetBlueprints(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
-                                <option value="@blueprint.Id">@blueprint.DisplayName</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-            </Body>
-            <Footer>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsBlueprintItemInputInvalid" @onclick="() => AddBlueprintItemAsync()">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addBlueprintItemModal.CloseAsync()">Cancel</button>
-            </Footer>
-        </Modal>
-    </div>
-    }
-</div>
+@if (Inventory == null) {
+    <p class="alert alert-warning">Inventory was not found.</p>
+}
+else {
 
-<div class="row g-3">
-    <div class="col-md-4 form-list-header">
-        <label class="form-label">Name</label>
-    </div>
-    <div class="col-md-2 form-list-header">
-        <label class="form-label">Type</label>
-    </div>
-    <div class="col-md-2 form-list-header">
-        <label class="form-label">Stack</label>
-    </div>
-    <div class="col-md-2 form-list-header">
-        <label class="form-label">Charges</label>
-    </div>
-    <div class="col-md-2 form-list-header">
-    </div>
-</div>
-@foreach (var item in Items) {
-<div class="row g-3">
-    <div class="col-md-4 overflow-hidden">
-        <label class="form-label">@item.DisplayName</label>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">@item.DisplayType</label>
-    </div>
-    <div class="col-md-2">
-        @if (item.IsStackable || item.Count > 1) {
-            <input class="form-control" type="number" @bind="item.Count" />
+    <div class="row g-3 top-toolbar">
+        <div class="col-md-6 btn-group">
+            <label class="btn btn-info" for="search">
+                <span class="oi oi-magnifying-glass"></span>
+            </label>
+            <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
+        </div>
+        @if (Resources.Blueprints.IsEmpty) {
+        <div class="col-md-2">
+            <button class="btn btn-primary" @onclick="() => addItemModal.OpenAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
+            <Modal @ref="addItemModal">
+                <Title>Add a new item</Title>
+                <Body>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="add-item-blueprint" class="form-label">Blueprint</label>
+                            <input id="add-item-blueprint" type="text" class="form-control" @bind="AddItemBlueprint" />
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="add-item-type" class="form-label">Item type</label>
+                            <select id="add-item-type" class="form-control" @bind="AddItemType">
+                                <option value="">Select item type...</option>
+                                @foreach (var type in AllItemTypes) {
+                                    <option value="@type.Key">@type.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Body>
+                <Footer>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsItemInputInvalid" @onclick="() => AddItemAsync()">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addItemModal.CloseAsync()">Cancel</button>
+                </Footer>
+            </Modal>
+        </div>
+        }
+        else {
+        <div class="col-md-2">
+            <button class="btn btn-primary" @onclick="() => addBlueprintItemModal.OpenAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
+            <Modal @ref="addBlueprintItemModal">
+                <Title>Add a new item</Title>
+                <Body>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="add-blueprint-item-type" class="form-label">Item type</label>
+                            <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
+                                <option value="">Select item type...</option>
+                                @foreach (var type in BlueprintType.AddableItems) {
+                                    <option value="@type.Type">@type.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
+                            <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
+                                <option value="">Select item...</option>
+                                @foreach (var blueprint in Resources.GetBlueprints(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Body>
+                <Footer>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsBlueprintItemInputInvalid" @onclick="() => AddBlueprintItemAsync()">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addBlueprintItemModal.CloseAsync()">Cancel</button>
+                </Footer>
+            </Modal>
+        </div>
         }
     </div>
-    <div class="col-md-2">
-        @if (item.IsChargable || item.Charges > 1) {
-            <input class="form-control" type="number" @bind="item.Charges" />
+
+    <div class="row g-3">
+        <div class="col-md-4 form-list-header">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+            <label class="form-label">Type</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+            <label class="form-label">Stack</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+            <label class="form-label">Charges</label>
+        </div>
+        <div class="col-md-2 form-list-header">
+        </div>
+    </div>
+    if (!Items.Any()) {
+        <div class="row">
+            <div class="col-md-12">
+                <p class="alert alert-info">Inventory is empty</p>
+            </div>
+        </div>
+}
+    else {
+        @foreach (var item in Items) {
+        <div class="row g-3">
+            <div class="col-md-4 overflow-hidden">
+                <label class="form-label">@item.DisplayName</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@item.DisplayType</label>
+            </div>
+            <div class="col-md-2">
+                @if (item.IsStackable || item.Count > 1) {
+                    <input class="form-control" type="number" @bind="item.Count" />
+                }
+            </div>
+            <div class="col-md-2">
+                @if (item.IsChargable || item.Charges > 1) {
+                    <input class="form-control" type="number" @bind="item.Charges" />
+                }
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
+                    <span class="oi oi-fork"></span>
+                </button>
+                <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
+                    <span class="oi oi-paperclip"></span>
+                </button>
+            </div>
+        </div>
         }
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
-            <span class="oi oi-fork"></span>
-        </button>
-        <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
-            <span class="oi oi-paperclip"></span>
-        </button>
-    </div>
-</div>
+    }
 }
 
 @code {

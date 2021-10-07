@@ -1,0 +1,72 @@
+@page "/"
+@using System.IO
+@inject MainViewModel Model
+@inject NavigationManager NavManager
+@inject IGameResourcesProvider Resources
+@inject StateManager State
+
+<fieldset class="form-controller" disabled="@State.IsBusy">
+
+<p class="alert alert-info">
+    Start by selecting the save game file you want to edit.<br />
+    For a better experience with the editor, fill in the appdata and game folder settings.
+</p>
+<div class="row">
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <button class="btn btn-sm btn-info w-100" @onclick="OpenFile">
+            <span class="oi oi-file"></span>
+            Open file dialog
+        </button>
+    </div>
+</div>
+
+<SaveGamesView>
+    <SaveFileToolbar Context="header">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-info w-100" @onclick="() => OpenFile(header)">
+                    <span class="oi oi-file"></span>
+                    Open
+                </button>
+            </div>
+        </div>
+    </SaveFileToolbar>
+</SaveGamesView>
+
+</fieldset>
+
+@code {
+    async Task OpenFile()
+    {
+        await State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+            string folder = null;
+            if (Model.Config.AppDataFolder != null) {
+                folder = Path.Combine(Model.Config.AppDataFolder, "Saved Games");
+                if (!Directory.Exists(folder)) folder = Model.Config.AppDataFolder;
+                if (!Directory.Exists(folder)) folder = null;
+            }
+
+            var options = new ElectronNET.API.Entities.OpenDialogOptions {
+                Title = "Select the save game file",
+                Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openFile},
+                Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } },
+                DefaultPath = folder
+            };
+            var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+            var file = files?.FirstOrDefault();
+            if (!string.IsNullOrEmpty(file)) {
+                await Model.OpenAsync(file);
+                NavManager.NavigateTo("/Overview");
+            }
+        });
+    }
+
+    async Task OpenFile(SaveFileHeader header)
+    {
+        await State.ExecuteAsync(async () => {
+            await Model.OpenAsync(header.Location.FilePath);
+            NavManager.NavigateTo("/Overview");
+        });
+    }
+}

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -30,6 +31,23 @@ namespace Arcemi.Pathfinder.Kingmaker
 
             _lookup = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             Extract();
+        }
+
+        public static HeaderModel ReadHeader(string path, IGameResourcesProvider res)
+        {
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var archive = new ZipArchive(stream, ZipArchiveMode.Read)) {
+                var entry = archive.Entries.FirstOrDefault(e => string.Equals(e.Name, "header.json", StringComparison.OrdinalIgnoreCase));
+                if (entry == null) return null;
+                using (var entryStream = entry.Open())
+                using (var entryReader = new StreamReader(entryStream))
+                using (var entryJsonReader = new JsonTextReader(entryReader)) {
+                    var refs = new References(res);
+                    var obj = JObject.Load(entryJsonReader);
+                    var accessor = new ModelDataAccessor(obj, refs, res);
+                    return new HeaderModel(accessor);
+                }
+            }
         }
 
         private void Extract()

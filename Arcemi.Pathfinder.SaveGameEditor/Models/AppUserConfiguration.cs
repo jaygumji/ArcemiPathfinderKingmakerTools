@@ -12,6 +12,11 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         public string AppDataFolder { get; set; }
         public string GameFolder { get; set; }
 
+        public string GetSaveGamesFolder()
+        {
+            return Path.Combine(AppDataFolder, "Saved Games");
+        }
+
         public async Task SaveAsync(string path)
         {
             var bckPath = Path.ChangeExtension(path, ".bck.config");

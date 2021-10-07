@@ -90,6 +90,14 @@ namespace Arcemi.Pathfinder.Kingmaker
             return listAccessor;
         }
 
+        public DictionaryAccessor<T> Dictionary<T>([CallerMemberName] string name = null, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
+            where T : Model
+        {
+            var dictAccessor = _refs.GetOrCreateDictionary(_obj, name, factory, createIfNull);
+            _changeTracker?.On(name, propertyName);
+            return dictAccessor;
+        }
+
         public DictionaryOfValueAccessor<TValue> DictionaryOfValue<TValue>([CallerMemberName] string name = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
         {
             var dictAccessor = _refs.GetOrCreateDictionaryOfValue<TValue>(_obj, name, createIfNull);
@@ -104,12 +112,12 @@ namespace Arcemi.Pathfinder.Kingmaker
             return dictAccessor;
         }
 
-        public T Value<T>([CallerMemberName] string name = null, [CallerMemberName] string propertyName = null)
+        public T Value<T>([CallerMemberName] string name = null, [CallerMemberName] string propertyName = null, T defaultValue = default)
         {
             _changeTracker?.On(name, propertyName);
             var property = _obj.Property(name);
             if (property == null || property.Value is null) {
-                return default(T);
+                return defaultValue;
             }
             if (typeof(T) == typeof(TimeSpan)) {
                 var str = _obj.Property(name).Value.Value<string>();

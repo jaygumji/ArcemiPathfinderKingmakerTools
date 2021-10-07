@@ -7,28 +7,25 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static string Process(IBlueprint blueprint)
         {
             if (string.Equals(blueprint.TypeFullName, BlueprintTypes.Unit, StringComparison.OrdinalIgnoreCase)) {
-                return Unit(blueprint.Name);
+                return Transform(blueprint.Name, prefix: "Army");
             }
             if (string.Equals(blueprint.TypeFullName, BlueprintTypes.Feature, StringComparison.OrdinalIgnoreCase)) {
-                return Feature(blueprint.Name);
+                return Transform(blueprint.Name, suffix: "Feature");
+            }
+            if (string.Equals(blueprint.TypeFullName, BlueprintTypes.AbilityResource, StringComparison.OrdinalIgnoreCase)) {
+                return Transform(blueprint.Name, suffix: "Resource");
             }
             return blueprint.Name.AsDisplayable();
         }
 
-        public static string Unit(string name)
+        public static string Transform(string name, string prefix = null, string suffix = null)
         {
             if (string.IsNullOrEmpty(name)) return name;
-            if (name.StartsWith("Army", StringComparison.Ordinal)) {
-                name = name.Substring(4);
+            if (prefix != null && name.StartsWith(prefix, StringComparison.Ordinal)) {
+                name = name.Substring(prefix.Length);
             }
-            return name.AsDisplayable();
-        }
-
-        public static string Feature(string name)
-        {
-            if (string.IsNullOrEmpty(name)) return name;
-            if (name.EndsWith("Feature", StringComparison.Ordinal)) {
-                name = name.Remove(name.Length - 7, 7);
+            if (suffix != null && name.EndsWith(suffix, StringComparison.Ordinal)) {
+                name = name.Remove(name.Length - suffix.Length, suffix.Length);
             }
             return name.AsDisplayable();
         }

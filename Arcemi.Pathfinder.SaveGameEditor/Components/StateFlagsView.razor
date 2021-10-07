@@ -1,0 +1,88 @@
+﻿@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals
+@inject MainViewModel Model
+
+<p class="alert alert-warning">Be very careful if you are considering to change any of these values.
+    They may very well break the save game for you.</p>
+<Modal @ref="modalAddFlag">
+    <Title>Add new flag</Title>
+    <Body>
+        <div class="row g-3">
+            <div class="col-md-12">
+                <select class="form-control" @bind="SelectedFlag">
+                    <option value="">Select flag...</option>
+                    @foreach (var type in AddableFlags) {
+                        <option value="@type.Id">@type.DisplayName</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(string.IsNullOrEmpty(SelectedFlag))" @onclick="() => AddFlagAsync()">Confirm</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFlag.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+<div class="row">
+    <div class="col-md-6 form-list-header">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-3 form-list-header">
+        <label class="form-label">Value</label>
+    </div>
+    <div class="col-md-3 form-list-header">
+        <button class="btn btn-sm btn-info" @onclick="() => modalAddFlag.OpenAsync()">
+            <span class="oi oi-plus"></span>
+        </button>
+    </div>
+</div>
+@foreach (var flag in Model.Player.UnlockableFlags.Items.OrderBy(f => f.DisplayName)) {
+<div class="row">
+    <div class="col-md-6">
+        <label class="form-label">@flag.DisplayName</label>
+    </div>
+    <div class="col-md-3">
+        <input type="text" class="form-control" @bind="flag.Value" />
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-sm btn-danger" @onclick="() => RemoveFlag(flag)">
+            <span class="oi oi-trash"></span>
+        </button>
+    </div>
+
+</div>
+}
+
+@code {
+    private List<IBlueprint> AddableFlags;
+    private Modal modalAddFlag;
+    private string SelectedFlag;
+
+    protected override void OnInitialized()
+    {
+        if (Model.CanEdit) {
+            AddableFlags = Model.Resources.GetBlueprints(BlueprintTypes.UnlockableFlag)
+                .Where(b => !Model.Player.UnlockableFlags.Items.Any(i => string.Equals(i.Key, b.Id)))
+                .OrderBy(b => b.DisplayName)
+                .ToList();
+        }
+    }
+
+    private async Task AddFlagAsync()
+    {
+        var blueprint = Model.Resources.Blueprints.Get(SelectedFlag);
+        AddableFlags.Remove(blueprint);
+        var flag = Model.Player.UnlockableFlags.Items.Add();
+        flag.Key = SelectedFlag;
+        flag.Value = 0;
+        await modalAddFlag.CloseAsync();
+    }
+
+    private void RemoveFlag(KeyValuePairModel<int> flag)
+    {
+        if (Model.Resources.Blueprints.TryGet(flag.Key, out var blueprint)) {
+            AddableFlags.Add(blueprint);
+            AddableFlags.Sort((l, r) => l.DisplayName?.CompareTo(r.DisplayName) ?? -1);
+        }
+        Model.Player.UnlockableFlags.Items.Remove(flag);
+    }
+}

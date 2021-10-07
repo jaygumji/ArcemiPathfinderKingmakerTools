@@ -1,11 +1,7 @@
-﻿@page "/Kingdom"
-@using System.IO
+﻿@using System.IO
 @inject MainViewModel Model
 
-@if (!Model.CanEdit) {
-    <p><em>Save file not loaded.</em></p>
-}
-else if(!Model.Player.IsKingdomEnabled) {
+@if(!Model.Player.IsKingdomEnabled) {
     <p><em>Kingdom is not enabled.</em></p>
 }
 else {

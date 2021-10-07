@@ -1,0 +1,25 @@
+﻿using System;
+using System.Threading.Tasks;
+
+namespace Arcemi.Pathfinder.SaveGameEditor.Models
+{
+    public class StateManager
+    {
+        public bool IsBusy { get; private set; }
+
+        public async Task ExecuteAsync(Func<Task> action)
+        {
+            IsBusy = true;
+            await Task.Yield();
+            try {
+                await action();
+            }
+            catch (Exception) {
+                throw;
+            }
+            finally {
+                IsBusy = false;
+            }
+        }
+    }
+}
