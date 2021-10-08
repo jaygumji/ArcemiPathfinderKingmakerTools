@@ -6,53 +6,61 @@
     They may very well break the save game for you.
 </p>
 
-<div class="accordion" id="quest-started">
+<div class="accordion">
 @foreach (var quest in Quests) {
     <div class="accordion-item">
     <h4 class="accordion-header">
-        <button class="accordion-button w-100" type="button" @onclick:stopPropagation="true" @onclick="() => quest.ToggleExpansion()">
-        @quest.DisplayName
+        <button class="accordion-button @(quest.IsExpanded ? "" : "collapsed") w-100" type="button" @onclick:stopPropagation="true" @onclick="() => quest.ToggleExpansion()">
+            <span>@quest.DisplayName</span>
         </button>
     </h4>
     <div class="accordion-collapse collapse @(quest.IsExpanded ? "show" : "")">
         <div class="accordion-body">
             <div class="row">
-                <div class="col-md-3">
-                    <label class="form-label">State</label>
-                    <select class="form-control" @bind="quest.State">
-                        <option value="None">None</option>
-                        <option value="Started">Started</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Failed">Failed</option>
-                    </select>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">State</label>
+                                    <select class="form-control" @bind="quest.State">
+                                        <option value="None">None</option>
+                                        <option value="Started">Started</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Failed">Failed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <h4 class="col-md-12">Steps</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 form-list-header">
+                                    <label class="form-label">Name</label>
+                                </div>
+                                <div class="col-md-3 form-list-header">
+                                    <label class="form-label">State</label>
+                                </div>
+                            </div>
+                            @foreach (var objective in quest.PersistentObjectives) {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">@objective.DisplayName</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" @bind="objective.State">
+                                        <option value="None">None</option>
+                                        <option value="Started">Started</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Failed">Failed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <h4 class="col-md-12">Steps</h4>
-            </div>
-        <div class="row">
-            <div class="col-md-6 form-list-header">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-3 form-list-header">
-                <label class="form-label">State</label>
-            </div>
-        </div>
-        @foreach (var objective in quest.PersistentObjectives) {
-            <div class="row">
-                <div class="col-md-6">
-                    <label class="form-label">@objective.DisplayName</label>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-control" @bind="objective.State">
-                        <option value="None">None</option>
-                        <option value="Started">Started</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Failed">Failed</option>
-                    </select>
-                </div>
-            </div>
-        }
         </div>
     </div>
     </div>

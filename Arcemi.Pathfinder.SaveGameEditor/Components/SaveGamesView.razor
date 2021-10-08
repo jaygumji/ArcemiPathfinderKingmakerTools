@@ -1,12 +1,12 @@
 ﻿@inject MainViewModel Model
 @inject IGameResourcesProvider Resources
 
-<div class="accordion" id="save-games">
+<div class="accordion">
 @foreach (var game in Games){
     <div class="accordion-item">
     <h4 class="accordion-header">
-        <button class="accordion-button w-100" type="button" @onclick:stopPropagation="true" @onclick="() => game.ToggleExpansion()">
-        @game.PlayerCharacterName
+        <button class="accordion-button @(game.IsExpanded ? "" : "collapsed") w-100" type="button" @onclick:stopPropagation="true" @onclick="() => game.ToggleExpansion()">
+            <span>@game.PlayerCharacterName</span>
         </button>
     </h4>
     <div class="accordion-collapse collapse @(game.IsExpanded ? "show" : "")">
@@ -14,7 +14,7 @@
         @foreach (var header in game.Headers) {
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card save-file">
+                    <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">@header.Header.Name</h5>
                             <div class="row">
@@ -54,6 +54,8 @@
             if (!Model.ValidateAppDataFolder()) return Array.Empty<SaveFileGroup>();
             if (_games == null) {
                 _games = SaveFileGroup.All(Model.Config.GetSaveGamesFolder(), Resources);
+                var g = _games.FirstOrDefault();
+                if (g != null) g.IsExpanded = true;
             }
             return _games;
         }

@@ -6,7 +6,6 @@
     <p class="alert alert-info">No armies found.</p>
 }
 else {
-    <p class="alert alert-info">Select the army you want to edit.</p>
     <ul class="portraits leaders">
         @foreach (var unit in Model.Armies) {
         <li @onclick="() => SelectArmy(unit)" class="@(Unit == unit ? "toggled" : "")">

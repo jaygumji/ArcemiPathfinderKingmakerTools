@@ -5,7 +5,6 @@
     <p class="alert alert-info">No generals found.</p>
 }
 else {
-    <p class="alert alert-info">Select the General you want to edit.</p>
     <ul class="portraits leaders">
         @foreach (var unit in Leaders) {
         <li @onclick="() => SelectLeader(unit)" class="@(Unit == unit ? "toggled" : "")">

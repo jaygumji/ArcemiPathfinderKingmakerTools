@@ -11,13 +11,30 @@ else {
 <fieldset class="form-controller" disabled="@State.IsBusy">
 
 <div class="row">
-    <div class="col-sm-6 col-md-4 col-lg-3">
-        <button class="btn btn-sm btn-info w-100" disabled="@(!Model.CanEdit)" @onclick="SaveFile">
+    <div class="col-md-6">
+        <button class="btn btn-info" @onclick="SaveFile">
             <span class="oi oi-data-transfer-download"></span>
             Save file dialog
         </button>
     </div>
 </div>
+
+@if (Model.ValidateAppDataFolder()) {
+    <div class="row">
+        <h3 class="col-md-12">New manual save</h3>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" class="form-control" @bind="NewSaveFileName" @bind:event="oninput" />
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <button class="btn btn-info w-100" disabled="@NewSaveIsInvalid" @onclick="SaveNewFile">
+                <span class="oi oi-data-transfer-download"></span>
+                Save
+            </button>
+        </div>
+    </div>
+}
 
 <SaveGamesView>
     <SaveFileToolbar Context="header">
@@ -38,6 +55,15 @@ else {
 }
 
 @code {
+    private string NewSaveFileName;
+    private bool NewSaveIsInvalid => string.IsNullOrEmpty(NewSaveFileName);
+
+    async Task SaveNewFile()
+    {
+        await Model.SaveAsync(new SaveFileLocation(Model.Config.GetSaveGamesFolder(), NewSaveFileName));
+        NavManager.NavigateTo("/Overview");
+    }
+
     async Task SaveFile()
     {
         await State.ExecuteAsync(async () => {

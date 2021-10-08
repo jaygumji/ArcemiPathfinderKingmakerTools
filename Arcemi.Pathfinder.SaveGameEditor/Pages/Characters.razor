@@ -8,7 +8,6 @@
     <p><em>Save file not loaded.</em></p>
 }
 else {
-    <p class="alert alert-info">Select the character you want to edit.</p>
     <ul class="portraits">
         @foreach (var unit in Model.Characters) {
         <li @onclick="() => SelectCharacter(unit)" class="@(Unit == unit ? "toggled" : "")">
@@ -19,7 +18,7 @@ else {
     </ul>
 
     @if (Character != null) {
-        <div class="row g-3">
+        <div class="row g-3 character-shared-edit">
             <div class="col-md-6">
                 <label class="form-label">Name</label>
                 <input class="form-control" type="text" @bind="Character.CustomName" placeholder="@Character.Name" />
