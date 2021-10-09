@@ -59,6 +59,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 foreach (var fact in facts) {
                     if (fact.RankToSource == null) continue;
                     for (var i = fact.RankToSource.Count - 1; i >= 0; i--) {
+                        if (fact.Rank == 1) break;
                         var rank = fact.RankToSource[i];
                         if (rank.Level == clsLevel) {
                             fact.RankToSource.RemoveAt(i);

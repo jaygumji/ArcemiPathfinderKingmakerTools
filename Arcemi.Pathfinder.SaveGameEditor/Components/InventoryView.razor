@@ -119,12 +119,12 @@ else {
                 <label class="form-label">@item.DisplayType</label>
             </div>
             <div class="col-md-2">
-                @if (item.IsStackable || item.Count > 1) {
+                @if (item.IsStackable) {
                     <input class="form-control" type="number" @bind="item.Count" />
                 }
             </div>
             <div class="col-md-2">
-                @if (item.IsChargable || item.Charges > 1) {
+                @if (item.IsChargable) {
                     <input class="form-control" type="number" @bind="item.Charges" />
                 }
             </div>

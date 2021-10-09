@@ -80,8 +80,8 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string DisplayDescription => (DescriptiveData?.Description).OrIfEmpty(null);
 
-        public bool IsStackable => RawData?.IsStackable ?? false;
-        public bool IsChargable => RawData?.IsChargable ?? false;
+        public bool IsStackable => true;
+        public bool IsChargable => ItemType == Kingmaker.ItemType.Usable;
 
         public ItemType? ItemType
         {
@@ -141,6 +141,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                     break;
                 case Kingmaker.ItemType.Usable:
                     jObj.Add("$type", TypeUsable);
+                    jObj.Add("Charges", 1);
                     break;
                 default:
                     jObj.Add("$type", TypeSimple);
