@@ -19,9 +19,17 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public bool IsPlayerButNotMainCharacter(UnitEntityModel unit)
         {
-            if (!unit.Descriptor.IsPlayer) return false;
+            if (!unit.IsPlayer) return false;
             if (string.IsNullOrEmpty(unit.UniqueId)) return false;
             return !string.Equals(main.Player.MainCharacterId, unit.UniqueId, StringComparison.Ordinal);
+        }
+
+        public UnitEntityModel GetOwnerOf(UnitEntityModel unit)
+        {
+            var petPart = unit.Parts.Items.OfType<UnitPetPartItemModel>().FirstOrDefault();
+            if (petPart == null || string.IsNullOrEmpty(petPart.MasterRef?.Ref)) return null;
+            var owner = Characters.FirstOrDefault(c => string.Equals(c.UniqueId, petPart.MasterRef.Ref));
+            return owner;
         }
 
         public void SetAsHero(UnitEntityModel unit)

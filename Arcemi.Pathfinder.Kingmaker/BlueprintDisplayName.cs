@@ -15,6 +15,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             if (string.Equals(blueprint.TypeFullName, BlueprintTypes.AbilityResource, StringComparison.OrdinalIgnoreCase)) {
                 return Transform(blueprint.Name, suffix: "Resource");
             }
+            if (string.Equals(blueprint.TypeFullName, BlueprintTypes.UnitAsksList, StringComparison.OrdinalIgnoreCase)) {
+                return Transform(blueprint.Name, suffix: "Barks");
+            }
             return blueprint.Name.AsDisplayable();
         }
 

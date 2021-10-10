@@ -9,7 +9,6 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public class UISettingsModel : RefModel
     {
-
         private readonly string _characterBlueprint;
 
         public UISettingsModel(ModelDataAccessor accessor, string characterBlueprint) : base(accessor)

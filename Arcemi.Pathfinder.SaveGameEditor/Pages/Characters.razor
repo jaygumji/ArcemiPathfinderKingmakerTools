@@ -50,14 +50,31 @@ else {
                 </div>
             </div>
 
-            @if (CompanionPart != null && Character.IsCompanion) {
+            @if (Unit.IsMercenary || (Unit.IsPet && Model.GetOwnerOf(Unit) == null)) {
             <div class="col-md-3">
-                <label class="form-label">State</label>
-                <select class="form-control" @bind="CompanionPart.State">
-                    @foreach (var state in CompanionPartState.All){
-                        <option value="@state.Key">@state.Value</option>
-                    }
-                </select>
+                <div>
+                    <label>&nbsp;</label>
+                </div>
+                <div>
+                <button class="btn btn-danger w-100" @onclick="() => modalConfirmDelete.OpenAsync()">
+                    <span class="oi oi-trash"></span>
+                    Delete
+                </button>
+                <Modal @ref="modalConfirmDelete">
+                    <Title>Confirm Delete</Title>
+                    <Body>
+                        <p>This is a destructive action. It can also potentially corrupt your save file,
+                            so make sure you have a backup to load.</p>
+                    </Body>
+                    <Footer>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="DeleteCharacter">
+                            <span class="oi oi-trash"></span>
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalConfirmDelete.CloseAsync()">Cancel</button>
+                    </Footer>
+                </Modal>
+                </div>
             </div>
             }
         </div>
@@ -90,9 +107,9 @@ else {
     private CharacterModel Character => Unit?.Descriptor;
     private UnitEntityModel Unit;
     private IEnumerable<FeatureFactItemModel> RankedFeatures;
-    private CompanionPartItemModel CompanionPart => Unit?.Parts?.Items?.OfType<CompanionPartItemModel>()?.FirstOrDefault();
 
     private Modal modalChosePortrait;
+    private Modal modalConfirmDelete;
 
     public async Task SelectCharacter(UnitEntityModel unit)
     {
@@ -103,5 +120,16 @@ else {
     {
         Unit.Descriptor.UISettings.SetPortrait(portrait);
         await modalChosePortrait.CloseAsync();
+    }
+
+    private async Task DeleteCharacter()
+    {
+        var pets = Model.Characters.Where(c => c.IsPet && Model.GetOwnerOf(c) == Unit).ToArray();
+        foreach (var pet in pets) {
+            Model.DeleteCharacter(pet);
+        }
+        Model.DeleteCharacter(Unit);
+        Unit = null;
+        await modalConfirmDelete.CloseAsync();
     }
 }

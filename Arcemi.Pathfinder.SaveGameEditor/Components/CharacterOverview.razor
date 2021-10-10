@@ -3,51 +3,49 @@
 @inject IGameResourcesProvider Resources
 
 <div class="row g-3">
-    <div class="col-md-3">
+    @if (Unit.IsPet) {
+    <div class="col-md-4">
+        <label class="form-label">Owner</label>
+        <input class="form-control" type="text" readonly="readonly" value="@(Model.GetOwnerOf(Unit)?.Descriptor.Name ?? "N/A")" />
+    </div>
+    }
+    else {
+    <div class="col-md-4">
         <label class="form-label">Race</label>
         <input class="form-control" type="text" readonly="readonly" value="@Character.Progression.RaceName" />
     </div>
-    @if (Model.IsPlayerButNotMainCharacter(Unit)) {
+    }
+    <div class="col-md-4">
+        <label class="form-label">Voice</label>
+        <select class="form-control" @bind="Character.CustomAsks">
+            <option value="">Default</option>
+            @foreach (var blueprint in Resources.Blueprints.GetEntries(BlueprintTypes.UnitAsksList).OrderBy(b => b.DisplayName)) {
+            <option value="@blueprint.Id">@blueprint.DisplayName</option>
+            }
+        </select>
+    </div>
+    @if (CompanionPart != null) {
+    <div class="col-md-4">
+        <label class="form-label">State</label>
+        <select class="form-control" disabled="@Unit.IsPlayer" @bind="CompanionPart.State">
+            @foreach (var state in CompanionPartState.All){
+                <option value="@state.Key">@state.Value</option>
+            }
+        </select>
+    </div>
+    }
+</div>
+
+@if (Model.IsPlayerButNotMainCharacter(Unit)) {
+<div class="row">
     <div class="col-md-3">
-        <div>
-            <label>&nbsp;</label>
-        </div>
-        <div>
         <button class="btn btn-info w-100" @onclick="() => Model.SetAsHero(Unit)" title="You are not set as the main character, fix it by pressing this button">
             <span class="oi oi-wrench"></span>
             Main Char
         </button>
-        </div>
     </div>
-    }
-    @if (Unit.Descriptor.IsCustom) {
-    <div class="col-md-3">
-        <div>
-            <label>&nbsp;</label>
-        </div>
-        <div>
-        <button class="btn btn-danger w-100" @onclick="() => modalConfirmDelete.OpenAsync()">
-            <span class="oi oi-trash"></span>
-            Delete
-        </button>
-        <Modal @ref="modalConfirmDelete">
-            <Title>Confirm Delete</Title>
-            <Body>
-                <p>This is a destructive action. It can also potentially corrupt your save file,
-                    so make sure you have a backup to load.</p>
-            </Body>
-            <Footer>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="DeleteCharacter">
-                    <span class="oi oi-trash"></span>
-                    Delete
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalConfirmDelete.CloseAsync()">Cancel</button>
-            </Footer>
-        </Modal>
-        </div>
-    </div>
-    }
 </div>
+}
 
 <div class="row g-3">
     <div class="col-md-3">
@@ -127,8 +125,8 @@
     [Parameter]
     public UnitEntityModel Unit { get; set; }
 
-    private Modal modalConfirmDelete;
     private CharacterModel Character => Unit?.Descriptor;
+    private CompanionPartItemModel CompanionPart => Unit?.Parts?.Items?.OfType<CompanionPartItemModel>()?.FirstOrDefault();
 
     private const int OffsetX = 20;
     private const int OffsetY = 6;
@@ -140,11 +138,5 @@
     private void DowngradeClass(ClassModel cls)
     {
         Model.DowngradeClass(Unit, cls);
-    }
-
-    private async Task DeleteCharacter()
-    {
-        Model.DeleteCharacter(Unit);
-        await modalConfirmDelete.CloseAsync();
     }
 }

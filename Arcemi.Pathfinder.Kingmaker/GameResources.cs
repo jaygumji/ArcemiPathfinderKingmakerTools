@@ -54,16 +54,19 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string GetCharacterPotraitIdentifier(string blueprint)
         {
-            var characterName = GetCharacterName(blueprint);
-            var characterKey = "_c_" + characterName;
-            return characterKey;
+            if (Mappings.Characters.TryGetValue(blueprint, out var character)) {
+                if (!string.IsNullOrEmpty(character.Portrait)) {
+                    return character.Portrait;
+                }
+            }
+            return blueprint;
         }
 
         public string GetCharacterName(string blueprint)
         {
             return Mappings.Characters.TryGetValue(blueprint, out var character)
                 ? character.Name
-                : Blueprints.TryGetName(blueprint, out var name) ? name : "";
+                : Blueprints.TryGetName(blueprint, out var name) ? BlueprintDisplayName.Transform(name, suffix: "Companion") : "";
         }
 
         public string GetArmyUnitName(string blueprint)
@@ -121,23 +124,6 @@ namespace Arcemi.Pathfinder.Kingmaker
                 return name;
             }
             return "";
-        }
-
-        public bool IsPlayerCharacter(string blueprint)
-        {
-            var cn = GetCharacterName(blueprint);
-            return string.Equals(cn, "Player", StringComparison.Ordinal);
-        }
-
-        public bool IsCustomCharacter(string blueprint)
-        {
-            var cn = GetCharacterName(blueprint);
-            return string.Equals(cn, "Custom", StringComparison.Ordinal);
-        }
-
-        public bool IsCompanionCharacter(string blueprint)
-        {
-            return !IsPlayerCharacter(blueprint) && !IsCustomCharacter(blueprint);
         }
 
         public string GetRaceName(string id)

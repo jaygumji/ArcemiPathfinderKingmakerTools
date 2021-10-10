@@ -9,5 +9,6 @@ namespace Arcemi.Pathfinder.Kingmaker
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string Portrait { get; set; }
     }
 }

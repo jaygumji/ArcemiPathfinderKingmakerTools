@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -26,5 +27,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             return Facts.Items.OfType<FeatureFactItemModel>().Where(f => f.Rank > 0 && !IgnoreRankFeatures.Contains(f.Blueprint)).ToArray();
         }
+
+        public bool IsPet => Parts.Items.OfType<UnitPetPartItemModel>().Any();
+
+        public bool IsPlayer => string.Equals(Descriptor?.Blueprint, "4391e8b9afbb0cf43aeba700c089f56d", StringComparison.Ordinal);
+        public bool IsMercenary => string.Equals(Descriptor?.Blueprint, "baaff53a675a84f4983f1e2113b24552", StringComparison.Ordinal);
+        public bool IsCompanion => !IsPlayer && !IsMercenary && !IsPet;
     }
 }

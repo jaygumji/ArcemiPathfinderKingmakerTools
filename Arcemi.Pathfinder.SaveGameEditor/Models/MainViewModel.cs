@@ -199,7 +199,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private string GetMainCharacterName()
         {
             return (MainCharacter?.Descriptor?.CustomName)
-                ?? Characters.FirstOrDefault(c => c.Descriptor.IsPlayer)?.Descriptor.CustomName;
+                ?? Characters.FirstOrDefault(c => c.IsPlayer)?.Descriptor.CustomName;
         }
     }
 }

@@ -23,10 +23,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         bool TryGetLeader(string blueprint, out LeaderDataMapping leader);
         string GetLeaderName(string blueprint);
 
-        bool IsPlayerCharacter(string blueprint);
-        bool IsCustomCharacter(string blueprint);
-        bool IsCompanionCharacter(string blueprint);
-
         string GetRaceName(string id);
         string GetClassTypeName(string id);
         string GetClassArchetypeName(IReadOnlyList<string> archetypes);

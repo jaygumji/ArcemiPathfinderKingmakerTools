@@ -21,6 +21,9 @@
             if (string.Equals(type, UnitKineticistPartItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new UnitKineticistPartItemModel(accessor);
             }
+            if (string.Equals(type, UnitPetPartItemModel.TypeRef, System.StringComparison.Ordinal)) {
+                return new UnitPetPartItemModel(accessor);
+            }
             return new PartItemModel(accessor);
         }
     }
