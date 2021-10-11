@@ -25,6 +25,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             var files = Directory.EnumerateFiles(directory, "*.zks");
             return files
                 .Select(f => new SaveFileHeader(f, res))
+                .Where(h => h.Exception == null)
                 .GroupBy(h => h.Header.GameId)
                 .Select(g => new SaveFileGroup(g))
                 .OrderByDescending(g => g.LastSystemSaveTime)
@@ -34,9 +35,14 @@ namespace Arcemi.Pathfinder.Kingmaker
     public class SaveFileHeader
     {
         public SaveFileHeader(string filePath, IGameResourcesProvider res)
-            : this(new SaveFileLocation(filePath), SaveGameFile.ReadHeader(filePath, res))
         {
-
+            Location = new SaveFileLocation(filePath);
+            try {
+                Header = SaveGameFile.ReadHeader(filePath, res);
+            }
+            catch (Exception e) {
+                Exception = e;
+            }
         }
 
         public SaveFileHeader(SaveFileLocation location, HeaderModel header)
@@ -47,5 +53,6 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public SaveFileLocation Location { get; }
         public HeaderModel Header { get; }
+        public Exception Exception { get; }
     }
 }
