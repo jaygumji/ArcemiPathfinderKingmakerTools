@@ -41,14 +41,16 @@ else {
 <div class="row g-3">
     <div class="col-md-4">
         <label class="form-label">Money</label>
-        <input class="form-control" type="number" @bind="@Model.Player.Money" />
+        <input class="form-control" type="number" @bind="Model.Player.Money" />
     </div>
-    @if (Model.Player.Corruption != null) {
     <div class="col-md-2">
         <label class="form-label">Corruption</label>
-        <input class="form-control" type="number" @bind="@Model.Player.Corruption.CurrentValue" />
+        <input class="form-control" type="number" readonly="@(Model.Player.Corruption == null)" @bind="Corruption" />
     </div>
-    }
+    <div class="col-md-2">
+        <label class="form-label">Respecs</label>
+        <input class="form-control" type="number" @bind="Model.Player.RespecsUsed" />
+    </div>
 </div>
 <div class="row g-3">
     <h4 class="col-md-12">Game Time</h4>
@@ -72,6 +74,11 @@ else {
 }
 
 @code {
+    public int Corruption {
+        get => Model.Player.Corruption?.CurrentValue ?? 0;
+        set => Model.Player.Corruption.CurrentValue = value;
+    }
+
     private async Task ReplaceFile()
     {
         await State.ExecuteAsync(async () => await Model.SaveAsync(Model.Location.Refresh()));

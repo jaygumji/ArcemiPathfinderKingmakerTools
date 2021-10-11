@@ -21,6 +21,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public int Money { get => A.Value<int>(); set => A.Value(value); }
         public int Chapter { get => A.Value<int>(); set => A.Value(value); }
+        public int RespecsUsed { get => A.Value<int>(); set => A.Value(value); }
         public TimeSpan GameTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public TimeParts GameTimeParts => _gameTimeParts ?? (_gameTimeParts = new TimeParts(() => GameTime, v => GameTime = v));
         public TimeSpan RealTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
