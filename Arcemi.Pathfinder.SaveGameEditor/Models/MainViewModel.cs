@@ -163,6 +163,18 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             if (Header.GameSaveTime != Player.GameTime) {
                 Header.GameSaveTime = Player.GameTime;
             }
+            foreach (var character in Characters) {
+                if (character.Descriptor?.Alignment?.History != null) {
+                    var vector = character.Descriptor.Alignment.Vector;
+                    var history = character.Descriptor.Alignment.History.LastOrDefault();
+                    if (!string.Equals(vector.Value, history?.Position, StringComparison.Ordinal)) {
+                        history = character.Descriptor.Alignment.History.Add();
+                        history.Position = vector.Value;
+                        history.Direction = vector.Direction;
+                        history.Provider = null;
+                    }
+                }
+            }
 
             if (string.Equals(Location.FilePath, location.FilePath, StringComparison.Ordinal)) {
                 // Overwriting the same file. No metadata needs to be changed.

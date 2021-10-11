@@ -48,38 +48,17 @@
 }
 
 <div class="row g-3">
-    <div class="col-md-3">
-        <div class="row g-3">
-            <div class="col-md-12">
-                <label class="form-label">Alignment X-Axis</label>
-                <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentX" />
-            </div>
-        </div>
-        <div class="row g-3">
-            <div class="col-md-12">
-                <label class="form-label">Alignment Y-Axis</label>
-                <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentY" />
-            </div>
-        </div>
-    </div>
-    <div class="col-md-9 alignment">
-        <img class="alignment-map" src="/images/alignment-map.png" alt="Alignment" />
-        <img class="alignment-dot" src="/images/alignment-dot.png" style="left: @(AlignmentX)px; top: @(AlignmentY)px" />
-    </div>
-</div>
-
-<div class="row g-3">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <label class="form-label">Experience</label>
         <input class="form-control" type="number" @bind="@Character.Progression.Experience" />
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <label class="form-label">Level</label>
         <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.CurrentLevel" />
     </div>
-    <div class="col-md-3">
-        <label class="form-label">Mythic Level</label>
-        <input class="form-control" type="number" readonly="readonly" value="@Character.Progression.MythicExperience" />
+    <div class="col-md-2">
+        <label class="form-label" title="Mythic level">Mythic</label>
+        <input class="form-control" type="number" readonly="readonly" title="Mythic level" value="@Character.Progression.MythicExperience" />
     </div>
 </div>
 
@@ -120,6 +99,35 @@
     </div>
 </div>
 }
+
+<div class="row">
+    <h3 class="col-md-12">Alignment</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label class="form-label">@Character?.Alignment?.Vector?.DisplayName</label>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label class="form-label">Alignment X-Axis</label>
+                <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentX" />
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-12">
+                <label class="form-label">Alignment Y-Axis</label>
+                <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentY" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9 alignment">
+        <img class="alignment-map" src="/images/alignment-map.png" alt="Alignment" />
+        <img class="alignment-dot" src="/images/alignment-dot.png" style="left: @(AlignmentX)px; top: @(AlignmentY)px" />
+    </div>
+</div>
 
 @code {
     [Parameter]

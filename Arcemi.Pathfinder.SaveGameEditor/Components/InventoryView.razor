@@ -157,8 +157,13 @@ else {
     }
     private string AddBlueprintItemBlueprint;
 
+    private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {
+        "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
+    };
+
     private string SearchTerm;
-    private IEnumerable<ItemModel> Items => Inventory.Items.Where(i => string.IsNullOrEmpty(i.WielderRef) && i.HoldingSlot == null)
+    private IEnumerable<ItemModel> Items => Inventory.Items
+        .Where(i => string.IsNullOrEmpty(i.WielderRef) && i.HoldingSlot == null && !ItemFilter.Contains(i.Blueprint))
         .OrderByDescending(i => CalculateScore(i)).ThenBy(i => i.InventorySlotIndex);
 
     private Modal addItemModal;
