@@ -39,5 +39,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public InventoryModel SharedStash => A.Object<InventoryModel>();
         public string MainCharacterId { get => A.Value<string>("m_MainCharacter"); set => A.Value(value, "m_MainCharacter"); }
+
+        public SettingsListModel SettingsList => A.Object(factory: a => new SettingsListModel(a));
     }
 }

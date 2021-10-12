@@ -1,0 +1,38 @@
+﻿<div class="accordion-item">
+    <h4 class="accordion-header">
+        <button class="accordion-button @(IsExpanded ? "" : "collapsed") w-100" type="button" @onclick:stopPropagation="true" @onclick="() => ToggleExpansion()">
+            <span>@HeaderText</span>
+        </button>
+    </h4>
+    <div class="accordion-collapse collapse @(IsExpanded ? "show" : "")">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            @ChildContent
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string HeaderText { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool StartAsExpanded { get; set; }
+
+    public bool IsExpanded { get; set; }
+
+    public void ToggleExpansion()
+    {
+        IsExpanded = !IsExpanded;
+    }
+}

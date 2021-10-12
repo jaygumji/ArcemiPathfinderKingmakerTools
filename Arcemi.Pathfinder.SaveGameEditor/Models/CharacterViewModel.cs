@@ -56,26 +56,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 : new HashSet<string>(StringComparer.Ordinal);
             clsBlueprints.Add(cls.CharacterClass);
 
-            void RemoveProgression(ProgressionItemModel pitem, int index, bool verifyFacts)
+            void RemoveProgression(ProgressionItemModel pitem, int index)
             {
                 progression.Items.RemoveAt(index);
-                if (!verifyFacts) return;
-                var facts = unit.Facts.Items
-                    .OfType<FeatureFactItemModel>()
-                    .Where(f => string.Equals(f.Source, pitem.Key, StringComparison.Ordinal));
-
-                foreach (var fact in facts) {
-                    if (fact.RankToSource == null) continue;
-                    for (var i = fact.RankToSource.Count - 1; i >= 0; i--) {
-                        if (fact.Rank == 1) break;
-                        var rank = fact.RankToSource[i];
-                        if (rank.Level == clsLevel) {
-                            fact.RankToSource.RemoveAt(i);
-                            fact.Rank--;
-                            fact.SourceLevel = fact.RankToSource.Count > 0 ? fact.RankToSource.Max(r => r.Level) : 1;
-                        }
-                    }
-                }
             }
 
             for (var i = progression.Items.Count - 1; i >= 0; i--) {
@@ -83,16 +66,16 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
                 if (item.Value.Level != clsLevel && item.Value.Level != level) continue;
 
-                if (!(item.Value.Archetypes?.Any() ?? false)) {
+                if (!cls.IsMythic && !(item.Value.Archetypes?.Any() ?? false)) {
                     // If the item doesn't have any archetype coupled, then we base it on the total character level
                     if (item.Value.Level == level) {
-                        RemoveProgression(item, i, verifyFacts: true);
+                        RemoveProgression(item, i);
                     }
                     continue;
                 }
 
                 if (item.Value.Level == clsLevel && item.Value.Archetypes.Any(a => clsBlueprints.Contains(a))) {
-                    RemoveProgression(item, i, verifyFacts: true);
+                    RemoveProgression(item, i);
                 }
             }
 
@@ -109,7 +92,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                     continue;
                 }
 
-                if (selection.Value.ByLevel.ContainsKey(levelStr)) {
+                if (!cls.IsMythic && selection.Value.ByLevel.ContainsKey(levelStr)) {
                     selection.Value.ByLevel.Remove(levelStr);
                     if (selection.Value.ByLevel.Count == 0) {
                         progression.Selections.RemoveAt(i);

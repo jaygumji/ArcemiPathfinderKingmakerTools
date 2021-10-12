@@ -50,5 +50,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IReadOnlyList<PlayerKingdomLeaderModel> Leaders => A.List<PlayerKingdomLeaderModel>("m_Leaders");
         public PlayerKingdomResources Resources => A.Object(factory: a => new PlayerKingdomResources(a));
+
+        public SettlementsManagerModel SettlementsManager => A.Object(factory: a => new SettlementsManagerModel(a));
     }
 }

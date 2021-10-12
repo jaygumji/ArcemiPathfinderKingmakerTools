@@ -1,0 +1,29 @@
+﻿@inject MainViewModel Model
+
+@if (!(Settlements?.Any() ?? false)) {
+    <p class="alert alert-info">No settlements found.</p>
+}
+else {
+    <AccordionContainer>
+        @foreach (var settlement in Settlements) {
+        <Accordion HeaderText="@settlement.Name">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Level</label>
+                    <select class="form-control" @bind="settlement.Level">
+                        @foreach (var level in SettlementLevels.All){
+                            <option value="@level.Value">@level.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </Accordion>
+        }
+    </AccordionContainer>
+}
+
+
+@code {
+    private IEnumerable<SettlementStateModel> Settlements =>
+        Model.Player?.Kingdom?.SettlementsManager?.SettlementStates;
+}

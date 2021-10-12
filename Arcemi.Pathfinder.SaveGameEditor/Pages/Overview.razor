@@ -70,6 +70,23 @@ else {
     </div>
 </div>
 
+<div class="row g-3">
+    <h3 class="col-md-12">Game Settings</h3>
+</div>
+<div class="row g-3">
+    <div class="col-md-12">
+        <p class="alert alert-warning">
+            Changing the auto crusade option should be done before crusade is enabled in game.
+        </p>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-3">
+        <label class="form-label">Auto Crusade</label>
+        <input type="checkbox" class="form-control" @bind="OptionAutoCrusade" />
+    </div>
+</div>
+
 </fieldset>
 }
 
@@ -77,6 +94,15 @@ else {
     public int Corruption {
         get => Model.Player.Corruption?.CurrentValue ?? 0;
         set => Model.Player.Corruption.CurrentValue = value;
+    }
+
+    private bool OptionAutoCrusade
+    {
+        get => Model.Player.SettingsList.AutoCrusade;
+        set {
+            Model.Player.SettingsList.AutoCrusade = value;
+            Model.Player.SettingsList.AutoCrusadeWasTouched = false;
+        }
     }
 
     private async Task ReplaceFile()
