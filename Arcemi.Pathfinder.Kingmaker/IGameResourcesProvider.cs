@@ -17,9 +17,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         string GetCharacterName(string blueprint);
         string GetArmyUnitName(string blueprint);
         IEnumerable<IBlueprint> GetAvailableArmyUnits();
-        IEnumerable<IBlueprint> GetBlueprints(string type);
-        IEnumerable<ResourceMapping> GetResources(ResourceMappingType type);
-        string GetFactName(string blueprint);
         bool TryGetLeader(string blueprint, out LeaderDataMapping leader);
         string GetLeaderName(string blueprint);
 

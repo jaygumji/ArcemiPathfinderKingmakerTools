@@ -3,8 +3,8 @@
     public interface IBlueprint
     {
         string Id { get; }
-        string Name { get; }
-        string TypeFullName { get; }
+        BlueprintName Name { get; }
+        BlueprintType Type { get; }
         string DisplayName { get; }
     }
 }

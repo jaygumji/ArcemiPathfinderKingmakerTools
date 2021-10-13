@@ -3,7 +3,7 @@
     public class FactItemModel : RefModel
     {
         public FactItemModel(ModelDataAccessor accessor) : base(accessor) { }
-        public string DisplayName => A.Res.GetFactName(Blueprint);
+        public string DisplayName => A.Res.Blueprints.GetNameOrBlueprint(Blueprint);
         public string Blueprint { get => A.Value<string>(); set => A.Value(value); }
         public string Type { get => A.Value<string>("$type"); set => A.Value(value, "$type"); }
         public FactContextModel Context { get => A.Object("m_Context", a => new FactContextModel(a)); }

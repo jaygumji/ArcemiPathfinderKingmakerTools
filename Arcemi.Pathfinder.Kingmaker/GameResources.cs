@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -66,41 +65,18 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             return Mappings.Characters.TryGetValue(blueprint, out var character)
                 ? character.Name
-                : Blueprints.TryGetName(blueprint, out var name) ? BlueprintDisplayName.Transform(name, suffix: "Companion") : "";
+                : Blueprints.TryGetName(blueprint, out var name) ? name : "";
         }
 
         public string GetArmyUnitName(string blueprint)
         {
-            return Mappings.Resources.TryGetValue(blueprint, out var armyUnit)
-                ? armyUnit.Name
-                : Blueprints.TryGetName(blueprint, out var name) ? name : blueprint;
+            return Blueprints.TryGetName(blueprint, out var name) ? name : blueprint;
         }
 
         public IEnumerable<IBlueprint> GetAvailableArmyUnits()
         {
             var blueprints = Blueprints.GetEntries(BlueprintTypes.Unit);
-            if (blueprints.Count > 0) {
-                return blueprints.Where(b => b.Name.StartsWith("Army", StringComparison.Ordinal));
-            }
-            return GetResources(ResourceMappingType.ArmyUnit);
-        }
-
-        public IEnumerable<IBlueprint> GetBlueprints(string type)
-        {
-            if (string.IsNullOrEmpty(type)) return Array.Empty<IBlueprint>();
-            return Blueprints.GetEntries(type);
-        }
-
-        public IEnumerable<ResourceMapping> GetResources(ResourceMappingType type)
-        {
-            return Mappings.Resources.Values.Where(x => x.Type == type).ToArray();
-        }
-
-        public string GetFactName(string blueprint)
-        {
-            return Mappings.Resources.TryGetValue(blueprint, out var res)
-                ? res.Name
-                : Blueprints.TryGetName(blueprint, out var name) ? name : blueprint;
+            return blueprints.Where(b => b.Name.StartsWith("Army"));
         }
 
         public bool TryGetLeader(string blueprint, out LeaderDataMapping leader)

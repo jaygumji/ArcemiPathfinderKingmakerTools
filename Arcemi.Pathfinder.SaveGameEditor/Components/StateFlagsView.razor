@@ -60,7 +60,7 @@
     protected override void OnInitialized()
     {
         if (Model.CanEdit) {
-            AddableFlags = Model.Resources.GetBlueprints(BlueprintTypes.UnlockableFlag)
+            AddableFlags = Model.Resources.Blueprints.GetEntries(BlueprintTypes.UnlockableFlag)
                 .Where(b => !Model.Player.UnlockableFlags.Items.Any(i => string.Equals(i.Key, b.Id)))
                 .OrderBy(b => b.DisplayName)
                 .ToList();

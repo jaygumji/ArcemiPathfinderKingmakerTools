@@ -1,74 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
     public class BlueprintType
     {
-        public BlueprintType(string type, string name)
+        public BlueprintType(string displayName, string fullName)
+            : this(displayName, BlueprintTypeCategory.NotSet, fullName)
         {
-            Type = type;
-            Name = name;
         }
 
-        public string Type { get; }
-        public string Name { get; }
+        public BlueprintType(string displayName, BlueprintTypeCategory category, string fullName)
+        {
+            FullName = fullName;
+            DisplayName = displayName;
+            Category = category;
+        }
+
+        public string FullName { get; }
+        public string DisplayName { get; }
+        public BlueprintTypeCategory Category { get; }
 
         public static IReadOnlyList<BlueprintType> AllVendorItems = new[] {
-            new BlueprintType(BlueprintTypes.ItemArmor, "Armor"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentBelt, "Belt"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentFeet, "Feet"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentGlasses, "Glasses"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentGloves, "Gloves"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentHead, "Head"),
-            new BlueprintType(BlueprintTypes.Ingredient, "Ingredient"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentNeck, "Neck"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentRing, "Ring"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentShirt, "Shirt"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentShoulders, "Shoulders"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentUsable, "Usable"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentWrist, "Wrist"),
-            new BlueprintType(BlueprintTypes.ItemShield, "Shield"),
-            new BlueprintType(BlueprintTypes.ItemThiefTool, "Thief Tool"),
-            new BlueprintType(BlueprintTypes.ItemWeapon, "Weapon"),
-            new BlueprintType(BlueprintTypes.Item, "Other")
+            BlueprintTypes.ItemArmor,
+            BlueprintTypes.ItemEquipmentBelt,
+            BlueprintTypes.ItemEquipmentFeet,
+            BlueprintTypes.ItemEquipmentGlasses,
+            BlueprintTypes.ItemEquipmentGloves,
+            BlueprintTypes.ItemEquipmentHead,
+            BlueprintTypes.Ingredient,
+            BlueprintTypes.ItemEquipmentNeck,
+            BlueprintTypes.ItemEquipmentRing,
+            BlueprintTypes.ItemEquipmentShirt,
+            BlueprintTypes.ItemEquipmentShoulders,
+            BlueprintTypes.ItemEquipmentUsable,
+            BlueprintTypes.ItemEquipmentWrist,
+            BlueprintTypes.ItemShield,
+            BlueprintTypes.ItemThiefTool,
+            BlueprintTypes.ItemWeapon,
+            BlueprintTypes.Item
         };
 
         public static IReadOnlyList<BlueprintType> AddableItems = new[] {
-            //new BlueprintType(BlueprintTypes.ItemArmor, "Armor"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentBelt, "Belt"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentFeet, "Feet"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentGlasses, "Glasses"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentGloves, "Gloves"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentHead, "Head"),
-            new BlueprintType(BlueprintTypes.Ingredient, "Ingredient"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentNeck, "Neck"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentRing, "Ring"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentShirt, "Shirt"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentShoulders, "Shoulders"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentUsable, "Usable"),
-            new BlueprintType(BlueprintTypes.ItemEquipmentWrist, "Wrist"),
-            new BlueprintType(BlueprintTypes.ItemKey, "Key"),
-            new BlueprintType(BlueprintTypes.ItemNote, "Note"),
-            //new BlueprintType(BlueprintTypes.ItemShield, "Shield"),
-            new BlueprintType(BlueprintTypes.ItemThiefTool, "Thief Tool"),
-            //new BlueprintType(BlueprintTypes.ItemWeapon, "Weapon"),
-            //new BlueprintType(BlueprintTypes.HiddenItem, "Hidden"),
-            new BlueprintType(BlueprintTypes.Item, "Other")
+            BlueprintTypes.ItemEquipmentBelt,
+            BlueprintTypes.ItemEquipmentFeet,
+            BlueprintTypes.ItemEquipmentGlasses,
+            BlueprintTypes.ItemEquipmentGloves,
+            BlueprintTypes.ItemEquipmentHead,
+            BlueprintTypes.Ingredient,
+            BlueprintTypes.ItemEquipmentNeck,
+            BlueprintTypes.ItemEquipmentRing,
+            BlueprintTypes.ItemEquipmentShirt,
+            BlueprintTypes.ItemEquipmentShoulders,
+            BlueprintTypes.ItemEquipmentUsable,
+            BlueprintTypes.ItemEquipmentWrist,
+            BlueprintTypes.ItemKey,
+            BlueprintTypes.ItemNote,
+            BlueprintTypes.ItemThiefTool,
+            BlueprintTypes.Item
         };
 
         public static ItemType GetItemType(string typeFullName)
         {
-            if (string.Equals(typeFullName, BlueprintTypes.ItemWeapon, StringComparison.Ordinal)) {
+            var type = BlueprintTypes.Resolve(typeFullName);
+            if (ReferenceEquals(type, BlueprintTypes.ItemWeapon)) {
                 return ItemType.Weapon;
             }
-            if (string.Equals(typeFullName, BlueprintTypes.ItemShield, StringComparison.Ordinal)) {
+            if (ReferenceEquals(type, BlueprintTypes.ItemShield)) {
                 return ItemType.Shield;
             }
-            if (string.Equals(typeFullName, BlueprintTypes.ItemArmor, StringComparison.Ordinal)) {
+            if (ReferenceEquals(type, BlueprintTypes.ItemArmor)) {
                 return ItemType.Armor;
             }
-            if (string.Equals(typeFullName, BlueprintTypes.ItemEquipmentUsable, StringComparison.Ordinal)) {
+            if (ReferenceEquals(type, BlueprintTypes.ItemEquipmentUsable)) {
                 return ItemType.Usable;
             }
             return ItemType.Simple;

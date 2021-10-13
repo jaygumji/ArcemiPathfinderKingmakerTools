@@ -1,0 +1,839 @@
+{
+	"Entries": [
+		{
+			"Name": "ArmyAeonsBythos",
+			"Guid": "a6d75776a29d4c0bb3bc8bcad259e990",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAirElementalMedium",
+			"Guid": "4c484666b207a3740a1b506a16a941d1",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAlchemist",
+			"Guid": "dfc2e36ffd9058d47832938c62ef1976",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAlederBeerElementals",
+			"Guid": "8262ad4367d740f5a0eb8afbd108582c",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAngelAstralDeva",
+			"Guid": "f86240f7d3774e55a0f5807e516f42b7",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAngelMonadicDeva",
+			"Guid": "264adf5b46de48f4bcdc93339573b589",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAngelMovanicDeva",
+			"Guid": "88547ce8c98f4797831b8d19494a474d",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyArcanist",
+			"Guid": "08a8c1c0c12943d3a8c29a3a2ee270d3",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyArcher",
+			"Guid": "adee0dc84ed3f254fa5da3c90d1e8e3c",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAshGiantNoRocks",
+			"Guid": "8a5e72f95bdd66846be2ca52237a59ec",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAshGiantStandart",
+			"Guid": "2da564e6e378c994e9d0b11a5935f502",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAsmodeanCleric",
+			"Guid": "f2ac17f3e3cd423da792e22887645a4a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAssassin",
+			"Guid": "a0d7031cb6876f34cb40d9753b00650c",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAzataBralani",
+			"Guid": "2217db3424a343efa6a2cff6c5c88619",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAzataLiliend",
+			"Guid": "6ef0f4aa97d047e09ac6765054fc519d",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAzataVeranallia",
+			"Guid": "1cfc2e8c6bed468baad632f53642f4d4",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyAzataYamah",
+			"Guid": "cc15da8924024d029407e05544a1b35a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBabauStandard",
+			"Guid": "26c4ebae32093b249bff19cbc7bb1665",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBalorStandard",
+			"Guid": "51a707b3b8e1987459defbfd159979ca",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBandit",
+			"Guid": "e6eee95b84347e745a5f0d94c50c611c",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBarbarian",
+			"Guid": "f942b277144bd7743899de92554f5e9e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBarbarianOnMammoth",
+			"Guid": "ad2171d3551141838cedf7df00b4efda",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBard",
+			"Guid": "32817f314a5e7d34e998238309c1fc44",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBattleSlaves",
+			"Guid": "99d9f5db152743f5878de34b58ca86fa",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBeerElemental",
+			"Guid": "4b78715907a64215a8666bea4d965732",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBellflowerHalfling",
+			"Guid": "5b2a2f2ee50e445ea70dee3447f4b0ee",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBloodrager",
+			"Guid": "612210fac8cee3347a0c1deddafbf35d",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyBrimorakStandard",
+			"Guid": "c03d9e999406efd47aa829e84ea99895",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCavaliers",
+			"Guid": "64d9c120a8a3ce949aed3457740f07fc",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCentipede",
+			"Guid": "d21f955d545a40dfa899750411bb078a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyChampion",
+			"Guid": "80db9a672f3bcf04f9f8de6023dae1fc",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyClericMummy",
+			"Guid": "d1ffd7a3afaa44dca2d991c901506c98",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyClericsOfCayden",
+			"Guid": "20583381709a4c409dde196da8019730",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyConscript",
+			"Guid": "621e94ddaa3fd5741ba9b0e2120e3ee5",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyConvict",
+			"Guid": "fb1bff7c95d90e14a98d3a6ed3ec062f",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCuirassier",
+			"Guid": "f3c63e5062a230c40b4133ecefa35bb1",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCultistGhlaunder",
+			"Guid": "f8f33a4f064a4024af54fba0649b9a56",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCultistLifestock",
+			"Guid": "deda299ddd3943fd9b05d351d24b73fa",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCultistMagic",
+			"Guid": "ce33641cbb034912b420b93405643f61",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCultistRogue",
+			"Guid": "311a74dbbcfb4c819eadfdbc162ba956",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCultist_Baphomet_Melee",
+			"Guid": "5b85c5fbb5a62774ab6c6fd97290ba74",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCultist_Deskari",
+			"Guid": "a96ee63169b74d4885d75b132e0f48fc",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCultist_FighterTank",
+			"Guid": "37a49639abfe0fb41b37b8ffa3cc21f8",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyCyborgs",
+			"Guid": "098d8e1563a64f11b78241d96f2ec444",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDeer",
+			"Guid": "f6807f84447740eea93152e69b798b36",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDemodandTarryStandard",
+			"Guid": "71e911e1b35a7f447945f978b96fdbd8",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDemonicKnights",
+			"Guid": "bcb0179fd44b4f0db5b061fdc7c6a6b2",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDerakniStandard",
+			"Guid": "effa1bab925d2d84cba4ced84e6561d6",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDhampires",
+			"Guid": "b763944d9d32c464aa67c14aeb287a60",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonBrass",
+			"Guid": "cdab29401e6540a69e06591583ecd2b3",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonBronze",
+			"Guid": "cd4e4dee9b564d35bda863484a77cbe0",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonCopper",
+			"Guid": "dcdbc80e8fd6430c8608ab1477d8ca9f",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonDiscipleBard",
+			"Guid": "6a1ef5ca1e2e40f0bdd1f916702c99a8",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonFallen",
+			"Guid": "a282441a47f4475d9e8f5f1f3c67caa8",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonGold",
+			"Guid": "6ae24de92f5941938223438384ccb676",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonHavoc",
+			"Guid": "f4c37a71593944539cf1ca646fb155d1",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonheirScionKnight",
+			"Guid": "63af42f2c1aa4016a5b5713a8f69c185",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonSilver",
+			"Guid": "f0852565fdb440668a9deefd4dd21bd9",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDragonslayer",
+			"Guid": "2bde9ee256f238041b85b256af8880b0",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDretchStandard",
+			"Guid": "71f2cd31ef4daca48a3f260faea0d79c",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyDuelists",
+			"Guid": "6bd7dbecebed8ee46b783d7f4d9c4f4a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyEarthElementalMedium",
+			"Guid": "6e78c497fc96e8f47acbe5fa737e026a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyEliteKnight",
+			"Guid": "e606cc618b5f49a7a88bd7e0c0b3dc0a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyErinyes",
+			"Guid": "bfc9486b89d24528847e37b74c96cf27",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyExecutionerDevil",
+			"Guid": "3c106648db2a4e39b4c9e4a920e092bb",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyFauchardSwordSaint",
+			"Guid": "9585ca162e06421183446a1b236f27b1",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyFireElementalMedium",
+			"Guid": "fd23034ba4ead6846bcef7c1a19371b7",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyFootHeavyScoutBardruidsDragonriders ",
+			"Guid": "f0965582d47345d79fc4f383ab75c513",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGallu",
+			"Guid": "24baa2abbdc2457b99570feeb304df99",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGargoyleStandard",
+			"Guid": "2a8b660058f9a074c87b393ef3c11b40",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGhoulStandard",
+			"Guid": "9dd5ff8cb0826de45838c2e5cd19cfd1",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGiantFlyStandard",
+			"Guid": "48f8491cd643284438e0bf5b49fb9500",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGiantSalamander",
+			"Guid": "3ca4aa868be949d6b10d53513458e5fe",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGiantSpiderNoWeb",
+			"Guid": "272f71e982166934182d51b4e03e400e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGiantSpiderStandard",
+			"Guid": "d95785c3853077a4599e0cbe8874703f",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGibrilethStandard",
+			"Guid": "be58edeef60ed4749bc1a0dd0760f5db",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGlabrezuStandard",
+			"Guid": "92e3cbc85f31f7249916c417dde4417b",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGoldenLegionnaires",
+			"Guid": "6fa933dc787537342b04e7cb3cf611cc",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyGraveKnight",
+			"Guid": "15c574688d6e44e79925411c5234765e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyHeadhunter",
+			"Guid": "becb6c6fe3a68354884a664d629dbefa",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyHeavyInfantry",
+			"Guid": "24ad1a10190de5c459a4521996dcec4b",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyHellknight",
+			"Guid": "61e12d43771a40241ac05471a60ddb38",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyHellknightSignifer",
+			"Guid": "097b67db3d62ea84390dc5a75a85826a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyHonorGuard",
+			"Guid": "f9b54444199bc074faf7ea49e91b8bd6",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyHunters",
+			"Guid": "4c1dbf30982dd544bb9a53dcd12cd8d9",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyIllusionist",
+			"Guid": "8856ae07cd3c4ccba85af0ed3d2aebe2",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyIncubusStandard",
+			"Guid": "810fefe6ea23691419d0414df10be774",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyInfantry",
+			"Guid": "34800b32867af5e4f9cdcb328470be16",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyInfernalArchers",
+			"Guid": "8e412d72eddc43a8b360f38da7446a6b",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyInfernalCavalry",
+			"Guid": "e5c7a178877148db9ee23ec81b5f1e8e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyInfernalInfantry",
+			"Guid": "cd3bced3ec764ea8961c839b5a7d6a14",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyInquisitor",
+			"Guid": "4cef3f3bb47343a45a1846204e2ef68d",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyKalavakus",
+			"Guid": "fe83c9d601c845e288f172ed259342ba",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyKineticist",
+			"Guid": "f76d591a08c84fc784ea7d9be756ad70",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyKnightsOfOzem",
+			"Guid": "f8b5212a4611a004a93a2d3684437192",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyKolyarutInevitable",
+			"Guid": "847db9fcd2b94eaaa527c130002c494d",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyLich",
+			"Guid": "a7da5ec13dc64bb1bf1ef7443056ea7a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyLightCavalry",
+			"Guid": "45743ca252f07b246a2f5107e5a05fae",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyLilitu",
+			"Guid": "c0c03b5924c64ee7b7406808714c1c90",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyLocustSwarmStandard",
+			"Guid": "bdf6c58bdaf74978b51b423993a6c9a0",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMagus",
+			"Guid": "7d543c104abaf4548a006922f2e4bcaf",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMammoth",
+			"Guid": "0f0c251ce7034e32b1dfd53b5a35703f",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMarilithStandard",
+			"Guid": "51cb3847de6cb0548ad16ce11ed31862",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMarksman",
+			"Guid": "81eae30d5d2809b429c0f21d942f7207",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMinotaur",
+			"Guid": "4fece5d5dcc14244595a9a4923a7239f",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMinotaurRanged",
+			"Guid": "79f7277fbbe56c849a2f687422d54116",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMongrelmanMeleeStandard",
+			"Guid": "fd8421c605a527649961278e7fd22993",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMongrelmanRangedStandard",
+			"Guid": "c0efa7525b6389a4992b11a574e5507a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyMonk",
+			"Guid": "d553037a296c3064f85c86661e7c87ec",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyNabasuStandard",
+			"Guid": "0c4aa321f8324d544a85e82ba1bbd583",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyNalfeshneeStandard",
+			"Guid": "34619e130cc2db44fa01cf0aa08648de",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyNecromancer",
+			"Guid": "d612483e61ad469c8d42760a3f0ba573",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyNightwalker",
+			"Guid": "43db94f68dad44c389b84f1647d78f65",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyOmoxStandard",
+			"Guid": "7b541e578ae3ba148b445b7090d348d8",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyOolioddroo",
+			"Guid": "ed2cf69ed7994947b4960e9224e5eb54",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPaidBlade",
+			"Guid": "5cd22aabef152de48b212aaed1c9b42f",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPainajaiRanged",
+			"Guid": "154975571bc240fd863ebe6e84e3b654",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPainajaiStandard",
+			"Guid": "f5afe453448532a4d8236c338f109e81",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPaladin",
+			"Guid": "ff408898eb9e8694cb849869d1dbfa05",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPaladinCavalry",
+			"Guid": "73801f2040063b848be8431cca5d3573",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPlaguedHorse",
+			"Guid": "72fbf524f955e634e851fdc0cafc743a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPlaguedMastodon",
+			"Guid": "f2d76a6dff64c774695affb834cd06cc",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPlagueDragon",
+			"Guid": "b6aac5af1fa8485f8d16d492de3365cc",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPlaguedSmilodon",
+			"Guid": "4fa47ef727f19994796c30126b68fc8b",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyPlaguedWolf",
+			"Guid": "1ca5936435027e54cb96a4e13c6a80d6",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyRaider",
+			"Guid": "3447fced5e594fa4aa67a481200ffd1e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyRanger",
+			"Guid": "5f0d3d1d58db0524bada47fee54b41e3",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyRavener",
+			"Guid": "6c04ffc735564eca834d3af60972a02b",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyRetrieverStandard",
+			"Guid": "b4633d6d8ca7e95479cc156808b0da3e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyRiftDrakeStandard",
+			"Guid": "e1c8172785022c142983266ef0b39a2c",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyRogue",
+			"Guid": "5788d3f4fbe0768499724c1e35fda91a",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySandClerics",
+			"Guid": "1afadb972c3e49fd9d93b7a2397af08f",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyScaledEldritchDisciplePaladin",
+			"Guid": "fa3aec9a06664aaea4949ce04dc22064",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyScaledFists",
+			"Guid": "76282b9bb97d437390dca28a53da5f0b",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySchirStandard",
+			"Guid": "78cc0bb2bcff8ed46ae04109080a31e8",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyScout",
+			"Guid": "fc63f902eab24ad0a3d58b44cf514316",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyShadowdancer",
+			"Guid": "5a49b18137ebd634e96f3dfba01b77f2",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyShadowdancerCopy",
+			"Guid": "bb3cbe9da55e426f9203af4fad8176d8",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySistersOfTheGoldenErinyes",
+			"Guid": "60982d1e730ae324fab213c01d0a9ab3",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySkeletalChampion",
+			"Guid": "57c102683ba9af548add64007ae7522e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySkeletonArcher",
+			"Guid": "aae40967ae55aca42a47cdf526bb4f0c",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySkeletonStandard",
+			"Guid": "c526c4be206681a428032aad8920dd35",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySlinger",
+			"Guid": "b5011c7140a47144abdd251f0c840fbb",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySorcerer",
+			"Guid": "fdfac936b98f7cf4788e7550c30a079b",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySpearman",
+			"Guid": "46c629fc950acbf4fb5535c6d2b8c055",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySpiderSwarmStandard",
+			"Guid": "48f0c472e5cd4beda4afdb1b6c39c344",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyStoneInfantry",
+			"Guid": "4926cfd5a8704c92ab497029f19fb594",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyStudentOfTheStone",
+			"Guid": "4685e57df8aa44518d7f80aa5100946d",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySuccubusStandard",
+			"Guid": "350d4ac1d315b8148985ee7418ffa619",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmySupport",
+			"Guid": "74c2f53638e84af78164c484ddd61ced",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyThugPaladin",
+			"Guid": "81927c9e73204dfb93b931aeabe29c31",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyTieflingsAvengers",
+			"Guid": "7acc0a1e5d11ae14dad6810fd7fd9494",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyVampire",
+			"Guid": "3136798af25641f6847b33216ab882fb",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyVampireNinjaPirates",
+			"Guid": "90a82470eed2453b9dfc6fdf27a3121d",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyVavakiaStandard",
+			"Guid": "1badd32c3e1941289a9bd60ef5e68d47",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyVescavorSwarmStandard",
+			"Guid": "c148c12cb7914a50b2fccc39fa880b73",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyVrockStandard",
+			"Guid": "5189caf9788ae3c4c93186a9e452a832",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyVrolikai",
+			"Guid": "5ae345afa4f147b1ae9c38e3eec95412",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyWarlocksWarwarpriests",
+			"Guid": "6c2384e0b5974517a9678ea5b9021e69",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyWarpriest",
+			"Guid": "03a56cb198bdb6a428f60b61efb8ea91",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyWaterElementalMedium",
+			"Guid": "824112c10498c7e4d9030e8223fd1c17",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyWightStandard",
+			"Guid": "60b8b746a2e824a4da2daed94b4dcc90",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyWitch",
+			"Guid": "6c3a25288f774ec4692231c410477bef",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyWizard",
+			"Guid": "21c707e39adc0154d85c44ef3f0b7aa4",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyWolf",
+			"Guid": "39dc6fb18e7144e9903eab21e8181f59",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyZagelforntzGiants",
+			"Guid": "db48c04ebf8d4b81bad2ee434296292e",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		{
+			"Name": "ArmyZombieStandard",
+			"Guid": "e4c4329f7d2a6414ca6dbef507dd5284",
+			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		}
+	]
+}

@@ -21,7 +21,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static readonly Dictionary<string, RaceDataMapping> Races;
         public static readonly Dictionary<string, CharacterDataMapping> Characters;
         public static readonly Dictionary<string, LeaderDataMapping> Leaders;
-        public static readonly Dictionary<string, ResourceMapping> Resources;
 
         public static RawItems RawItems { get; }
         public static DescriptiveItems DescriptiveItems { get; }
@@ -64,9 +63,6 @@ namespace Arcemi.Pathfinder.Kingmaker
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
             Leaders = dataMappings.Leaders
-                .ToDictionary(x => x.Id, StringComparer.Ordinal);
-
-            Resources = dataMappings.Resources
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
             BlueprintTypes = dataMappings.Characters.ToDictionary(x => new BlueprintIdentifier(x.Id), x => typeof(CharacterModel));

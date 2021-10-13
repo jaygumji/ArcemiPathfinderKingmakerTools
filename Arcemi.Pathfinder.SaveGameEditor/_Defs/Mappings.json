@@ -353,21 +353,5 @@
     { "id": "12d26ece33984e7387ce9094dd0737b1", "name": "Baroness Gaunther", "portrait": "37b60641d5545b642ae4d3699298d3f5" }
     //{ "id": "", "name": "" },
     //{ "id": "", "name": "" },
-  ],
-  "resources": [
-    // Army units
-    { "id": "34800b32867af5e4f9cdcb328470be16", "type": "ArmyUnit", "name": "Footmen" },
-    { "id": "adee0dc84ed3f254fa5da3c90d1e8e3c", "type": "ArmyUnit", "name": "Archers" },
-    { "id": "ff408898eb9e8694cb849869d1dbfa05", "type": "ArmyUnit", "name": "Clerics" },
-    { "id": "24ad1a10190de5c459a4521996dcec4b", "type": "ArmyUnit", "name": "Shield Bearers" },
-    { "id": "5f0d3d1d58db0524bada47fee54b41e3", "type": "ArmyUnit", "name": "Rangers" },
-    { "id": "61e12d43771a40241ac05471a60ddb38", "type": "ArmyUnit", "name": "Hellknights" },
-    { "id": "fc63f902eab24ad0a3d58b44cf514316", "type": "ArmyUnit", "name": "Mounted Scouts" },
-    { "id": "80db9a672f3bcf04f9f8de6023dae1fc", "type": "ArmyUnit", "name": "Champions" },
-    { "id": "73801f2040063b848be8431cca5d3573", "type": "ArmyUnit", "name": "Paladins" },
-    { "id": "fdfac936b98f7cf4788e7550c30a079b", "type": "ArmyUnit", "name": "Sorcerers" },
-  
-    // Facts
-    { "id": "93efbde2764b5504e98e6824cab3d27c", "type": "Feature", "name": "Kinetic Blast" }
   ]
 }

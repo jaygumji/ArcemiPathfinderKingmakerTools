@@ -48,7 +48,7 @@
                 <select id="add-item-type" class="form-control" @bind="AddItemType">
                     <option value="">Select item type...</option>
                     @foreach (var type in BlueprintType.AllVendorItems) {
-                        <option value="@type.Type">@type.Name</option>
+                        <option value="@type.FullName">@type.DisplayName</option>
                     }
                 </select>
             </div>
@@ -89,21 +89,16 @@
 
     private Modal modalAddItem;
 
-    private IEnumerable<IBlueprint> AddableItemBlueprints => Resources.GetBlueprints(AddItemType)
-        .Where(b => !AddItemTable.HasItem(b.Id) && !IsComponent(b))
+    private IEnumerable<IBlueprint> AddableItemBlueprints => Resources.Blueprints.GetEntries(AddItemType)
+        .Where(b => {
+            if (AddItemTable.HasItem(b.Id)) return false;
+            var name = (BlueprintItemName) b.Name;
+            if (name.IsComponent()) return false;
+            if (name.IsNaturalWeapon()) return false;
+            if (name.IsSpecialWeapon()) return false;
+            return true;
+        })
         .OrderBy(x => x.DisplayName);
-
-    private bool IsComponent(IBlueprint blueprint)
-    {
-        if (string.Equals(blueprint.TypeFullName, BlueprintTypes.ItemWeapon, StringComparison.Ordinal)) {
-            return blueprint.Name.StartsWith("Finnean", StringComparison.OrdinalIgnoreCase)
-                || blueprint.Name.StartsWith("Weapon", StringComparison.OrdinalIgnoreCase);
-        }
-        else if (string.Equals(blueprint.TypeFullName, BlueprintTypes.ItemArmor, StringComparison.Ordinal)) {
-            return blueprint.Name.StartsWith("ShieldOf", StringComparison.OrdinalIgnoreCase);
-        }
-        return false;
-    }
 
     private async Task ShowAddItemAsync(VendorTableModel table)
     {

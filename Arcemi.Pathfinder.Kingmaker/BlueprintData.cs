@@ -9,14 +9,14 @@ namespace Arcemi.Pathfinder.Kingmaker
     {
         private readonly Dictionary<string, BlueprintEntry> _lookup;
 
-        private readonly Dictionary<string, List<BlueprintEntry>> _byType;
+        private readonly Dictionary<BlueprintType, List<BlueprintEntry>> _byType;
 
         public static BlueprintData Empty { get; } = new BlueprintData(Array.Empty<BlueprintEntry>());
 
         public BlueprintData(IReadOnlyList<BlueprintEntry> entries)
         {
             _lookup = new Dictionary<string, BlueprintEntry>(StringComparer.Ordinal);
-            _byType = new Dictionary<string, List<BlueprintEntry>>(StringComparer.Ordinal);
+            _byType = new Dictionary<BlueprintType, List<BlueprintEntry>>();
 
             string clsType = default;
             List<BlueprintEntry> list = default;
@@ -24,10 +24,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                 _lookup.Add(entry.Guid, entry);
 
                 if (clsType == null || !string.Equals(clsType, entry.TypeFullName)) {
-                    clsType = entry.TypeFullName;
-                    if (!_byType.TryGetValue(clsType, out list)) {
+                    if (!_byType.TryGetValue(entry.Type, out list)) {
                         list = new List<BlueprintEntry>();
-                        _byType.Add(clsType, list);
+                        _byType.Add(entry.Type, list);
                     }
                 }
                 list.Add(entry);
@@ -81,7 +80,14 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IReadOnlyList<IBlueprint> GetEntries(string typeFullName)
         {
-            if (_byType.TryGetValue(typeFullName, out var entries)) {
+            if (string.IsNullOrEmpty(typeFullName)) return Array.Empty<IBlueprint>();
+            var type = BlueprintTypes.Resolve(typeFullName);
+            return GetEntries(type);
+        }
+
+        public IReadOnlyList<IBlueprint> GetEntries(BlueprintType type)
+        {
+            if (_byType.TryGetValue(type, out var entries)) {
                 return entries;
             }
             return Array.Empty<IBlueprint>();
@@ -92,6 +98,10 @@ namespace Arcemi.Pathfinder.Kingmaker
             if (string.IsNullOrEmpty(gameFolder)) return Empty;
             var cheatdataPath = Path.Combine(gameFolder, "Bundles", "cheatdata.json");
             BlueprintDataContainer cheatdata;
+            if (!File.Exists(cheatdataPath)) {
+                // Small backup
+                cheatdataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs", "Blueprints.json");
+            }
             if (File.Exists(cheatdataPath)) {
                 var serializer = new JsonSerializer();
                 using (var stream = new FileStream(cheatdataPath, FileMode.Open, FileAccess.Read, FileShare.Read))

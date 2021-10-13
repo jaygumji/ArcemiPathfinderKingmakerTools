@@ -60,7 +60,7 @@ else {
                             <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
                                 <option value="">Select item type...</option>
                                 @foreach (var type in BlueprintType.AddableItems) {
-                                    <option value="@type.Type">@type.Name</option>
+                                    <option value="@type.FullName">@type.DisplayName</option>
                                 }
                             </select>
                         </div>
@@ -70,7 +70,7 @@ else {
                             <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
                             <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
                                 <option value="">Select item...</option>
-                                @foreach (var blueprint in Resources.GetBlueprints(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
+                                @foreach (var blueprint in Resources.Blueprints.GetEntries(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
                                     <option value="@blueprint.Id">@blueprint.DisplayName</option>
                                 }
                             </select>

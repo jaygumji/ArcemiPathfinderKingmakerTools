@@ -10,17 +10,6 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public static class StringExtensions
     {
-        private static bool IsSequence(string value, int index, string sequence)
-        {
-            if (sequence.Length + index > value.Length) return false;
-            for (var i = 0; i < sequence.Length; i++) {
-                var s = sequence[i];
-                var c = value[i + index];
-                if (s != c) return false;
-            }
-            return true;
-        }
-
         public static string AsDisplayable(this string value)
         {
             if (string.IsNullOrEmpty(value)) return value;
@@ -48,23 +37,6 @@ namespace Arcemi.Pathfinder.Kingmaker
                         continue;
                     }
                 }
-                if (IsSequence(value, i, "Item")) {
-                    i += 3;
-                    continue;
-                }
-                if (IsSequence(value, i, "Plus") && i + 4 < len) {
-                    var cd = value[i + 4];
-                    if (char.IsDigit(cd)) {
-                        if (!char.IsWhiteSpace(cp)) {
-                            b.Append(' ');
-                        }
-                        b.Append('+');
-                        b.Append(cd);
-                        i += 4;
-                        continue;
-                    }
-                }
-
                 if (char.IsUpper(c) && i + 1 < value.Length && char.IsLower(value[i + 1])) {
                     b.Append(' ');
                 }
