@@ -79,6 +79,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public static bool IsStackable(string typeFullName)
         {
+            if (string.IsNullOrEmpty(typeFullName)) return false;
             return IsStackable(BlueprintTypes.Resolve(typeFullName));
         }
 
