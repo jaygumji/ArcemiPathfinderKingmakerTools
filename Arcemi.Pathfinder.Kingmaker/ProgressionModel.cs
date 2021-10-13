@@ -22,7 +22,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public int MythicExperience { get => A.Value<int>(); set => A.Value(value); }
         public string Race { get => A.Value<string>("m_Race"); set => A.Value(value, "m_Race"); }
         public string RaceName => A.Res.GetRaceName(Race);
-        public int CurrentLevel => CombinedLevel - MythicExperience;
-        public int CombinedLevel => Classes?.Sum(c => c.Level) ?? 0;
+        public int CurrentLevel => Classes?.Where(c => !c.IsMythic).Sum(c => c.Level) ?? 0;
     }
 }

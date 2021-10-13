@@ -74,7 +74,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                     continue;
                 }
 
-                if (item.Value.Level == clsLevel && item.Value.Archetypes.Any(a => clsBlueprints.Contains(a))) {
+                if (item.Value.Level == clsLevel && (item.Value.Archetypes?.Any(a => clsBlueprints.Contains(a)) ?? false)) {
                     RemoveProgression(item, i);
                 }
             }
