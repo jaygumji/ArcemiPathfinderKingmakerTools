@@ -1,7 +1,7 @@
 ﻿@using System.IO
 @inject MainViewModel Model
 
-@if(!Model.Player.IsKingdomEnabled) {
+@if(Model.Player.Kingdom == null) {
     <p><em>Kingdom is not enabled.</em></p>
 }
 else {

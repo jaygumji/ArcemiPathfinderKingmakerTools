@@ -1,7 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
+    public static class Enchantments
+    {
+        public static EnchantmentSpec Level1 = new EnchantmentSpec("d42fc23b92c640846ac137dc26e000d4", "$WeaponEnhancementBonus$f1459788-04d5-4128-ad25-dace4b8dee42");
+
+        public static IReadOnlyList<EnchantmentSpec> Levels { get; } = new[] {
+            Level1
+        };
+        public static int Level(string blueprint)
+        {
+            for (var i = 0; i < Levels.Count; i++) {
+                if (string.Equals(Levels[i].Blueprint, blueprint, StringComparison.Ordinal)) {
+                    return i + 1;
+                }
+            }
+            return 0;
+        }
+        public static EnchantmentSpec Level(int level)
+        {
+            if (level < 1 || level > Levels.Count) {
+                throw new ArgumentOutOfRangeException(nameof(level), level, $"Enchantmentlevel must be between 1 and {Levels.Count}");
+            }
+            return Levels[level - 1];
+        }
+    }
+
     public class EnchantmentFactItemModel : FactItemModel
     {
         public const string TypeRef = "Kingmaker.Blueprints.Items.Ecnchantments.ItemEnchantment, Assembly-CSharp";
@@ -10,31 +36,18 @@ namespace Arcemi.Pathfinder.Kingmaker
         public TimeSpan AttachTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public bool IsActive { get => A.Value<bool>(); set => A.Value(value); }
 
-        private static class Levels
-        {
-            public static class One
-            {
-                public const string Blueprint = "d42fc23b92c640846ac137dc26e000d4";
-                public const string Component = "$WeaponEnhancementBonus$f1459788-04d5-4128-ad25-dace4b8dee42";
-            }
-        }
-
         public int Level
         {
             get {
-                if (string.Equals(Blueprint, Levels.One.Blueprint, StringComparison.Ordinal)) return 1;
-
-                return 0;
+                return Enchantments.Level(Blueprint);
             }
             set {
-                if (value == 1) {
-                    Blueprint = Levels.One.Blueprint;
-                    if (Components.Count > 0) Components.Clear();
-                    Components.Add(Levels.One.Component, null);
+                var spec = Enchantments.Level(value);
+                Blueprint = spec.Blueprint;
+                foreach (var level in Enchantments.Levels) {
+                    Components.Remove(level.Component);
                 }
-                else {
-                    throw new ArgumentOutOfRangeException(nameof(value), value, "Enchantmentlevel must be between 1 and 5");
-                }
+                Components.Add(spec.Component, null);
             }
         }
     }

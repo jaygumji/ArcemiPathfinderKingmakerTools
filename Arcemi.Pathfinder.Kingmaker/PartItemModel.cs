@@ -24,6 +24,9 @@
             if (string.Equals(type, UnitPetPartItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new UnitPetPartItemModel(accessor);
             }
+            if (string.Equals(type, UnitDollDataPartItemModel.TypeRef, System.StringComparison.Ordinal)) {
+                return new UnitDollDataPartItemModel(accessor);
+            }
             return new PartItemModel(accessor);
         }
     }

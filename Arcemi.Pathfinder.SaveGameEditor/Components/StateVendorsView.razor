@@ -86,7 +86,7 @@
         set {
             _AddItemType = value;
             AddItemBlueprint = null;
-            AddItemCount = BlueprintType.IsStackable(_AddItemType) ? 99 : 1;
+            AddItemCount = BlueprintType.IsStackableAtVendor(_AddItemType) ? 99 : 1;
         }
     }
     private string AddItemBlueprint;

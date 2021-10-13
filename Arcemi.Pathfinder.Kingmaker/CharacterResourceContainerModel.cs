@@ -6,6 +6,6 @@
         {
         }
 
-        public ListAccessor<CharacterResourceModel> PersistantResources => A.List(factory: a => new CharacterResourceModel(a));
+        public ListAccessor<AbilityResourceModel> PersistantResources => A.List(factory: a => new AbilityResourceModel(a));
     }
 }

@@ -35,4 +35,9 @@
     {
         IsExpanded = !IsExpanded;
     }
+
+    protected override void OnInitialized()
+    {
+        IsExpanded = StartAsExpanded;
+    }
 }

@@ -56,8 +56,18 @@ namespace Arcemi.Pathfinder.Kingmaker
             Add(item.Key, item.Value);
         }
 
+        public void AddRange(IEnumerable<KeyValuePair<string, TValue>> items)
+        {
+            foreach (var item in items) {
+                Add(item.Key, item.Value);
+            }
+        }
+
         public void Clear()
         {
+            foreach (var key in _dict.Keys) {
+                _obj.Remove(key);
+            }
             _dict.Clear();
         }
 

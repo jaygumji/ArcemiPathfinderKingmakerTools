@@ -7,10 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Files\DollData.json" />
+    <None Remove="Files\DollDataClone.json" />
     <None Remove="Files\party_Downgrade_LevelCheck.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Files\DollDataClone.json" />
+    <EmbeddedResource Include="Files\DollData.json" />
     <EmbeddedResource Include="Files\party_Downgrade_LevelCheck.json" />
   </ItemGroup>
 

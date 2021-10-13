@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Runtime.CompilerServices;
@@ -33,6 +34,31 @@ namespace Arcemi.Pathfinder.Kingmaker
             _obj = obj;
             _refs = refs;
             Res = res;
+        }
+
+        public string Export(bool deep = true)
+        {
+            var obj = _obj.Export(deep, incSys: false);
+            var json = obj.ToString(Formatting.None);
+            var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+            return Convert.ToBase64String(bytes);
+        }
+
+        public T CreateImportView<T>(string script, Func<ModelDataAccessor, T> factory = null)
+        {
+            var bytes = Convert.FromBase64String(script.Trim());
+            var json = System.Text.Encoding.UTF8.GetString(bytes);
+            var obj = JObject.Parse(json);
+            var accessor = new ModelDataAccessor(obj, new References(Res), Res);
+            return (factory ?? Mappings.GetFactory<T>()).Invoke(accessor);
+        }
+
+        public void Import(string script, bool deep = true)
+        {
+            var bytes = Convert.FromBase64String(script.Trim());
+            var json = System.Text.Encoding.UTF8.GetString(bytes);
+            var obj = JObject.Parse(json);
+            obj.ImportTo(_obj, deep, incSys: false, arrayHandling: MergeArrayHandling.Replace);
         }
 
         public void ShallowMerge(JObject target)

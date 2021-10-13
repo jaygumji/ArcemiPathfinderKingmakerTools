@@ -51,7 +51,22 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         int IList.Add(object value)
         {
-            throw new NotImplementedException();
+            Add((T)value);
+            return _items.Count - 1;
+        }
+
+        public void Add(T value)
+        {
+            _items.Add(value);
+            _array.Add(JToken.FromObject(value));
+        }
+
+        public void AddRange(IEnumerable<T> values)
+        {
+            _items.AddRange(values);
+            foreach (var value in values) {
+                _array.Add(JToken.FromObject(value));
+            }
         }
 
         public void Clear()
@@ -87,7 +102,16 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         void IList.Remove(object value)
         {
-            throw new NotImplementedException();
+            Remove((T)value);
+        }
+
+        public bool Remove(T value)
+        {
+            var idx = _items.IndexOf(value);
+            if (idx < 0) return false;
+            _array.RemoveAt(idx);
+            _items.RemoveAt(idx);
+            return true;
         }
 
         public void RemoveAt(int index)

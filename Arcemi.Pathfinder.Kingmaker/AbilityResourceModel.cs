@@ -1,8 +1,8 @@
 ﻿namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class CharacterResourceModel : RefModel
+    public class AbilityResourceModel : RefModel
     {
-        public CharacterResourceModel(ModelDataAccessor accessor) : base(accessor)
+        public AbilityResourceModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
 

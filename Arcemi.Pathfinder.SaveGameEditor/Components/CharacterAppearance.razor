@@ -1,0 +1,31 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+@using Arcemi.Pathfinder.SaveGameEditor.Components
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
+
+@if (DollDataPart == null) {
+    <p class="alert alert-info">Character has no appearance data</p>
+}
+else {
+<p class="alert alert-info">
+    Create a new character with the appearance you want, either as new game, or a mercenary in your current game.<br />
+    Copy the appearance code from that character and import it into the character you want to change.
+</p>
+<AccordionContainer>
+    <Accordion HeaderText="Main appearance" StartAsExpanded="true">
+        <CharacterDollData DollData="DollDataPart.Default" />
+    </Accordion>
+    @if (DollDataPart.Special?.KitsunePolymorph != null) {
+    <Accordion HeaderText="Kitsune polymorph">
+        <CharacterDollData DollData="DollDataPart.Special.KitsunePolymorph" />
+    </Accordion>
+    }
+</AccordionContainer>
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+    private CharacterModel Character => Unit.Descriptor;
+    private UnitDollDataPartItemModel DollDataPart => Unit.Parts.Items.OfType<UnitDollDataPartItemModel>().FirstOrDefault();
+}
