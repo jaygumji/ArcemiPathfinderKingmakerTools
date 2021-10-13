@@ -54,7 +54,7 @@
             </div>
         </div>
         <div class="row g-3">
-            <div class="col-md-12">
+            <div class="col-md-10">
                 <label for="add-item-blueprint" class="form-label">Item</label>
                 <select id="add-item-blueprint" class="form-control" @bind="AddItemBlueprint">
                     <option value="">Select item...</option>
@@ -62,6 +62,10 @@
                         <option value="@blueprint.Id">@blueprint.DisplayName</option>
                     }
                 </select>
+            </div>
+            <div class="col-md-2">
+                <label for="add-item-count" class="form-label">Amount</label>
+                <input type="number" min="1" max="99" class="form-control" readonly="@IsAddItemInvalid" @bind="AddItemCount" />
             </div>
         </div>
     </Body>
@@ -82,9 +86,11 @@
         set {
             _AddItemType = value;
             AddItemBlueprint = null;
+            AddItemCount = BlueprintType.IsStackable(_AddItemType) ? 99 : 1;
         }
     }
     private string AddItemBlueprint;
+    private int AddItemCount;
     private bool IsAddItemInvalid => string.IsNullOrEmpty(AddItemType) || string.IsNullOrEmpty(AddItemBlueprint);
 
     private Modal modalAddItem;
@@ -110,7 +116,7 @@
     {
         var entry = AddItemTable.Entries.Add();
         entry.Item = AddItemBlueprint;
-        entry.Count = 99;
+        entry.Count = AddItemCount;
         await modalAddItem.CloseAsync();
         AddItemType = null;
         AddItemBlueprint = null;

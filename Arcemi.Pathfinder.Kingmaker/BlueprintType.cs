@@ -76,5 +76,18 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
             return ItemType.Simple;
         }
+
+        public static bool IsStackable(string typeFullName)
+        {
+            return IsStackable(BlueprintTypes.Resolve(typeFullName));
+        }
+
+        public static bool IsStackable(BlueprintType type)
+        {
+            return type.Equals(BlueprintTypes.ItemEquipmentUsable)
+                || type.Equals(BlueprintTypes.Ingredient)
+                || type.Equals(BlueprintTypes.Item)
+                || type.Equals(BlueprintTypes.ItemThiefTool);
+        }
     }
 }
