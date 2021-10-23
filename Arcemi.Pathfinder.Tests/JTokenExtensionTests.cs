@@ -25,11 +25,13 @@ namespace Arcemi.Pathfinder.Tests
             var expectedJson = JObject.Parse(Res.Get("DollData.json")).ToString(Formatting.None);
             var srcObj = JObject.Parse(srcJson);
             var destObj = new JObject {
-                {"$id", "7"},
-                {"$type", "Kingmaker.UnitLogic.Parts.UnitPartDollData, Assembly-CSharp"},
-                {"Default", new JObject {{"$id", "8"}} }
+                {"$id", "8"},
+                {"EquipmentEntityIds", new JArray { "InvalidArrayItem" } },
+                {"EntityRampIdices", new JObject {
+                    {"InvalidDictionaryKey", -1}
+                }}
             };
-            srcObj.ImportTo(destObj, deep: true, incSys: false, arrayHandling: MergeArrayHandling.Replace);
+            srcObj.ImportTo(destObj, ImportOptions.CodeScripts);
             var json = destObj.ToString(Formatting.None);
             Assert.Equal(expectedJson, json);
         }

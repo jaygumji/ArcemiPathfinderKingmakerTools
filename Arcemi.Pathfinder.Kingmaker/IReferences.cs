@@ -28,5 +28,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         bool RemoveObject(JObject parent, string name);
         bool RemoveList(JObject parent, string name);
         bool RemoveListValue(JObject parent, string name);
+        void Refresh(JObject parent);
     }
 }

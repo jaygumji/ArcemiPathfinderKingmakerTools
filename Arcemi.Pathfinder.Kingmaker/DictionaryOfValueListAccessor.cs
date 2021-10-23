@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class DictionaryOfValueListAccessor<TValue> : IDictionary<string, ListValueAccessor<TValue>>, IReadOnlyDictionary<string, IReadOnlyList<TValue>>
+    public class DictionaryOfValueListAccessor<TValue> : IDictionary<string, ListValueAccessor<TValue>>, IReadOnlyDictionary<string, IReadOnlyList<TValue>>, IModelContainer
     {
         private readonly JObject _obj;
         private readonly Dictionary<string, ListValueAccessor<TValue>> _dict;
@@ -20,7 +20,13 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             _obj = obj;
             _dict = new Dictionary<string, ListValueAccessor<TValue>>(StringComparer.Ordinal);
-            foreach (var property in obj.Properties()) {
+            ((IModelContainer)this).Refresh();
+        }
+
+        void IModelContainer.Refresh()
+        {
+            if (_dict.Count > 0) _dict.Clear();
+            foreach (var property in _obj.Properties()) {
                 var propertyValue = property.Value;
                 if (propertyValue == null || !(propertyValue is JArray arr)) continue;
 

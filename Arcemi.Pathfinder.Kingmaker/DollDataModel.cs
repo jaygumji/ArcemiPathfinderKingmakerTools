@@ -17,27 +17,27 @@
 
         public string Export()
         {
-            return A.Export();
+            return A.ExportCode();
         }
 
         public void Import(string script)
         {
-            var obj = A.CreateImportView(script, a => new DollDataModel(a));
-            EquipmentEntityIds.Clear();
-            EquipmentEntityIds.AddRange(obj.EquipmentEntityIds);
+            //var obj = A.CreateImportView(script, a => new DollDataModel(a));
+            //EquipmentEntityIds.Clear();
+            //EquipmentEntityIds.AddRange(obj.EquipmentEntityIds);
 
-            EntityRampIdices.Clear();
-            EntityRampIdices.AddRange(obj.EntityRampIdices);
+            //EntityRampIdices.Clear();
+            //EntityRampIdices.AddRange(obj.EntityRampIdices);
 
-            EntitySecondaryRampIdices.Clear();
-            EntitySecondaryRampIdices.AddRange(obj.EntitySecondaryRampIdices);
+            //EntitySecondaryRampIdices.Clear();
+            //EntitySecondaryRampIdices.AddRange(obj.EntitySecondaryRampIdices);
 
-            ClothesPrimaryIndex = obj.ClothesPrimaryIndex;
-            ClothesSecondaryIndex = obj.ClothesSecondaryIndex;
+            //ClothesPrimaryIndex = obj.ClothesPrimaryIndex;
+            //ClothesSecondaryIndex = obj.ClothesSecondaryIndex;
 
-            RacePreset = obj.RacePreset;
-            Gender = obj.Gender;
-            //A.Import(script);
+            //RacePreset = obj.RacePreset;
+            //Gender = obj.Gender;
+            A.ImportCode(script);
         }
     }
 }

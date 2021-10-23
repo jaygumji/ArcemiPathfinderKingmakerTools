@@ -8,11 +8,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class ListAccessor<T> : IList, IReadOnlyList<T>, INotifyCollectionChanged
+    public class ListAccessor<T> : IList, IReadOnlyList<T>, INotifyCollectionChanged, IModelContainer
         where T : Model
     {
         private readonly JArray _array;
@@ -29,16 +28,23 @@ namespace Arcemi.Pathfinder.Kingmaker
             _refs = refs;
             _factory = factory;
             _res = res;
-            _items = array
-                .Select(t => {
-                    if (t == null || t.Type == JTokenType.Null) {
-                        return null;
-                    }
-                    var obj = refs.GetReferred((JObject)t);
-                    var accessor = new ModelDataAccessor(obj, _refs, res);
-                    return factory.Invoke(accessor);
-                })
-                .ToList() ?? new List<T>();
+            _items = new List<T>();
+            ((IModelContainer)this).Refresh();
+        }
+
+        void IModelContainer.Refresh()
+        {
+            if (_items.Count > 0) _items.Clear();
+            foreach (var t in _array) {
+                if (t == null || t.Type == JTokenType.Null) {
+                    _items.Add(null);
+                    continue;
+                }
+                var obj = _refs.GetReferred((JObject)t);
+                var accessor = new ModelDataAccessor(obj, _refs, _res);
+                var instance = _factory.Invoke(accessor);
+                _items.Add(instance);
+            }
         }
 
         private T InitAndInsert(int index = -1, Action<IReferences, JObject> init = null)

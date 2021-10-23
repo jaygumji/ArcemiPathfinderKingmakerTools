@@ -2,10 +2,11 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
- #endregion
+#endregion
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -86,6 +87,15 @@ namespace Arcemi.Pathfinder.Kingmaker
                 return false;
             }
             return cache.Remove(name);
+        }
+
+        public void Refresh(JObject parent)
+        {
+            if (!_local.TryGetValue(parent, out var cache)) return;
+
+            foreach (var modelContainer in cache.Values.OfType<IModelContainer>()) {
+                modelContainer.Refresh();
+            }
         }
     }
 }

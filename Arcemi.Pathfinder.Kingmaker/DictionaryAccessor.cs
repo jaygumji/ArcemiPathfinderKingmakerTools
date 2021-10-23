@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class DictionaryAccessor<T> : IReadOnlyDictionary<string, T>
+    public class DictionaryAccessor<T> : IReadOnlyDictionary<string, T>, IModelContainer
         where T : Model
     {
         private readonly JObject _obj;
@@ -26,14 +26,20 @@ namespace Arcemi.Pathfinder.Kingmaker
             _refs = refs;
             _factory = factory;
             _res = res;
-            foreach (var property in obj.Properties()) {
+            ((IModelContainer)this).Refresh();
+        }
+
+        void IModelContainer.Refresh()
+        {
+            if (_dict.Count > 0) _dict.Clear();
+            foreach (var property in _obj.Properties()) {
                 if (property.Value == null || property.Value is null || property.Value.Type == JTokenType.Null) {
                     _dict.Add(property.Name, null);
                     continue;
                 }
-                var item = refs.GetReferred((JObject)property.Value);
-                var accessor = new ModelDataAccessor(item, _refs, res);
-                var dictItem = factory.Invoke(accessor);
+                var item = _refs.GetReferred((JObject)property.Value);
+                var accessor = new ModelDataAccessor(item, _refs, _res);
+                var dictItem = _factory.Invoke(accessor);
                 _dict.Add(property.Name, dictItem);
             }
         }

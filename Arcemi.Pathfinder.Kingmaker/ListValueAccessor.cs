@@ -7,11 +7,10 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class ListValueAccessor<T> : IList, IReadOnlyList<T>
+    public class ListValueAccessor<T> : IList, IReadOnlyList<T>, IModelContainer
     {
         private readonly JArray _array;
         private readonly List<T> _items;
@@ -19,9 +18,16 @@ namespace Arcemi.Pathfinder.Kingmaker
         public ListValueAccessor(JArray array)
         {
             _array = array;
-            _items = array
-                .Select(t => t.Value<T>())
-                .ToList() ?? new List<T>();
+            _items = new List<T>();
+            ((IModelContainer)this).Refresh();
+        }
+
+        void IModelContainer.Refresh()
+        {
+            if (_items.Count > 0) _items.Clear();
+            foreach (var item in _array) {
+                _items.Add(item.Value<T>());
+            }
         }
 
         public JArray UnderlyingStructure => _array;

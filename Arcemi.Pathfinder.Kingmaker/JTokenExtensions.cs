@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -23,7 +24,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             if (token.Type == JTokenType.Object) {
                 var obj = new JObject();
                 foreach (var property in ((JObject)token).Properties()) {
-                    if (!incSys && property.Name.StartsWith("$", StringComparison.Ordinal)) {
+                    if (!incSys && property.IsSystemProperty()) {
                         continue;
                     }
                     if (!deep && property.Type == JTokenType.Object) continue;
@@ -35,39 +36,65 @@ namespace Arcemi.Pathfinder.Kingmaker
             return token;
         }
 
-        public static void ImportTo(this JToken src, JToken dest, bool deep, bool incSys, MergeArrayHandling arrayHandling)
+        public static void ImportTo(this JToken src, JToken dest, ImportOptions options)
         {
             if (src == null || src.Type == JTokenType.Null) return;
             if (dest == null || dest.Type == JTokenType.Null) return;
             if (src.Type == JTokenType.Array && dest.Type == JTokenType.Array) {
-                if (arrayHandling == MergeArrayHandling.Replace) { ((JArray)dest).Clear(); }
+                var destArr = (JArray)dest;
+                if (options.Arrays == ImportArrayOptions.Replace) { destArr.Clear(); }
+                var i = 0;
                 foreach (var item in src) {
-                    if (!deep && item.Type == JTokenType.Object) continue;
-                    ((JArray)dest).Add(item);
+                    if (!options.Deep && item.Type == JTokenType.Object) continue;
+                    if (options.Arrays == ImportArrayOptions.Overwrite && i < destArr.Count) {
+                        destArr[i] = item;
+                    }
+                    else {
+                        destArr.Add(item);
+                    }
                 }
                 return;
             }
             if (src.Type == JTokenType.Object && dest.Type == JTokenType.Object) {
                 var destObj = (JObject)dest;
+                if (options.Objects == ImportObjectOptions.Replace) {
+                    var destObjPropertyNames = destObj.Properties()
+                        .Where(p => !p.Value.IsReference() && (options.IncludeSystemProperties || !p.IsSystemProperty()))
+                        .Select(p => p.Name).ToArray();
+                    foreach (var destName in destObjPropertyNames) {
+                        destObj.Remove(destName);
+                    }
+                }
                 foreach (var srcProp in ((JObject)src).Properties()) {
-                    if (!incSys && srcProp.Name.StartsWith("$", StringComparison.Ordinal)) {
+                    if (!options.IncludeSystemProperties && srcProp.IsSystemProperty()) {
                         continue;
                     }
 
-                    if (!deep && srcProp.Type == JTokenType.Object) continue;
+                    if (!options.Deep && srcProp.Type == JTokenType.Object) continue;
 
                     var destProp = destObj.Property(srcProp.Name);
                     if (destProp == null) {
                         destObj.Add(srcProp.Name, srcProp.Value);
                     }
-                    else if (srcProp.Type == JTokenType.Object || srcProp.Type == JTokenType.Integer) {
-                        ImportTo(srcProp.Value, destProp.Value, deep, incSys, arrayHandling);
+                    else if (srcProp.Value.IsReference()) {
+                        ImportTo(srcProp.Value, destProp.Value, options);
                     }
                     else {
                         destProp.Value = srcProp.Value;
                     }
                 }
             }
+        }
+
+        public static bool IsReference(this JToken token)
+        {
+            if (token == null) return false;
+            return token.Type == JTokenType.Object || token.Type == JTokenType.Array;
+        }
+
+        public static bool IsSystemProperty(this JProperty property)
+        {
+            return property.Name.StartsWith("$", StringComparison.Ordinal);
         }
     }
 }

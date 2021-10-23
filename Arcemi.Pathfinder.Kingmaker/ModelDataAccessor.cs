@@ -36,9 +36,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             Res = res;
         }
 
-        public string Export(bool deep = true)
+        public string ExportCode()
         {
-            var obj = _obj.Export(deep, incSys: false);
+            var obj = _obj.Export(deep: true, incSys: false);
             var json = obj.ToString(Formatting.None);
             var bytes = System.Text.Encoding.UTF8.GetBytes(json);
             return Convert.ToBase64String(bytes);
@@ -53,12 +53,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             return (factory ?? Mappings.GetFactory<T>()).Invoke(accessor);
         }
 
-        public void Import(string script, bool deep = true)
+        public void ImportCode(string script)
         {
             var bytes = Convert.FromBase64String(script.Trim());
             var json = System.Text.Encoding.UTF8.GetString(bytes);
             var obj = JObject.Parse(json);
-            obj.ImportTo(_obj, deep, incSys: false, arrayHandling: MergeArrayHandling.Replace);
+            obj.ImportTo(_obj, ImportOptions.CodeScripts);
+            _refs.Refresh(_obj);
         }
 
         public void ShallowMerge(JObject target)

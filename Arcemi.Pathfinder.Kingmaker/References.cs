@@ -281,5 +281,15 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             return _valueLists.Remove(parent, name);
         }
+
+        void IReferences.Refresh(JObject parent)
+        {
+            _objects.Refresh(parent);
+            _lists.Refresh(parent);
+            _valueLists.Refresh(parent);
+            _dictionary.Refresh(parent);
+            _dictionaryOfValueLists.Refresh(parent);
+            _dictionaryOfValues.Refresh(parent);
+        }
     }
 }
