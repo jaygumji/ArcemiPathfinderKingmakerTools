@@ -15,10 +15,85 @@ h4 {
   margin-top: 20px;
   font-size: 1.2rem;
 }
+.btn-help-tooltip {
+  position: relative;
+  display: inline-block;
+  background-color: #e8e9ea;
+  border-color: #e8e9ea;
+}
+.btn-help-tooltip:hover {
+  background-color: #e2e6ea;
+  border-color: #dae0e5;
+}
+.btn-help-tooltip .help-tooltip {
+  width: 300px;
+  top: 100%;
+  left: 50%;
+  margin-left: -270px;
+  /* Width - arrow pos right - 5px (padding) */
+  margin-top: 10px;
+  /* Move it below the button */
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+}
+.btn-help-tooltip .help-tooltip::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  right: 25px;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+.btn-help-tooltip:hover .help-tooltip {
+  visibility: visible;
+}
+.form-label {
+  white-space: nowrap;
+}
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+.btn-circle {
+  width: 38px;
+  height: 38px;
+  padding: 6px 8px;
+  border-radius: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+.btn-circle.btn-md {
+  width: 50px;
+  height: 50px;
+  padding: 7px 10px;
+  border-radius: 25px;
+  font-size: 10px;
+  text-align: center;
+}
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  border-radius: 35px;
+  font-size: 12px;
+  text-align: center;
+}
+.btn-circle.btn-sm {
+  width: 30px;
+  height: 30px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  font-size: 8px;
+  text-align: center;
 }
 .main {
   overflow: hidden;

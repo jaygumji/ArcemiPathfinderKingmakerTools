@@ -87,7 +87,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public bool ValidateGameFolder()
         {
-            if (string.IsNullOrEmpty(Config.GameFolder)) return false;
+            if (string.IsNullOrEmpty(Config?.GameFolder)) return false;
             var cheatdataPath = Path.Combine(Config.GameFolder, "Bundles", "cheatdata.json");
             return File.Exists(cheatdataPath);
         }

@@ -7,10 +7,12 @@
 
 <fieldset class="form-controller" disabled="@State.IsBusy">
 
-<p class="alert alert-info">
-    Start by selecting the save game file you want to edit.<br />
-    For a better experience with the editor, fill in the appdata and game folder settings.
+@if (!Model.ValidateGameFolder()){
+<p class="alert alert-warning">
+    Appdata folder is not configured in settings, enhanced UI has been disabled.
+    Set the appdata folder in the settings to enable the enhanced UI for a better experience.
 </p>
+}
 <div class="row">
     <div class="col-md-6">
         <button class="btn btn-info" @onclick="OpenFile">

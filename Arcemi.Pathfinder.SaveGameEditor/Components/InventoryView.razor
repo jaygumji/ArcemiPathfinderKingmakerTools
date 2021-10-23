@@ -13,8 +13,8 @@ else {
             </label>
             <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
         </div>
-        @if (Resources.Blueprints.IsEmpty) {
-        <div class="col-md-2">
+        @if (Resources.Blueprints.GetEntries(BlueprintTypes.Item).Count == 0) {
+        <div class="col-md-1">
             <button class="btn btn-primary" @onclick="() => addItemModal.OpenAsync()">
                 <span class="oi oi-plus"></span>
             </button>
@@ -45,9 +45,15 @@ else {
                 </Footer>
             </Modal>
         </div>
+        <div class col-md-1>
+            <Help>
+                A fallback view is used and you will see a lot of identifiers.
+                To get item names, set the game folder in the settings.
+            </Help>
+        </div>
         }
         else {
-        <div class="col-md-2">
+        <div class="col-md-1">
             <button class="btn btn-primary" @onclick="() => addBlueprintItemModal.OpenAsync()">
                 <span class="oi oi-plus"></span>
             </button>
@@ -82,6 +88,12 @@ else {
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addBlueprintItemModal.CloseAsync()">Cancel</button>
                 </Footer>
             </Modal>
+        </div>
+        <div class="col-md-1">
+            <Help>
+                Adding weapons, shields and armors are restricted in the inventory view. To add those item categories,
+                go to state and vendors and add the item to a vendor, then buy it from the vendor in game.
+            </Help>
         </div>
         }
     </div>
@@ -161,9 +173,19 @@ else {
         "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
     };
 
+    private bool IsVisibleItem(ItemModel i)
+    {
+        if (!string.IsNullOrEmpty(i.WielderRef)) return false;
+        if (i.HoldingSlot != null) return false;
+        if (ItemFilter.Contains(i.Blueprint)) return false;
+        if (!Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) return true;
+        if (!(blueprint.Name is BlueprintItemName itemName)) return true;
+        return !itemName.IsFinnean && !itemName.IsNaturalWeapon();
+    }
+
     private string SearchTerm;
     private IEnumerable<ItemModel> Items => Inventory.Items
-        .Where(i => string.IsNullOrEmpty(i.WielderRef) && i.HoldingSlot == null && !ItemFilter.Contains(i.Blueprint))
+        .Where(IsVisibleItem)
         .OrderByDescending(i => CalculateScore(i)).ThenBy(i => i.InventorySlotIndex);
 
     private Modal addItemModal;

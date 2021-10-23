@@ -1,0 +1,11 @@
+﻿<button class="btn btn-circle btn-help-tooltip">
+    <span class="oi oi-question-mark"></span>
+    <span class="help-tooltip">
+        @ChildContent
+    </span>
+</button>
+
+@code{
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}
