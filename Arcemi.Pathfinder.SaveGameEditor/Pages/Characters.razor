@@ -10,7 +10,7 @@
 else {
     <ul class="portraits">
         @foreach (var unit in Model.Characters) {
-        <li @onclick="() => SelectCharacter(unit)" class="@(Unit == unit ? "toggled" : "")">
+        <li @onclick="() => SelectCharacter(unit)" class="@(Unit == unit ? "toggled" : "")" title="@(unit.Descriptor.CustomName ?? unit.Descriptor.Name)">
             <img src="file://@unit.Descriptor.UISettings.PortraitPath" alt="Portrait" />
             <span>@(unit.Descriptor.CustomName ?? unit.Descriptor.Name)</span>
         </li>

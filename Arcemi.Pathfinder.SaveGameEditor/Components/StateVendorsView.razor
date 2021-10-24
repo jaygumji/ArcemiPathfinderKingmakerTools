@@ -1,17 +1,17 @@
 ﻿@inject MainViewModel Model
 @inject IGameResourcesProvider Resources
 
-<div class="row">
-    <div class="col-md-5 form-list-header">
+<div class="row form-list-header">
+    <div class="col-md-5">
         <label class="form-label">Name</label>
     </div>
-    <div class="col-md-2 form-list-header">
+    <div class="col-md-2">
         <label class="form-label" title="Number of entries on this vendor">Entries</label>
     </div>
-    <div class="col-md-2 form-list-header">
+    <div class="col-md-2">
         <label class="form-label" title="Number of known items">Known</label>
     </div>
-    <div class="col-md-3 form-list-header">
+    <div class="col-md-3">
     </div>
 </div>
 @foreach (var table in Model.Player.SharedVendorTables.PersistentTables) {
@@ -45,7 +45,7 @@
 <Modal @ref="modalEditTable">
     <Title>Edit Vendor Table</Title>
     <Body>
-        <div class="row form-list-header-row">
+        <div class="row form-list-header">
             <div class="col-md-7">Name</div>
             <div class="col-md-3">Count</div>
             <div class="col-md-2"></div>

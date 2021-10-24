@@ -21,20 +21,20 @@ else {
         }
     </div>
 
-    <div class="row g-3">
-        <div class="col-md-4 form-list-header">
+    <div class="row form-list-header">
+        <div class="col-md-4">
             <label class="form-label">Name</label>
         </div>
-        <div class="col-md-1 form-list-header">
+        <div class="col-md-1">
             <label class="form-label">Type</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-2">
             <label class="form-label">Stack</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-2">
             <label class="form-label">Charges</label>
         </div>
-        <div class="col-md-3 form-list-header">
+        <div class="col-md-3">
         </div>
     </div>
     if (!Items.Any()) {
@@ -46,11 +46,11 @@ else {
 }
     else {
         @foreach (var item in Items) {
-        <div class="row g-3">
+        <div class="row">
             <div class="col-md-4 overflow-hidden">
                 <label class="form-label">@item.DisplayName</label>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <img src="@GetItemTypeIconUrl(item)" alt="@item.DisplayType" />
             </div>
             <div class="col-md-2">

@@ -36,19 +36,21 @@
     <div class="row g-3">
         <h3 class="col-md-12">Resources</h3>
     </div>
-    <div class="row g-3">
-        <div class="col-md-4 form-list-header">
+    <div class="row form-list-header">
+        <div class="col-md-4">
             <label class="form-label">Name</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-2">
             <label class="form-label">Amount</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-2">
             <label class="form-label">Retain</label>
         </div>
-        <div class="col-md-2 form-list-header">
-        </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-2">
+            <Help>
+                The amount referes to how many uses you have left until you camp.
+                I'm unsure what "Retain" is used for, will leave it in the UI for now.
+            </Help>
         </div>
     </div>
     @foreach (var res in Character.Resources.PersistantResources) {
@@ -61,8 +63,6 @@
         </div>
         <div class="col-md-2">
             <input type="number" class="form-control" @bind="res.RetainCount" />
-        </div>
-        <div class="col-md-2">
         </div>
         <div class="col-md-2">
         </div>

@@ -9,30 +9,30 @@ else {
         you need to subtract the duration left (Ends in x days) displayed in game - 1.
         So if started on is 50 and the duration left is 5 days, you set the started on to 46
         to complete it in a day.</p>
-    <div class="row g-3">
-        <div class="col-md-4 form-list-header">
+    <div class="row form-list-header">
+        <div class="col-md-4">
             <label class="form-label">Name</label>
         </div>
-        <div class="col-md-4 form-list-header">
+        <div class="col-md-4">
             <label class="form-label">Description</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-2">
             <label class="form-label">Stat</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-2">
             <label class="form-label">Started On</label>
         </div>
     </div>
     @foreach (var task in Model.Tasks) {
     <div class="row g-3">
         <div class="col-md-4 overflow-hidden">
-            <label class="form-label">@task.Name</label>
+            @task.Name
         </div>
         <div class="col-md-4">
-            <label class="form-label" title="@task.Description">@task.Description.CutAt(100)</label>
+            <span title="@task.Description">@task.Description.CutAt(100)</span>
         </div>
         <div class="col-md-2">
-            <label class="form-label">@task.AssignedLeader?.Type</label>
+            @task.AssignedLeader?.Type
         </div>
         <div class="col-md-2">
             <input class="form-control" type="number" @bind="task.StartedOn" />

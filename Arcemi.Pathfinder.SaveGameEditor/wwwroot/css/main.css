@@ -111,11 +111,7 @@ h4 {
 .validation-message {
   color: red;
 }
-.form-list-header {
-  font-size: 1.1rem;
-  border-bottom: solid 1px lightgray;
-}
-.form-list-header-row > div {
+.form-list-header.row > div {
   font-size: 1.1rem;
   border-bottom: solid 1px lightgray;
 }

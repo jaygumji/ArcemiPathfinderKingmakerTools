@@ -45,10 +45,16 @@ else {
                 <input class="form-control" type="number" @bind="@Unit.Data.MaxSquadsCount.BaseValue" />
             </div>
         </div>
-        <div class="row g-3">
-            <h3 class="col-md-2">Squads</h3>
-            <div class="col-md-2 header-toolbar">
-                <button class="btn btn-info" disabled="@(Unit.Data.Squads.Count >= MaxSquadCount)" @onclick="() => modalAddArmyUnit.OpenAsync()">
+        <div class="row"><h3 class="col-md-12">Army units</h3></div>
+        <div class="row form-list-header">
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Number</label>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-sm btn-info" disabled="@(Unit.Data.Squads.Count >= MaxSquadCount)" @onclick="() => modalAddArmyUnit.OpenAsync()">
                     <span class="oi oi-plus"></span>
                 </button>
                 <Modal @ref="modalAddArmyUnit">
@@ -80,28 +86,21 @@ else {
                     </Footer>
                 </Modal>
             </div>
-        </div>
-        <div class="row g-3">
-            <div class="col-md-4 form-list-header">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-2 form-list-header">
-                <label class="form-label">Number</label>
-            </div>
-            <div class="col-md-2">
-            </div>
             <div class="col-md-2">
             </div>
         </div>
-        @foreach (var squad in Unit.Data.Squads) {
+        @foreach (var armyUnit in Unit.Data.Squads) {
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">@squad.DisplayName</label>
+                    <label class="form-label">@armyUnit.DisplayName</label>
                 </div>
                 <div class="col-md-2">
-                    <input class="form-control" type="number" @bind="@squad.Count" />
+                    <input class="form-control" type="number" @bind="@armyUnit.Count" />
                 </div>
                 <div class="col-md-2">
+                    <button class="btn btn-sm btn-danger" title="Remove army unit" @onclick="() => RemoveArmyUnit(armyUnit)">
+                        <span class="oi oi-trash"></span>
+                    </button>
                 </div>
                 <div class="col-md-2">
                 </div>
@@ -122,6 +121,12 @@ else {
     private string KnownArmyUnitBlueprint = "X";
     private string CustomArmyUnitBlueprint;
     private bool IsArmyUnitInputValid => KnownArmyUnitBlueprint != "X" || !string.IsNullOrEmpty(CustomArmyUnitBlueprint);
+
+    private void RemoveArmyUnit(PlayerArmySquadModel armyUnit)
+    {
+        Unit.Data.SquadsPosition.Remove(armyUnit);
+        Unit.Data.Squads.Remove(armyUnit);
+    }
 
     private async Task AddArmyUnitAsync()
     {
