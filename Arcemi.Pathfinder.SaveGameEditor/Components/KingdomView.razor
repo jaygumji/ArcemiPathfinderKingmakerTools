@@ -2,7 +2,7 @@
 @inject MainViewModel Model
 
 @if(Model.Player.Kingdom == null) {
-    <p><em>Kingdom is not enabled.</em></p>
+    <p class="alert alert-info">Kingdom is not enabled.</p>
 }
 else {
     <div class="row g-3">

@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -66,6 +67,12 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
         }
 
+        public void AddNull(string key)
+        {
+            _dict.Add(key, null);
+            _obj.Add(key, null);
+        }
+
         public T Add(string key, Action<IReferences, JObject> init = null)
         {
             JObject obj;
@@ -93,6 +100,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         public void Clear()
         {
             _dict.Clear();
+            var propNames = _obj.Properties().Select(p => p.Name).ToArray();
+            foreach (var name in propNames) {
+                _obj.Remove(name);
+            }
         }
 
         public bool ContainsKey(string key)

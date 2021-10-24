@@ -8,36 +8,67 @@ using System;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class WeaponItemModel : ItemModel
+    public class WeaponItemModel : ItemModel, IEnchantmentLevelItemModel
     {
+        public const string TypeRef = "Kingmaker.Items.ItemEntityWeapon, Assembly-CSharp";
         public WeaponItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
+
+        public int EnchantmentLevel
+        {
+            get => Enchantments.WeaponLevel.GetLevelFrom(Facts.Items);
+            set => Enchantments.WeaponLevel.SetLevelOn(Facts.Items, value);
+        }
+
+        public int MaxEnchantmentLevel => Enchantments.WeaponLevel.Levels.Count;
     }
 
     public class UsableItemModel : ItemModel
     {
+        public const string TypeRef = "Kingmaker.Items.ItemEntityUsable, Assembly-CSharp";
         public UsableItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
     }
 
-    public class ShieldItemModel : ItemModel
+    public class ShieldItemModel : ItemModel, IEnchantmentLevelItemModel
     {
+        public const string TypeRef = "Kingmaker.Items.ItemEntityShield, Assembly-CSharp";
         public ShieldItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
+
+        public ArmorComponentModel ArmorComponent => A.Object(factory: a => new ArmorComponentModel(a));
+
+        public int EnchantmentLevel
+        {
+            get => Enchantments.ShieldLevel.GetLevelFrom(ArmorComponent.Facts.Items);
+            set => Enchantments.ShieldLevel.SetLevelOn(ArmorComponent.Facts.Items, value);
+        }
+
+        public int MaxEnchantmentLevel => Enchantments.ArmorLevel.Levels.Count;
     }
 
-    public class ArmorItemModel : ItemModel
+    public class ArmorItemModel : ItemModel, IEnchantmentLevelItemModel
     {
+        public const string TypeRef = "Kingmaker.Items.ItemEntityArmor, Assembly-CSharp";
         public ArmorItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
+
+        public int EnchantmentLevel
+        {
+            get => Enchantments.ArmorLevel.GetLevelFrom(Facts.Items);
+            set => Enchantments.ArmorLevel.SetLevelOn(Facts.Items, value);
+        }
+
+        public int MaxEnchantmentLevel => Enchantments.ArmorLevel.Levels.Count;
     }
 
     public class SimpleItemModel : ItemModel
     {
+        public const string TypeRef = "Kingmaker.Items.ItemEntitySimple, Assembly-CSharp";
         public SimpleItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
@@ -45,21 +76,6 @@ namespace Arcemi.Pathfinder.Kingmaker
 
     public class ItemModel : RefModel
     {
-        private const string TypeSimple = "Kingmaker.Items.ItemEntitySimple, Assembly-CSharp";
-        private const string TypeWeapon = "Kingmaker.Items.ItemEntityWeapon, Assembly-CSharp";
-        private const string TypeShield = "Kingmaker.Items.ItemEntityShield, Assembly-CSharp";
-        private const string TypeArmor = "Kingmaker.Items.ItemEntityArmor, Assembly-CSharp";
-        private const string TypeUsable = "Kingmaker.Items.ItemEntityUsable, Assembly-CSharp";
-
-        public void SetEnhancementLevel(int enchantmentLevel)
-        {
-            var enchantment = (EnchantmentFactItemModel)Facts.Items.Add((refs, jobj) => jobj.Add("$type", EnchantmentFactItemModel.TypeRef));
-            enchantment.Level = enchantmentLevel;
-            enchantment.AttachTime = TimeSpan.Zero;
-            enchantment.IsActive = false;
-            enchantment.UniqueId = Guid.NewGuid().ToString();
-        }
-
         public ItemModel(ModelDataAccessor accessor) : base(accessor)
         {
             N.On(nameof(Blueprint), nameof(RawData));
@@ -87,11 +103,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             get {
                 switch (Type) {
-                    case TypeWeapon: return Kingmaker.ItemType.Weapon;
-                    case TypeArmor: return Kingmaker.ItemType.Armor;
-                    case TypeShield: return Kingmaker.ItemType.Shield;
-                    case TypeUsable: return Kingmaker.ItemType.Usable;
-                    case TypeSimple: return Kingmaker.ItemType.Simple;
+                    case WeaponItemModel.TypeRef: return Kingmaker.ItemType.Weapon;
+                    case ArmorItemModel.TypeRef: return Kingmaker.ItemType.Armor;
+                    case ShieldItemModel.TypeRef: return Kingmaker.ItemType.Shield;
+                    case UsableItemModel.TypeRef: return Kingmaker.ItemType.Usable;
+                    case SimpleItemModel.TypeRef: return Kingmaker.ItemType.Simple;
                 }
                 return null;
             }
@@ -114,15 +130,20 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string WielderRef => A.Value<string>("m_WielderRef");
         public HoldingSlotModel HoldingSlot => A.Object(factory: a => new HoldingSlotModel(a));
 
+        public CraftedPartItemModel SetAsCrafted()
+        {
+            return (CraftedPartItemModel)Parts.Items.Add(CraftedPartItemModel.Prepare);
+        }
+
         public static ItemModel Create(ModelDataAccessor accessor)
         {
             var type = accessor.Value<string>("$type", "$type");
             switch (type) {
-                case TypeWeapon: return new WeaponItemModel(accessor);
-                case TypeArmor: return new ArmorItemModel(accessor);
-                case TypeShield: return new ShieldItemModel(accessor);
-                case TypeUsable: return new UsableItemModel(accessor);
-                case TypeSimple: return new SimpleItemModel(accessor);
+                case WeaponItemModel.TypeRef: return new WeaponItemModel(accessor);
+                case ArmorItemModel.TypeRef: return new ArmorItemModel(accessor);
+                case ShieldItemModel.TypeRef: return new ShieldItemModel(accessor);
+                case UsableItemModel.TypeRef: return new UsableItemModel(accessor);
+                case SimpleItemModel.TypeRef: return new SimpleItemModel(accessor);
             }
             return new ItemModel(accessor);
         }
@@ -131,20 +152,20 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             switch (itemType) {
                 case Kingmaker.ItemType.Weapon:
-                    jObj.Add("$type", TypeWeapon);
+                    jObj.Add("$type", WeaponItemModel.TypeRef);
                     break;
                 case Kingmaker.ItemType.Armor:
-                    jObj.Add("$type", TypeArmor);
+                    jObj.Add("$type", ArmorItemModel.TypeRef);
                     break;
                 case Kingmaker.ItemType.Shield:
-                    jObj.Add("$type", TypeShield);
+                    jObj.Add("$type", ShieldItemModel.TypeRef);
                     break;
                 case Kingmaker.ItemType.Usable:
-                    jObj.Add("$type", TypeUsable);
+                    jObj.Add("$type", UsableItemModel.TypeRef);
                     jObj.Add("Charges", 1);
                     break;
                 default:
-                    jObj.Add("$type", TypeSimple);
+                    jObj.Add("$type", SimpleItemModel.TypeRef);
                     break;
             }
             jObj.Add("Time", TimeSpan.Zero);

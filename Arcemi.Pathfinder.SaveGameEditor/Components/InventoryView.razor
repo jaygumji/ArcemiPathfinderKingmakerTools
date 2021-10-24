@@ -14,87 +14,10 @@ else {
             <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
         </div>
         @if (Resources.Blueprints.GetEntries(BlueprintTypes.Item).Count == 0) {
-        <div class="col-md-1">
-            <button class="btn btn-primary" @onclick="() => addItemModal.OpenAsync()">
-                <span class="oi oi-plus"></span>
-            </button>
-            <Modal @ref="addItemModal">
-                <Title>Add a new item</Title>
-                <Body>
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label for="add-item-blueprint" class="form-label">Blueprint</label>
-                            <input id="add-item-blueprint" type="text" class="form-control" @bind="AddItemBlueprint" />
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label for="add-item-type" class="form-label">Item type</label>
-                            <select id="add-item-type" class="form-control" @bind="AddItemType">
-                                <option value="">Select item type...</option>
-                                @foreach (var type in AllItemTypes) {
-                                    <option value="@type.Key">@type.Value</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </Body>
-                <Footer>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsItemInputInvalid" @onclick="() => AddItemAsync()">Confirm</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addItemModal.CloseAsync()">Cancel</button>
-                </Footer>
-            </Modal>
-        </div>
-        <div class col-md-1>
-            <Help>
-                A fallback view is used and you will see a lot of identifiers.
-                To get item names, set the game folder in the settings.
-            </Help>
-        </div>
-        }
+            <InventoryAddItemFallback Inventory="Inventory" />
+    }
         else {
-        <div class="col-md-1">
-            <button class="btn btn-primary" @onclick="() => addBlueprintItemModal.OpenAsync()">
-                <span class="oi oi-plus"></span>
-            </button>
-            <Modal @ref="addBlueprintItemModal">
-                <Title>Add a new item</Title>
-                <Body>
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label for="add-blueprint-item-type" class="form-label">Item type</label>
-                            <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
-                                <option value="">Select item type...</option>
-                                @foreach (var type in BlueprintType.AddableItems) {
-                                    <option value="@type.FullName">@type.DisplayName</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
-                            <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
-                                <option value="">Select item...</option>
-                                @foreach (var blueprint in Resources.Blueprints.GetEntries(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
-                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </Body>
-                <Footer>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsBlueprintItemInputInvalid" @onclick="() => AddBlueprintItemAsync()">Confirm</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addBlueprintItemModal.CloseAsync()">Cancel</button>
-                </Footer>
-            </Modal>
-        </div>
-        <div class="col-md-1">
-            <Help>
-                Adding weapons, shields and armors are restricted in the inventory view. To add those item categories,
-                go to state and vendors and add the item to a vendor, then buy it from the vendor in game.
-            </Help>
-        </div>
+            <InventoryAddItem Inventory="Inventory" />
         }
     </div>
 
@@ -102,7 +25,7 @@ else {
         <div class="col-md-4 form-list-header">
             <label class="form-label">Name</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-1 form-list-header">
             <label class="form-label">Type</label>
         </div>
         <div class="col-md-2 form-list-header">
@@ -111,7 +34,7 @@ else {
         <div class="col-md-2 form-list-header">
             <label class="form-label">Charges</label>
         </div>
-        <div class="col-md-2 form-list-header">
+        <div class="col-md-3 form-list-header">
         </div>
     </div>
     if (!Items.Any()) {
@@ -128,7 +51,7 @@ else {
                 <label class="form-label">@item.DisplayName</label>
             </div>
             <div class="col-md-2">
-                <label class="form-label">@item.DisplayType</label>
+                <img src="@GetItemTypeIconUrl(item)" alt="@item.DisplayType" />
             </div>
             <div class="col-md-2">
                 @if (item.IsStackable) {
@@ -141,33 +64,136 @@ else {
                 }
             </div>
             <div class="col-md-2">
-                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
+@*                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
                     <span class="oi oi-fork"></span>
-                </button>
+                </button>*@
                 <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
                     <span class="oi oi-paperclip"></span>
                 </button>
+                @if (CanEdit(item)){
+                <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => StartEditItemAsync(item)">
+                    <span class="oi oi-pencil"></span>
+                </button>
+                }
             </div>
         </div>
         }
     }
 }
 
+<Modal @ref="modalEditItem">
+    <Title>Edit item characteristics</Title>
+    <Body>
+        @if (ItemEnchantable != null) {
+            <div class="row"><h3 class="col-md-12">Enchantments</h3></div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Level</label>
+                    <input class="form-control" type="number" min="0" max="@ItemEnchantable.MaxEnchantmentLevel" @bind="ItemEnchantable.EnchantmentLevel" />
+                </div>
+            </div>
+        }
+        @if (Item?.ItemType == ItemType.Usable) {
+            <div class="row"><h3 class="col-md-12">Crafted item</h3></div>
+            if (ItemCrafted != null) {
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Caster level</label>
+                        <input class="form-control" type="number" min="1" max="20" @bind="ItemCrafted.CasterLevel" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Spell level</label>
+                        <input class="form-control" type="number" min="1" max="20" @bind="ItemCrafted.SpellLevel" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Ability DC</label>
+                        <input class="form-control" type="number" min="1" max="100" @bind="ItemCrafted.AbilityDC" />
+                    </div>
+                    <div class="col-md-1">
+                        <Help>
+                            You will need to roll 1d20 + your "Use Magic Device" against the spell level &times; 2.
+                        </Help>
+                    </div>
+                </div>
+            }
+            else {
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <button class="btn btn-info" @onclick="() => UnlockCraftedItem()">
+                            <span class="oi oi-lock-locked"></span>
+                            Set as crafted
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditItem.CloseAsync()">Close</button>
+    </Footer>
+</Modal>
+
 @code {
     [Parameter]
     public InventoryModel Inventory { get; set; }
 
-    private string _AddBlueprintItemType;
-    private string AddBlueprintItemType {
-        get {
-            return _AddBlueprintItemType;
+    private Modal modalEditItem;
+    private ItemModel Item;
+    private CraftedPartItemModel ItemCrafted;
+    private IEnchantmentLevelItemModel ItemEnchantable;
+
+    private string GetItemTypeIconUrl(ItemModel item)
+    {
+        if (Resources.Blueprints.TryGet(item.Blueprint, out var blueprint)) {
+            if (blueprint.Type.IsItemWeapon) {
+                return "/images/ItemTypes/Weapons.png";
+            }
+            if (blueprint.Type.IsItemArmorOrShield) {
+                return "/images/ItemTypes/ArmorsAndShields.png";
+            }
+            if (blueprint.Type.IsItemAccessory) {
+                return "/images/ItemTypes/Accessories.png";
+            }
+            if (blueprint.Type.IsItemIngredient) {
+                return "/images/ItemTypes/Ingredients.png";
+            }
+            if (blueprint.Type.IsItemUsable) {
+                return "/images/ItemTypes/Usable.png";
+            }
+            if (blueprint.Type.IsItemNotable) {
+                return "/images/ItemTypes/Notable.png";
+            }
+            return "/images/ItemTypes/Other.png";
         }
-        set {
-            _AddBlueprintItemType = value;
-            AddBlueprintItemBlueprint = null;
+        switch (item.ItemType) {
+            case ItemType.Weapon:
+                return "/images/ItemTypes/Weapons.png";
+            case ItemType.Armor:
+            case ItemType.Shield:
+                return "/images/ItemTypes/ArmorsAndShields.png";
+            case ItemType.Usable:
+                return "/images/ItemTypes/Usable.png";
         }
+        return "/images/ItemTypes/Other.png";
     }
-    private string AddBlueprintItemBlueprint;
+
+    private bool CanEdit(ItemModel item)
+    {
+        return item.ItemType == ItemType.Usable; // || item is IEnchantmentLevelItemModel;
+    }
+
+    private async Task StartEditItemAsync(ItemModel item)
+    {
+        Item = item;
+        ItemCrafted = item.Parts.Items.OfType<CraftedPartItemModel>().FirstOrDefault();
+        ItemEnchantable = item as IEnchantmentLevelItemModel;
+        await modalEditItem.OpenAsync();
+    }
+
+    private void UnlockCraftedItem()
+    {
+        ItemCrafted = Item.SetAsCrafted();
+    }
 
     private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {
         "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
@@ -178,34 +204,16 @@ else {
         if (!string.IsNullOrEmpty(i.WielderRef)) return false;
         if (i.HoldingSlot != null) return false;
         if (ItemFilter.Contains(i.Blueprint)) return false;
-        if (!Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) return true;
-        if (!(blueprint.Name is BlueprintItemName itemName)) return true;
-        return !itemName.IsFinnean && !itemName.IsNaturalWeapon();
+        return true;
+        //if (!Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) return true;
+        //if (!(blueprint.Name is BlueprintItemName itemName)) return true;
+        //return !itemName.IsFinnean && !itemName.IsNaturalWeapon();
     }
 
     private string SearchTerm;
     private IEnumerable<ItemModel> Items => Inventory.Items
         .Where(IsVisibleItem)
         .OrderByDescending(i => CalculateScore(i)).ThenBy(i => i.InventorySlotIndex);
-
-    private Modal addItemModal;
-    private Modal addBlueprintItemModal;
-    private string AddItemBlueprint;
-    private ItemType? AddItemType;
-
-    private List<KeyValuePair<ItemType, string>> AllItemTypes = InventoryViewModel.ItemTypeStaticList
-        .Where(x => !IsDisabledType(x.Key)).ToList();
-
-    private bool IsItemInputInvalid => string.IsNullOrEmpty(AddItemBlueprint) || AddItemType == null;
-    private bool IsBlueprintItemInputInvalid => string.IsNullOrEmpty(AddBlueprintItemType) || string.IsNullOrEmpty(AddBlueprintItemBlueprint);
-
-    private static bool IsDisabledType(ItemType? itemType)
-    {
-        if (itemType == null) return true;
-        return itemType == ItemType.Weapon
-            || itemType == ItemType.Armor
-            || itemType == ItemType.Shield;
-    }
 
     private void CopyBlueprintIdentifier(ItemModel i)
     {
@@ -229,22 +237,6 @@ else {
         if (C(i.DisplayDescription)) s += 50;
 
         return s;
-    }
-
-    private async Task AddItemAsync()
-    {
-        Inventory.AddItem(AddItemType.Value, AddItemBlueprint);
-        await addItemModal.CloseAsync();
-        AddItemType = null;
-        AddItemBlueprint = null;
-    }
-
-    private async Task AddBlueprintItemAsync()
-    {
-        var type = BlueprintType.GetItemType(AddBlueprintItemType);
-        Inventory.AddItem(type, AddBlueprintItemBlueprint);
-        await addBlueprintItemModal.CloseAsync();
-        AddBlueprintItemType = null;
     }
 
     private void Duplicate(ItemModel item)

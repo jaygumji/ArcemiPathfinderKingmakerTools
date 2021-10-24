@@ -59,6 +59,26 @@ namespace Arcemi.Pathfinder.Kingmaker
             BlueprintTypes.Item
         };
 
+        private static ISet<BlueprintType> ItemAccessories { get; } = new HashSet<BlueprintType> {
+            BlueprintTypes.ItemEquipmentBelt,
+            BlueprintTypes.ItemEquipmentFeet,
+            BlueprintTypes.ItemEquipmentGlasses,
+            BlueprintTypes.ItemEquipmentGloves,
+            BlueprintTypes.ItemEquipmentHead,
+            BlueprintTypes.ItemEquipmentNeck,
+            BlueprintTypes.ItemEquipmentRing,
+            BlueprintTypes.ItemEquipmentShirt,
+            BlueprintTypes.ItemEquipmentShoulders,
+            BlueprintTypes.ItemEquipmentWrist
+        };
+
+        public bool IsItemWeapon => Equals(BlueprintTypes.ItemWeapon);
+        public bool IsItemArmorOrShield => Equals(BlueprintTypes.ItemArmor) || Equals(BlueprintTypes.ItemShield);
+        public bool IsItemAccessory => ItemAccessories.Contains(this);
+        public bool IsItemIngredient => Equals(BlueprintTypes.Ingredient);
+        public bool IsItemUsable => Equals(BlueprintTypes.ItemEquipmentUsable);
+        public bool IsItemNotable => Equals(BlueprintTypes.ItemNote);
+
         public static ItemType GetItemType(string typeFullName)
         {
             var type = BlueprintTypes.Resolve(typeFullName);

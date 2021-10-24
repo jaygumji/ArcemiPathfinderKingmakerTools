@@ -1,4 +1,6 @@
-﻿namespace Arcemi.Pathfinder.Kingmaker
+﻿using Newtonsoft.Json.Linq;
+
+namespace Arcemi.Pathfinder.Kingmaker
 {
     public class FactItemModel : RefModel
     {
@@ -25,6 +27,11 @@
                 return new BuffFactItemModel(accessor);
             }
             return new FactItemModel(accessor);
+        }
+
+        protected static void Prepare(IReferences refs, JObject obj)
+        {
+            obj.Add(nameof(Components), new JObject());
         }
     }
 }

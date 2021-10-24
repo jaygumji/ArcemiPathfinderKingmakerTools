@@ -24,7 +24,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\images\Portraits\overridable\" />
-  </ItemGroup>
 </Project>

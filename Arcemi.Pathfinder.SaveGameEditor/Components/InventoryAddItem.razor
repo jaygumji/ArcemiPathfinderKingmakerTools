@@ -1,0 +1,73 @@
+﻿@inject IGameResourcesProvider Resources
+
+<div class="col-md-1">
+    <button class="btn btn-primary" @onclick="() => addBlueprintItemModal.OpenAsync()">
+        <span class="oi oi-plus"></span>
+    </button>
+    <Modal @ref="addBlueprintItemModal">
+        <Title>Add a new item</Title>
+        <Body>
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label for="add-blueprint-item-type" class="form-label">Item type</label>
+                    <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
+                        <option value="">Select item type...</option>
+                        @foreach (var type in BlueprintType.AddableItems) {
+                            <option value="@type.FullName">@type.DisplayName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
+                    <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
+                        <option value="">Select item...</option>
+                        @foreach (var blueprint in Resources.Blueprints.GetEntries(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
+                            <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsBlueprintItemInputInvalid" @onclick="() => AddBlueprintItemAsync()">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addBlueprintItemModal.CloseAsync()">Cancel</button>
+        </Footer>
+    </Modal>
+</div>
+<div class="col-md-1">
+    <Help>
+        Adding weapons, shields and armors are restricted in the inventory view. To add those item categories,
+        go to state and vendors and add the item to a vendor, then buy it from the vendor in game.
+    </Help>
+</div>
+
+@code {
+    [Parameter]
+    public InventoryModel Inventory { get; set; }
+
+    private string _AddBlueprintItemType;
+    private string AddBlueprintItemType {
+        get {
+            return _AddBlueprintItemType;
+        }
+        set {
+            _AddBlueprintItemType = value;
+            AddBlueprintItemBlueprint = null;
+        }
+    }
+    private string AddBlueprintItemBlueprint;
+
+    private Modal addBlueprintItemModal;
+
+    private bool IsBlueprintItemInputInvalid => string.IsNullOrEmpty(AddBlueprintItemType) || string.IsNullOrEmpty(AddBlueprintItemBlueprint);
+
+    private async Task AddBlueprintItemAsync()
+    {
+        var type = BlueprintType.GetItemType(AddBlueprintItemType);
+        Inventory.AddItem(type, AddBlueprintItemBlueprint);
+        await addBlueprintItemModal.CloseAsync();
+        AddBlueprintItemType = null;
+    }
+}

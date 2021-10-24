@@ -1,14 +1,16 @@
-﻿namespace Arcemi.Pathfinder.Kingmaker
+﻿using System.Collections.Generic;
+
+namespace Arcemi.Pathfinder.Kingmaker
 {
     public class EnchantmentSpec
     {
-        public EnchantmentSpec(string blueprint, string component)
+        public EnchantmentSpec(string blueprint, params string[] components)
         {
             Blueprint = blueprint;
-            Component = component;
+            Components = components;
         }
 
         public string Blueprint { get; }
-        public string Component { get; }
+        public IReadOnlyList<string> Components { get; }
     }
 }

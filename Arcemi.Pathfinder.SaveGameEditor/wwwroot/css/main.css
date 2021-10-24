@@ -115,6 +115,10 @@ h4 {
   font-size: 1.1rem;
   border-bottom: solid 1px lightgray;
 }
+.form-list-header-row > div {
+  font-size: 1.1rem;
+  border-bottom: solid 1px lightgray;
+}
 .header-toolbar {
   display: flex;
   align-items: center;

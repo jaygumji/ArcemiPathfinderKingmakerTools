@@ -12,5 +12,16 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             return type.ToString();
         }
+
+        public static bool IsEnchantable(this ItemType? type)
+        {
+            switch (type) {
+                case ItemType.Weapon:
+                case ItemType.Armor:
+                case ItemType.Shield:
+                    return true;
+            }
+            return false;
+        }
     }
 }
