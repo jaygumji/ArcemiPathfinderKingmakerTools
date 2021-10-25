@@ -27,8 +27,9 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             var available = new List<Portrait>();
             var all = new Dictionary<string, Portrait>(StringComparer.OrdinalIgnoreCase);
+            var portraitsDirectory = Path.Combine(wwwDirectory, "images", "Portraits");
 
-            foreach (var uri in System.IO.Directory.EnumerateFiles(wwwDirectory, "*", SearchOption.AllDirectories)) {
+            foreach (var uri in System.IO.Directory.EnumerateFiles(portraitsDirectory, "*", SearchOption.AllDirectories)) {
                 var extension = Path.GetExtension(uri);
                 if (!ImageExtensions.Contains(extension)) continue;
 

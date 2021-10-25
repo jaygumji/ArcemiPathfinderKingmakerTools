@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -11,19 +10,19 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> GetAvailablePortraits()
         {
-            var unknownUri = AppData.Portraits.GetUnknownUri();
-            var unmappedPortraits = Blueprints.GetEntries(BlueprintTypes.Portrait)
-                .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) < 0)
-                .Where(e => !AppData.Portraits.Available.Any(p => string.Equals(p.Key, e.Id, StringComparison.Ordinal)))
-                .Select(e => new Portrait(e.Id, unknownUri, PortraitCategory.Unmapped, name: e.DisplayName))
-                .ToArray();
+            //var unknownUri = AppData.Portraits.GetUnknownUri();
+            //var unmappedPortraits = Blueprints.GetEntries(BlueprintTypes.Portrait)
+            //    .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) >= 0)
+            //    .Where(e => !AppData.Portraits.Available.Any(p => string.Equals(p.Key, e.Id, StringComparison.Ordinal)))
+            //    .Select(e => new Portrait(e.Id, unknownUri, PortraitCategory.Unmapped, name: e.DisplayName))
+            //    .ToArray();
 
             var res = AppData.Portraits.Available
                 .GroupBy(p => p.Category)
                 .OrderBy(g => g.Key.Order)
                 .ToDictionary(g => g.Key, g => (IReadOnlyList<Portrait>)g.ToArray());
 
-            res.Add(PortraitCategory.Unmapped, unmappedPortraits);
+            //res.Add(PortraitCategory.Unmapped, unmappedPortraits);
             return res;
         }
 

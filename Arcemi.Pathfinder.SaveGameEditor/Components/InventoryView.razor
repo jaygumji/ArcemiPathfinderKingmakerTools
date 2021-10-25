@@ -101,9 +101,20 @@ else {
                         <label class="form-label">Caster level</label>
                         <input class="form-control" type="number" min="1" max="20" @bind="ItemCrafted.CasterLevel" />
                     </div>
+                    <div class="col-md-1">
+                        <Help>
+                            The higher the caster level the greater the duration, damage, effect.
+                        </Help>
+                    </div>
                     <div class="col-md-3">
                         <label class="form-label">Spell level</label>
                         <input class="form-control" type="number" min="1" max="20" @bind="ItemCrafted.SpellLevel" />
+                    </div>
+                    <div class="col-md-1">
+                        <Help>
+                            For scrolls only you will need to roll 1d20 + your "Use Magic Device" against the spell level &times; 2.
+                            I recommend you set this to a low value.
+                        </Help>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Ability DC</label>
@@ -111,7 +122,7 @@ else {
                     </div>
                     <div class="col-md-1">
                         <Help>
-                            You will need to roll 1d20 + your "Use Magic Device" against the spell level &times; 2.
+                            This is the DC the target must overcome.
                         </Help>
                     </div>
                 </div>

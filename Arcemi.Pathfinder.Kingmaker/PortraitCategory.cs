@@ -12,7 +12,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public class PortraitCategory
     {
-        public static PortraitCategory Others { get; } = new PortraitCategory("others", "Others", isAvailable: false, order: 100000);
+        public static PortraitCategory Others { get; } = new PortraitCategory("others", "Others", isAvailable: true, order: 100000);
         public static PortraitCategory Custom { get; } = new PortraitCategory("custom", "Custom", isAvailable: true, order: 100);
         public static PortraitCategory Unmapped { get; } = new PortraitCategory("unmapped", "Unmapped", isAvailable: true, order: 100000000);
         public static IReadOnlyDictionary<string, PortraitCategory> All { get; }
@@ -20,10 +20,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                 new PortraitCategory("main", "Main", isAvailable: true, order: 1),
                 new PortraitCategory("supernatural", "Supernaturals", isAvailable: true, order: 10),
                 Custom,
-                new PortraitCategory("creatures", "Creatures", isAvailable: true, order: 200),
-                new PortraitCategory("humanoid-creature", "Creatures 2", isAvailable: true, order: 201),
+                new PortraitCategory("animals", "Animals", isAvailable: true, order: 200),
+                new PortraitCategory("creatures", "Creatures", isAvailable: true, order: 201),
                 new PortraitCategory("special", "Special", isAvailable: false, order: 10000),
-                new PortraitCategory("leaders", "Leaders", isAvailable: false, order: 10001),
                 Others,
                 Unmapped
             }.ToDictionary(x => x.Key, StringComparer.OrdinalIgnoreCase);
