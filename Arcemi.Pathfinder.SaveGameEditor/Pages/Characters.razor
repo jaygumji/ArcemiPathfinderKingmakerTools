@@ -23,6 +23,14 @@ else {
                 <label class="form-label">Name</label>
                 <input class="form-control" type="text" @bind="Character.CustomName" placeholder="@Character.Name" />
             </div>
+            <div class="col-md-1">
+                <div>
+                    <label>&nbsp;</label>
+                </div>
+                <button class="btn btn-info" title="Copy portrait blueprint" @onclick="() => CopyPortraitBlueprint()">
+                    <span class="oi oi-clipboard"></span>
+                </button>
+            </div>
             <div class="col-md-3">
                 <div>
                     <label>&nbsp;</label>
@@ -35,13 +43,21 @@ else {
                 <Modal @ref="modalChosePortrait">
                     <Title>Select new portrait</Title>
                     <Body>
-                        <ul class="portraits portraits-selection">
-                            @foreach (var portrait in Unit.Descriptor.UISettings.AvailablePortraits) {
-                            <li @onclick="() => SelectPortrait(portrait)">
-                                <img src="file://@portrait.Uri" alt="Portrait" />
-                            </li>
+                        <TabControl StartIndex="0">
+                            @foreach (var catKV in AvailablePortraits){
+                                <Tab Name="@catKV.Key.Name">
+                                    <Content>
+                                        <ul class="portraits portraits-selection">
+                                            @foreach (var portrait in catKV.Value) {
+                                            <li @onclick="() => SelectPortrait(portrait)" title="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))">
+                                                <img src="file://@portrait.Uri" alt="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))" />
+                                            </li>
+                                            }
+                                        </ul>
+                                    </Content>
+                                </Tab>
                             }
-                        </ul>
+                        </TabControl>
                     </Body>
                     <Footer>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalChosePortrait.CloseAsync()">Cancel</button>
@@ -116,9 +132,22 @@ else {
     private Modal modalChosePortrait;
     private Modal modalConfirmDelete;
 
+    private IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> AvailablePortraits;
+
+    protected override void OnInitialized()
+    {
+        AvailablePortraits = Resources?.GetAvailablePortraits() ?? new Dictionary<PortraitCategory, IReadOnlyList<Portrait>>();
+    }
+
     public async Task SelectCharacter(UnitEntityModel unit)
     {
         Unit = unit;
+    }
+
+    private void CopyPortraitBlueprint()
+    {
+        if (string.IsNullOrEmpty(Unit?.Descriptor?.UISettings?.Portrait)) return;
+        ElectronNET.API.Electron.Clipboard.WriteText(Unit.Descriptor.UISettings.Portrait);
     }
 
     private async Task SelectPortrait(Portrait portrait)

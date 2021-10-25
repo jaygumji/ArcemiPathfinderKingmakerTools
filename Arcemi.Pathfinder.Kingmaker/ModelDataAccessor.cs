@@ -55,7 +55,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public void ImportCode(string script)
         {
-            var bytes = Convert.FromBase64String(script.Trim());
+            var bytes = Convert.FromBase64String(script.Trim().Trim('\"'));
             var json = System.Text.Encoding.UTF8.GetString(bytes);
             var obj = JObject.Parse(json);
             obj.ImportTo(_obj, ImportOptions.CodeScripts);

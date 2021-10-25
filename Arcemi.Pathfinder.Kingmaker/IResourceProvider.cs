@@ -43,7 +43,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                     continue;
                 }
                 var key = Path.GetFileName(folder);
-                var portrait = new Portrait(key, uri, isCustom: true);
+                var portrait = new Portrait(key, uri, PortraitCategory.Custom, isCustom: true, name: key);
                 available.Add(portrait);
                 if (!all.ContainsKey(key)) {
                     all.Add(key, portrait);

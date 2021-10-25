@@ -3,7 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
-using System.Collections.Generic;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -36,8 +35,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Portrait { get => A.Value<string>("m_Portrait"); set => A.Value(value, "m_Portrait"); }
 
         private CustomPortraitModel CustomPortrait => A.Object("m_CustomPortrait", a => new CustomPortraitModel(a));
-
-        public IReadOnlyList<Portrait> AvailablePortraits => A.Res.GetAvailableFor(_characterBlueprint);
 
         public void SetPortrait(Portrait portrait)
         {

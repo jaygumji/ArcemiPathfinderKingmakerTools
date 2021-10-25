@@ -39,7 +39,8 @@ namespace Arcemi.Pathfinder.Kingmaker
                         var key = Path.GetFileNameWithoutExtension(uri);
                         var dir = Path.GetDirectoryName(uri);
                         var type = Path.GetFileName(dir);
-                        var portrait = new Portrait(key, "/" + uri);
+                        var category = PortraitCategory.GetCategoryFor(type);
+                        var portrait = new Portrait(key, "/" + uri, category);
 
                         if (string.Equals(type, "available", StringComparison.OrdinalIgnoreCase)) {
                             available.Add(portrait);

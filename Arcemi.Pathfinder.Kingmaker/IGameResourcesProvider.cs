@@ -12,7 +12,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         string GetLeaderPortraitUri(string blueprint);
         string GetPortraitsUri(string id);
         bool TryGetPortraitsUri(string characterBlueprint, out string uri);
-        IReadOnlyList<Portrait> GetAvailableFor(string characterBlueprint);
+        IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> GetAvailablePortraits();
 
         string GetCharacterName(string blueprint);
         string GetArmyUnitName(string blueprint);

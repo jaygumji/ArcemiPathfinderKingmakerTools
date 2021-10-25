@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -8,14 +9,22 @@ namespace Arcemi.Pathfinder.Kingmaker
         public PathfinderAppData AppData { get; set; }
         public BlueprintData Blueprints { get; set; }
 
-        public IReadOnlyList<Portrait> GetAvailableFor(string characterBlueprint)
+        public IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> GetAvailablePortraits()
         {
-            if (AppData.Portraits.TryGetPortrait(characterBlueprint, out var portrait)) {
-                return new[] { portrait }.Concat(AppData.Portraits.Available).ToArray();
-            }
-            else {
-                return AppData.Portraits.Available;
-            }
+            var unknownUri = AppData.Portraits.GetUnknownUri();
+            var unmappedPortraits = Blueprints.GetEntries(BlueprintTypes.Portrait)
+                .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) < 0)
+                .Where(e => !AppData.Portraits.Available.Any(p => string.Equals(p.Key, e.Id, StringComparison.Ordinal)))
+                .Select(e => new Portrait(e.Id, unknownUri, PortraitCategory.Unmapped, name: e.DisplayName))
+                .ToArray();
+
+            var res = AppData.Portraits.Available
+                .GroupBy(p => p.Category)
+                .OrderBy(g => g.Key.Order)
+                .ToDictionary(g => g.Key, g => (IReadOnlyList<Portrait>)g.ToArray());
+
+            res.Add(PortraitCategory.Unmapped, unmappedPortraits);
+            return res;
         }
 
         public string GetLeaderPortraitUri(string blueprint)
