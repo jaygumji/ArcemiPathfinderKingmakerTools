@@ -1,5 +1,1221 @@
 {
 	"Entries": [
+		/***********************************************
+		* Custom Asks / Voices
+		***********************************************/
+		{
+			"Name": "Test_Bebilith Unit Asks List",
+			"Guid": "633b5542b6582494fa4425e0a85ec778",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_None_Barks",
+			"Guid": "e7b22776ba8e2b84eaaff98e439639a7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_ArueshalaeEvil_Barks",
+			"Guid": "18404960f157e7b47813a6b534d06c75",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Arueshalae_Barks",
+			"Guid": "294cedac26de90e4c9fd30088a805803",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Camelia_Barks",
+			"Guid": "c4fd5639f62a80d449476fbac1c7e7da",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Daeran_Barks",
+			"Guid": "561d66216bc71ac4582c8bb976b1c230",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Ember_Barks",
+			"Guid": "baba519e25960de4faed3441b420dcbd",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Galfrey_Barks",
+			"Guid": "1f8e90e2082f13e44aac6b8ffad2f1c1",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Greybor_Barks",
+			"Guid": "8be4e50fe3feea5478e27da182332314",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Lann_Barks",
+			"Guid": "cd874ea2a7db9b3488bf7a0d1e1e2521",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Nenio_Barks",
+			"Guid": "2c212ced6e7213a4a8fcb1f59f114552",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Qeen_Galfrey_Barks",
+			"Guid": "fae87a9b41b7412eb1889a2202d11f12",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Regill_Barks",
+			"Guid": "6ba5e6fbe680a354a85a045341b5eabd",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Seelah_Barks",
+			"Guid": "9f97d9accae3e344b88224e50a8e189e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Sosiel_Barks",
+			"Guid": "8309f03f4b96a5c4e8c57bb15f0b7ec3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Trever_Barks",
+			"Guid": "d2d496041ed148e4f902e191ad918e26",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Wenduag_Barks",
+			"Guid": "82df8a678f8380b43a96bb9a2357d0b2",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_Woljif_Barks",
+			"Guid": "91f99923db0244549aebf9e2fff23b1b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_ZombieCiar_Barks",
+			"Guid": "cb71c3e13d52b8843b2906109d08f788",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_ZombieDelamere_Barks",
+			"Guid": "0cb087e799706884098acdc25aa4ac12",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_ZombieGalfrey_Barks",
+			"Guid": "65fcf73d434e4e7daf2d69435377b916",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_ZombieKestoglyr_Barks",
+			"Guid": "84c95387743807948839bcee32a39568",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CMP_ZombieStaunton_Barks",
+			"Guid": "30559e603c8e4a0da9ce68c137fa0768",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BanditCommon01_Barks",
+			"Guid": "5605f35a8f9403249acb60566ead6542",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BanditCommon02_Barks",
+			"Guid": "4ea5acc53d950b34e9c7397cdb0321fa",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BanditFemale01_Barks",
+			"Guid": "c19c6b9c2772526409b7cdb5f3364efe",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BanditLeader01_Barks",
+			"Guid": "979a1cd011afaf04ab3a1b465f084567",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanFemale_Common_01_Barks",
+			"Guid": "576e47e30a27f6c4f80e4bb2f6d5a42e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanFemale_Common_02_Barks",
+			"Guid": "f8bbd14978df29f44a5388d220a15d27",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanFemale_Common_03_Barks",
+			"Guid": "471f91ad1ab8b564ab13f2eb42270979",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanFemale_Common_04_Barks",
+			"Guid": "942a8d4b314f6e1459e7e50c1be79777",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanMale_Common_01_Barks",
+			"Guid": "984678813427c314eb2d2141b89061a3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanMale_Common_02_Barks",
+			"Guid": "91628b4d579577f4f8c62c214b5b50ce",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanMale_Common_03_Barks",
+			"Guid": "264e5442e6c4d494e856668880c12694",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EnemyHumanMale_Common_04_Barks",
+			"Guid": "f947945b26c876446b93ad324de3345a",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "AirElemental_Barks",
+			"Guid": "19b7afaf9f430c545b1fd99aafd8af17",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Ankou_Barks",
+			"Guid": "a54f2e75f1f258d4aa3cd22d00cad30c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Astraedaemon_Barks",
+			"Guid": "592068a217d068d43b74328551886ab4",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Athach_Barks",
+			"Guid": "22251f36db1d3a245a986673a897cfe1",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "AzataBralani_Barks",
+			"Guid": "cd95e9317a5c8be478b8452b8b873034",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "AzataGhaele_Barks",
+			"Guid": "35f294bcf569bdb44b55fafb290ea8d5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BearCompanion_Barks",
+			"Guid": "545729d924df7a941a29c8c923d4d355",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BearCub_Barks",
+			"Guid": "4b7259f2d2ef21d4281db8a27cc47065",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Bear_Barks",
+			"Guid": "90ac36b1eee5d7c429e4aea89dd3f1dc",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BlackDragon_Barks",
+			"Guid": "3c0924a80e504f04c94de6ec2a28f9aa",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BoarCompanion_Barks",
+			"Guid": "a00507a11638f7d4086336eeccd9d1c2",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Boar_Barks",
+			"Guid": "584d818e0927c8b42b04fc5a6e93ace9",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Bogeyman_Barks",
+			"Guid": "b366ecd66f706c94f978457038926fc0",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Boggard_Barks",
+			"Guid": "f69e5e8b7b68610469029db29a7dfbc0",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Bulette_Barks",
+			"Guid": "6ebe45db883bdb34d8d740a8eb5753f6",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CatFamiliar_Barks",
+			"Guid": "e712ce44a3afce54ea4415e1a954282b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CentaurFemale_Barks",
+			"Guid": "e2cf4700a795ad14fa7e923c8ed74fed",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CentaurMale_Barks",
+			"Guid": "eb5cab5bc1d4d4a49b22f7625b58a0b5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CentipedeCompanion_Barks",
+			"Guid": "517ab4d01f816334c9ccbe44c1e9d02d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Centipede_Barks",
+			"Guid": "0efbb783c068b9d4aaf5dc98515ffdee",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CragLinnorm_Barks",
+			"Guid": "d48621d24d06bf84ead88849feb09cb8",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "DevilApostate_Barks",
+			"Guid": "e6e1803c49f17774fa8ce824230d1fe3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Devourer_Barks",
+			"Guid": "231404330d9bc5848a7b5fca7ee972ef",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "DogCompanion_Barks",
+			"Guid": "b5519c88e2eb18142b7803e6b137995a",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Dog_Barks",
+			"Guid": "543f6e408c088d044b1bfea4535c5b7b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Dweomercat_Barks",
+			"Guid": "f3397a5e218472c4ab7b5ef00ed07654",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EarthElemental_Barks",
+			"Guid": "841546117acf7c549804346499002840",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ElkCompanion_Barks",
+			"Guid": "197e5cecfae4a4d49abc0854db8fb8a5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Elk_Barks",
+			"Guid": "baf9bab700feb334699acd07e3a691ad",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "FaerieDragonPet_Barks",
+			"Guid": "f4d93e1ea0760a54f9e9b3f9ce9de67a",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "FaerieDragon_Barks",
+			"Guid": "5dcd32e437084874c94dd2d6b8ac2f34",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "FireElemental_Barks",
+			"Guid": "124423930873b31449d3863e711e6744",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Flytrap_Barks",
+			"Guid": "6400a869e4026f242af0c3da506ecdd6",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "FrogGiant_Barks",
+			"Guid": "8699bee251501c641a92733ab3ea5d96",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Gargoyle_Barks",
+			"Guid": "3527b218abf2041409e107266afaf1ce",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "GiantOwlbear_Barks",
+			"Guid": "6f1a4b1d61f887b41b2c6e49deac4f26",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "GiantSlug_Barks",
+			"Guid": "ce4ffbd2fbc46bc469ee8f557f1ff83e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Goblin_Barks",
+			"Guid": "4ce26ee8269bb564bacfff8b6a7aae09",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Hag_Barks",
+			"Guid": "0fe116d3644472043ba2c1742daa3174",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "HillGiant_Barks",
+			"Guid": "66b135cd3359ea64a9ab6225e02c509c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Hodag_Barks",
+			"Guid": "af7c5bb448c854d4d8df683e53251dde",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Horse_Barks",
+			"Guid": "2108e4bdab276c6428c0bf7ce98cfbf7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Hydra_Barks",
+			"Guid": "641708318d70b8f4e97d12c43af456f3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ImmenceMandragora_Barks",
+			"Guid": "2dc05d35a38743a4cb28405f8681d601",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "IronGolem_Barks",
+			"Guid": "a553a5982136ce14fbf937ae981c861c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Jabberwock_Barks",
+			"Guid": "7caad4a9aafa55b4185293e6475c06ab",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "KoboldStandard_Barks",
+			"Guid": "6fb8a83e49656aa43b07858bb07fc341",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "LivingArmor_Barks",
+			"Guid": "73c7e63d59c256a47a171f8e71cb052b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Lizardfolk_Barks",
+			"Guid": "7081a48ac09bfb54d9df7afaa083b220",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MagicBird_Barks",
+			"Guid": "ca62c23c5518f6840acfe88b8b1c4cca",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Manticore_Barks",
+			"Guid": "f82c12c2e893a784ab7b091e8bb7621c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MastodonCompanion_Barks",
+			"Guid": "1be7fd0e655435a4a949299ecdc0e5bb",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Mastodon_Barks",
+			"Guid": "4f94f64a576d5d446be68b533f17fb61",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Mephit_Barks",
+			"Guid": "9a4d3575a4f3187429e1986821701089",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MimicBoss_Barks",
+			"Guid": "b166f86cf07aeb6429a364d0e18bac86",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Mimic_Barks",
+			"Guid": "d8d3c823b6b126641ac8a06bad0c1f64",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Mite_Barks",
+			"Guid": "3dd6d10188c4d0140b169e742d488c07",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MonitorLizardCompanion_Barks",
+			"Guid": "8f1014f44fedfef45808ef10b921a942",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MonitorLizard_Barks",
+			"Guid": "0ba931a2b20ec024e97effd83f9c2683",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Mudman_Barks",
+			"Guid": "98fe39176ec73da48919f848053ed01b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Nereid_Barks",
+			"Guid": "880aee6bc8e29cf42b74ecaef4d81de3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Nightmare_Barks",
+			"Guid": "159467695a39e764d8cd47a1ab3e2520",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Nixie_Barks",
+			"Guid": "ac5ecc12f8df64f4eaee68785cd51c49",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "OozeHuge_Barks",
+			"Guid": "3acd823cec0fc604ca00873b4fb6a864",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Ooze_Barks",
+			"Guid": "89c194e11a8598540b3ff2a33d3d34ff",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Owlbear_Barks",
+			"Guid": "083efee591644fc49826f045f692f3de",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Owlcat_Barks",
+			"Guid": "6c90754183ebb4c44a4373e2a7034720",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Pony_Barks",
+			"Guid": "3002794576a18874fabed37efc7a0c5b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PurpleWorm_Barks",
+			"Guid": "cd5144238ee2dfd42824f142033aba01",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Quickwood_Barks",
+			"Guid": "a84220a063d385f4d87dd844d397c8ed",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Raven_Barks",
+			"Guid": "eee62767937db7f45a4cd26398892ce2",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Redcap_Barks",
+			"Guid": "3e63072063020bf4bbbf3a6705b93399",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "RedPanda_Barks",
+			"Guid": "de56d3e4870192a4fa5977dfad626753",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Roc_Barks",
+			"Guid": "88e75e6d0c2ec074aa23d9b0b7c62b72",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Satyr_Barks",
+			"Guid": "ffc6fb170ba5bd348a2841df563d99e2",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Scarecrow_Barks",
+			"Guid": "1f54ac6e1b748e74b8b07ca1b73b2b49",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ScytheTree_Barks",
+			"Guid": "fef9d0e9a30b36d46ac4905c001d41e2",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ShamblingMound_Barks",
+			"Guid": "2b16730449d17104fa90b38ac310a547",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ShockerLizard_Barks",
+			"Guid": "cb6e4020b5bdd4c4c897ae289dbca66d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Singer_Barks",
+			"Guid": "4e1659bd54b21b1499989ce5af623201",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Skeleton_Barks",
+			"Guid": "d112b7911d9d3be48bd86a5cde266020",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "SoulEater_Barks",
+			"Guid": "abc9863a5652065448df1f9b1fba9d36",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Spawn_Barks",
+			"Guid": "a7b2e8f4317a374488c3448b342f3b03",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Spectre_Barks",
+			"Guid": "27b87abb4455e61459ec9b4f0132c716",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Spider_Barks",
+			"Guid": "7d340f75a57c47d45b0e79200a6b5eac",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "SpiritNaga_Barks",
+			"Guid": "e48a87ba4ab0d5d41afe3c47192aa204",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Spriggan_Barks",
+			"Guid": "cf38d6f42992e2746b2f64876612f002",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "StoneGolem_Barks",
+			"Guid": "34ca66289f4899347a7ab9bef34a13f0",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "SwarmCrows_Barks",
+			"Guid": "72816ddd70dc583459f562293c805fcb",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "SwarmMandragora_Barks",
+			"Guid": "0e67421cab319894896d2a00f7d0fa2b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "SwarmRats_Barks",
+			"Guid": "e2e0b9c9d1b716a4a8b3fec921a95891",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "SwarmSpiders_Barks",
+			"Guid": "05380db5d4f212a45acdd0f030aaae83",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Tatzlwyrm_Barks",
+			"Guid": "ccaf1c8df17c90743838b28b6a3ce457",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Thanaedemon_Barks",
+			"Guid": "848d4aa1b95b1a247be22500d244d4a5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Thylacine_Barks",
+			"Guid": "82616f287c286174587b65300fca3d0b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Treant_Barks",
+			"Guid": "bb9ffa4bd65336f4f99ebd3a234f90cf",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "TrollBoss_Barks",
+			"Guid": "961b724b02d8ea340b6e9c6386462201",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Trollhound_Barks",
+			"Guid": "c41502109037be64b8b405d58542c0f8",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "TrollStandard_Barks",
+			"Guid": "b8c6c2393c5389644899197a24cc93b7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Troll_SubjectZero_Barks",
+			"Guid": "f35c8701c945ed54f9c3926d198f86ee",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Vilderavn_Barks",
+			"Guid": "a8a8524d805f3594695b405cffca7c38",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "WaterElemental_Barks",
+			"Guid": "408aee29e39058143b663adf579d4d5d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Wererat_Barks",
+			"Guid": "d39ca6b95b246e84cb3e54360fadcd69",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Weretiger_Barks",
+			"Guid": "7a67b6fccb2b1fa4bb755a3af5863d16",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Werewolf_Barks",
+			"Guid": "f1e324e22983dc64ea7a50e4475b9e44",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "WildHunt_Barks",
+			"Guid": "606539abe05e0fc4cbb5ede34947c3a1",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "WillOWispFemale_Barks",
+			"Guid": "7411173a8ac4de34a844a47f51869ba6",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "WillOWisp_Barks",
+			"Guid": "dbd362ade82c0f44ea3e9e46cef31814",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Wolf_Barks",
+			"Guid": "a05bf641a3fb6e3498707ac9814f583b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "WrigglingMan_Barks",
+			"Guid": "0e9f85587b086534f810c3e19bb7f5b7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Wyvern_Barks",
+			"Guid": "062cad9f96b04364181713d9fcbe9d12",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Zombie_Barks",
+			"Guid": "5b77c4c031391294b920f5a1e119b959",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Abrikandilu_Barks",
+			"Guid": "97c7b7df236d38d4083756c6e71e038b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ApocalypseLocust_Barks",
+			"Guid": "e3d95e1e09111234789c70178c490a05",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Areelu_Barks",
+			"Guid": "9d22d1eb5f96d4d41b5aa4c978cad89c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Areshkagal_Barks",
+			"Guid": "c1dbba38a00cb634bb5aadcd31b01484",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "AshGiant_Barks",
+			"Guid": "e2f1101fa2974ca4c8d3ed3fd41e7157",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "AzataLillend_Barks",
+			"Guid": "6b9fea0705f1f8547b583e7b907a96ed",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Babau_Barks",
+			"Guid": "1ec6e73973953384eae31307fca008a6",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Balor_Barks",
+			"Guid": "a57d58cad0a2a3046a3061a45e196df1",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "BaphometStatue_Barks",
+			"Guid": "a1a52286f57f4e829597ff82a8936031",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Baphomet_Barks",
+			"Guid": "dbd4506a7b2c41c2a77941edfecca3a3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Bodak_Barks",
+			"Guid": "26b8d4c14b0a77544b42a7552261b8cb",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Brimorak_Barks",
+			"Guid": "cc290da39ccff694d945efa79842710b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Bythos_Barks",
+			"Guid": "1e18b1332596c354c9d08f2bb78ca845",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Cambion_Barks",
+			"Guid": "2adbcb4697a61074fa22fa5ecf0a7458",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CarnivorousCrystalHuge_Barks",
+			"Guid": "059bb3a389a8c6642a4c1074af1dbb1c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "CarnivorousCrystal_Barks",
+			"Guid": "6b026ed8f2fed374489f74d222b96a53",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Coloxus_Barks",
+			"Guid": "6d2cc224040a26f41a7dabe3ccb15aab",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Deathsnatcher_Barks",
+			"Guid": "ec6a8faba9332024599becceb1da8a54",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "DemodandStringy_Barks",
+			"Guid": "3248b7a0f3d6f6141a02af04a31a17fc",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "DemodandTarry_Barks",
+			"Guid": "3808636d77c134448904bd91ba448868",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Derakni_Barks",
+			"Guid": "61bccb3b093c40643a99c2bb5983026f",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Deskari_Barks",
+			"Guid": "6daffce7e61d4d988038c0af050bb1b6",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "DevaFemale_Barks",
+			"Guid": "a2de6fc19698abd42a4fa7bcbbb0a364",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "DevaMale_Barks",
+			"Guid": "727c657f35124f943ae71ae545ae6524",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Devastator_Barks",
+			"Guid": "dd4fc892ba8f4bd88550fc0c9fade24d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Dretch_Barks",
+			"Guid": "53893ad6cc7a40047beecc22898ab84b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "EMPTY_Barks",
+			"Guid": "c3cfb468cc632ff40bead005d913a0b8",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Gallu_Barks",
+			"Guid": "5cb737ac327828641a057c732ebc1b01",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "GiantFly_Barks",
+			"Guid": "5f2435439043da240ad7ba96179523cf",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Gibrileth_Barks",
+			"Guid": "e1dbdb46d16625e4db7857f672efc51e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Glabrezu_Barks",
+			"Guid": "85d8b5c2dea213a4db6868d0b7a0c467",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Graveknight_Barks",
+			"Guid": "938750464d67dff4092e213841aec5e8",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "HavocDragonLarge_Barks",
+			"Guid": "478370a2af1b5cb4abe9c2fe80ef0cb5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "HavocDragonSmall_Barks",
+			"Guid": "e6c1a2a17fe4b554a9a9dd6b48c2b9a6",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Hepzamirah_Barks",
+			"Guid": "6119cd9b94d416f46bb96cd16e7b4858",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Herald_Barks",
+			"Guid": "23485fa25d40fae4caf1f9a4d64cd548",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Hippogriff_Barks",
+			"Guid": "29844003ee1181a45964bde36e35987a",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ImpDevil_Barks",
+			"Guid": "dc59e678832b412083395d4f36cc38e4",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Incubus_Barks",
+			"Guid": "1d062b397d8be024db1f7dae8ddff110",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "InevitableKolyarut_Barks",
+			"Guid": "7cb8761e783f44f29dd877a51a37a018",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Kalavakus_Barks",
+			"Guid": "291595dc771a12e46ba63b1f09aec713",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Lilithu_Barks",
+			"Guid": "08184ae01ef7a414da9edbd05a58144c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MandragoraSmall_Barks",
+			"Guid": "d11108d2f1662a842929f53e16bd6742",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Marilith_Barks",
+			"Guid": "15575dac0e1b9684da4a5804084d8446",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Memitim_Barks",
+			"Guid": "c127db462b0fec04e872c3b985a0e2ac",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Mephistopheles_Barks",
+			"Guid": "26ed5f28734066f4dab49d55135cb669",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Minagho_Barks",
+			"Guid": "2cf4a0e1b14149ab9e50670e1557effc",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Minotaur_Standard_Barks",
+			"Guid": "aaa92ab0778d3114c8c341f43e895c6d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MongrelFemale_Barks",
+			"Guid": "d326dc580efae064bbd12b3d037339f9",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "MongrelMale_Barks",
+			"Guid": "326fd98d4cb3b5946b3eb006d64c80ab",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Nabasu_Barks",
+			"Guid": "7f3386912f3fc9742a2166b1ecfb4c6e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Nalfeshnee_Barks",
+			"Guid": "7990500fa93c32e43adc32f09b8840c5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Nightcrawler_Barks",
+			"Guid": "7e0bc52d0b510764c8d51414ac60b075",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Nocticula_Barks",
+			"Guid": "9396b14ed46f36d49bcb30bafac761e3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Oolioddroo_Barks",
+			"Guid": "118bb5898908bc54bba9a4556f166fa2",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Panajai_Barks",
+			"Guid": "38821689c6e6a174faed00e56003915a",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Quasit_Barks",
+			"Guid": "d843022892aeabe4ca4a30104af1fe5b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Ravener_Barks ",
+			"Guid": "a66dd4b15e165274a83a2a933cfbef44",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Retriver_Barks",
+			"Guid": "69a87fc3a23d0d9499448d9c902b746d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "RiftDrake_Barks",
+			"Guid": "74111cfb38b8d6447b87f10337b31853",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Salamander_Barks",
+			"Guid": "76ed0ecb91cc48cea8770346062eacda",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Schir_Barks",
+			"Guid": "c4c0cdd638a13564689ed107989d7aed",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "ShadowDemon_Barks",
+			"Guid": "b4e8b52a4f0590846b9b69ac5e56aaa4",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Sphinx_Barks",
+			"Guid": "5011ef329d914e14baf40d551ff0f1ac",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Succubus_Barks",
+			"Guid": "482042afbea927e44a6917dd701d400c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Triceratops_Barks",
+			"Guid": "c825a5847ce54914cb018d4f3e7d1cab",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "UmbralDragon_Barks",
+			"Guid": "a526fcf667234d4e8bb2ba5376a0f91a",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Vavakia_Barks",
+			"Guid": "6ef03eb5c06964747b18f4e3e3db0097",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Velociraptor_Barks",
+			"Guid": "113f8d6aec1d48a47b54fc50b0eb34a1",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Vermlek_Barks",
+			"Guid": "fc33cd601813712429c932aae0dc32e7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "VescavorQueen_Barks",
+			"Guid": "402f256ed6f708e43ba3c3a8cf64487f",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "VescavorSwarm_Barks",
+			"Guid": "9bf5a10fb207fbe42913780436dd3d49",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Vrok_Barks",
+			"Guid": "d933a836dff18ad4c863c8f3bcf1e4f4",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Vrolikai_Barks",
+			"Guid": "77004fc8d1cd8b44dbe1fc9f8181c8c6",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "WildHuntFemale_Barks",
+			"Guid": "a5a0162c907014442b00c7979527e3ef",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "Woundwyrm_Barks",
+			"Guid": "93c004dd7f4f1104aa854bccb6da1f11",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Aggressive_Barks",
+			"Guid": "658bb6f61cfeb664ebd6eed7cb2ce15e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Brave_Barks",
+			"Guid": "4fd6c458b8cab284d82f8db530bac7a3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Carefree_Barks",
+			"Guid": "a0e98c96fb8ffaa4083d3199fc985ed1",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Confident_Barks",
+			"Guid": "5d30b41cae209e047b679614b5520d6c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Cunning_Barks",
+			"Guid": "79c56f4a1e81c8f43b572edfae28ae0e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Madman_Barks",
+			"Guid": "d088b40b81a12d345af51eeb4ba913dc",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Pious_Barks",
+			"Guid": "41de17d88c60c734eae579812a3616bb",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Pragmatic_Barks",
+			"Guid": "15d12365cd8a84e4a8efa095eb292b83",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Reserved_Barks",
+			"Guid": "2b63671451c82094f828817ce94d33e5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Aggressive_Barks",
+			"Guid": "875e273f9fb12e74c82d2ac7d901eae7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Brave_Barks",
+			"Guid": "875760f22cf9073499d7e4705b4c36f7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Confident_Barks",
+			"Guid": "090b8bee9e498df40918136ec69d33c5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Grumpy_Barks",
+			"Guid": "f05606ad44c4870498701ee4d425449b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Madman_Barks",
+			"Guid": "d3f75c07e14448a4f9b9010f2004e480",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Optimist_Barks",
+			"Guid": "0ac4c0a68735fd242b7e0f1cf0a5104d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Pious_Barks",
+			"Guid": "62d6c36669e7d414380e20b33d41130f",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Pragmatic_Barks",
+			"Guid": "7f0a743a90858e74eacb95823b058cce",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Reserved_Barks",
+			"Guid": "2dbc60282a52a184f869c67ff488dc9b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Wise_Barks",
+			"Guid": "7be4759097b894448b6a898eaed7a09c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		/***********************************************
+		* Units
+		***********************************************/
 		{
 			"Name": "ArmyAeonsBythos",
 			"Guid": "a6d75776a29d4c0bb3bc8bcad259e990",
@@ -834,6 +2050,219 @@
 			"Name": "ArmyZombieStandard",
 			"Guid": "e4c4329f7d2a6414ca6dbef507dd5284",
 			"TypeFullName": "Kingmaker.Blueprints.BlueprintUnit"
+		},
+		/***********************************************
+		* Visual Presets
+		***********************************************/
+		{
+			"Name": "Cavalier_HalfElf_Pregen_VisualPreset",
+			"Guid": "5f3731f20e3b4f4e9a01df7a5046fa30",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Aasimar_Standard_VisualPreset",
+			"Guid": "640e57f7890fa044ea78914930ddac5b",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Aasimar_Standard_VisualPreset_fat",
+			"Guid": "d529cb3def52a584f93a4aff5e20316a",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Aasimar_Standard_VisualPreset_thin",
+			"Guid": "00fa5240ec151e8419cb60c34fb96e0e",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dhampir_Standard_VisualPreset",
+			"Guid": "7d62fdf38e8509d489bad61edc3bb378",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dhampir_Standard_VisualPreset_fat",
+			"Guid": "3c6cc7bb7064419b8ffb38dd4b967259",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dhampir_Standard_VisualPreset_thin",
+			"Guid": "aeb4b53456324320ba73016227a2cb84",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dwarf_VisualPreset",
+			"Guid": "97887dd22770a8f4382fea706108ae1d",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dwarf_VisualPreset_fat",
+			"Guid": "62d55ab200433cf48969742069082900",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dwarf_VisualPreset_thin",
+			"Guid": "955e56e2035c3f44ca02d653b54d6c4c",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Elf_VisualPreset",
+			"Guid": "33c5153d85a687d40ab3a56f8c391f0c",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Elf_VisualPreset_fat",
+			"Guid": "69f805875eebbe44a98de85ca73dec2d",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Elf_VisualPreset_thin",
+			"Guid": "5949351417a1c644c8909d79dcfa3c07",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Gnome_VisualPreset",
+			"Guid": "22ce97d0a0ed72a42be8f91c81dff3fc",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Gnome_VisualPreset_fat",
+			"Guid": "2d2aa9649a8a7bc43a545d42921db850",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Gnome_VisualPreset_thin",
+			"Guid": "219af30a164c8704d897b40a484be6ac",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfElf_VisualPreset",
+			"Guid": "73182addc48e5b944a0a87d4fbd8f35b",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfElf_VisualPreset_fat",
+			"Guid": "249e1b67814574e4b9d4b9a3f846e765",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfElf_VisualPreset_thin",
+			"Guid": "ee326fab8804493499ce07c5cd8759e2",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Halfling_VisualPreset",
+			"Guid": "639cebe8cbc098345af429d62fd79578",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Halfling_VisualPreset_fat",
+			"Guid": "4031e194544440c47a50ed30073bcf09",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Halfling_VisualPreset_thin",
+			"Guid": "f6db3ede6c67b84438e2b5609fcaf693",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Slim_VisualPreset",
+			"Guid": "fadca6de52f495842bbe5a42bef14fe9",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Standard_VisualPreset",
+			"Guid": "aa0929877b81dfc4a9a8a43902701a15",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Standard_VisualPreset_fat",
+			"Guid": "ba5b547d3641a5b4f8ccdefc35009222",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Standard_VisualPreset_thin",
+			"Guid": "09433f75c36594d4e88e2cc122c6bbce",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Fat_VisualPreset",
+			"Guid": "ac19b4cbd6d24094fa0db19f26973103",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Standard_VisualPreset",
+			"Guid": "58181bf151eb0c0408f82546541dcc03",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Standard_VisualPreset_fat",
+			"Guid": "10d74847c1492bf428b462f948e69d4f",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Standard_VisualPreset_thin",
+			"Guid": "e03b9c63971878743b8f53bdf14673ee",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Tall_VisualPreset",
+			"Guid": "3a691e2c33c914f4c8ea2be45515ba38",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Kitsune_Standard_VisualPreset",
+			"Guid": "f7c20e42f9e6dc140b71e4157db24e4d",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Kitsune_Standard_VisualPreset_fat",
+			"Guid": "8b88651f2c3f4a82aeb66f339e57c489",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Kitsune_Standard_VisualPreset_thin",
+			"Guid": "eed106c1251548aeb6eb51049686d032",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Oread_Standard_VisualPreset",
+			"Guid": "3fbaf485e78c5dd46b255a71e013f34e",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Oread_Standard_VisualPreset_fat",
+			"Guid": "9209746f14e247a9a6cc10e124a4bde4",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Oread_Standard_VisualPreset_thin",
+			"Guid": "89f78351ab914aa8a9ee330ef9dce760",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Tiefling_Standard_VisualPreset",
+			"Guid": "4bbf7e0e8d2f0e84e8236bea2df185ff",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Tiefling_Standard_VisualPreset_fat",
+			"Guid": "8b485a757f883734585da9b8b816d1d6",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Tiefling_Standard_VisualPreset_thin",
+			"Guid": "4d9124908caec8145b733ecbd2896b23",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "SuccubusIncubus_VisualPreset",
+			"Guid": "173d5edc284d408783d5b2a5e37eaea7",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "SuccubusIncubus_VisualPreset2",
+			"Guid": "230ccb3561d149aab93ea74154a14d0c",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
 		}
 	]
 }

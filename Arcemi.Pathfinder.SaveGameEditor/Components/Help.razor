@@ -1,4 +1,4 @@
-﻿<button class="btn btn-circle btn-help-tooltip">
+﻿<button class="btn @GetCssSizeClass() btn-circle btn-help-tooltip">
     <span class="oi oi-question-mark"></span>
     <span class="help-tooltip">
         @ChildContent
@@ -8,4 +8,20 @@
 @code{
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public ElementSize? Size { get; set; }
+
+    //public TooltipPosition Position { get; set; }
+
+    private string GetCssSizeClass()
+    {
+        if (!Size.HasValue) return string.Empty;
+        switch (Size.Value) {
+            case ElementSize.Small: return "btn-sm";
+            case ElementSize.Medium: return "btn-md";
+            case ElementSize.ExtraLarge: return "btn-xl";
+        }
+        return string.Empty;
+    }
 }
