@@ -46,8 +46,8 @@ h4 {
 .btn-help-tooltip .help-tooltip-bottom-right {
   top: 100%;
   left: 50%;
-  margin-left: 30px;
-  /* Width - arrow pos right - 5px (padding) */
+  margin-left: -35px;
+  /* - arrow pos right - 5px * 2 (padding) */
   margin-top: 10px;
   /* Move it below the button */
 }
