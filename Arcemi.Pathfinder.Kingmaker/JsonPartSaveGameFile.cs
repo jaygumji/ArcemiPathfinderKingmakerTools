@@ -45,7 +45,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             _refs = new References(res);
             _types = new Dictionary<string, List<Model>>(StringComparer.Ordinal);
             _blueprintRefs = new Dictionary<BlueprintIdentifier, List<Model>>();
-            VisitTree(json);
+            VisitTree(null, json);
         }
 
         public T GetRoot<T>(Func<ModelDataAccessor, T> factory = null)
@@ -101,11 +101,11 @@ namespace Arcemi.Pathfinder.Kingmaker
             list.Add(model);
         }
 
-        private void VisitTree(JToken node)
+        private void VisitTree(JToken parent, JToken node)
         {
             if (node is JArray arr) {
-                foreach (var value in arr) {
-                    VisitTree(value);
+                for (var i = 0; i < arr.Count; i++) {
+                    VisitTree(arr, arr[i]);
                 }
                 return;
             }
@@ -123,8 +123,12 @@ namespace Arcemi.Pathfinder.Kingmaker
                         AddBlueprintRef(blueprintId, obj);
                         _refs.Add(id, obj);
                     }
+                    else if (string.Equals(property.Name, "$ref", StringComparison.Ordinal)) {
+                        var id = property.Value.Value<string>();
+                        _refs.ReferTo(parent, obj, id);
+                    }
 
-                    VisitTree(property.Value);
+                    VisitTree(obj, property.Value);
                 }
             }
         }

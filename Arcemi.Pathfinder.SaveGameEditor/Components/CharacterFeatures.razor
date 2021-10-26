@@ -7,16 +7,16 @@
     <div class="col-md-4">
         <label class="form-label">Name</label>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
         <label class="form-label">Rank</label>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
         <label class="form-label" title="Last level feat was updated">Level</label>
     </div>
     <div class="col-md-2">
         <label class="form-label">Components</label>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
     </div>
 </div>
 
@@ -25,16 +25,16 @@
     <div class="col-md-4 overflow-hidden">
         <label class="form-label">@feature.DisplayName</label>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
         <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
         <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
     </div>
     <div class="col-md-2">
         <label class="form-label">@feature.Components.Count</label>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
         @if (feature.IsRanked) {
         <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
             <span class="oi oi-arrow-thick-bottom"></span>
@@ -43,6 +43,9 @@
             <span class="oi oi-arrow-thick-top"></span>
         </button>
         }
+        <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFeature(feature)">
+            <span class="oi oi-trash"></span>
+        </button>
     </div>
 </div>
 }
@@ -76,5 +79,10 @@
         }
 
         feature.RankToSource.RemoveAt(feature.RankToSource.Count - 1);
+    }
+
+    private void RemoveFeature(FeatureFactItemModel feature)
+    {
+        Unit.Facts.Items.Remove(feature);
     }
 }

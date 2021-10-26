@@ -63,7 +63,7 @@ else {
                     <input class="form-control" type="number" @bind="item.Charges" />
                 }
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
 @*                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
                     <span class="oi oi-fork"></span>
                 </button>*@
@@ -75,6 +75,9 @@ else {
                     <span class="oi oi-pencil"></span>
                 </button>
                 }
+                <button class="btn btn-sm btn-danger" title="Remove item" @onclick="() => RemoveItem(item)">
+                    <span class="oi oi-trash"></span>
+                </button>
             </div>
         </div>
         }
@@ -199,6 +202,11 @@ else {
         ItemCrafted = item.Parts.Items.OfType<CraftedPartItemModel>().FirstOrDefault();
         ItemEnchantable = item as IEnchantmentLevelItemModel;
         await modalEditItem.OpenAsync();
+    }
+
+    private void RemoveItem(ItemModel item)
+    {
+        Inventory.Items.Remove(item);
     }
 
     private void UnlockCraftedItem()

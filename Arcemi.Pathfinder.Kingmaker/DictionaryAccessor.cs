@@ -99,11 +99,12 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public void Clear()
         {
-            _dict.Clear();
             var propNames = _obj.Properties().Select(p => p.Name).ToArray();
             foreach (var name in propNames) {
+                _refs.BubbleRemoval(_obj.Property(name)?.Value);
                 _obj.Remove(name);
             }
+            _dict.Clear();
         }
 
         public bool ContainsKey(string key)
@@ -118,6 +119,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public bool Remove(string key)
         {
+            _refs.BubbleRemoval(_obj.Property(key)?.Value);
             _dict.Remove(key);
             return _obj.Remove(key);
         }

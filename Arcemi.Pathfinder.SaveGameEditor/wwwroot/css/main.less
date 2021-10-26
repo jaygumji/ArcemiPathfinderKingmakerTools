@@ -29,23 +29,11 @@ h4 {
         border-color: #dae0e5;
     }
 
-    .help-tooltip {
-        width: 300px;
+    .help-tooltip-bottom-left {
         top: 100%;
         left: 50%;
         margin-left: -270px; /* Width - arrow pos right - 5px (padding) */
         margin-top: 10px; /* Move it below the button */
-
-        visibility: hidden;
-        background-color: black;
-        color: #fff;
-        text-align: center;
-        padding: 5px;
-        border-radius: 6px;
-        position: absolute;
-        z-index: 1;
-        font-size: 14px;
-        white-space: normal;
 
         &::after {
             content: " ";
@@ -57,6 +45,38 @@ h4 {
             border-style: solid;
             border-color: transparent transparent black transparent;
         }
+    }
+
+    .help-tooltip-bottom-right {
+        top: 100%;
+        left: 50%;
+        margin-left: 30px; /* Width - arrow pos right - 5px (padding) */
+        margin-top: 10px; /* Move it below the button */
+
+        &::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            left: 25px;
+            margin-left: 5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent black transparent;
+        }
+    }
+
+    .help-tooltip {
+        width: 300px;
+        visibility: hidden;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        padding: 5px;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 1;
+        font-size: 14px;
+        white-space: normal;
     }
 
     &:hover .help-tooltip {

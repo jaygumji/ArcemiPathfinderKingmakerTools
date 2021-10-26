@@ -9,11 +9,11 @@ using System.Collections.Generic;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-
     public class References : IReferences
     {
         private readonly IGameResourcesProvider _res;
-        private readonly Dictionary<string, JObject> _lookup;
+        private readonly Dictionary<string, JObjectReference> _lookup;
+        private readonly Dictionary<JObject, JObjectReference> _refLookup;
         private int _maxId;
 
         private readonly ObjectCache _objects;
@@ -28,7 +28,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         public References(IGameResourcesProvider res)
         {
             _res = res;
-            _lookup = new Dictionary<string, JObject>(StringComparer.Ordinal);
+            _lookup = new Dictionary<string, JObjectReference>(StringComparer.Ordinal);
+            _refLookup = new Dictionary<JObject, JObjectReference>();
             _objects = new ObjectCache();
             _lists = new ObjectCache();
             _valueLists = new ObjectCache();
@@ -46,7 +47,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 }
             }
 
-            _lookup.Add(id, obj);
+            _lookup.Add(id, new JObjectReference(obj));
         }
 
         public object CreateObject(JObject jObj, Func<ModelDataAccessor, object> factory)
@@ -82,7 +83,12 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         bool IReferences.TryGetReferred(string refId, out JObject refObj)
         {
-            return _lookup.TryGetValue(refId, out refObj);
+            if (_lookup.TryGetValue(refId, out var jRef)) {
+                refObj = jRef.Obj;
+                return true;
+            }
+            refObj = null;
+            return false;
         }
 
         JObject IReferences.GetReferred(JObject obj)
@@ -139,6 +145,44 @@ namespace Arcemi.Pathfinder.Kingmaker
             obj = (factory ?? Mappings.GetFactory<T>()).Invoke(property);
             _objects.Add(parent, name, obj);
             return obj;
+        }
+
+        public void ReferTo(JToken parent, JObject reference, string id)
+        {
+            var jRef = _lookup[id];
+            jRef.AddReference(parent, reference);
+            _refLookup.Add(reference, jRef);
+        }
+
+        public void BubbleRemoval(JToken token)
+        {
+            if (token == null) return;
+            if (token.Type == JTokenType.Null) return;
+            if (token is JObject obj) {
+                var refId = obj.Property("$ref")?.Value?.ToString();
+                if (!string.IsNullOrEmpty(refId)) {
+                    _refLookup[obj].RemoveReference(obj);
+                    _refLookup.Remove(obj);
+                    return;
+                }
+
+                var id = obj.Property("$id")?.Value?.ToString();
+                if (!string.IsNullOrEmpty(id)) {
+                    var reference = _lookup[id];
+                    if (reference.RefCount > 0) {
+                        reference.EnsureAnotherOwner();
+                        return;
+                    }
+                }
+                foreach (var property in obj.Properties()) {
+                    BubbleRemoval(property.Value);
+                }
+            }
+            else if (token is JArray arr) {
+                for (var i = 0; i < arr.Count; i++) {
+                    BubbleRemoval(arr[i]);
+                }
+            }
         }
 
         ListAccessor<T> IReferences.GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNotDefined)

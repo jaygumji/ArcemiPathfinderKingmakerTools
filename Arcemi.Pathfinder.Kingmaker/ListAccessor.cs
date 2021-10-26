@@ -103,6 +103,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             for (var i = 0; i < _items.Count; i++) {
                 if (_items[i] == null) return i;
+                if (_items[i] == null) return i;
             }
             return -1;
         }
@@ -128,6 +129,10 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public void Clear()
         {
+            foreach (var item in _array) {
+                _refs.BubbleRemoval(item);
+            }
+
             _array.Clear();
             _items.Clear();
 
@@ -175,6 +180,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         public void RemoveAt(int index)
         {
             var item = _items[index];
+            var token = _array[index];
+
+            _refs.BubbleRemoval(token);
+
             _array.RemoveAt(index);
             _items.RemoveAt(index);
 

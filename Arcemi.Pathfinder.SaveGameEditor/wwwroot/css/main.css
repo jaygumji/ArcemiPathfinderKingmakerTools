@@ -25,14 +25,44 @@ h4 {
   background-color: #e2e6ea;
   border-color: #dae0e5;
 }
-.btn-help-tooltip .help-tooltip {
-  width: 300px;
+.btn-help-tooltip .help-tooltip-bottom-left {
   top: 100%;
   left: 50%;
   margin-left: -270px;
   /* Width - arrow pos right - 5px (padding) */
   margin-top: 10px;
   /* Move it below the button */
+}
+.btn-help-tooltip .help-tooltip-bottom-left::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  right: 25px;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+.btn-help-tooltip .help-tooltip-bottom-right {
+  top: 100%;
+  left: 50%;
+  margin-left: 30px;
+  /* Width - arrow pos right - 5px (padding) */
+  margin-top: 10px;
+  /* Move it below the button */
+}
+.btn-help-tooltip .help-tooltip-bottom-right::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  left: 25px;
+  margin-left: 5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+.btn-help-tooltip .help-tooltip {
+  width: 300px;
   visibility: hidden;
   background-color: black;
   color: #fff;
@@ -43,16 +73,6 @@ h4 {
   z-index: 1;
   font-size: 14px;
   white-space: normal;
-}
-.btn-help-tooltip .help-tooltip::after {
-  content: " ";
-  position: absolute;
-  bottom: 100%;
-  right: 25px;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent black transparent;
 }
 .btn-help-tooltip:hover .help-tooltip {
   visibility: visible;

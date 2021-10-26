@@ -12,6 +12,7 @@ namespace Arcemi.Pathfinder.Kingmaker
     {
         bool TryGetReferred(string refId, out JObject refObj);
         JObject GetReferred(JObject obj);
+        void BubbleRemoval(JToken token);
         JObject Create();
         JObject CreateReference(string refId);
         JObject CreateReference(JObject refObj);

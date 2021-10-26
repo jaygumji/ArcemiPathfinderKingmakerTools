@@ -1,6 +1,6 @@
 ﻿<button class="btn @GetCssSizeClass() btn-circle btn-help-tooltip">
     <span class="oi oi-question-mark"></span>
-    <span class="help-tooltip">
+    <span class="help-tooltip @GetCssPositionClass()">
         @ChildContent
     </span>
 </button>
@@ -12,7 +12,8 @@
     [Parameter]
     public ElementSize? Size { get; set; }
 
-    //public TooltipPosition Position { get; set; }
+    [Parameter]
+    public TooltipPosition? Position { get; set; }
 
     private string GetCssSizeClass()
     {
@@ -23,5 +24,14 @@
             case ElementSize.ExtraLarge: return "btn-xl";
         }
         return string.Empty;
+    }
+
+    private string GetCssPositionClass()
+    {
+        var position = Position ?? TooltipPosition.BottomLeft;
+        switch (position) {
+            case TooltipPosition.BottomRight: return "help-tooltip-bottom-right";
+        }
+        return "help-tooltip-bottom-left";
     }
 }
