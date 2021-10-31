@@ -44,7 +44,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor
             //    app.UseHsts();
             //}
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
