@@ -124,7 +124,8 @@ else {
 
     private void RemoveArmyUnit(PlayerArmySquadModel armyUnit)
     {
-        Unit.Data.SquadsPosition.Remove(armyUnit);
+        var posIdx = Unit.Data.SquadsPosition.IndexOf(armyUnit);
+        Unit.Data.SquadsPosition[posIdx] = null;
         Unit.Data.Squads.Remove(armyUnit);
     }
 

@@ -11,42 +11,49 @@ using System.Collections.Specialized;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class ListAccessor<T> : IList, IReadOnlyList<T>, INotifyCollectionChanged, IModelContainer
+    public class ListD2Accessor<T> : IList, IReadOnlyList<IReadOnlyList<T>>, INotifyCollectionChanged, IModelContainer
         where T : Model
     {
         private readonly JArray _array;
         private readonly IReferences _refs;
         private readonly Func<ModelDataAccessor, T> _factory;
         private readonly IGameResourcesProvider _res;
-        private readonly List<T> _items;
+        private readonly List<List<T>> _items;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public ListAccessor(JArray array, IReferences refs, IGameResourcesProvider res, Func<ModelDataAccessor, T> factory)
+        public ListD2Accessor(JArray array, IReferences refs, IGameResourcesProvider res, Func<ModelDataAccessor, T> factory)
         {
             _array = array;
             _refs = refs;
             _factory = factory;
             _res = res;
-            _items = new List<T>();
+            _items = new List<List<T>>();
             ((IModelContainer)this).Refresh();
         }
 
         void IModelContainer.Refresh()
         {
             if (_items.Count > 0) _items.Clear();
-            for (var i = 0; i < _array.Count; i++) {
-                var t = _array[i];
-                if (t == null || t.Type == JTokenType.Null) {
+            foreach (var i1 in _array) {
+                if (i1 == null || i1.Type == JTokenType.Null) {
                     _items.Add(null);
                     continue;
                 }
-                var instance = _refs.GetOrCreateObject((JObject)t, _factory);
-                _items.Add(instance);
+                var jarr = (JArray)i1;
+                var arr = new List<T>();
+                _items.Add(arr);
+
+                foreach (var i2 in jarr) {
+                    var obj = _refs.GetReferred((JObject)i2);
+                    var accessor = new ModelDataAccessor(obj, _refs, _res);
+                    var instance = _factory.Invoke(accessor);
+                    arr.Add(instance);
+                }
             }
         }
 
-        private T InitAndInsert(int index = -1, Action<IReferences, JObject> init = null)
+        private T InitAndInsert(int index1 = -1, int index2 = -1, Action<IReferences, JObject> init = null)
         {
             JObject obj;
             if (typeof(T).IsSubclassOf(typeof(RefModel))) {
@@ -58,13 +65,26 @@ namespace Arcemi.Pathfinder.Kingmaker
             init?.Invoke(_refs, obj);
             var accessor = new ModelDataAccessor(obj, _refs, _res);
             var item = _factory.Invoke(accessor);
-            if (index < 0) {
-                _array.Add(obj);
-                _items.Add(item);
+            JArray jarr;
+            List<T> arr;
+            if (index1 < 0) {
+                jarr = new JArray();
+                _array.Add(jarr);
+                arr = new List<T>();
+                _items.Add(arr);
             }
             else {
-                _array.Insert(index, obj);
-                _items.Insert(index, item);
+                jarr = (JArray)_array[index1];
+                arr = _items[index1];
+            }
+
+            if (index2 < 0) {
+                jarr.Add(obj);
+                arr.Add(item);
+            }
+            else {
+                jarr.Insert(index2, obj);
+                arr.Insert(index2, item);
             }
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
             return item;
@@ -74,28 +94,43 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
         }
 
-        public T Insert(int index, Action<IReferences, JObject> init = null)
+        public T Insert(int index1, int index2, Action<IReferences, JObject> init = null)
         {
-            return InitAndInsert(index, init);
+            return InitAndInsert(index1, index2, init);
+        }
+
+        public T Add(int index, Action<IReferences, JObject> init = null)
+        {
+            return InitAndInsert(index, -1, init);
         }
 
         public T Add(Action<IReferences, JObject> init = null)
         {
-            return InitAndInsert(-1, init);
+            return InitAndInsert(-1, -1, init);
+        }
+
+        public void AddRef<TRef>(int index, TRef item)
+            where TRef : RefModel, T
+        {
+            _items[index].Add(item);
+            ((JArray)_array[index]).Add(_refs.CreateReference(item.Id));
         }
 
         public void AddRef<TRef>(TRef item)
             where TRef : RefModel, T
         {
-            _items.Add(item);
-            _array.Add(_refs.CreateReference(item.Id));
+            var jarr = new JArray { _refs.CreateReference(item.Id) };
+            var arr = new List<T> { item };
+
+            _items.Add(arr);
+            _array.Add(jarr);
         }
 
-        public void SetRef<TRef>(int index, TRef item)
+        public void SetRef<TRef>(int index1, int index2, TRef item)
             where TRef : RefModel, T
         {
-            _items[index] = item;
-            _array[index] = _refs.CreateReference(item.Id);
+            _items[index1][index2] = item;
+            ((JArray)_array[index1])[index2] = _refs.CreateReference(item.Id);
         }
 
         public int FirstEmptyIndex()
@@ -107,27 +142,10 @@ namespace Arcemi.Pathfinder.Kingmaker
             return -1;
         }
 
-        public T this[int index]
-        {
-            get => _items[index];
-            set {
-                var item = _array[index];
-                if (value == null) {
-                    _items[index] = null;
-                    _array[index] = null;
-                }
-                else {
-                    if (!(value is RefModel refModel)) throw new InvalidOperationException("Value can not be referenced");
-                    _items[index] = value;
-                    _array[index] = _refs.CreateReference(refModel.Id);
-                }
-                if (item != null) {
-                    _refs.BubbleRemoval(item);
-                }
-            }
-        }
+        public IReadOnlyList<T> this[int index] => _items[index];
+        public T this[int index1, int index2] => _items[index1][index2];
 
-        object IList.this[int index] { get => _items[index]; set => this[index] = (T)value; }
+        object IList.this[int index] { get => _items[index]; set => throw new NotImplementedException(); }
 
         public int Count => _items.Count;
 
@@ -166,7 +184,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             ((IList)_items).CopyTo(array, index);
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<IReadOnlyList<T>> GetEnumerator()
         {
             return _items.GetEnumerator();
         }
@@ -186,16 +204,23 @@ namespace Arcemi.Pathfinder.Kingmaker
             Remove((T)value);
         }
 
-        public int IndexOf(T item)
+        public bool TryGetIndexOf(T item, out int index1, out int index2)
         {
-            return _items.IndexOf(item);
+            for (index1 = 0; index1 < _items.Count; index1++) {
+                var list = _items[index1];
+                if (list == null) continue;
+                index2 = list.IndexOf(item);
+                if (index2 >= 0) return true;
+            }
+            index1 = -1;
+            index2 = -1;
+            return false;
         }
 
         public bool Remove(T item)
         {
-            var idx = _items.IndexOf(item);
-            if (idx < 0) return false;
-            RemoveAt(idx);
+            if (!TryGetIndexOf(item, out var index1, out var index2)) return false;
+            RemoveAt(index1, index2);
             return true;
         }
 
@@ -208,6 +233,22 @@ namespace Arcemi.Pathfinder.Kingmaker
 
             _array.RemoveAt(index);
             _items.RemoveAt(index);
+
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
+        }
+
+        public void RemoveAt(int index1, int index2)
+        {
+            var arr = _items[index1];
+            var jarr = (JArray)_array[index1];
+
+            var item = arr[index2];
+            var token = jarr[index2];
+
+            _refs.BubbleRemoval(token);
+
+            jarr.RemoveAt(index2);
+            arr.RemoveAt(index2);
 
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
         }

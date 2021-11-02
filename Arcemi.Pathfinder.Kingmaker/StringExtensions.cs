@@ -80,5 +80,20 @@ namespace Arcemi.Pathfinder.Kingmaker
 
             return list;
         }
+
+        public static bool IEq(this string value, string other)
+        {
+            return string.Equals(value, other, System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool ILike(this string value, string other)
+        {
+            return value?.IndexOf(other, System.StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        public static bool IStart(this string value, string other)
+        {
+            return value?.StartsWith(other, System.StringComparison.OrdinalIgnoreCase) ?? false;
+        }
     }
 }

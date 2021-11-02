@@ -1,0 +1,13 @@
+﻿<div class="row">
+    @foreach (var acc in Accessors) {
+    <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">
+        <label class="form-label form-label-centered">Lvl @acc.Level</label>
+        <input class="form-control" type="number" @bind="acc.Value" />
+    </div>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public IEnumerable<SpellIndexAccessor> Accessors { get; set; }
+}

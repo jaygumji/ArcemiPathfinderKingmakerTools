@@ -38,9 +38,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                     _dict.Add(property.Name, null);
                     continue;
                 }
-                var item = _refs.GetReferred((JObject)property.Value);
-                var accessor = new ModelDataAccessor(item, _refs, _res);
-                var dictItem = _factory.Invoke(accessor);
+                var dictItem = _refs.GetOrCreateObject(_obj, property.Name, _factory);
                 _dict.Add(property.Name, dictItem);
             }
         }

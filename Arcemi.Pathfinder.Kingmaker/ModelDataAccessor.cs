@@ -10,14 +10,19 @@ using System.Runtime.CompilerServices;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-
-    public class ModelDataAccessor
+    public interface IModelDataAccessor
+    {
+        JObject UnderlyingObject { get; }
+    }
+    public class ModelDataAccessor : IModelDataAccessor
     {
         private readonly JObject _obj;
         private readonly IReferences _refs;
         private NotifyChangeTracker _changeTracker;
 
         public IGameResourcesProvider Res { get; }
+
+        JObject IModelDataAccessor.UnderlyingObject => _obj;
 
         public string TypeValue()
         {
@@ -100,6 +105,14 @@ namespace Arcemi.Pathfinder.Kingmaker
             var obj = _refs.GetOrCreateObject(_obj, name, factory, createIfNull);
             _changeTracker?.On(name, propertyName);
             return obj;
+        }
+
+        public ListD2Accessor<T> ListD2<T>([CallerMemberName] string name = null, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)
+            where T : Model
+        {
+            var listD2Accessor = _refs.GetOrCreateListD2(_obj, name, factory, createIfNull);
+            _changeTracker?.On(name, propertyName);
+            return listD2Accessor;
         }
 
         public ListValueAccessor<T> ListValue<T>([CallerMemberName] string name = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)

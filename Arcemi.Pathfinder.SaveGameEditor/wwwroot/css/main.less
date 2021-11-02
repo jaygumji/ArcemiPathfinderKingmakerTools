@@ -18,6 +18,22 @@ h4 {
     font-size: 1.2rem;
 }
 
+.btn-h3 {
+    margin-top: 20px;
+}
+
+.btn-h4 {
+    margin-top: 20px;
+}
+
+.toolbar-h3 {
+    margin-top: 20px;
+}
+
+.toolbar-h4 {
+    margin-top: 20px;
+}
+
 .btn-help-tooltip {
     position: relative;
     display: inline-block;
@@ -88,6 +104,11 @@ h4 {
     white-space: nowrap;
 }
 
+.form-label-centered{
+    width: 100%;
+    text-align: center;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -103,10 +124,10 @@ h4 {
     text-align: center;
 
     &.btn-md {
-        width: 50px;
-        height: 50px;
-        padding: 7px 10px;
-        border-radius: 25px;
+        width: 28px;
+        height: 28px;
+        padding: 3px 8px;
+        border-radius: 14px;
         font-size: 10px;
         text-align: center;
     }
@@ -239,6 +260,43 @@ ul.nav-tabs {
 
 .tab-content{
     padding-top: 20px;
+}
+
+ul.search-result {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    overflow-y: auto !important;
+    max-height: 350px;
+
+    li.toggled {
+        box-shadow: 1px 1px inset;
+        background-color: #eef;
+    }
+
+    li {
+        border-radius: 3px 4px;
+        margin: 5px;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 1px 1px;
+        border: solid 1px gray;
+        width: 100%;
+        cursor: pointer;
+
+        span {
+            overflow-x: hidden;
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    }
 }
 
 ul.portraits {

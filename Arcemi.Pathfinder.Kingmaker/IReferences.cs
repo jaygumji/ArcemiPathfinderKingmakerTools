@@ -17,10 +17,13 @@ namespace Arcemi.Pathfinder.Kingmaker
         JObject CreateReference(string refId);
         JObject CreateReference(JObject refObj);
 
+        T GetOrCreateObject<T>(JObject obj, Func<ModelDataAccessor, T> factory = null);
         T GetOrCreateObject<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false);
         ListAccessor<T> GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false)
             where T : Model;
         ListValueAccessor<T> GetOrCreateListValue<T>(JObject parent, string name, bool createIfNull = false);
+        ListD2Accessor<T> GetOrCreateListD2<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false)
+            where T : Model;
         DictionaryOfValueAccessor<TValue> GetOrCreateDictionaryOfValue<TValue>(JObject parent, string name, bool createIfNull = false);
         DictionaryAccessor<T> GetOrCreateDictionary<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false)
             where T : Model;

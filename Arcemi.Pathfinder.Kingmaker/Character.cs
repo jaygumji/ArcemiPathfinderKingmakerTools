@@ -23,7 +23,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public InventoryModel Inventory => A.Object<InventoryModel>("m_Inventory");
         public BodyModel Body => A.Object(factory: a => new BodyModel(a));
         public CharacterResourceContainerModel Resources => A.Object(factory: a => new CharacterResourceContainerModel(a));
-        public IReadOnlyList<KeyValuePairModel<CharacterSpellBookModel>> SpellBooks => A.List("m_Spellbooks", a => new KeyValuePairModel<CharacterSpellBookModel>(a));
+        public IReadOnlyList<KeyValuePairObjectModel<CharacterSpellbookModel>> Spellbooks => A.List("m_Spellbooks", a => new KeyValuePairObjectModel<CharacterSpellbookModel>(a, a2 => new CharacterSpellbookModel(a2)));
 
         public string Blueprint => A.Value<string>();
         public string CustomName { get => A.Value<string>(); set => A.Value(string.IsNullOrEmpty(value) ? null : value); }

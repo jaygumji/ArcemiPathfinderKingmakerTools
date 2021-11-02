@@ -18,6 +18,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         private readonly ObjectCache _objects;
         private readonly ObjectCache _lists;
+        private readonly ObjectCache _listD2s;
         private readonly ObjectCache _valueLists;
         private readonly ObjectCache _dictionary;
         private readonly ObjectCache _dictionaryOfValueLists;
@@ -32,6 +33,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             _refLookup = new Dictionary<JObject, JObjectReference>();
             _objects = new ObjectCache();
             _lists = new ObjectCache();
+            _listD2s = new ObjectCache();
             _valueLists = new ObjectCache();
             _dictionary = new ObjectCache();
             _dictionaryOfValueLists = new ObjectCache();
@@ -55,7 +57,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             var accessor = new ModelDataAccessor(jObj, this, _res);
             var obj = factory.Invoke(accessor);
             var id = jObj.Property("$id").Value.Value<string>();
-            _objects.Add(id, obj);
+            _objects.AddGlobal(id, obj);
             return obj;
         }
 
@@ -120,6 +122,34 @@ namespace Arcemi.Pathfinder.Kingmaker
             return new ModelDataAccessor(obj, this, _res);
         }
 
+        private ModelDataAccessor Get(JToken item)
+        {
+            if (item == null || item.Type == JTokenType.Null) {
+                return null;
+            }
+            if (!(item is JObject obj)) {
+                throw new ArgumentException("Parameter item does not reference a valid reference object.");
+            }
+
+            obj = _refs.GetReferred(obj);
+            return new ModelDataAccessor(obj, this, _res);
+        }
+
+        T IReferences.GetOrCreateObject<T>(JObject item, Func<ModelDataAccessor, T> factory)
+        {
+            if (_objects.TryGetGlobal(item, out T obj)) {
+                return obj;
+            }
+
+            var accessor = Get(item);
+            if (accessor == null) {
+                return default;
+            }
+            obj = (factory ?? Mappings.GetFactory<T>()).Invoke(accessor);
+            _objects.AddGlobal(item, obj);
+            return obj;
+        }
+
         T IReferences.GetOrCreateObject<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNull)
         {
             if (_objects.TryGet(parent, name, out T obj)) {
@@ -139,7 +169,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                     property = new ModelDataAccessor(jObj, this, _res);
                 }
                 else {
-                    return default(T);
+                    return default;
                 }
             }
             obj = (factory ?? Mappings.GetFactory<T>()).Invoke(property);
@@ -183,6 +213,31 @@ namespace Arcemi.Pathfinder.Kingmaker
                     BubbleRemoval(arr[i]);
                 }
             }
+        }
+
+        ListD2Accessor<T> IReferences.GetOrCreateListD2<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNotDefined)
+        {
+            if (_listD2s.TryGet(parent, name, out ListD2Accessor<T> list)) {
+                return list;
+            }
+
+            var property = parent.Property(name);
+            if (property == null) {
+                if (!createIfNotDefined) return null;
+                parent.Add(name, new JArray());
+                property = parent.Property(name);
+            }
+            if (property.Value is null || property.Value.Type == JTokenType.Null) {
+                return null;
+            }
+
+            if (!(property.Value is JArray arr)) {
+                throw new ArgumentException($"Parameter {name} does not reference a valid array.");
+            }
+
+            var listAccessor = new ListD2Accessor<T>(arr, _refs, _res, factory ?? Mappings.GetFactory<T>());
+            _listD2s.Add(parent, name, listAccessor);
+            return listAccessor;
         }
 
         ListAccessor<T> IReferences.GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNotDefined)

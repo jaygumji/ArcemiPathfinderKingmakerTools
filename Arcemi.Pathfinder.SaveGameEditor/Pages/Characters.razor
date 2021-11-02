@@ -1,8 +1,6 @@
 @page "/Characters"
 @inject CharacterViewModel Model
 @inject IGameResourcesProvider Resources
-@using Arcemi.Pathfinder.SaveGameEditor.Components
-@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 
 @if (!Model.CanEdit) {
     <p><em>Save file not loaded.</em></p>
@@ -113,6 +111,11 @@ else {
             <Tab Name="Stats">
                 <Content>
                     <CharacterStats Unit="Unit" />
+                </Content>
+            </Tab>
+            <Tab Name="Spellbooks">
+                <Content>
+                    <CharacterSpellbook Unit="Unit" />
                 </Content>
             </Tab>
             <Tab Name="Misc">

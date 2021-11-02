@@ -15,8 +15,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         private static readonly Dictionary<Type, Func<ModelDataAccessor, object>> UntypedFactories;
         private static readonly Dictionary<Type, object> Factories;
 
-        private static readonly Dictionary<BlueprintIdentifier, Type> BlueprintTypes;
-        private static readonly Dictionary<Type, List<BlueprintIdentifier>> TypeToBlueprint;
         public static readonly Dictionary<string, ClassDataMapping> Classes;
         public static readonly Dictionary<string, RaceDataMapping> Races;
         public static readonly Dictionary<string, CharacterDataMapping> Characters;
@@ -65,20 +63,8 @@ namespace Arcemi.Pathfinder.Kingmaker
             Leaders = dataMappings.Leaders
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
-            BlueprintTypes = dataMappings.Characters.ToDictionary(x => new BlueprintIdentifier(x.Id), x => typeof(CharacterModel));
-            TypeToBlueprint = BlueprintTypes
-                .GroupBy(kv => kv.Value)
-                .ToDictionary(g => g.Key, g => g.Select(kv => kv.Key).ToList());
-
             RawItems = RawItems.LoadFromDefault();
             DescriptiveItems = DescriptiveItems.LoadFromDefault();
-        }
-
-        public static IReadOnlyCollection<BlueprintIdentifier> GetBlueprintId<T>()
-        {
-            return TypeToBlueprint.TryGetValue(typeof(T), out var identifier)
-                ? identifier
-                : throw new ArgumentException("No blueprint registration exists for type " + typeof(T).FullName);
         }
 
         public static void RegisterFactory<T>(Func<ModelDataAccessor, T> factory)
@@ -92,15 +78,6 @@ namespace Arcemi.Pathfinder.Kingmaker
             return Factories.TryGetValue(typeof(T), out var factory)
                 ? (Func<ModelDataAccessor, T>)factory
                 : throw new ArgumentException("No factory registered for type " + typeof(T).FullName);
-        }
-
-        public static bool TryGetFactory(BlueprintIdentifier blueprintId, out Func<ModelDataAccessor, object> factory)
-        {
-            if (BlueprintTypes.TryGetValue(blueprintId, out var type)) {
-                return UntypedFactories.TryGetValue(type, out factory);
-            }
-            factory = null;
-            return false;
         }
     }
 }

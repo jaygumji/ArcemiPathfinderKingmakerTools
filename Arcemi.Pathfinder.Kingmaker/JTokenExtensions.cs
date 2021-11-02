@@ -96,5 +96,37 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             return property.Name.StartsWith("$", StringComparison.Ordinal);
         }
+
+        public static bool TryGetValue<T>(this JToken token, string name, out T value)
+        {
+            value = default;
+            if (token == null || token.Type == JTokenType.Null) return false;
+            if (!(token is JObject obj)) return false;
+            var property = obj.Property(name);
+            if (property == null) return false;
+            if (property.Value is null) return false;
+
+            if (typeof(T) == typeof(TimeSpan)) {
+                var strValue = property.Value<string>();
+                value = string.IsNullOrEmpty(strValue) ? default : (T)(object)TimeSpan.Parse(strValue);
+            }
+            else {
+                value = property.Value.Value<T>();
+            }
+            return true;
+        }
+        public static bool TryGetId(this JToken token, out string id)
+        {
+            return TryGetValue(token, "$id", out id) && !string.IsNullOrEmpty(id);
+        }
+        public static bool TryGetRefId(this JToken token, out string id)
+        {
+            if (TryGetValue(token, "$id", out id) && !string.IsNullOrEmpty(id))
+                return true;
+            if (TryGetValue(token, "$ref", out id) && !string.IsNullOrEmpty(id))
+                return true;
+
+            return false;
+        }
     }
 }

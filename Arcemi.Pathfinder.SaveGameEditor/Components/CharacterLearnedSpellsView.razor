@@ -1,0 +1,182 @@
+﻿@inject IGameResourcesProvider Resources
+
+@if (LearnedSpells?.Count > 0) {
+    for (var i = 0; i < LearnedSpells.Count; i++){
+        var arr = LearnedSpells[i];
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Level @i</h4>
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-sm btn-info btn-h4" @onclick="() => modalAddSpell.OpenAsync()">
+                    <span class="oi oi-plus"></span>
+                </button>
+            </div>
+        </div>
+        if (arr.Count == 0) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-info">
+                        No spells
+                    </p>
+                </div>
+            </div>
+        }
+        else {
+            foreach (var spell in arr) {
+                <div class="row">
+                    <div class="col-md-6">
+                        @spell.DisplayName
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(spell)">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    }
+}
+
+<Modal @ref="modalAddSpell">
+    <Title>Add spell for level @AddSpellLevel</Title>
+    <Body>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label class="form-label">Spell</label>
+                            <input type="text" class="form-control" @bind:event="oninput" @bind="AddSpellSearchTerm" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Scribed</label>
+                            <input type="checkbox" class="form-control" @bind="AddSpellScribed"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="search-result">
+                                @foreach (var blueprint in AvailableSpellsSearch) {
+                                    <li class="@(AddSpellBlueprint.IEq(blueprint.Id) ? "toggled" : "")" @onclick="() => SelectAddSpellBlueprint(blueprint)">
+                                        @blueprint.DisplayName
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label class="form-label">Spell</label>
+                            <select class="form-control" @bind="AddSpellBlueprint">
+                                <option value="">Select spell...</option>
+                                @foreach (var blueprint in AvailableSpells) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Scribed</label>
+                            <input type="checkbox" class="form-control" @bind="AddSpellScribed"/>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddSpellIsInvalid" @onclick="AddSpellAsync">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddSpell.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+@code {
+    [Parameter]
+    public ListD2Accessor<LearnedSpellModel> LearnedSpells { get; set; }
+
+    private bool OrderByName = true;
+
+    private IEnumerable<IBlueprint> AvailableSpellsBase => Resources.Blueprints.GetEntries(BlueprintTypes.Ability)
+        .Where(IsValidSpell);
+
+    private IEnumerable<IBlueprint> AvailableSpells => OrderByName ? AvailableSpellsBase.OrderBy(x => x.Name.DisplayName) : AvailableSpellsBase;
+
+    private IEnumerable<IBlueprint> AvailableSpellsSearch => string.IsNullOrEmpty(AddSpellSearchTerm) ? Array.Empty<IBlueprint>() : AvailableSpellsBase
+        .Where(x => x.Name.DisplayName.ILike(AddSpellSearchTerm))
+        .Take(100);
+
+    private bool IsValidSpell(IBlueprint x)
+    {
+        if (x.Name.Original.ILike("Cutscene")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("Cutcene")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("Backgrounds")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("Test")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("Ability")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("Quest")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("Staff")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("Puzzle")) {
+            return false;
+        }
+        if (x.Name.Original.ILike("RegQ")) {
+            return false;
+        }
+        if (x.Name.Original.IStart("Army")) {
+            return false;
+        }
+        if (x.Name.Original.IStart("CastleOfKnives")) {
+            return false;
+        }
+        return true;
+    }
+
+    private Modal modalAddSpell;
+    private string AddSpellBlueprint;
+    private int AddSpellLevel;
+    private bool AddSpellScribed;
+    private string AddSpellSearchTerm;
+    private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint);
+
+    private void SelectAddSpellBlueprint(IBlueprint blueprint)
+    {
+        AddSpellBlueprint = blueprint.Id;
+    }
+
+    private async Task AddSpellAsync()
+    {
+        var spell = LearnedSpells.Add(AddSpellLevel);
+        spell.Blueprint = AddSpellBlueprint;
+        spell.CopiedFromScroll = AddSpellScribed;
+        spell.UniqueId = Guid.NewGuid().ToString();
+
+        AddSpellBlueprint = null;
+        AddSpellLevel = 0;
+        AddSpellScribed = false;
+        await modalAddSpell.CloseAsync();
+    }
+
+    private void RemoveSpell(LearnedSpellModel spell)
+    {
+        LearnedSpells.Remove(spell);
+    }
+}

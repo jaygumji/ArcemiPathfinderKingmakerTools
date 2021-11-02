@@ -1,0 +1,119 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+
+@if (!HasSpellBooks) {
+    <p class="alert alert-info">Character has no spellbooks.</p>
+}
+else {
+    <div class="row g-3">
+        <h3 class="col-md-12">Bonus Spells</h3>
+    </div>
+    @if (UnitExtraSpellsPerDayPart == null) {
+        <button class="btn btn-info" @onclick="() => UnlockUnitExtraSpellsPerDay()">
+            <span class="oi oi-lock-locked"></span>
+            Unlock
+        </button>
+    }
+    else {
+        <SpellIndexAccessorView Accessors="UnitExtraSpellsPerDayPart.BonusSpellsAccessors" />
+    }
+
+    @foreach (var spellbook in Character.Spellbooks.Select(sb => sb.Value)) {
+        <div class="row">
+            <div class="col-md-12">
+                <h3>@spellbook.DisplayName</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">Base Level</label>
+                <input type="number" class="form-control" @bind="spellbook.BaseLevelInternal" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Mythic Level</label>
+                <input type="number" class="form-control" @bind="spellbook.MythicLevelInternal" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Type</label>
+                <input type="text" class="form-control" readonly="readonly" value="@spellbook.Type" />
+            </div>
+        </div>
+        @if (spellbook.OppositionSchools?.Count > 0) {
+            <div class="row">
+                <div class="col-md-6 col-sm-10 col-xs-9">
+                    <h3>Opposition schools</h3>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-3 toolbar-h3">
+                    <Help Size="ElementSize.Medium">
+                        If you remove the opposition school, you also need to remove the opposition school feature.
+                    </Help>
+                </div>
+            </div>
+            foreach (var oppositionSchool in spellbook.OppositionSchools) {
+                <div class="row">
+                    <div class="col-md-6 col-sm-10 col-xs-9">@oppositionSchool</div>
+                    <div class="col-md-2 col-sm-2 col-xs-3">
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveOppositionSchool(spellbook, oppositionSchool)">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+
+        <AccordionContainer>
+            @if (spellbook.BonusSpellSlots?.Count > 0) {
+                <Accordion HeaderText="Bonus Slots">
+                    <SpellIndexAccessorView Accessors="spellbook.BonusSpellSlotsAccessors" />
+                </Accordion>
+            }
+            @if (spellbook.SpontaneousSlots?.Count > 0) {
+                <Accordion HeaderText="Spontaneous Slots">
+                    <SpellIndexAccessorView Accessors="spellbook.SpontaneousSlotsAccessors" />
+                </Accordion>
+            }
+            <Accordion HeaderText="Known spells">
+                <CharacterLearnedSpellsView LearnedSpells="spellbook.KnownSpells" />
+            </Accordion>
+            @if (spellbook.SpecialLists?.Count > 0) {
+                <Accordion HeaderText="Special spells">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="alert alert-info">
+                                @GetSpecialListsInfo(spellbook)
+                            </p>
+                        </div>
+                    </div>
+                    <CharacterLearnedSpellsView LearnedSpells="spellbook.SpecialSpells" />
+                </Accordion>
+            }
+        </AccordionContainer>
+    }
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+    private CharacterModel Character => Unit?.Descriptor;
+
+    private UnitExtraSpellsPerDayPartItemModel UnitExtraSpellsPerDayPart => Unit.Parts.Items
+        .OfType<UnitExtraSpellsPerDayPartItemModel>()
+        .FirstOrDefault();
+
+    private bool HasSpellBooks => Character.Spellbooks?.Count > 0;
+
+    private void UnlockUnitExtraSpellsPerDay()
+    {
+        UnitExtraSpellsPerDayPartItemModel.AddTo(Unit.Parts);
+    }
+
+    private string GetSpecialListsInfo(CharacterSpellbookModel spellbook)
+    {
+        return string.Join("<br />", spellbook.SpecialLists.Select(x => Resources.Blueprints.GetNameOrBlueprint(x)));
+    }
+
+    private void RemoveOppositionSchool(CharacterSpellbookModel spellbook, string oppositionSchool)
+    {
+        spellbook.OppositionSchools.Remove(oppositionSchool);
+    }
+}
