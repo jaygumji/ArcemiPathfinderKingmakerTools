@@ -88,14 +88,14 @@ namespace Arcemi.Pathfinder.Kingmaker
             where TRef : RefModel, T
         {
             _items.Add(item);
-            _array.Add(_refs.CreateReference(item.Id));
+            _array.Add(_refs.CreateReference(_array, item.Id));
         }
 
         public void SetRef<TRef>(int index, TRef item)
             where TRef : RefModel, T
         {
             _items[index] = item;
-            _array[index] = _refs.CreateReference(item.Id);
+            _array[index] = _refs.CreateReference(_array, item.Id);
         }
 
         public int FirstEmptyIndex()
@@ -119,7 +119,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 else {
                     if (!(value is RefModel refModel)) throw new InvalidOperationException("Value can not be referenced");
                     _items[index] = value;
-                    _array[index] = _refs.CreateReference(refModel.Id);
+                    _array[index] = _refs.CreateReference(_array, refModel.Id);
                 }
                 if (item != null) {
                     _refs.BubbleRemoval(item);

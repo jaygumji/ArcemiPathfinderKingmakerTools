@@ -92,7 +92,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             where TRef : RefModel, T
         {
             _dict.Add(key, item);
-            _obj.Add(key, _refs.CreateReference(item.Id));
+            _obj.Add(key, _refs.CreateReference(_obj, item.Id));
         }
 
         public void Clear()

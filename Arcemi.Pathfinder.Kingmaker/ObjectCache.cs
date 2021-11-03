@@ -13,7 +13,6 @@ namespace Arcemi.Pathfinder.Kingmaker
     public class ObjectCache
     {
         private readonly Dictionary<JObject, Dictionary<string, object>> _local;
-        private readonly Dictionary<JArray, Dictionary<int, object>> _localArrs;
         private readonly Dictionary<string, object> _global;
 
         public ObjectCache()

@@ -1,0 +1,56 @@
+﻿@typeparam TItem
+
+<div class="row">
+    <div class="col-md-12">
+        @if (HeaderText.HasValue()) {
+        <label class="form-label">@HeaderText</label>
+        }
+        <div class="btn-group w-100">
+            <label class="btn btn-info">
+                <span class="oi oi-magnifying-glass"></span>
+            </label>
+            <input type="text" class="form-control" @bind:event="oninput" @bind="Term" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <ul class="search-result">
+            @foreach (var item in FilteredItems) {
+                <li class="@(item.Equals(Current) ? "toggled" : "")" @onclick="() => SelectAsync(item)">
+                    @ResultItemTemplate.Invoke(item)
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string HeaderText { get; set; }
+
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> ResultItemTemplate { get; set; }
+
+    [Parameter]
+    public EventCallback<SearchSelectArgs<TItem>> OnSelect { get; set; }
+
+    [Parameter]
+    public Func<TItem, string> ItemSearchable { get; set; }
+
+    public string Term { get; private set; }
+    public TItem Current { get; private set; }
+
+    private IEnumerable<TItem> FilteredItems => Term.HasValue()
+        ? Items.Where(x => ItemSearchable(x).ILike(Term)).Take(100)
+        : Items.Take(100);
+
+    private async Task SelectAsync(TItem item)
+    {
+        Current = item;
+        await OnSelect.InvokeAsync(new SearchSelectArgs<TItem>(item));
+    }
+}

@@ -21,5 +21,20 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 IsBusy = false;
             }
         }
+
+        public async Task ExecuteAsync(Action action)
+        {
+            IsBusy = true;
+            await Task.Yield();
+            try {
+                action();
+            }
+            catch (Exception) {
+                throw;
+            }
+            finally {
+                IsBusy = false;
+            }
+        }
     }
 }

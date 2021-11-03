@@ -14,8 +14,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         JObject GetReferred(JObject obj);
         void BubbleRemoval(JToken token);
         JObject Create();
-        JObject CreateReference(string refId);
-        JObject CreateReference(JObject refObj);
+        JObject CreateReference(JToken parent, string refId);
+        JObject CreateReference(JToken parent, JObject refObj);
 
         T GetOrCreateObject<T>(JObject obj, Func<ModelDataAccessor, T> factory = null);
         T GetOrCreateObject<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false);

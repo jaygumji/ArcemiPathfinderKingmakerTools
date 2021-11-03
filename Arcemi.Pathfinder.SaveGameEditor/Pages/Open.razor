@@ -58,7 +58,7 @@
             var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
             var file = files?.FirstOrDefault();
             if (!string.IsNullOrEmpty(file)) {
-                await Model.OpenAsync(file);
+                Model.Open(file);
                 NavManager.NavigateTo("/Overview");
             }
         });
@@ -66,8 +66,8 @@
 
     async Task OpenFile(SaveFileHeader header)
     {
-        await State.ExecuteAsync(async () => {
-            await Model.OpenAsync(header.Location.FilePath);
+        await State.ExecuteAsync(() => {
+            Model.Open(header.Location.FilePath);
             NavManager.NavigateTo("/Overview");
         });
     }

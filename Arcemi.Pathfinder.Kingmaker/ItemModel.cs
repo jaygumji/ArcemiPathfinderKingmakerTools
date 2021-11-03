@@ -178,7 +178,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             // $type is a reserved value and used by the serializer, it must be the second after the $id field.
             jObj.Add("$type", item.Type);
             jObj.Add("UniqueId", Guid.NewGuid().ToString());
-            jObj.Add("Collection", refs.CreateReference(item.Collection.Id));
+            jObj.Add("Collection", refs.CreateReference(jObj, item.Collection.Id));
             item.A.ShallowMerge(jObj);
             jObj.Remove("m_WielderRef");
         }
@@ -186,7 +186,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static void Prepare(InventoryModel inventory, IReferences refs, JObject jObj, ItemType itemType)
         {
             AddRequiredItemProperties(jObj, itemType);
-            jObj.Add("Collection", refs.CreateReference(inventory.Id));
+            jObj.Add("Collection", refs.CreateReference(jObj, inventory.Id));
 
             //var addArmorComponent = itemType == ItemType.Shield;
             //if (addArmorComponent) {

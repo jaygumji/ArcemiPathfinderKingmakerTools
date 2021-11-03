@@ -38,7 +38,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 return Simple(type, name, suffix: "Companion");
             }
             if (ReferenceEquals(type, BlueprintTypes.RaceVisualPreset)) {
-                return Parts(type, name, "Visual", "Preset");
+                return RParts(type, name, "Visual", "Preset");
             }
             return new BlueprintName(type, name.AsDisplayable(), name);
         }
@@ -60,7 +60,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             return name.AsDisplayable();
         }
 
-        public static BlueprintName Parts(BlueprintType type, string name, params string[] removableParts)
+        public static BlueprintName RParts(BlueprintType type, string name, params string[] removableParts)
         {
             var parts = name.AsDisplayable().Split(' ');
             var list = (IList<string>)removableParts;

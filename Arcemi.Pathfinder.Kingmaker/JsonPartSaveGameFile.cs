@@ -31,7 +31,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly string _path;
         private readonly JObject _json;
         private readonly IGameResourcesProvider _res;
-        private readonly Dictionary<BlueprintIdentifier, List<Model>> _blueprintRefs;
         private readonly References _refs;
         private readonly Dictionary<string, List<Model>> _types;
 

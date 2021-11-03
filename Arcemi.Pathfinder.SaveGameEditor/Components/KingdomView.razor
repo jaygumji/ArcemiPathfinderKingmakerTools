@@ -86,7 +86,7 @@ else {
 @code {
     private PlayerKingdomModel Data;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         Data = Model.Player?.Kingdom;
     }

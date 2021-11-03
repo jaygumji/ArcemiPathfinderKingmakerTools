@@ -63,9 +63,9 @@ else {
     private string NewSaveFileName;
     private bool NewSaveIsInvalid => string.IsNullOrEmpty(NewSaveFileName);
 
-    async Task SaveNewFile()
+    void SaveNewFile()
     {
-        await Model.SaveAsync(new SaveFileLocation(Model.Config.GetSaveGamesFolder(), NewSaveFileName));
+        Model.Save(new SaveFileLocation(Model.Config.GetSaveGamesFolder(), NewSaveFileName));
         NavManager.NavigateTo("/Overview");
     }
 
@@ -80,7 +80,7 @@ else {
             };
             var file = await ElectronNET.API.Electron.Dialog.ShowSaveDialogAsync(window, options);
             if (!string.IsNullOrEmpty(file)) {
-                await Model.SaveAsync(new SaveFileLocation(file));
+                Model.Save(new SaveFileLocation(file));
                 NavManager.NavigateTo("/Overview");
             }
         });
@@ -88,8 +88,8 @@ else {
 
     async Task SaveFile(SaveFileHeader header)
     {
-        await State.ExecuteAsync(async () => {
-            await Model.SaveAsync(header.Location);
+        await State.ExecuteAsync(() => {
+            Model.Save(header.Location);
             NavManager.NavigateTo("/Overview");
         });
     }

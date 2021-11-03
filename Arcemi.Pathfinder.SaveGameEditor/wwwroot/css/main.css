@@ -231,10 +231,11 @@ ul.search-result {
 ul.search-result li.toggled {
   box-shadow: 1px 1px inset;
   background-color: #eef;
+  cursor: default;
 }
 ul.search-result li {
-  border-radius: 3px 4px;
-  margin: 5px;
+  border-radius: 5px;
+  margin: 5px 0px;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -272,6 +273,7 @@ ul.portraits.leaders span {
 }
 ul.portraits li.toggled {
   box-shadow: 1px 1px inset;
+  cursor: default;
 }
 ul.portraits li {
   border-radius: 5px;
@@ -282,6 +284,7 @@ ul.portraits li {
   box-shadow: 1px 1px;
   border: solid 1px gray;
   width: 87px;
+  cursor: pointer;
 }
 ul.portraits li img {
   object-fit: cover;

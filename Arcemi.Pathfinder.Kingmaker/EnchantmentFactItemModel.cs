@@ -104,7 +104,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public TimeSpan AttachTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public bool IsActive { get => A.Value<bool>(); set => A.Value(value); }
 
-        public static void Prepare(IReferences refs, JObject obj)
+        public static new void Prepare(IReferences refs, JObject obj)
         {
             obj.Add("$type", TypeRef);
             obj.Add(nameof(AttachTime), "00:00:00");

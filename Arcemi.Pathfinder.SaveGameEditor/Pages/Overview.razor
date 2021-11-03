@@ -107,17 +107,17 @@ else {
 
     private async Task ReplaceFile()
     {
-        await State.ExecuteAsync(async () => await Model.SaveAsync(Model.Location.Refresh()));
+        await State.ExecuteAsync(() => Model.Save(Model.Location.Refresh()));
     }
 
     private async Task ReloadFile()
     {
-        await State.ExecuteAsync(async () => await Model.OpenAsync(Model.Location.FilePath));
+        await State.ExecuteAsync(() => Model.Open(Model.Location.FilePath));
     }
 
     private async Task OpenBackupFile()
     {
-        await State.ExecuteAsync(async () => await Model.OpenAsync(Model.Location.BackupFilePath));
+        await State.ExecuteAsync(() => Model.Open(Model.Location.BackupFilePath));
     }
 
 }

@@ -113,13 +113,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             where TRef : RefModel, T
         {
             _items[index].Add(item);
-            ((JArray)_array[index]).Add(_refs.CreateReference(item.Id));
+            ((JArray)_array[index]).Add(_refs.CreateReference(_array, item.Id));
         }
 
         public void AddRef<TRef>(TRef item)
             where TRef : RefModel, T
         {
-            var jarr = new JArray { _refs.CreateReference(item.Id) };
+            var jarr = new JArray { _refs.CreateReference(_array, item.Id) };
             var arr = new List<T> { item };
 
             _items.Add(arr);
@@ -130,7 +130,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             where TRef : RefModel, T
         {
             _items[index1][index2] = item;
-            ((JArray)_array[index1])[index2] = _refs.CreateReference(item.Id);
+            ((JArray)_array[index1])[index2] = _refs.CreateReference(_array, item.Id);
         }
 
         public int FirstEmptyIndex()

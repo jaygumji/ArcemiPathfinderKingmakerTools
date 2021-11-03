@@ -6,16 +6,31 @@
 <Modal @ref="modalAddFlag">
     <Title>Add new flag</Title>
     <Body>
-        <div class="row g-3">
-            <div class="col-md-12">
-                <select class="form-control" @bind="SelectedFlag">
-                    <option value="">Select flag...</option>
-                    @foreach (var type in AddableFlags) {
-                        <option value="@type.Id">@type.DisplayName</option>
-                    }
-                </select>
-            </div>
-        </div>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="IBlueprint" Items="AddableFlags" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => SelectedFlag = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.Name.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <select class="form-control" @bind="SelectedFlag">
+                                <option value="">Select flag...</option>
+                                @foreach (var type in AddableFlags) {
+                                    <option value="@type.Id">@type.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
     </Body>
     <Footer>
         <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(string.IsNullOrEmpty(SelectedFlag))" @onclick="() => AddFlagAsync()">Confirm</button>

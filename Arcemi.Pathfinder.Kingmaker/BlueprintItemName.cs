@@ -109,7 +109,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             return true;
         }
 
-        public static BlueprintName Detect(BlueprintType type, string name)
+        public static new BlueprintName Detect(BlueprintType type, string name)
         {
             if (string.IsNullOrEmpty(name)) return new BlueprintName(type, name, name);
             var parts = new List<string>();

@@ -45,33 +45,17 @@
         <TabControl StartIndex="0">
             <Tab Name="Search">
                 <Content>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <label class="form-label">Spell</label>
-                            <input type="text" class="form-control" @bind:event="oninput" @bind="AddSpellSearchTerm" />
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Scribed</label>
-                            <input type="checkbox" class="form-control" @bind="AddSpellScribed"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="search-result">
-                                @foreach (var blueprint in AvailableSpellsSearch) {
-                                    <li class="@(AddSpellBlueprint.IEq(blueprint.Id) ? "toggled" : "")" @onclick="() => SelectAddSpellBlueprint(blueprint)">
-                                        @blueprint.DisplayName
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
+                    <Search TItem="IBlueprint" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.Name.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
                 </Content>
             </Tab>
             <Tab Name="All">
                 <Content>
                     <div class="row">
-                        <div class="col-md-10">
+                        <div class="col-md-12">
                             <label class="form-label">Spell</label>
                             <select class="form-control" @bind="AddSpellBlueprint">
                                 <option value="">Select spell...</option>
@@ -79,10 +63,6 @@
                                     <option value="@blueprint.Id">@blueprint.DisplayName</option>
                                 }
                             </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Scribed</label>
-                            <input type="checkbox" class="form-control" @bind="AddSpellScribed"/>
                         </div>
                     </div>
                 </Content>
@@ -107,10 +87,6 @@
         .Where(IsValidSpell);
 
     private IEnumerable<IBlueprint> AvailableSpells => OrderByName ? AvailableSpellsBase.OrderBy(x => x.Name.DisplayName) : AvailableSpellsBase;
-
-    private IEnumerable<IBlueprint> AvailableSpellsSearch => string.IsNullOrEmpty(AddSpellSearchTerm) ? Array.Empty<IBlueprint>() : AvailableSpellsBase
-        .Where(x => x.Name.DisplayName.ILike(AddSpellSearchTerm))
-        .Take(100);
 
     private bool IsValidSpell(IBlueprint x)
     {
@@ -153,8 +129,6 @@
     private Modal modalAddSpell;
     private string AddSpellBlueprint;
     private int AddSpellLevel;
-    private bool AddSpellScribed;
-    private string AddSpellSearchTerm;
     private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint);
 
     private void SelectAddSpellBlueprint(IBlueprint blueprint)
@@ -166,12 +140,11 @@
     {
         var spell = LearnedSpells.Add(AddSpellLevel);
         spell.Blueprint = AddSpellBlueprint;
-        spell.CopiedFromScroll = AddSpellScribed;
+        spell.CopiedFromScroll = false;
         spell.UniqueId = Guid.NewGuid().ToString();
 
         AddSpellBlueprint = null;
         AddSpellLevel = 0;
-        AddSpellScribed = false;
         await modalAddSpell.CloseAsync();
     }
 

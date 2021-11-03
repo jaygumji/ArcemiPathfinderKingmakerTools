@@ -106,7 +106,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             LoadConfigResources();
         }
 
-        public async Task OpenAsync(string path, string originalPath = null)
+        public void Open(string path, string originalPath = null)
         {
             _file?.Close();
             _file = new SaveGameFile(path, Resources);
@@ -133,7 +133,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             CanEdit = true;
         }
 
-        public async Task RestoreAsync()
+        public void Restore()
         {
             var tmp = Path.ChangeExtension(Location.FilePath, ".zks.tmp");
             try {
@@ -148,10 +148,10 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 throw;
             }
             Location = Location.Refresh();
-            await OpenAsync(Location.FilePath);
+            Open(Location.FilePath);
         }
 
-        public async Task SaveAsync(SaveFileLocation location)
+        public void Save(SaveFileLocation location)
         {
             var currentMainCharacterName = GetMainCharacterName();
             if (!string.IsNullOrEmpty(_playerCharacterName) && !string.IsNullOrEmpty(currentMainCharacterName)

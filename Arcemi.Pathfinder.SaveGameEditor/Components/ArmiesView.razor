@@ -110,7 +110,6 @@ else {
 }
 
 @code {
-    private bool IsBusy = true;
     private PlayerArmyModel Unit;
 
     private Modal modalAddArmyUnit;
@@ -148,13 +147,12 @@ else {
         CustomArmyUnitBlueprint = "";
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         AllArmyUnitTypes = Model.Resources.GetAvailableArmyUnits().OrderBy(x => x.DisplayName);
-        IsBusy = false;
     }
 
-    public async Task SelectArmy(PlayerArmyModel unit)
+    public void SelectArmy(PlayerArmyModel unit)
     {
         Unit = unit;
     }

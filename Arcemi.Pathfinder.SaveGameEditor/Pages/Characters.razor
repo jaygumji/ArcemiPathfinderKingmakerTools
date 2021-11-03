@@ -130,7 +130,6 @@ else {
 @code {
     private CharacterModel Character => Unit?.Descriptor;
     private UnitEntityModel Unit;
-    private IEnumerable<FeatureFactItemModel> RankedFeatures;
 
     private Modal modalChosePortrait;
     private Modal modalConfirmDelete;
@@ -142,7 +141,7 @@ else {
         AvailablePortraits = Resources?.GetAvailablePortraits() ?? new Dictionary<PortraitCategory, IReadOnlyList<Portrait>>();
     }
 
-    public async Task SelectCharacter(UnitEntityModel unit)
+    public void SelectCharacter(UnitEntityModel unit)
     {
         Unit = unit;
     }

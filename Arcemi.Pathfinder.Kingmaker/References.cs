@@ -50,24 +50,28 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         JObject IReferences.Create()
         {
+            var id = (++_maxId).ToString();
             var obj = new JObject {
-                { "$id", (++_maxId).ToString() }
+                { "$id", id }
             };
+
+            Add(id, obj);
             return obj;
         }
 
-        JObject IReferences.CreateReference(string refId)
+        JObject IReferences.CreateReference(JToken parent, string refId)
         {
             var obj = new JObject {
                 {"$ref", refId}
             };
+            ReferTo(parent, obj, refId);
             return obj;
         }
 
-        JObject IReferences.CreateReference(JObject refObj)
+        JObject IReferences.CreateReference(JToken parent, JObject refObj)
         {
             var refId = refObj.Property("$id").Value.Value<string>();
-            return ((IReferences)this).CreateReference(refId);
+            return ((IReferences)this).CreateReference(parent, refId);
         }
 
         bool IReferences.TryGetReferred(string refId, out JObject refObj)
