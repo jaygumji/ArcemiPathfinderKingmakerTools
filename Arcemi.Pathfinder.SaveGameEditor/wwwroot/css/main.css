@@ -265,7 +265,6 @@ ul.portraits.portraits-selection {
   height: 250px;
 }
 ul.portraits.portraits-selection li {
-  width: 85px;
   height: 115px;
 }
 ul.portraits.leaders span {
@@ -275,18 +274,20 @@ ul.portraits li.toggled {
   box-shadow: 1px 1px inset;
 }
 ul.portraits li {
-  border-radius: 3px 4px;
+  border-radius: 5px;
   margin: 5px;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 1px 1px;
   border: solid 1px gray;
+  width: 87px;
 }
 ul.portraits li img {
-  object-fit: scale-down;
+  object-fit: cover;
   width: 85px;
   height: 115px;
+  border-radius: 5px 5px 0px 0px;
 }
 ul.portraits li span {
   overflow-x: hidden;

@@ -81,6 +81,16 @@ namespace Arcemi.Pathfinder.Kingmaker
             return list;
         }
 
+        public static bool HasValue(this string value)
+        {
+            return !string.IsNullOrEmpty(value);
+        }
+
+        public static bool IsEmpty(this string value)
+        {
+            return string.IsNullOrEmpty(value);
+        }
+
         public static bool IEq(this string value, string other)
         {
             return string.Equals(value, other, System.StringComparison.OrdinalIgnoreCase);

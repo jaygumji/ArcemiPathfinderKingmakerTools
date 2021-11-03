@@ -2,7 +2,7 @@
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class FactItemModel : RefModel
+    public class FactItemModel : RefModel, ITypedModel
     {
         public FactItemModel(ModelDataAccessor accessor) : base(accessor) { }
         public string DisplayName => A.Res.Blueprints.GetNameOrBlueprint(Blueprint);
@@ -25,6 +25,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
             if (string.Equals(type, BuffFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new BuffFactItemModel(accessor);
+            }
+            if (string.Equals(type, AbilityFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
+                return new AbilityFactItemModel(accessor);
             }
             return new FactItemModel(accessor);
         }

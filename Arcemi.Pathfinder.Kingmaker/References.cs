@@ -17,13 +17,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         private int _maxId;
 
         private readonly ObjectCache _objects;
-        private readonly ObjectCache _lists;
-        private readonly ObjectCache _listD2s;
-        private readonly ObjectCache _valueLists;
-        private readonly ObjectCache _dictionary;
-        private readonly ObjectCache _dictionaryOfValueLists;
-        private readonly ObjectCache _dictionaryOfValues;
-
         private readonly IReferences _refs;
 
         public References(IGameResourcesProvider res)
@@ -32,12 +25,6 @@ namespace Arcemi.Pathfinder.Kingmaker
             _lookup = new Dictionary<string, JObjectReference>(StringComparer.Ordinal);
             _refLookup = new Dictionary<JObject, JObjectReference>();
             _objects = new ObjectCache();
-            _lists = new ObjectCache();
-            _listD2s = new ObjectCache();
-            _valueLists = new ObjectCache();
-            _dictionary = new ObjectCache();
-            _dictionaryOfValueLists = new ObjectCache();
-            _dictionaryOfValues = new ObjectCache();
             _refs = this;
         }
 
@@ -217,7 +204,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         ListD2Accessor<T> IReferences.GetOrCreateListD2<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNotDefined)
         {
-            if (_listD2s.TryGet(parent, name, out ListD2Accessor<T> list)) {
+            if (_objects.TryGet(parent, name, out ListD2Accessor<T> list)) {
                 return list;
             }
 
@@ -236,13 +223,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             var listAccessor = new ListD2Accessor<T>(arr, _refs, _res, factory ?? Mappings.GetFactory<T>());
-            _listD2s.Add(parent, name, listAccessor);
+            _objects.Add(parent, name, listAccessor);
             return listAccessor;
         }
 
         ListAccessor<T> IReferences.GetOrCreateList<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory, bool createIfNotDefined)
         {
-            if (_lists.TryGet(parent, name, out ListAccessor<T> list)) {
+            if (_objects.TryGet(parent, name, out ListAccessor<T> list)) {
                 return list;
             }
 
@@ -261,13 +248,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             var listAccessor = new ListAccessor<T>(arr, _refs, _res, factory ?? Mappings.GetFactory<T>());
-            _lists.Add(parent, name, listAccessor);
+            _objects.Add(parent, name, listAccessor);
             return listAccessor;
         }
 
         ListValueAccessor<T> IReferences.GetOrCreateListValue<T>(JObject parent, string name, bool createIfNull)
         {
-            if (_valueLists.TryGet(parent, name, out ListValueAccessor<T> list)) {
+            if (_objects.TryGet(parent, name, out ListValueAccessor<T> list)) {
                 return list;
             }
 
@@ -286,13 +273,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             var listAccessor = new ListValueAccessor<T>(arr);
-            _valueLists.Add(parent, name, listAccessor);
+            _objects.Add(parent, name, listAccessor);
             return listAccessor;
         }
 
         public DictionaryOfValueAccessor<TValue> GetOrCreateDictionaryOfValue<TValue>(JObject parent, string name, bool createIfNull = false)
         {
-            if (_dictionaryOfValues.TryGet(parent, name, out DictionaryOfValueAccessor<TValue> dict)) {
+            if (_objects.TryGet(parent, name, out DictionaryOfValueAccessor<TValue> dict)) {
                 return dict;
             }
 
@@ -311,14 +298,14 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             dict = new DictionaryOfValueAccessor<TValue>(dictObj);
-            _dictionaryOfValues.Add(parent, name, dict);
+            _objects.Add(parent, name, dict);
             return dict;
         }
 
         public DictionaryAccessor<T> GetOrCreateDictionary<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false)
             where T : Model
         {
-            if (_dictionary.TryGet(parent, name, out DictionaryAccessor<T> dict)) {
+            if (_objects.TryGet(parent, name, out DictionaryAccessor<T> dict)) {
                 return dict;
             }
 
@@ -337,13 +324,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             dict = new DictionaryAccessor<T>(dictObj, _refs, _res, factory ?? Mappings.GetFactory<T>());
-            _dictionary.Add(parent, name, dict);
+            _objects.Add(parent, name, dict);
             return dict;
         }
 
         public DictionaryOfValueListAccessor<TValue> GetOrCreateDictionaryOfValueList<TValue>(JObject parent, string name, bool createIfNull = false)
         {
-            if (_dictionaryOfValueLists.TryGet(parent, name, out DictionaryOfValueListAccessor<TValue> dict)) {
+            if (_objects.TryGet(parent, name, out DictionaryOfValueListAccessor<TValue> dict)) {
                 return dict;
             }
 
@@ -362,7 +349,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             dict = new DictionaryOfValueListAccessor<TValue>(dictObj);
-            _dictionaryOfValueLists.Add(parent, name, dict);
+            _objects.Add(parent, name, dict);
             return dict;
         }
 
@@ -373,22 +360,17 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         bool IReferences.RemoveList(JObject parent, string name)
         {
-            return _lists.Remove(parent, name);
+            return _objects.Remove(parent, name);
         }
 
         bool IReferences.RemoveListValue(JObject parent, string name)
         {
-            return _valueLists.Remove(parent, name);
+            return _objects.Remove(parent, name);
         }
 
         void IReferences.Refresh(JObject parent)
         {
             _objects.Refresh(parent);
-            _lists.Refresh(parent);
-            _valueLists.Refresh(parent);
-            _dictionary.Refresh(parent);
-            _dictionaryOfValueLists.Refresh(parent);
-            _dictionaryOfValues.Refresh(parent);
         }
     }
 }

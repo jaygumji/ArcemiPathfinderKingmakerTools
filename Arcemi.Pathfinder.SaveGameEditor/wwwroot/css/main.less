@@ -315,7 +315,6 @@ ul.portraits {
         height: 250px;
 
         li {
-            width: 85px;
             height: 115px;
         }
     }
@@ -331,18 +330,20 @@ ul.portraits {
     }
 
     li {
-        border-radius: 3px 4px;
+        border-radius: 5px;
         margin: 5px;
         display: inline-flex;
         flex-direction: column;
         align-items: center;
         box-shadow: 1px 1px;
         border: solid 1px gray;
+        width: 87px;
 
         img {
-            object-fit: scale-down;
+            object-fit: cover;
             width: 85px;
             height: 115px;
+            border-radius: 5px 5px 0px 0px;
         }
 
         span {

@@ -1,0 +1,17 @@
+﻿<AccordionContainer>
+    <Accordion HeaderText="Features">
+        <CharacterFeatures Unit="Unit"/>
+    </Accordion>
+    <Accordion HeaderText="Abilities">
+        <CharacterAbilities Unit="Unit"/>
+    </Accordion>
+    <Accordion HeaderText="Buffs">
+        <CharacterBuffs Unit="Unit"/>
+    </Accordion>
+</AccordionContainer>
+
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+}

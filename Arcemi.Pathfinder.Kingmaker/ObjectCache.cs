@@ -25,8 +25,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         public bool TryGetGlobal<T>(JObject item, out T obj)
         {
             if (item.TryGetRefId(out var id) && _global.TryGetValue(id, out var globalObj)) {
-                obj = (T)globalObj;
-                return true;
+                if (globalObj is T tobj) {
+                    obj = tobj;
+                    return true;
+                }
             }
             obj = default;
             return false;
@@ -65,6 +67,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public void AddGlobal(string id, object obj)
         {
+            if (obj is ITypedModel typed && typed.Type.IsEmpty()) return;
             _global.Add(id, obj);
         }
 

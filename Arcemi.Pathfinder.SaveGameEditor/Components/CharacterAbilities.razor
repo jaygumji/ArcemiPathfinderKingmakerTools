@@ -1,0 +1,55 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+@using Arcemi.Pathfinder.SaveGameEditor.Components
+@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
+
+<div class="row form-list-header">
+    <div class="col-md-4">
+        <label class="form-label">Name</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Active</label>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Components</label>
+    </div>
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-3">
+    </div>
+</div>
+
+@foreach (var ability in Abilities) {
+<div class="row g-3">
+    <div class="col-md-4 overflow-hidden">
+        <label class="form-label">@ability.DisplayName</label>
+    </div>
+    <div class="col-md-2">
+        <input type="checkbox" class="form-control" @bind="ability.IsActive" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">@ability.Components.Count</label>
+    </div>
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFact(ability)">
+            <span class="oi oi-trash"></span>
+        </button>
+    </div>
+</div>
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+    private CharacterModel Character => Unit?.Descriptor;
+    private IEnumerable<AbilityFactItemModel> Abilities => Unit.Facts.Items
+        .OfType<AbilityFactItemModel>()
+        .OrderBy(b => b.DisplayName);
+
+    private void RemoveFact(FactItemModel fact)
+    {
+        Unit.Facts.Items.Remove(fact);
+    }
+}
