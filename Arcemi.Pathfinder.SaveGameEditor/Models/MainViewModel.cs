@@ -106,6 +106,11 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             LoadConfigResources();
         }
 
+        public void OpenBackup(SaveFileLocation loc)
+        {
+            Open(loc.BackupFilePath, loc.FilePath);
+        }
+
         public void Open(string path, string originalPath = null)
         {
             _file?.Close();

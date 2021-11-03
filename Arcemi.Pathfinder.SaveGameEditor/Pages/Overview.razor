@@ -117,7 +117,7 @@ else {
 
     private async Task OpenBackupFile()
     {
-        await State.ExecuteAsync(() => Model.Open(Model.Location.BackupFilePath));
+        await State.ExecuteAsync(() => Model.OpenBackup(Model.Location));
     }
 
 }
