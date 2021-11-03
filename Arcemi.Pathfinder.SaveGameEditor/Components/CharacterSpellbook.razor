@@ -6,7 +6,13 @@
 }
 else {
     <div class="row g-3">
-        <h3 class="col-md-12">Bonus Spells</h3>
+        <div class="col-md-12">
+            <h3 class="w-auto d-inline-block">Bonus Spells</h3>
+            <Help Position="TooltipPosition.BottomRight">
+                This works with both regular spell slots and spontaneous slots.<br/>
+                However it does not work for mythic spellbooks.
+            </Help>
+        </div>
     </div>
     @if (UnitExtraSpellsPerDayPart == null) {
         <button class="btn btn-info" @onclick="() => UnlockUnitExtraSpellsPerDay()">
@@ -31,6 +37,9 @@ else {
             </div>
             <div class="col-md-3">
                 <label class="form-label">Mythic Level</label>
+                <Help Size="ElementSize.Small">
+                    This is only used for combined spellbooks
+                </Help>
                 <input type="number" class="form-control" @bind="spellbook.MythicLevelInternal" />
             </div>
             <div class="col-md-6">
@@ -62,17 +71,24 @@ else {
         }
 
         <AccordionContainer>
-            @if (spellbook.BonusSpellSlots?.Count > 0) {
+            @if (IsBonusSpellSlotsAvailable) {
                 <Accordion HeaderText="Bonus Slots">
                     <SpellIndexAccessorView Accessors="spellbook.BonusSpellSlotsAccessors" />
                 </Accordion>
             }
             @if (spellbook.SpontaneousSlots?.Count > 0) {
                 <Accordion HeaderText="Spontaneous Slots">
+                    <p class="alert alert-info">This is the available number of slots until you rest.
+                        You can set this to above your maximum slots, but it will reset after a rest.</p>
                     <SpellIndexAccessorView Accessors="spellbook.SpontaneousSlotsAccessors" />
                 </Accordion>
             }
             <Accordion HeaderText="Known spells">
+                <p class="alert alert-info">
+                    It's possible to add spells like fireball, haste etc as cantrips (lvl 0).
+                    It will appear as a cantrip in game with no cast limit.<br />
+                    Some spells listed will not work for different reasons, feel free to experiment.
+                </p>
                 <CharacterLearnedSpellsView LearnedSpells="spellbook.KnownSpells" />
             </Accordion>
             @if (spellbook.SpecialLists?.Count > 0) {
@@ -101,6 +117,9 @@ else {
         .FirstOrDefault();
 
     private bool HasSpellBooks => Character.Spellbooks?.Count > 0;
+
+    // Doesn't seem to do anything
+    private bool IsBonusSpellSlotsAvailable => false; // spellbook.BonusSpellSlots?.Count > 0
 
     private void UnlockUnitExtraSpellsPerDay()
     {
