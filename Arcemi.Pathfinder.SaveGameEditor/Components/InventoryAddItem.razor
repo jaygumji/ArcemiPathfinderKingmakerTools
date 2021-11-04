@@ -94,7 +94,11 @@
 
     private async Task AddBlueprintItemAsync()
     {
-        var type = BlueprintType.GetItemType(AddBlueprintItemType);
+        var typeStr = AddBlueprintItemType.HasValue()
+            ? AddBlueprintItemType
+            : Resources.Blueprints.Get(AddBlueprintItemBlueprint).Type.FullName;
+        var type = BlueprintType.GetItemType(typeStr);
+
         Inventory.AddItem(type, AddBlueprintItemBlueprint);
         await addBlueprintItemModal.CloseAsync();
         AddBlueprintItemType = null;
