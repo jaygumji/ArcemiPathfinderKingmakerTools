@@ -262,6 +262,104 @@ ul.nav-tabs {
     padding-top: 20px;
 }
 
+.army-unit-grid-container {
+    position: relative;
+    font-size: 10px;
+}
+
+.army-unit-slot {
+    display: grid;
+    grid-template-columns: repeat(7, 80px);
+    grid-template-rows: 100px 100px;
+
+    > div {
+        background-color: #e8e9ea;
+        border: solid 1px #d8d9da;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 5px;
+    }
+}
+
+.army-unit-default {
+    display: grid;
+    grid-template-columns: repeat(7, 80px);
+    grid-template-rows: 100px 100px;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    > div {
+        background-color: #e8e9ea;
+        border: solid 1px black;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 5px;
+        box-shadow: 1px 1px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        &.empty {
+            visibility: hidden;
+        }
+    }
+}
+
+.army-unit-large-even {
+    display: grid;
+    grid-template-columns: repeat(3, 160px);
+    grid-template-rows: 200px;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    > div {
+        background-color: #e8e9ea;
+        border: solid 1px black;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 5px;
+        box-shadow: 1px 1px;
+        display: flex;
+        flex-direction:column;
+        align-items: center;
+        text-align: center;
+
+        &.empty {
+            visibility: hidden;
+        }
+    }
+}
+
+.army-unit-large-odd {
+    display: grid;
+    grid-template-columns: repeat(3, 160px);
+    grid-template-rows: 200px;
+    position: absolute;
+    top: 0;
+    left: 80px;
+
+    > div {
+        background-color: #e8e9ea;
+        border: solid 1px black;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 5px;
+        box-shadow: 1px 1px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        &.empty {
+            visibility: hidden;
+        }
+    }
+}
+
+
 ul.search-result {
     text-decoration: none;
     display: flex;

@@ -19,9 +19,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static readonly Dictionary<string, RaceDataMapping> Races;
         public static readonly Dictionary<string, CharacterDataMapping> Characters;
         public static readonly Dictionary<string, LeaderDataMapping> Leaders;
-
-        public static RawItems RawItems { get; }
-        public static DescriptiveItems DescriptiveItems { get; }
+        public static readonly Dictionary<string, ArmyUnitDataMapping> ArmyUnits;
 
         static Mappings()
         {
@@ -63,8 +61,8 @@ namespace Arcemi.Pathfinder.Kingmaker
             Leaders = dataMappings.Leaders
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
 
-            RawItems = RawItems.LoadFromDefault();
-            DescriptiveItems = DescriptiveItems.LoadFromDefault();
+            ArmyUnits = dataMappings.ArmyUnits
+                .ToDictionary(x => x.Id, StringComparer.Ordinal);
         }
 
         public static void RegisterFactory<T>(Func<ModelDataAccessor, T> factory)

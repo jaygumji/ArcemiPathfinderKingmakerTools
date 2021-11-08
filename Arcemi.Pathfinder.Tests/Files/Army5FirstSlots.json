@@ -1,0 +1,130 @@
+{
+	"$id": "1300",
+	"Id": "f03a98f3-9ab2-44ef-b69b-f268fd0f7d23",
+	"m_Position": {
+		"$id": "1301",
+		"Location": "567407d47cc49a14392bb5c76ee17d8d",
+		"Edge": null,
+		"EdgePosition": 0.0,
+		"Direction": 0
+	},
+	"Data": {
+		"m_LeaderGuid": "28727cf2-c723-4587-9463-b374f4806843",
+		"m_Squads": [
+			{
+				"$id": "1302",
+				"Id": "138725bf-f54c-4ca8-9063-9d906cd1d6db",
+				"Unit": "ff408898eb9e8694cb849869d1dbfa05",
+				"Count": 299
+			},
+			{
+				"$id": "1303",
+				"Id": "efdde752-8c1e-40b2-b4f3-15c68ecb3435",
+				"Unit": "fc63f902eab24ad0a3d58b44cf514316",
+				"Count": 370
+			},
+			{
+				"$id": "1304",
+				"Id": "1cd5e079-0676-4edb-a362-71e483c6fa69",
+				"Unit": "24ad1a10190de5c459a4521996dcec4b",
+				"Count": 440
+			},
+			{
+				"$id": "1305",
+				"Id": "4d49565a-be0d-4227-a75a-3a5744535b10",
+				"Unit": "80db9a672f3bcf04f9f8de6023dae1fc",
+				"Count": 81
+			},
+			{
+				"$id": "1306",
+				"Id": "0a831e3b-eaa4-44c1-ad8d-b7eef27e16eb",
+				"Unit": "81eae30d5d2809b429c0f21d942f7207",
+				"Count": 147
+			}
+		],
+		"m_SquadsPosition": [
+			{
+				"$ref": "1305"
+			},
+			{
+				"$ref": "1306"
+			},
+			{
+				"$ref": "1302"
+			},
+			{
+				"$ref": "1303"
+			},
+			{
+				"$ref": "1304"
+			},
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		],
+		"m_ArmyName": {
+			"$id": "1307",
+			"ArmyName": "Army5FirstSlots",
+			"ArmyIndex": 2
+		},
+		"m_ArmyMorale": {
+			"$id": "1308",
+			"m_MoraleMods": [
+				{
+					"$id": "1309",
+					"ModValue": 0,
+					"Source": {
+						"EntityId": null,
+						"FactId": null
+					},
+					"ArmyMoraleEffect": null
+				},
+				{
+					"$id": "1310",
+					"ModValue": 20,
+					"Source": {
+						"EntityId": "KingdomState_2b820cacf1aa59d5-39a5ea72f229b816",
+						"FactId": "f59b002f-3961-4b79-b50e-9cca72f1872d"
+					},
+					"ArmyMoraleEffect": null
+				}
+			],
+			"m_Value": 20,
+			"HaveMorale": true
+		},
+		"m_EffectsManager": {
+			"$id": "1311",
+			"m_Effects": []
+		},
+		"Faction": "Crusaders",
+		"MaxSquadsCount": {
+			"$id": "1312",
+			"m_BaseValue": 4,
+			"PersistentModifierList": [
+				{
+					"$id": "1313",
+					"ModDescriptor": "None",
+					"StackMode": "Default",
+					"ModValue": 1,
+					"SourceId": "a3d140d99d62480e92db5fe20bf2e8dd",
+					"ItemSource": null
+				}
+			]
+		},
+		"Preset": "c9a4cd1c0e6a4e87adc753a7d4cde71c"
+	},
+	"ArmyType": "Ordinary",
+	"TravelLogic": null,
+	"TravelData": null,
+	"MovementPoints": 55.0,
+	"IsGarrison": false,
+	"HasNoReward": false,
+	"IsInSettlement": false,
+	"IsRevealed": true
+}

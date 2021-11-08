@@ -78,23 +78,14 @@ namespace Arcemi.Pathfinder.Kingmaker
     {
         public ItemModel(ModelDataAccessor accessor) : base(accessor)
         {
-            N.On(nameof(Blueprint), nameof(RawData));
         }
 
-        public RawItemData RawData => Mappings.RawItems.GetByBlueprint(Blueprint);
-        public DescriptiveItemData DescriptiveData => Mappings.DescriptiveItems.GetByBlueprint(Blueprint);
-
-        public string DisplayName => (DescriptiveData?.Name)
-            .OrIfEmpty(A.Res.GetItemName(Blueprint))
-            .OrIfEmpty(RawData?.Name.AsDisplayable())
+        public string DisplayName => A.Res.GetItemName(Blueprint)
             .OrIfEmpty(Blueprint);
-        public string DisplayType => (DescriptiveData?.SubType)
-            .OrIfEmpty(DescriptiveData?.Type)
-            .OrIfEmpty(ItemType?.AsDisplayable())
-            .OrIfEmpty(RawData?.TypeName)
+        public string DisplayType => ItemType?.AsDisplayable()
             .OrIfEmpty(null);
 
-        public string DisplayDescription => (DescriptiveData?.Description).OrIfEmpty(null);
+        public string DisplayDescription => "";
 
         public bool IsStackable => true;
         public bool IsChargable => ItemType == Kingmaker.ItemType.Usable;

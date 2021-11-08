@@ -46,6 +46,24 @@ else {
             </div>
         </div>
         <div class="row"><h3 class="col-md-12">Army units</h3></div>
+        @if (!CanAddDefaultArmyUnit) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-danger">
+                        Army is full, you can not add any more units.
+                    </p>
+                </div>
+            </div>
+}
+        else if (!CanAddLargeArmyUnit) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-warning">
+                        There is no space for large army units.
+                    </p>
+                </div>
+            </div>
+        }
         <div class="row form-list-header">
             <div class="col-md-4">
                 <label class="form-label">Name</label>
@@ -54,7 +72,7 @@ else {
                 <label class="form-label">Number</label>
             </div>
             <div class="col-md-2">
-                <button class="btn btn-sm btn-info" disabled="@(Unit.Data.Squads.Count >= MaxSquadCount)" @onclick="() => modalAddArmyUnit.OpenAsync()">
+                <button class="btn btn-sm btn-info" disabled="@(!CanAddDefaultArmyUnit)" @onclick="() => modalAddArmyUnit.OpenAsync()">
                     <span class="oi oi-plus"></span>
                 </button>
                 <Modal @ref="modalAddArmyUnit">
@@ -63,22 +81,42 @@ else {
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label for="add-unit-type" class="form-label">Known Types</label>
+                                <Help Size="ElementSize.Small" Position="TooltipPosition.BottomRight">
+                                    The army units that's loaded from the game resources does not have the same name in game.
+                                    So don't expect the army unit name to be the same as in game. It's usually similar though.
+                                </Help>
                                 <select id="add-unit-type" class="form-control" @bind="KnownArmyUnitBlueprint">
-                                    <option value="X">@(Model.Resources.Blueprints.IsEmpty ? "Custom" : "Select Army Unit...")</option>
+                                    <option value="">Select army unit...</option>
                                     @foreach (var type in AllArmyUnitTypes) {
-                                        <option value="@type.Id">@type.DisplayName</option>
+                                        <option value="@type.Id">@type.Name</option>
                                     }
                                 </select>
                             </div>
                         </div>
-                        @if (Model.Resources.Blueprints.IsEmpty) {
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label for="add-item-blueprint" class="form-label">Custom Blueprint</label>
-                                <input id="add-item-blueprint" type="text" class="form-control" disabled="@(KnownArmyUnitBlueprint != "X")" @bind="CustomArmyUnitBlueprint" />
+                                <label class="form-label">Custom Blueprint</label>
+                                <Help Size="ElementSize.Small" Position="TooltipPosition.BottomRight">
+                                    All army units should be listed, especially if you have the game folder configured.
+                                    This is a fallback if the the army unit for some reason doesn't show.
+                                </Help>
+                                <input type="text" class="form-control" disabled="@IsCustomArmyUnitBlueprintDisabled" @bind="CustomArmyUnitBlueprint" />
                             </div>
                         </div>
-                        }
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Size</label>
+                                <Help Size="ElementSize.Small" Position="TooltipPosition.BottomRight">
+                                    The size of the army unit. A large unit takes up 4 slots.
+                                    If this is incorrect, then the unit will be invisible in game.
+                                    If your army can't fit the large unit, it will not be added.
+                                </Help>
+                                <select class="form-control" disabled="@IsArmyUnitSizeDisabled" @bind="ArmyUnitSize">
+                                    <option value="Default">Default</option>
+                                    <option value="Large">Large</option>
+                                </select>
+                            </div>
+                        </div>
                     </Body>
                     <Footer>
                         <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(!IsArmyUnitInputValid)" @onclick="() => AddArmyUnitAsync()">Confirm</button>
@@ -89,16 +127,16 @@ else {
             <div class="col-md-2">
             </div>
         </div>
-        @foreach (var armyUnit in Unit.Data.Squads) {
+        @foreach (var armyUnit in Army.Units) {
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">@armyUnit.DisplayName</label>
+                    <label class="form-label">@armyUnit.Name</label>
                 </div>
                 <div class="col-md-2">
-                    <input class="form-control" type="number" @bind="@armyUnit.Count" />
+                    <input class="form-control" type="number" @bind="armyUnit.Squad.Count" />
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-sm btn-danger" title="Remove army unit" @onclick="() => RemoveArmyUnit(armyUnit)">
+                    <button class="btn btn-sm btn-danger" title="Remove army unit" @onclick="() => Army.RemoveArmyUnit(armyUnit)">
                         <span class="oi oi-trash"></span>
                     </button>
                 </div>
@@ -106,54 +144,125 @@ else {
                 </div>
             </div>
         }
+
+        <div class="army-unit-grid-container">
+            <div class="army-unit-slot">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="army-unit-default">
+                @foreach (var row in Army.DefaultSizePosition) {
+                    @foreach (var unit in row) {
+                    <div class="@(unit == null ? "empty" : "")">
+                        <div>@unit?.Name</div>
+                        <div>(@unit?.Squad.Count)</div>
+                    </div>
+                    }
+                }
+            </div>
+            <div class="army-unit-large-even">
+                @for (var i = 0; i < 6; i+=2) {
+                    var unit = Army.LargeSizePosition[i];
+                    <div class="army-unit-slot-large @(unit == null ? "empty" : "")">
+                        <div>@unit?.Name</div>
+                        <div>(@unit?.Squad.Count)</div>
+                    </div>
+                }
+            </div>
+            <div class="army-unit-large-odd">
+                @for (var i = 1; i < 6; i+=2) {
+                    var unit = Army.LargeSizePosition[i];
+                    <div class="army-unit-slot-large @(unit == null ? "empty" : "")">
+                        <div>@unit?.Name</div>
+                        <div>(@unit?.Squad.Count)</div>
+                    </div>
+                }
+            </div>
+        </div>
     }
 }
 
 @code {
     private PlayerArmyModel Unit;
+    private ArmyViewModel Army;
 
     private Modal modalAddArmyUnit;
     private const int MaxSquadCount = 14;
 
-    private IEnumerable<IBlueprint> AllArmyUnitTypes;
+    private IEnumerable<ArmyUnitDataMapping> AllArmyUnitTypes;
 
-    private string KnownArmyUnitBlueprint = "X";
-    private string CustomArmyUnitBlueprint;
-    private bool IsArmyUnitInputValid => KnownArmyUnitBlueprint != "X" || !string.IsNullOrEmpty(CustomArmyUnitBlueprint);
-
-    private void RemoveArmyUnit(PlayerArmySquadModel armyUnit)
+    private bool IsArmyUnitSizeDisabled => KnownArmyUnit != null
+        && KnownArmyUnit.Size != ArmyUnitSize.Unknown;
+    
+    private string _KnownArmyUnitBlueprint = "";
+    private string KnownArmyUnitBlueprint
     {
-        var posIdx = Unit.Data.SquadsPosition.IndexOf(armyUnit);
-        Unit.Data.SquadsPosition[posIdx] = null;
-        Unit.Data.Squads.Remove(armyUnit);
+        get => _KnownArmyUnitBlueprint;
+        set {
+            _KnownArmyUnitBlueprint = value;
+            if (string.IsNullOrEmpty(value)) {
+                KnownArmyUnit = null;
+                ArmyUnitSize = ArmyUnitSize.Default;
+            }
+            else {
+                KnownArmyUnit = AllArmyUnitTypes.First(x => string.Equals(x.Id, value, StringComparison.OrdinalIgnoreCase));
+                if (KnownArmyUnit.Size == ArmyUnitSize.Unknown) {
+                    ArmyUnitSize = ArmyUnitSize.Default;
+                }
+                else {
+                    ArmyUnitSize = KnownArmyUnit.Size;
+                }
+            }
+        }
     }
+
+    private bool IsCustomArmyUnitBlueprintDisabled => !string.IsNullOrEmpty(KnownArmyUnitBlueprint);
+    private string CustomArmyUnitBlueprint;
+    private ArmyUnitSize ArmyUnitSize;
+    private ArmyUnitDataMapping KnownArmyUnit;
+    private bool IsArmyUnitInputValid => (!string.IsNullOrEmpty(KnownArmyUnitBlueprint) || !string.IsNullOrEmpty(CustomArmyUnitBlueprint))
+        && (CanAddLargeArmyUnit || ArmyUnitSize != ArmyUnitSize.Large);
+    private bool CanAddLargeArmyUnit => Army?.FindFirstAvailablePosition(ArmyUnitSize.Large) >= 0;
+    private bool CanAddDefaultArmyUnit => Army?.FindFirstAvailablePosition(ArmyUnitSize.Default) >= 0;
 
     private async Task AddArmyUnitAsync()
     {
-        var squad = Unit.Data.Squads.Add();
-        squad.Guid = Guid.NewGuid().ToString();
-        squad.Count = 10;
-        if (KnownArmyUnitBlueprint == "X") {
-            squad.Unit = CustomArmyUnitBlueprint;
-        }
-        else {
-            squad.Unit = KnownArmyUnitBlueprint;
-        }
+        var blueprint = string.IsNullOrEmpty(KnownArmyUnitBlueprint)
+            ? CustomArmyUnitBlueprint
+            : KnownArmyUnitBlueprint;
 
-        var emptyIndex = Unit.Data.SquadsPosition.FirstEmptyIndex();
-        Unit.Data.SquadsPosition.SetRef(emptyIndex, squad);
+        Army.AddArmyUnit(blueprint, ArmyUnitSize, 10);
+
         await modalAddArmyUnit.CloseAsync();
-        KnownArmyUnitBlueprint = "X";
+        KnownArmyUnitBlueprint = "";
         CustomArmyUnitBlueprint = "";
     }
 
     protected override void OnInitialized()
     {
-        AllArmyUnitTypes = Model.Resources.GetAvailableArmyUnits().OrderBy(x => x.DisplayName);
+        var unmappedArmyUnits = Model.Resources.GetAvailableArmyUnits()
+            .Where(x => !Mappings.ArmyUnits.ContainsKey(x.Id))
+            .Select(x => new ArmyUnitDataMapping { Id = x.Id, Name = x.DisplayName, Size = ArmyUnitSize.Unknown })
+            .ToArray();
+
+        AllArmyUnitTypes = Mappings.ArmyUnits.Values.Concat(unmappedArmyUnits).OrderBy(x => x.Name);
     }
 
     public void SelectArmy(PlayerArmyModel unit)
     {
         Unit = unit;
+        Army = new ArmyViewModel(Model.Resources, unit);
     }
 }

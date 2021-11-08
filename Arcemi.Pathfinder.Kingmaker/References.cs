@@ -15,7 +15,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         private readonly Dictionary<string, JObjectReference> _lookup;
         private readonly Dictionary<JObject, JObjectReference> _refLookup;
         private int _maxId;
-
         private readonly ObjectCache _objects;
         private readonly IReferences _refs;
 
@@ -26,6 +25,31 @@ namespace Arcemi.Pathfinder.Kingmaker
             _refLookup = new Dictionary<JObject, JObjectReference>();
             _objects = new ObjectCache();
             _refs = this;
+        }
+
+        public void VisitTree(JToken parent, JToken node)
+        {
+            if (node is JArray arr) {
+                for (var i = 0; i < arr.Count; i++) {
+                    VisitTree(arr, arr[i]);
+                }
+                return;
+            }
+
+            if (node is JObject obj) {
+                foreach (var property in obj.Properties()) {
+                    if (string.Equals(property.Name, "$id", StringComparison.Ordinal)) {
+                        var id = property.Value.Value<string>();
+                        Add(id, obj);
+                    }
+                    else if (string.Equals(property.Name, "$ref", StringComparison.Ordinal)) {
+                        var id = property.Value.Value<string>();
+                        ReferTo(parent, obj, id);
+                    }
+
+                    VisitTree(obj, property.Value);
+                }
+            }
         }
 
         public void Add(string id, JObject obj)
