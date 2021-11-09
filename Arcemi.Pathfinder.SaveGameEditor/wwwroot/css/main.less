@@ -269,8 +269,8 @@ ul.nav-tabs {
 
 .army-unit-slot {
     display: grid;
-    grid-template-columns: repeat(7, 80px);
-    grid-template-rows: 100px 100px;
+    grid-template-columns: repeat(7, 90px);
+    grid-template-rows: 120px 120px;
 
     > div {
         background-color: #e8e9ea;
@@ -283,23 +283,42 @@ ul.nav-tabs {
 
 .army-unit-default {
     display: grid;
-    grid-template-columns: repeat(7, 80px);
-    grid-template-rows: 100px 100px;
+    grid-template-columns: repeat(7, 90px);
+    grid-template-rows: 120px 120px;
     position: absolute;
     top: 0;
     left: 0;
 
     > div {
-        background-color: #e8e9ea;
+        background-color: #ffe;
         border: solid 1px black;
         border-radius: 5px;
-        padding: 5px;
+        padding: 30px 5px 5px 5px;
         margin: 5px;
         box-shadow: 1px 1px;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
+        position: relative;
+
+        > button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 22px;
+            height: 22px;
+            font-size: 10px;
+            padding: 3px;
+            z-index: 20;
+        }
+
+        input {
+            position: relative;
+            z-index: 20;
+            padding: 2px 5px 2px 5px;
+            font-size: 12px;
+        }
 
         &.empty {
             visibility: hidden;
@@ -309,23 +328,42 @@ ul.nav-tabs {
 
 .army-unit-large-even {
     display: grid;
-    grid-template-columns: repeat(3, 160px);
-    grid-template-rows: 200px;
+    grid-template-columns: repeat(3, 180px);
+    grid-template-rows: 240px;
     position: absolute;
     top: 0;
     left: 0;
 
     > div {
-        background-color: #e8e9ea;
+        background-color: #ffe;
         border: solid 1px black;
         border-radius: 5px;
-        padding: 5px;
+        padding: 30px 5px 5px 5px;
         margin: 5px;
         box-shadow: 1px 1px;
         display: flex;
-        flex-direction:column;
+        flex-direction: column;
         align-items: center;
         text-align: center;
+        position: relative;
+
+        > button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 22px;
+            height: 22px;
+            font-size: 10px;
+            padding: 3px;
+            z-index: 20;
+        }
+
+        input {
+            position: relative;
+            z-index: 20;
+            padding: 2px 5px 2px 5px;
+            font-size: 12px;
+        }
 
         &.empty {
             visibility: hidden;
@@ -335,23 +373,42 @@ ul.nav-tabs {
 
 .army-unit-large-odd {
     display: grid;
-    grid-template-columns: repeat(3, 160px);
-    grid-template-rows: 200px;
+    grid-template-columns: repeat(3, 180px);
+    grid-template-rows: 240px;
     position: absolute;
     top: 0;
-    left: 80px;
+    left: 90px;
 
     > div {
-        background-color: #e8e9ea;
+        background-color: #ffe;
         border: solid 1px black;
         border-radius: 5px;
-        padding: 5px;
+        padding: 30px 5px 5px 5px;
         margin: 5px;
         box-shadow: 1px 1px;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
+        position: relative;
+
+        > button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 22px;
+            height: 22px;
+            font-size: 10px;
+            padding: 3px;
+            z-index: 20;
+        }
+
+        input {
+            position: relative;
+            z-index: 20;
+            padding: 2px 5px 2px 5px;
+            font-size: 12px;
+        }
 
         &.empty {
             visibility: hidden;

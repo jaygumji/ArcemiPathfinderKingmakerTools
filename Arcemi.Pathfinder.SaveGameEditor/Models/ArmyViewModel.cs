@@ -68,7 +68,8 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 }
                 return -1;
             }
-            for (var i = 0; i < 14; i++) {
+            for (var i = 0; i < 7; i++) {
+                if (IsPositionAvailable(i + 7, size)) return i + 7;
                 if (IsPositionAvailable(i, size)) return i;
             }
             return -1;
@@ -160,19 +161,5 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             if (count == 1) return ArmyUnitSize.Default;
             return ArmyUnitSize.Unknown;
         }
-    }
-    public class ArmyUnitViewModel
-    {
-        public ArmyUnitViewModel(PlayerArmySquadModel squad, ArmyUnitDataMapping mapping, int positionIndex)
-        {
-            Squad = squad;
-            Mapping = mapping;
-            PositionIndex = positionIndex;
-        }
-
-        public PlayerArmySquadModel Squad { get; }
-        public ArmyUnitDataMapping Mapping { get; }
-        public int PositionIndex { get; }
-        public string Name => Mapping.Name.OrIfEmpty(Squad.DisplayName);
     }
 }

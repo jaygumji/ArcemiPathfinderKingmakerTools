@@ -222,8 +222,8 @@ ul.nav-tabs li.nav-item button {
 }
 .army-unit-slot {
   display: grid;
-  grid-template-columns: repeat(7, 80px);
-  grid-template-rows: 100px 100px;
+  grid-template-columns: repeat(7, 90px);
+  grid-template-rows: 120px 120px;
 }
 .army-unit-slot > div {
   background-color: #e8e9ea;
@@ -234,69 +234,120 @@ ul.nav-tabs li.nav-item button {
 }
 .army-unit-default {
   display: grid;
-  grid-template-columns: repeat(7, 80px);
-  grid-template-rows: 100px 100px;
+  grid-template-columns: repeat(7, 90px);
+  grid-template-rows: 120px 120px;
   position: absolute;
   top: 0;
   left: 0;
 }
 .army-unit-default > div {
-  background-color: #e8e9ea;
+  background-color: #ffe;
   border: solid 1px black;
   border-radius: 5px;
-  padding: 5px;
+  padding: 30px 5px 5px 5px;
   margin: 5px;
   box-shadow: 1px 1px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: relative;
+}
+.army-unit-default > div > button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+  padding: 3px;
+  z-index: 20;
+}
+.army-unit-default > div input {
+  position: relative;
+  z-index: 20;
+  padding: 2px 5px 2px 5px;
+  font-size: 12px;
 }
 .army-unit-default > div.empty {
   visibility: hidden;
 }
 .army-unit-large-even {
   display: grid;
-  grid-template-columns: repeat(3, 160px);
-  grid-template-rows: 200px;
+  grid-template-columns: repeat(3, 180px);
+  grid-template-rows: 240px;
   position: absolute;
   top: 0;
   left: 0;
 }
 .army-unit-large-even > div {
-  background-color: #e8e9ea;
+  background-color: #ffe;
   border: solid 1px black;
   border-radius: 5px;
-  padding: 5px;
+  padding: 30px 5px 5px 5px;
   margin: 5px;
   box-shadow: 1px 1px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: relative;
+}
+.army-unit-large-even > div > button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+  padding: 3px;
+  z-index: 20;
+}
+.army-unit-large-even > div input {
+  position: relative;
+  z-index: 20;
+  padding: 2px 5px 2px 5px;
+  font-size: 12px;
 }
 .army-unit-large-even > div.empty {
   visibility: hidden;
 }
 .army-unit-large-odd {
   display: grid;
-  grid-template-columns: repeat(3, 160px);
-  grid-template-rows: 200px;
+  grid-template-columns: repeat(3, 180px);
+  grid-template-rows: 240px;
   position: absolute;
   top: 0;
-  left: 80px;
+  left: 90px;
 }
 .army-unit-large-odd > div {
-  background-color: #e8e9ea;
+  background-color: #ffe;
   border: solid 1px black;
   border-radius: 5px;
-  padding: 5px;
+  padding: 30px 5px 5px 5px;
   margin: 5px;
   box-shadow: 1px 1px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: relative;
+}
+.army-unit-large-odd > div > button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+  padding: 3px;
+  z-index: 20;
+}
+.army-unit-large-odd > div input {
+  position: relative;
+  z-index: 20;
+  padding: 2px 5px 2px 5px;
+  font-size: 12px;
 }
 .army-unit-large-odd > div.empty {
   visibility: hidden;

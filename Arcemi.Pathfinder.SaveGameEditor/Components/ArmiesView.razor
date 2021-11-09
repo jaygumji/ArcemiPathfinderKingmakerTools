@@ -45,36 +45,14 @@ else {
                 <input class="form-control" type="number" @bind="@Unit.Data.MaxSquadsCount.BaseValue" />
             </div>
         </div>
-        <div class="row"><h3 class="col-md-12">Army units</h3></div>
-        @if (!CanAddDefaultArmyUnit) {
-            <div class="row">
-                <div class="col-md-12">
-                    <p class="alert alert-danger">
-                        Army is full, you can not add any more units.
-                    </p>
-                </div>
-            </div>
-}
-        else if (!CanAddLargeArmyUnit) {
-            <div class="row">
-                <div class="col-md-12">
-                    <p class="alert alert-warning">
-                        There is no space for large army units.
-                    </p>
-                </div>
-            </div>
-        }
-        <div class="row form-list-header">
-            <div class="col-md-4">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Number</label>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-sm btn-info" disabled="@(!CanAddDefaultArmyUnit)" @onclick="() => modalAddArmyUnit.OpenAsync()">
-                    <span class="oi oi-plus"></span>
-                </button>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>
+                    Army units
+                    <button class="btn btn-sm btn-info" disabled="@(!CanAddDefaultArmyUnit)" @onclick="() => modalAddArmyUnit.OpenAsync()">
+                        <span class="oi oi-plus"></span>
+                    </button>
+                </h3>
                 <Modal @ref="modalAddArmyUnit">
                     <Title>Add army unit</Title>
                     <Body>
@@ -124,23 +102,22 @@ else {
                     </Footer>
                 </Modal>
             </div>
-            <div class="col-md-2">
-            </div>
         </div>
-        @foreach (var armyUnit in Army.Units) {
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">@armyUnit.Name</label>
+        @if (!CanAddDefaultArmyUnit) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-danger">
+                        Army is full, you can not add any more units.
+                    </p>
                 </div>
-                <div class="col-md-2">
-                    <input class="form-control" type="number" @bind="armyUnit.Squad.Count" />
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-sm btn-danger" title="Remove army unit" @onclick="() => Army.RemoveArmyUnit(armyUnit)">
-                        <span class="oi oi-trash"></span>
-                    </button>
-                </div>
-                <div class="col-md-2">
+            </div>
+}
+        else if (!CanAddLargeArmyUnit) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-warning">
+                        There is no space for large army units.
+                    </p>
                 </div>
             </div>
         }
@@ -163,11 +140,18 @@ else {
                 <div></div>
             </div>
             <div class="army-unit-default">
-                @foreach (var row in Army.DefaultSizePosition) {
+                @foreach (var row in Army.DefaultSizePosition.Reverse()) {
                     @foreach (var unit in row) {
                     <div class="@(unit == null ? "empty" : "")">
                         <div>@unit?.Name</div>
-                        <div>(@unit?.Squad.Count)</div>
+                        <div>
+                            @if (unit != null) {
+                                <input type="number" class="form-control" @bind="unit.Squad.Count" />
+                            }
+                        </div>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Army.RemoveArmyUnit(unit)">
+                            <span class="oi oi-trash"></span>
+                        </button>
                     </div>
                     }
                 }
@@ -177,7 +161,14 @@ else {
                     var unit = Army.LargeSizePosition[i];
                     <div class="army-unit-slot-large @(unit == null ? "empty" : "")">
                         <div>@unit?.Name</div>
-                        <div>(@unit?.Squad.Count)</div>
+                        <div>
+                            @if (unit != null) {
+                                <input type="number" class="form-control" @bind="unit.Squad.Count" />
+                            }
+                        </div>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Army.RemoveArmyUnit(unit)">
+                            <span class="oi oi-trash"></span>
+                        </button>
                     </div>
                 }
             </div>
@@ -186,7 +177,14 @@ else {
                     var unit = Army.LargeSizePosition[i];
                     <div class="army-unit-slot-large @(unit == null ? "empty" : "")">
                         <div>@unit?.Name</div>
-                        <div>(@unit?.Squad.Count)</div>
+                        <div>
+                            @if (unit != null) {
+                                <input type="number" class="form-control" @bind="unit.Squad.Count" />
+                            }
+                        </div>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Army.RemoveArmyUnit(unit)">
+                            <span class="oi oi-trash"></span>
+                        </button>
                     </div>
                 }
             </div>
