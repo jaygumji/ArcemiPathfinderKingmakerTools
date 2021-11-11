@@ -1,7 +1,7 @@
 ﻿@inject IGameResourcesProvider Resources
 
 <p class="alert alert-info">
-    Manage custom spells. Add, edit, remove spells customized with metamagic.
+    Add, edit, remove spells customized with metamagic.
 </p>
 @if (CustomSpells == null) {
     <div class="row">
@@ -43,7 +43,7 @@ else {
                         @spell.DisplayName
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-sm btn-default" @onclick="() => EditSpellAsync(spell)">
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditSpellAsync(spell)">
                             <span class="oi oi-pencil"></span>
                         </button>
                         <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(spell)">
@@ -114,12 +114,72 @@ else {
             </div>
         </div>
         <div class="row">
-            @foreach (var meta in Spell.MetamagicData.Metamagic) {
-            <div class="col-md-3">
-                <label class="form-label form-label-centered">@meta.Name</label>
-                <input type="checkbox" class="form-control" @bind="meta.IsActive" />
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Empower" HelpPosition="TooltipPosition.BottomRight">
+                    <HelpText>
+                        Spell damage is increased by 50% (Saving throws not affected).
+                    </HelpText>
+                </MetamagicControl>
             </div>
-            }
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Maximize" HelpPosition="TooltipPosition.BottomRight">
+                    <HelpText>
+                        Numerical values maximized.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Quicken" HelpPosition="TooltipPosition.BottomRight">
+                    <HelpText>
+                        Cast spell as a swift action.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Extend">
+                    <HelpText>
+                        Duration increased by 100%.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Heighten">
+                    <HelpText>
+                        Cast spells as if they were a higher level (up to a maximum of 9th level).
+                        The level you put the spell in determines the effect.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Reach">
+                    <HelpText>
+                        Increase the range of the spell by one range category.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Persistent" HelpPosition="TooltipPosition.BottomRight">
+                    <HelpText>
+                        Enemies must succeed their saving throws twice to resist the spell.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Selective" HelpPosition="TooltipPosition.BottomRight">
+                    <HelpText>
+                        On area spells, select targets that should be excluded from the effect.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
+            <div class="col-md-2">
+                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Bolstered" HelpPosition="TooltipPosition.BottomRight">
+                    <HelpText>
+                        Spell now deals 2 more damage per die rolled to all targets.
+                        Enemies in a 5 feet radius of spell targets take 2 damage per die rolled of the original spell.
+                        Spell no longer does precision damage.
+                    </HelpText>
+                </MetamagicControl>
+            </div>
         </div>
         }
     </Body>

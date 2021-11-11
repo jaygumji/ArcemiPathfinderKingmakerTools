@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -33,38 +32,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             Name = name;
             UID = uid;
             Flag = flag;
-            this._update = update;
-            IsActive = active.Contains(uid);
+            _update = update;
+            _IsActive = active.Contains(uid);
         }
 
-        public static IReadOnlyList<Metamagic> All(string value, Action<string> update)
-        {
-            var active = new HashSet<string>(value?.Split(',').Select(x => x.Trim()) ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
-
-            IReadOnlyList<Metamagic> all = default;
-
-            void Update(Metamagic v)
-            {
-                if (all == null) return;
-                update(string.Join(", ", all.Where(x => x.IsActive).Select(x => x.UID)));
-            }
-
-            all = new[] {
-                Empower(active, Update),
-                Maximize(active, Update),
-                Quicken(active, Update),
-                Extend(active, Update),
-                Heighten(active, Update),
-                Reach(active, Update),
-                //CompletelyNormal(active, Update),
-                Persistent(active, Update),
-                Selective(active, Update),
-                Bolstered(active, Update)
-            };
-
-
-
-            return all;
-        }
     }
 }

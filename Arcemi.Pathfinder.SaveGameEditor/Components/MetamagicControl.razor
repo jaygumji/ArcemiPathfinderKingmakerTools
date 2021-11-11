@@ -1,0 +1,18 @@
+﻿<label class="form-label form-label-centered">
+    @Metamagic.Name
+    <Help Size="ElementSize.Small" Position="HelpPosition">
+        @HelpText
+    </Help>
+</label>
+<input type="checkbox" class="form-control" @bind="Metamagic.IsActive" />
+
+@code{
+    [Parameter]
+    public Metamagic Metamagic { get; set; }
+
+    [Parameter]
+    public RenderFragment HelpText { get; set; }
+
+    [Parameter]
+    public TooltipPosition HelpPosition { get; set; } = TooltipPosition.BottomLeft;
+}
