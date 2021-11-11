@@ -21,7 +21,16 @@ namespace Arcemi.Pathfinder.Kingmaker
         public IEnumerable<SpellIndexAccessor> BonusSpellSlotsAccessors => BonusSpellSlots.Select((x, i) => new SpellIndexAccessor(i, BonusSpellSlots));
         public ListD2Accessor<LearnedSpellModel> KnownSpells => A.ListD2("m_KnownSpells", factory: a => new LearnedSpellModel(a));
         public ListD2Accessor<LearnedSpellModel> SpecialSpells => A.ListD2("m_SpecialSpells", factory: a => new LearnedSpellModel(a));
+        public ListD2Accessor<CustomSpellModel> CustomSpells => A.ListD2("m_CustomSpells", factory: a => new CustomSpellModel(a));
         public ListValueAccessor<string> SpecialLists => A.ListValue<string>("m_SpecialLists");
         public ListValueAccessor<string> OppositionSchools => A.ListValue<string>();
+        
+        public void EnableCustomSpells()
+        {
+            if (CustomSpells != null) return;
+
+            var list = A.ListD2("m_CustomSpells", factory: a => new CustomSpellModel(a));
+            list.EnsureRank1Count(11);
+        }
     }
 }

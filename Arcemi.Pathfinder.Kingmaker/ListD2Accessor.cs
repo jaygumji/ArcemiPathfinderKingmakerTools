@@ -109,6 +109,16 @@ namespace Arcemi.Pathfinder.Kingmaker
             return InitAndInsert(-1, -1, init);
         }
 
+        public void EnsureRank1Count(int count)
+        {
+            while (_items.Count < count) {
+                _items.Add(new List<T>());
+            }
+            while (_array.Count < count) {
+                _array.Add(new JArray());
+            }
+        }
+
         public void AddRef<TRef>(int index, TRef item)
             where TRef : RefModel, T
         {

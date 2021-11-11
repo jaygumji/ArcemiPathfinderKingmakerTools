@@ -1,8 +1,22 @@
 ﻿@inject IGameResourcesProvider Resources
 
-@if (LearnedSpells?.Count > 0) {
-    for (var i = 0; i < LearnedSpells.Count; i++){
-        var arr = LearnedSpells[i];
+<p class="alert alert-info">
+    Manage custom spells. Add, edit, remove spells customized with metamagic.
+</p>
+@if (CustomSpells == null) {
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-info" @onclick="() => UnlockCustomSpells()">
+                <span class="oi oi-lock-locked"></span>
+                Unlock
+            </button>
+        </div>
+    </div>
+}
+else {
+    
+    for (var i = 0; i < CustomSpells.Count; i++){
+        var arr = CustomSpells[i];
         <div class="row">
             <div class="col-md-6">
                 <h4>Level @i</h4>
@@ -28,7 +42,10 @@
                     <div class="col-md-6">
                         @spell.DisplayName
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
+                        <button class="btn btn-sm btn-default" @onclick="() => EditSpellAsync(spell)">
+                            <span class="oi oi-pencil"></span>
+                        </button>
                         <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(spell)">
                             <span class="oi oi-trash"></span>
                         </button>
@@ -37,6 +54,7 @@
             }
         }
     }
+
 }
 
 <Modal @ref="modalAddSpell">
@@ -77,9 +95,44 @@
     </Footer>
 </Modal>
 
+<Modal @ref="modalEditSpell">
+    <Title>Edit spell @Spell?.DisplayName</Title>
+    <Body>
+        @if (Spell != null) {
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">Cost</label>
+                <input type="number" class="form-control" @bind="Spell.MetamagicData.SpellLevelCost" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Color</label>
+                <input type="number" min="1" max="20" class="form-control" @bind="DecorationColor" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Border</label>
+                <input type="number" min="1" max="11" class="form-control" @bind="DecorationBorder" />
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var meta in Spell.MetamagicData.Metamagic) {
+            <div class="col-md-3">
+                <label class="form-label form-label-centered">@meta.Name</label>
+                <input type="checkbox" class="form-control" @bind="meta.IsActive" />
+            </div>
+            }
+        </div>
+        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditSpell.CloseAsync()">Done</button>
+    </Footer>
+</Modal>
+
 @code {
     [Parameter]
-    public ListD2Accessor<LearnedSpellModel> LearnedSpells { get; set; }
+    public CharacterSpellbookModel Spellbook { get; set; }
+
+    private ListD2Accessor<CustomSpellModel> CustomSpells => Spellbook.CustomSpells;
 
     private bool OrderByName = true;
 
@@ -93,6 +146,10 @@
         return !Spells.IsSpecial(x);
     }
 
+    private CustomSpellModel Spell;
+    private int DecorationColor { get => Spell.DecorationColorNumber + 1; set => Spell.DecorationColorNumber = value - 1; }
+    private int DecorationBorder { get => Spell.DecorationBorderNumber + 1; set => Spell.DecorationBorderNumber = value - 1; }
+    private Modal modalEditSpell;
     private Modal modalAddSpell;
     private string AddSpellBlueprint;
     private int AddSpellLevel;
@@ -103,20 +160,36 @@
         AddSpellBlueprint = blueprint.Id;
     }
 
+    private void UnlockCustomSpells()
+    {
+        Spellbook.EnableCustomSpells();
+    }
+
     private async Task AddSpellAsync()
     {
-        var spell = LearnedSpells.Add(AddSpellLevel);
+        var spell = CustomSpells.Add(AddSpellLevel, (refs, obj) => { obj.Add("MetamagicData", refs.Create()); });
         spell.Blueprint = AddSpellBlueprint;
-        spell.CopiedFromScroll = false;
         spell.UniqueId = Guid.NewGuid().ToString();
+        spell.DecorationBorderNumber = 0;
+        spell.DecorationColorNumber = 0;
+        spell.MetamagicData.SpellLevelCost = 0;
+        spell.MetamagicData.MetamagicMask = "";
 
         AddSpellBlueprint = null;
         AddSpellLevel = 0;
         await modalAddSpell.CloseAsync();
+
+        await EditSpellAsync(spell);
     }
 
-    private void RemoveSpell(LearnedSpellModel spell)
+    private async Task EditSpellAsync(CustomSpellModel spell)
     {
-        LearnedSpells.Remove(spell);
+        Spell = spell;
+        await modalEditSpell.OpenAsync();
+    }
+
+    private void RemoveSpell(CustomSpellModel spell)
+    {
+        CustomSpells.Remove(spell);
     }
 }
