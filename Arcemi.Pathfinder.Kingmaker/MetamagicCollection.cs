@@ -19,11 +19,11 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public MetamagicCollection(string value, Action<string> update)
         {
-            var active = new HashSet<string>(value?.Split(';').Select(x => x.Trim()) ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+            var active = new HashSet<string>(value?.Split(',').Select(x => x.Trim()) ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
 
             void Update(Metamagic v)
             {
-                var newValue = string.Join("; ", this.Where(x => x.IsActive).Select(x => x.UID));
+                var newValue = string.Join(", ", this.Where(x => x.IsActive).Select(x => x.UID));
                 update(newValue.OrIfEmpty("CompletelyNormal"));
             }
 
