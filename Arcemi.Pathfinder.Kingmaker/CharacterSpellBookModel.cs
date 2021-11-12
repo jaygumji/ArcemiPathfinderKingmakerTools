@@ -22,6 +22,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public ListD2Accessor<LearnedSpellModel> KnownSpells => A.ListD2("m_KnownSpells", factory: a => new LearnedSpellModel(a));
         public ListD2Accessor<LearnedSpellModel> SpecialSpells => A.ListD2("m_SpecialSpells", factory: a => new LearnedSpellModel(a));
         public ListD2Accessor<CustomSpellModel> CustomSpells => A.ListD2("m_CustomSpells", factory: a => new CustomSpellModel(a));
+        public ListD2Accessor<MemorizedSpellModel> MemorizedSpells => A.ListD2("m_MemorizedSpells", factory: a => new MemorizedSpellModel(a));
         public ListValueAccessor<string> SpecialLists => A.ListValue<string>("m_SpecialLists");
         public ListValueAccessor<string> OppositionSchools => A.ListValue<string>();
         

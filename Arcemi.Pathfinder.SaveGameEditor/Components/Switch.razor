@@ -1,0 +1,41 @@
+﻿<div class="custom-control custom-switch">
+    <input id="@Id" type="checkbox" class="custom-control-input" @oninput="OnIsCheckedChangedAsync" @bind="IsCheckedBind" />
+    <label for="@Id" class="custom-control-label">@Label</label>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment Label { get; set; }
+
+    [Parameter]
+    public bool IsChecked { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsCheckedChanged { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+
+    private bool IsCheckedBind;
+
+    private async Task OnIsCheckedChangedAsync(ChangeEventArgs e)
+    {
+        var value = (bool)e.Value;
+        IsChecked = value;
+        await IsCheckedChanged.InvokeAsync(value);
+    }
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(Id)) {
+            Id = System.Guid.NewGuid().ToString("N");
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (IsCheckedBind != IsChecked) {
+            IsCheckedBind = IsChecked;
+        }
+    }
+}

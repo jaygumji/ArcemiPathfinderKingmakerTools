@@ -1,10 +1,14 @@
-﻿<label class="form-label form-label-centered">
-    @Metamagic.Name
-    <Help Size="ElementSize.Small" Position="HelpPosition">
-        @HelpText
-    </Help>
-</label>
-<input type="checkbox" class="form-control" @bind="Metamagic.IsActive" />
+﻿<div>
+    <label for="@Id" class="form-label form-label-centered">
+        @Metamagic.Name
+        <Help Size="ElementSize.Small" Position="HelpPosition">
+            @HelpText
+        </Help>
+    </label>
+</div>
+<div class="text-center">
+    <Switch Id="@Id" @bind-IsChecked="Metamagic.IsActive" />
+</div>
 
 @code{
     [Parameter]
@@ -15,4 +19,6 @@
 
     [Parameter]
     public TooltipPosition HelpPosition { get; set; } = TooltipPosition.BottomLeft;
+
+    private string Id => "Metamagic-" + Metamagic.UID;
 }

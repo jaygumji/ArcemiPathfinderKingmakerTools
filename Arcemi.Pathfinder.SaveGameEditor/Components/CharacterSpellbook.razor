@@ -7,11 +7,13 @@
 else {
     <div class="row g-3">
         <div class="col-md-12">
-            <h3 class="w-auto d-inline-block">Bonus Spells</h3>
-            <Help Position="TooltipPosition.BottomRight">
-                This works with both regular spell slots and spontaneous slots.<br/>
-                However it does not work for mythic spellbooks.
-            </Help>
+            <h3>
+                Bonus Spells
+                <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                    This works with both regular spell slots and spontaneous slots.<br/>
+                    However it does not work for mythic spellbooks.
+                </Help>
+            </h3>
         </div>
     </div>
     @if (UnitExtraSpellsPerDayPart == null) {
@@ -31,37 +33,45 @@ else {
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3">
-                <label class="form-label">Base Level</label>
+            <div class="col-md-2">
+                <label class="form-label">Level</label>
                 <input type="number" class="form-control" @bind="spellbook.BaseLevelInternal" />
             </div>
-            <div class="col-md-3">
-                <label class="form-label">Mythic Level</label>
+            <div class="col-md-2">
+                <label class="form-label">Mythic</label>
                 <Help Size="ElementSize.Small">
                     This is only used for combined spellbooks
                 </Help>
                 <input type="number" class="form-control" @bind="spellbook.MythicLevelInternal" />
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label class="form-label">Type</label>
-                <input type="text" class="form-control" readonly="readonly" value="@spellbook.Type" />
+                <input type="text" class="form-control" readonly="readonly" value="@spellbook.Type.AsDisplayable()" />
+            </div>
+            <div class="col-md-4">
+                <div><label class="form-label">&nbsp;</label></div>
+                @if (HasMemorizedSpells(spellbook)) {
+                    <button class="btn btn-secondary" disabled="@IsAllMemorizedSpellsAvailable(spellbook)" @onclick="() => RestoreMemorizedSpells(spellbook)">
+                        Restore Spells
+                    </button>
+                }
             </div>
         </div>
         @if (spellbook.OppositionSchools?.Count > 0) {
             <div class="row">
-                <div class="col-md-6 col-sm-10 col-xs-9">
-                    <h3>Opposition schools</h3>
-                </div>
-                <div class="col-md-2 col-sm-2 col-xs-3 toolbar-h3">
-                    <Help Size="ElementSize.Medium">
-                        If you remove the opposition school, you also need to remove the opposition school feature.
-                    </Help>
+                <div class="col-md-12">
+                    <h3>
+                        Opposition schools
+                        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                            If you remove the opposition school, you also need to remove the opposition school feature.
+                        </Help>
+                    </h3>
                 </div>
             </div>
             foreach (var oppositionSchool in spellbook.OppositionSchools) {
                 <div class="row">
-                    <div class="col-md-6 col-sm-10 col-xs-9">@oppositionSchool</div>
-                    <div class="col-md-2 col-sm-2 col-xs-3">
+                    <div class="col-md-3">@oppositionSchool</div>
+                    <div class="col-md-1">
                         <button class="btn btn-sm btn-danger" @onclick="() => RemoveOppositionSchool(spellbook, oppositionSchool)">
                             <span class="oi oi-trash"></span>
                         </button>
@@ -137,5 +147,22 @@ else {
     private void RemoveOppositionSchool(CharacterSpellbookModel spellbook, string oppositionSchool)
     {
         spellbook.OppositionSchools.Remove(oppositionSchool);
+    }
+
+    private bool HasMemorizedSpells(CharacterSpellbookModel spellbook)
+    {
+        return spellbook?.MemorizedSpells?.Any(x => x.Any(s => s.Spell != null)) ?? false;
+    }
+
+    private bool IsAllMemorizedSpellsAvailable(CharacterSpellbookModel spellbook)
+    {
+        return spellbook?.MemorizedSpells?.All(x => x.All(s => s.Spell == null || s.Available)) ?? true;
+    }
+
+    private void RestoreMemorizedSpells(CharacterSpellbookModel spellbook)
+    {
+        foreach (var spell in spellbook.MemorizedSpells.SelectMany(x => x).Where(s => s.Spell != null && !s.Available)) {
+            spell.Available = true;
+        }
     }
 }

@@ -100,17 +100,32 @@ else {
     <Body>
         @if (Spell != null) {
         <div class="row">
-            <div class="col-md-4">
-                <label class="form-label">Cost</label>
-                <input type="number" class="form-control" @bind="Spell.MetamagicData.SpellLevelCost" />
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">Color</label>
                 <input type="number" min="1" max="20" class="form-control" @bind="DecorationColor" />
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">Border</label>
                 <input type="number" min="1" max="11" class="form-control" @bind="DecorationBorder" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">
+                    Cost
+                    <Help Size="ElementSize.Small">
+                        Unsure what this does, leaving it at zero seems safe in all scenarios.
+                    </Help>
+                </label>
+                <input type="number" class="form-control" @bind="Spell.MetamagicData.SpellLevelCost" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">
+                    Heighten
+                    <Help Size="ElementSize.Small">
+                        The number of levels to heighten the spell. Only used with the heighten metamagic.
+                        E. g. a spell like Burning Arc (Level 2) with a heighten level of 5 will be a level 7 spell.
+                    </Help>
+                </label>
+                <input type="number" class="form-control" @bind="Spell.MetamagicData.HeightenLevel" />
             </div>
         </div>
         <div class="row">
@@ -207,6 +222,7 @@ else {
     }
 
     private CustomSpellModel Spell;
+    private bool IsHeightenActive => Spell?.MetamagicData?.Metamagic?.Heighten?.IsActive ?? false;
     private int DecorationColor { get => Spell.DecorationColorNumber + 1; set => Spell.DecorationColorNumber = value - 1; }
     private int DecorationBorder { get => Spell.DecorationBorderNumber + 1; set => Spell.DecorationBorderNumber = value - 1; }
     private Modal modalEditSpell;
