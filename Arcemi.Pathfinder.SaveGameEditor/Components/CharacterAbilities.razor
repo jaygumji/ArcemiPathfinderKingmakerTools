@@ -25,7 +25,7 @@
         <label class="form-label">@ability.DisplayName</label>
     </div>
     <div class="col-md-2">
-        <input type="checkbox" class="form-control" @bind="ability.IsActive" />
+        <Switch @bind-IsChecked="ability.IsActive" />
     </div>
     <div class="col-md-2">
         <label class="form-label">@ability.Components.Count</label>

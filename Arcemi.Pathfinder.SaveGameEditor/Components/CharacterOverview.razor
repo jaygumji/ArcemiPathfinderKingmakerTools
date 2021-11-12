@@ -2,7 +2,7 @@
 @inject CharacterViewModel Model
 @inject IGameResourcesProvider Resources
 
-<div class="row g-3">
+<div class="row">
     @if (Unit.IsPet) {
     <div class="col-md-4">
         <label class="form-label">Owner</label>
@@ -47,7 +47,7 @@
 </div>
 }
 
-<div class="row g-3">
+<div class="row">
     <div class="col-md-4">
         <label class="form-label">Experience</label>
         <input class="form-control" type="number" @bind="@Character.Progression.Experience" />
@@ -85,7 +85,7 @@
 </div>
 
 @foreach (var cls in Character.Progression.Classes) {
-<div class="row g-3">
+<div class="row">
     <div class="col-md-4 overflow-hidden">
         <label class="form-label">@cls.TypeName</label>
     </div>
@@ -108,23 +108,31 @@
 <div class="row">
     <h3 class="col-md-12">Alignment</h3>
 </div>
-<div class="row g-3">
+<div class="row">
     <div class="col-md-3">
-        <div class="row g-3">
+        <div class="row">
             <div class="col-md-12">
                 <label class="form-label">@Character?.Alignment?.Vector?.DisplayName</label>
             </div>
         </div>
-        <div class="row g-3">
+        <div class="row">
             <div class="col-md-12">
                 <label class="form-label">Alignment X-Axis</label>
                 <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentX" />
             </div>
         </div>
-        <div class="row g-3">
+        <div class="row">
             <div class="col-md-12">
                 <label class="form-label">Alignment Y-Axis</label>
                 <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentY" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-secondary" disabled="@(!(Character.Alignment.History?.Any() ?? false))" @onclick="() => EditAlignmentHistoryAsync()">
+                    <span class="oi oi-pencil"></span>
+                    Edit history
+                </button>
             </div>
         </div>
     </div>
@@ -133,6 +141,52 @@
         <img class="alignment-dot" src="/images/alignment-dot.png" style="left: @(AlignmentX)px; top: @(AlignmentY)px" />
     </div>
 </div>
+
+<Modal @ref="modalEditAlignmentHistory">
+    <Title>Edit alignment history</Title>
+    <Body>
+        @if (Character.Alignment?.History?.Count > 0) {
+            <div class="row form-list-header">
+                <div class="col-md-3">
+                    Direction
+                </div>
+                <div class="col-md-3">
+                    Provider
+                </div>
+                <div class="col-md-3">
+                    Position
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntries()">
+                        <span class="oi oi-trash"></span>
+                        All
+                    </button>
+                </div>
+            </div>
+            foreach (var alignment in Character.Alignment.History) {
+                <div class="row">
+                    <div class="col-md-3">
+                        @alignment.Direction.AsDisplayable()
+                    </div>
+                    <div class="col-md-3">
+                        @alignment.ProviderDisplayName
+                    </div>
+                    <div class="col-md-3">
+                        @alignment.Vector.X, @(alignment.Vector.Y*-1)
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntry(alignment)">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditAlignmentHistory.CloseAsync()">Done</button>
+    </Footer>
+</Modal>
 
 @code {
     [Parameter]
@@ -147,6 +201,22 @@
     private int AlignmentY => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0) *-1 + 100 + OffsetY;
     private int EditAlignmentX { get => Unit?.Descriptor?.Alignment?.Vector?.X ?? 0; set => Unit.Descriptor.Alignment.Vector.X = value; }
     private int EditAlignmentY { get => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0)*-1; set => Unit.Descriptor.Alignment.Vector.Y = value*-1; }
+
+    private Modal modalEditAlignmentHistory;
+    private async Task EditAlignmentHistoryAsync()
+    {
+        await modalEditAlignmentHistory.OpenAsync();
+    }
+
+    private void RemoveAlignmentEntry(AlignmentHistoryModel entry)
+    {
+        Character.Alignment.History.Remove(entry);
+    }
+
+    private void RemoveAlignmentEntries()
+    {
+        Character.Alignment.History.Clear();
+    }
 
     private void DowngradeClass(ClassModel cls)
     {

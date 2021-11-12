@@ -37,6 +37,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string GetNameOrBlueprint(string blueprint)
         {
+            if (string.IsNullOrEmpty(blueprint)) return blueprint;
             return TryGetName(blueprint, out var name) ? name : blueprint;
         }
 

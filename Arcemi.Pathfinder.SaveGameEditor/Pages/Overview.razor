@@ -82,8 +82,9 @@ else {
 </div>
 <div class="row g-3">
     <div class="col-md-3">
-        <label class="form-label">Auto Crusade</label>
-        <input type="checkbox" class="form-control" @bind="OptionAutoCrusade" />
+        <Switch @bind-IsChecked="OptionAutoCrusade">
+            <Label>Auto Crusade</Label>
+        </Switch>
     </div>
 </div>
 

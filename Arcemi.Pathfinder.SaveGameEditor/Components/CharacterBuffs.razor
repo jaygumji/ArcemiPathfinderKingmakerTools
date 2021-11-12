@@ -25,7 +25,7 @@
         <label class="form-label">@buff.DisplayName</label>
     </div>
     <div class="col-md-2">
-        <input type="checkbox" class="form-control" @bind="buff.IsActive" />
+        <Switch @bind-IsChecked="buff.IsActive" />
     </div>
     <div class="col-md-2">
         <label class="form-label">@buff.Components.Count</label>
