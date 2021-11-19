@@ -3,6 +3,16 @@
 
 <p class="alert alert-warning">Be very careful if you are considering to change any of these values.
     They may very well break the save game for you.</p>
+
+<div class="row top-toolbar">
+    <div class="col-md-6 btn-group">
+        <label class="btn btn-info" for="search-state-flags">
+            <span class="oi oi-magnifying-glass"></span>
+        </label>
+        <input id="search-state-flags" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
+    </div>
+</div>
+
 <Modal @ref="modalAddFlag">
     <Title>Add new flag</Title>
     <Body>
@@ -50,7 +60,7 @@
         </button>
     </div>
 </div>
-@foreach (var flag in Model.Player.UnlockableFlags.Items.OrderBy(f => f.DisplayName)) {
+@foreach (var flag in Flags) {
 <div class="row">
     <div class="col-md-6">
         <label class="form-label">@flag.DisplayName</label>
@@ -68,16 +78,36 @@
 }
 
 @code {
-    private List<IBlueprint> AddableFlags;
     private Modal modalAddFlag;
     private string SelectedFlag;
+    private string SearchTerm;
+
+    private List<KeyValuePairModel<int>> OrderedBase;
+    private HashSet<string> FlagCheck;
+    private IEnumerable<IBlueprint> AddableFlags => Model.Resources.Blueprints.GetEntries(BlueprintTypes.UnlockableFlag)
+        .Where(b => !FlagCheck.Contains(b.Id))
+        .OrderBy(b => b.DisplayName, StringComparer.Ordinal);
+
+    private IEnumerable<KeyValuePairModel<int>> Flags
+    {
+        get {
+            if (string.IsNullOrEmpty(SearchTerm)) {
+                return OrderedBase;
+            }
+            return OrderedBase.Where(e => e.DisplayName?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ?? false);
+        }
+    }
 
     protected override void OnInitialized()
     {
         if (Model.CanEdit) {
-            AddableFlags = Model.Resources.Blueprints.GetEntries(BlueprintTypes.UnlockableFlag)
-                .Where(b => !Model.Player.UnlockableFlags.Items.Any(i => string.Equals(i.Key, b.Id)))
-                .OrderBy(b => b.DisplayName)
+            FlagCheck = new HashSet<string>(StringComparer.Ordinal);
+            OrderedBase = Model.Player.UnlockableFlags.Items
+                .OrderBy(f => f.DisplayName, StringComparer.Ordinal)
+                .Select(f => {
+                    FlagCheck.Add(f.Key);
+                    return f;
+                })
                 .ToList();
         }
     }
@@ -85,19 +115,19 @@
     private async Task AddFlagAsync()
     {
         var blueprint = Model.Resources.Blueprints.Get(SelectedFlag);
-        AddableFlags.Remove(blueprint);
         var flag = Model.Player.UnlockableFlags.Items.Add();
         flag.Key = SelectedFlag;
         flag.Value = 0;
+        FlagCheck.Add(SelectedFlag);
+        OrderedBase.Add(flag);
+        OrderedBase.Sort((l, r) => l.DisplayName.CompareTo(r.DisplayName));
         await modalAddFlag.CloseAsync();
     }
 
     private void RemoveFlag(KeyValuePairModel<int> flag)
     {
-        if (Model.Resources.Blueprints.TryGet(flag.Key, out var blueprint)) {
-            AddableFlags.Add(blueprint);
-            AddableFlags.Sort((l, r) => l.DisplayName?.CompareTo(r.DisplayName) ?? -1);
-        }
+        FlagCheck.Remove(flag.Key);
+        OrderedBase.Remove(flag);
         Model.Player.UnlockableFlags.Items.Remove(flag);
     }
 }

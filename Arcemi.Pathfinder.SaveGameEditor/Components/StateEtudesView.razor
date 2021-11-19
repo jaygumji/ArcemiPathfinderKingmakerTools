@@ -207,6 +207,8 @@ else {
         etudeState.Key = SelectedEtude;
         etudeState.Value = EtudeStates.Started;
         EtudeCheck.Add(SelectedEtude);
+        OrderedBase.Add(etudeState);
+        OrderedBase.Sort((l, r) => l.DisplayName.CompareTo(r.DisplayName));
 
         await modalAddEtude.CloseAsync();
 
