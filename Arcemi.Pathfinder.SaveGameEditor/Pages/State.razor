@@ -14,10 +14,17 @@ else {
             <StateVendorsView />
         </Content>
     </Tab>
-    @if (Model.Player.UnlockableFlags?.Items?.Count > 0) {
+    @if (Model.Player.UnlockableFlags?.Items != null) {
     <Tab Name="Flags">
         <Content>
             <StateFlagsView />
+        </Content>
+    </Tab>
+    }
+    @if (Model.Player.EtudesSystem != null) {
+    <Tab Name="Etudes">
+        <Content>
+            <StateEtudesView />
         </Content>
     </Tab>
     }

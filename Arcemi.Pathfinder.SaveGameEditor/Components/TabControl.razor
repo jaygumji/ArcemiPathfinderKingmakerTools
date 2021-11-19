@@ -12,7 +12,9 @@
     <div class="tab-content">
         @foreach (var tab in Tabs) {
             <div class="tab-pane @(tab.Index == CurrentIndex ? "show active" : "fade")">
-                @tab.Content
+                @if (tab.Index == CurrentIndex) {
+                    @tab.Content
+                }
             </div>
         }
     </div>

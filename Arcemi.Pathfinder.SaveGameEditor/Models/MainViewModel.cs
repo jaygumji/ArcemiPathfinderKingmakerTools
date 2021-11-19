@@ -174,8 +174,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                     var history = character.Descriptor.Alignment.History.LastOrDefault();
                     if (!string.Equals(vector.Value, history?.Position, StringComparison.Ordinal)) {
                         history = character.Descriptor.Alignment.History.Add();
-                        history.Position = vector.Value;
-                        history.Direction = vector.Direction;
+                        history.Vector.X = vector.X;
+                        history.Vector.Y = vector.Y;
+                        history.Direction = vector.DirectionText;
                         history.Provider = null;
                     }
                 }

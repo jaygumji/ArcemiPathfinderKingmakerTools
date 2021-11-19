@@ -451,6 +451,18 @@ ul.portraits li span {
 .top-toolbar {
   margin-bottom: 20px;
 }
+.character-alignment-grid > div {
+  border-bottom: dotted 1px lightgray;
+}
+.character-alignment-grid > div > div {
+  border-right: dotted 1px lightgray;
+}
+.character-alignment-grid > div > div:nth-child(3) {
+  border-right: solid 1px black;
+}
+.character-alignment-grid > div:nth-child(3) {
+  border-bottom: solid 1px black;
+}
 #blazor-error-ui {
   background: lightyellow;
   bottom: 0;

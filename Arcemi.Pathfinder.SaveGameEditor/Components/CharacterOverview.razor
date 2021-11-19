@@ -106,7 +106,14 @@
 }
 
 <div class="row">
-    <h3 class="col-md-12">Alignment</h3>
+    <div class="col-md-12">
+        <h3>
+            Alignment
+            <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                You will not be considered the alignment you have set unless you are allowed to have the alignment.
+            </Help>
+        </h3>
+    </div>
 </div>
 <div class="row">
     <div class="col-md-3">
@@ -140,6 +147,146 @@
         <img class="alignment-map" src="/images/alignment-map.png" alt="Alignment" />
         <img class="alignment-dot" src="/images/alignment-dot.png" style="left: @(AlignmentX)px; top: @(AlignmentY)px" />
     </div>
+</div>
+@if (!IsAlignmentAllowed) {
+    <p class="alert alert-danger">
+        Your alignment is not allowed. Change your alignment or change the alignment mask to allow it.
+        You will not see your new alignment in game until you update this.
+    </p>
+}
+<div class="row">
+    <div class="col-md-12">
+        <h3>
+            Alignment mask
+            <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                This is the alignments you are allowed to have.
+            </Help>
+        </h3>
+    </div>
+</div>
+<div class="character-alignment-grid">
+<div class="row">
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-LawfulGood" class="form-label-centered">Lawful Good</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-LawfulGood" @bind-IsChecked="AlignmentMask.IsLawfulGoodAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-NeutralGood" class="form-label-centered">Neutral Good</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-NeutralGood" @bind-IsChecked="AlignmentMask.IsNeutralGoodAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-ChaoticGood" class="form-label-centered">Chaotic Good</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-ChaoticGood" @bind-IsChecked="AlignmentMask.IsChaoticGoodAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-Good" class="form-label-centered">Good</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-Good" @bind-IsChecked="AlignmentMask.IsGoodAllowed" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-LawfulNeutral" class="form-label-centered">Lawful Neutral</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-LawfulNeutral" @bind-IsChecked="AlignmentMask.IsLawfulNeutralAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-TrueNeutral" class="form-label-centered">True Neutral</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-TrueNeutral" @bind-IsChecked="AlignmentMask.IsTrueNeutralAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-ChaoticNeutral" class="form-label-centered">Chaotic Neutral</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-ChaoticNeutral" @bind-IsChecked="AlignmentMask.IsChaoticNeutralAllowed" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-LawfulEvil" class="form-label-centered">Lawful Evil</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-LawfulEvil" @bind-IsChecked="AlignmentMask.IsLawfulEvilAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-NeutralEvil" class="form-label-centered">Neutral Evil</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-NeutralEvil" @bind-IsChecked="AlignmentMask.IsNeutralEvilAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-ChaoticEvil" class="form-label-centered">Chaotic Evil</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-ChaoticEvil" @bind-IsChecked="AlignmentMask.IsChaoticEvilAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-Evil" class="form-label-centered">Evil</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-Evil" @bind-IsChecked="AlignmentMask.IsEvilAllowed" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-Lawful" class="form-label-centered">Lawful</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-Lawful" @bind-IsChecked="AlignmentMask.IsLawfulAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-Chaotic" class="form-label-centered">Chaotic</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-Chaotic" @bind-IsChecked="AlignmentMask.IsChaoticAllowed" />
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <label for="alignment-Any" class="form-label-centered">Any</label>
+        </div>
+        <div class="text-center">
+            <Switch Id="alignment-Any" @bind-IsChecked="AlignmentMask.IsAnyAllowed" />
+        </div>
+    </div>
+</div>
 </div>
 
 <Modal @ref="modalEditAlignmentHistory">
@@ -201,6 +348,24 @@
     private int AlignmentY => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0) *-1 + 100 + OffsetY;
     private int EditAlignmentX { get => Unit?.Descriptor?.Alignment?.Vector?.X ?? 0; set => Unit.Descriptor.Alignment.Vector.X = value; }
     private int EditAlignmentY { get => (Unit?.Descriptor?.Alignment?.Vector?.Y ?? 0)*-1; set => Unit.Descriptor.Alignment.Vector.Y = value*-1; }
+
+    private AlignmentMaskView AlignmentMask;
+    private bool IsAlignmentAllowed => AlignmentMask.IsAlignmentAllowed(Character.Alignment.Vector.Direction);
+
+    protected override void OnInitialized()
+    {
+        AlignmentMask = new AlignmentMaskView();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Model.CanEdit) {
+            AlignmentMask.Set(Character.Alignment?.LockedAlignmentMask);
+        }
+        else {
+            AlignmentMask.Set(Alignment.Any);
+        }
+    }
 
     private Modal modalEditAlignmentHistory;
     private async Task EditAlignmentHistoryAsync()

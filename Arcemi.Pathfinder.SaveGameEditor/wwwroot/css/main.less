@@ -530,9 +530,23 @@ ul.portraits {
     }
 }
 
-.top-toolbar
-{
+.top-toolbar {
     margin-bottom: 20px;
+}
+
+.character-alignment-grid {
+    > div {
+        border-bottom: dotted 1px lightgray;
+        > div {
+            border-right: dotted 1px lightgray;
+        }
+        > div:nth-child(3) {
+            border-right: solid 1px black;
+        }
+    }
+    > div:nth-child(3) {
+        border-bottom: solid 1px black;
+    }
 }
 
 #blazor-error-ui {

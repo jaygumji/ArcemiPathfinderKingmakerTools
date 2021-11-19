@@ -29,6 +29,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             if (string.Equals(type, AbilityFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new AbilityFactItemModel(accessor);
             }
+            if (string.Equals(type, EtudeFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
+                return new EtudeFactItemModel(accessor);
+            }
             return new FactItemModel(accessor);
         }
 
