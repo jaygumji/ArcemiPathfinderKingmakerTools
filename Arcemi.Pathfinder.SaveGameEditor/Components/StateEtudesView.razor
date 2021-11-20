@@ -1,8 +1,10 @@
 ﻿@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals
 @inject MainViewModel Model
 
-<p class="alert alert-warning">Be very careful if you are considering to change any of these values.
-    They may very well break the save game for you.</p>
+<p class="alert alert-warning">
+    Experimental. Do not play around with this unless you know what you're doing
+    or feel like experimenting with safe backups.
+</p>
 
 @if (OrderedBase == null) {
     <div class="d-flex justify-content-center">
