@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Pathfinder.Kingmaker
@@ -12,7 +13,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             //var unknownUri = AppData.Portraits.GetUnknownUri();
             //var unmappedPortraits = Blueprints.GetEntries(BlueprintTypes.Portrait)
-            //    .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) >= 0)
+            //    .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) < 0)
             //    .Where(e => !AppData.Portraits.Available.Any(p => string.Equals(p.Key, e.Id, StringComparison.Ordinal)))
             //    .Select(e => new Portrait(e.Id, unknownUri, PortraitCategory.Unmapped, name: e.DisplayName))
             //    .ToArray();

@@ -2,13 +2,14 @@
 
 @if (LearnedSpells?.Count > 0) {
     for (var i = 0; i < LearnedSpells.Count; i++){
-        var arr = LearnedSpells[i];
+        var thisLevel = i;
+        var arr = LearnedSpells[thisLevel];
         <div class="row">
             <div class="col-md-6">
-                <h4>Level @i</h4>
+                <h4>Level @thisLevel</h4>
             </div>
             <div class="col-md-1">
-                <button class="btn btn-sm btn-info btn-h4" @onclick="() => modalAddSpell.OpenAsync()">
+                <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddSpellAsync(thisLevel)">
                     <span class="oi oi-plus"></span>
                 </button>
             </div>
@@ -101,6 +102,12 @@
     private void SelectAddSpellBlueprint(IBlueprint blueprint)
     {
         AddSpellBlueprint = blueprint.Id;
+    }
+
+    private async Task OpenAddSpellAsync(int level)
+    {
+        AddSpellLevel = level;
+        await modalAddSpell.OpenAsync();
     }
 
     private async Task AddSpellAsync()
