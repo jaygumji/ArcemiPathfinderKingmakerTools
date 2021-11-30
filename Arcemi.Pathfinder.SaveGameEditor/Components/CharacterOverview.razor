@@ -97,7 +97,7 @@
     </div>
     <div class="col-md-2">
         @if (!cls.IsMythicChampion) {
-        <button class="btn btn-sm btn-warning" disabled="@(cls.Level <= 1)" @onclick="() => DowngradeClass(cls)">
+        <button class="btn btn-sm btn-warning" disabled="@(!LevelManipulator.CanDowngrade(cls))" @onclick="() => DowngradeClass(cls)">
             <span class="oi oi-arrow-thick-bottom"></span>
         </button>
         }
@@ -341,6 +341,7 @@
 
     private CharacterModel Character => Unit?.Descriptor;
     private CompanionPartItemModel CompanionPart => Unit?.Parts?.Items?.OfType<CompanionPartItemModel>()?.FirstOrDefault();
+    private CharacterLevelManipulator LevelManipulator;
 
     private const int OffsetX = 20;
     private const int OffsetY = 6;
@@ -359,6 +360,7 @@
 
     protected override void OnParametersSet()
     {
+        LevelManipulator = new CharacterLevelManipulator(Unit, Resources);
         if (Model.CanEdit) {
             AlignmentMask.Set(Character.Alignment?.LockedAlignmentMask);
         }
@@ -385,6 +387,6 @@
 
     private void DowngradeClass(ClassModel cls)
     {
-        Model.DowngradeClass(Unit, cls);
+        LevelManipulator.DowngradeClass(cls);
     }
 }
