@@ -10,6 +10,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Type { get => A.Value<string>("$type"); set => A.Value(value, "$type"); }
         public FactContextModel Context { get => A.Object("m_Context", a => new FactContextModel(a)); }
         public DictionaryAccessor<ComponentModel> Components => A.Dictionary(factory: a => new ComponentModel(a), createIfNull: true);
+        public ParentContextModel ParentContext => A.Object(factory: a => new ParentContextModel(a), createIfNull: true);
 
         public static FactItemModel Factory(ModelDataAccessor accessor)
         {

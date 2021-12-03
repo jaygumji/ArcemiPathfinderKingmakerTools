@@ -72,6 +72,9 @@
     [Parameter]
     public InventoryModel Inventory { get; set; }
 
+    [Parameter]
+    public EventCallback<ItemModel> OnItemAdded { get; set; }
+
     private IEnumerable<IBlueprint> SearchableItems => AddBlueprintItemType.HasValue()
         ? Resources.Blueprints.GetEntries(AddBlueprintItemType).OrderBy(x => x.DisplayName)
         : BlueprintType.AddableItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).OrderBy(x => x.DisplayName);
@@ -99,8 +102,9 @@
             : Resources.Blueprints.Get(AddBlueprintItemBlueprint).Type.FullName;
         var type = BlueprintType.GetItemType(typeStr);
 
-        Inventory.AddItem(type, AddBlueprintItemBlueprint);
+        var item = Inventory.AddItem(type, AddBlueprintItemBlueprint);
         await addBlueprintItemModal.CloseAsync();
         AddBlueprintItemType = null;
+        await OnItemAdded.InvokeAsync(item);
     }
 }

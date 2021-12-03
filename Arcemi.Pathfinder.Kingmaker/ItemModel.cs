@@ -8,7 +8,7 @@ using System;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class WeaponItemModel : ItemModel, IEnchantmentLevelItemModel
+    public class WeaponItemModel : ItemModel, IEnchantableItemModel
     {
         public const string TypeRef = "Kingmaker.Items.ItemEntityWeapon, Assembly-CSharp";
         public WeaponItemModel(ModelDataAccessor accessor) : base(accessor)
@@ -17,11 +17,11 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public int EnchantmentLevel
         {
-            get => Enchantments.WeaponLevel.GetLevelFrom(Facts.Items);
-            set => Enchantments.WeaponLevel.SetLevelOn(Facts.Items, value);
+            get => Enchantments.Weapon.Level.GetLevelFrom(Facts.Items);
+            set => Enchantments.Weapon.Level.SetLevelOn(Facts.Items, value);
         }
 
-        public int MaxEnchantmentLevel => Enchantments.WeaponLevel.Levels.Count;
+        public int MaxEnchantmentLevel => Enchantments.Weapon.Level.Levels.Count;
     }
 
     public class UsableItemModel : ItemModel
@@ -32,7 +32,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
     }
 
-    public class ShieldItemModel : ItemModel, IEnchantmentLevelItemModel
+    public class ShieldItemModel : ItemModel, IEnchantableItemModel
     {
         public const string TypeRef = "Kingmaker.Items.ItemEntityShield, Assembly-CSharp";
         public ShieldItemModel(ModelDataAccessor accessor) : base(accessor)
@@ -40,17 +40,18 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public ArmorComponentModel ArmorComponent => A.Object(factory: a => new ArmorComponentModel(a));
+        FactsContainerModel IEnchantableItemModel.Facts => ArmorComponent.Facts;
 
         public int EnchantmentLevel
         {
-            get => Enchantments.ShieldLevel.GetLevelFrom(ArmorComponent.Facts.Items);
-            set => Enchantments.ShieldLevel.SetLevelOn(ArmorComponent.Facts.Items, value);
+            get => Enchantments.Shield.Level.GetLevelFrom(ArmorComponent.Facts.Items);
+            set => Enchantments.Shield.Level.SetLevelOn(ArmorComponent.Facts.Items, value);
         }
 
-        public int MaxEnchantmentLevel => Enchantments.ArmorLevel.Levels.Count;
+        public int MaxEnchantmentLevel => Enchantments.Shield.Level.Levels.Count;
     }
 
-    public class ArmorItemModel : ItemModel, IEnchantmentLevelItemModel
+    public class ArmorItemModel : ItemModel, IEnchantableItemModel
     {
         public const string TypeRef = "Kingmaker.Items.ItemEntityArmor, Assembly-CSharp";
         public ArmorItemModel(ModelDataAccessor accessor) : base(accessor)
@@ -59,11 +60,11 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public int EnchantmentLevel
         {
-            get => Enchantments.ArmorLevel.GetLevelFrom(Facts.Items);
-            set => Enchantments.ArmorLevel.SetLevelOn(Facts.Items, value);
+            get => Enchantments.Armor.Level.GetLevelFrom(Facts.Items);
+            set => Enchantments.Armor.Level.SetLevelOn(Facts.Items, value);
         }
 
-        public int MaxEnchantmentLevel => Enchantments.ArmorLevel.Levels.Count;
+        public int MaxEnchantmentLevel => Enchantments.Armor.Level.Levels.Count;
     }
 
     public class SimpleItemModel : ItemModel

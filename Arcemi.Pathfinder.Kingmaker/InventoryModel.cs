@@ -25,7 +25,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         //        rawData.Type, rawData.Blueprint, this, list));
         //}
 
-        public void AddItem(ItemType itemType, string blueprint)
+        public ItemModel AddItem(ItemType itemType, string blueprint)
         {
             var list = A.List<ItemModel>("m_Items");
             var item = list.Add((refs, jObj) => ItemModel.Prepare(this, refs, jObj, itemType));
@@ -42,6 +42,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             //        }
             //        break;
             //}
+            return item;
         }
 
         public ItemModel Duplicate(ItemModel item)

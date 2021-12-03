@@ -46,6 +46,9 @@
     [Parameter]
     public InventoryModel Inventory { get; set; }
 
+    [Parameter]
+    public EventCallback<ItemModel> OnItemAdded { get; set; }
+
     private static bool IsDisabledType(ItemType? itemType)
     {
         if (itemType == null) return true;
@@ -59,9 +62,10 @@
 
     private async Task AddItemAsync()
     {
-        Inventory.AddItem(AddItemType.Value, AddItemBlueprint);
+        var item = Inventory.AddItem(AddItemType.Value, AddItemBlueprint);
         await addItemModal.CloseAsync();
         AddItemType = null;
         AddItemBlueprint = null;
+        await OnItemAdded.InvokeAsync(item);
     }
 }

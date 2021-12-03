@@ -15,7 +15,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <ul class="search-result">
+        <ul class="search-result @GeneratedClasses">
             @foreach (var item in FilteredItems) {
                 <li class="@(item.Equals(Current) ? "toggled" : "")" @onclick="() => SelectAsync(item)">
                     @ResultItemTemplate.Invoke(item)
@@ -28,6 +28,9 @@
 @code {
     [Parameter]
     public string HeaderText { get; set; }
+
+    [Parameter]
+    public ElementSize Height { get; set; } = ElementSize.Medium;
 
     [Parameter]
     public IEnumerable<TItem> Items { get; set; }
@@ -43,6 +46,19 @@
 
     public string Term { get; private set; }
     public TItem Current { get; private set; }
+
+    private string GeneratedClasses
+    {
+        get {
+            if (Height == ElementSize.Small) {
+                return "sm";
+            }
+            else if (Height == ElementSize.ExtraLarge) {
+                return "xl";
+            }
+            return "";
+        }
+    }
 
     private IEnumerable<TItem> FilteredItems => Term.HasValue()
         ? Items.Where(x => ItemSearchable(x).ILike(Term)).Take(100)

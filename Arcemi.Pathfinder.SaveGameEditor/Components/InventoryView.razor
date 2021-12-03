@@ -14,10 +14,10 @@ else {
             <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
         </div>
         @if (Resources.Blueprints.GetEntries(BlueprintTypes.Item).Count == 0) {
-            <InventoryAddItemFallback Inventory="Inventory" />
-    }
+            <InventoryAddItemFallback Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
+        }
         else {
-            <InventoryAddItem Inventory="Inventory" />
+            <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
         }
     </div>
 
@@ -95,6 +95,52 @@ else {
                     <input class="form-control" type="number" min="0" max="@ItemEnchantable.MaxEnchantmentLevel" @bind="ItemEnchantable.EnchantmentLevel" />
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>
+                        Current
+                        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                            You will only be able to remove enchantments that have been mapped.
+                        </Help>
+                    </h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @foreach (var fact in ItemEnchantable.Facts.Items.OfType<EnchantmentFactItemModel>().Where(f => !f.IsLevel)) {
+                        <span class="badge badge-secondary m-1">
+                            @fact.DisplayName
+                            @if (!fact.IsMapped) {
+                                <button class="btn btn-sm btn-secondary" @onclick="() => CopyEnchantmentData(fact)">
+                                    <span class="oi oi-paperclip"></span>
+                                </button>
+                            }
+                            <button class="btn btn-sm btn-secondary" @onclick="() => RemoveEnchantmentFact(fact)">
+                                &times;
+                            </button>
+                        </span>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>
+                        Add new
+                        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                            You will only be able to add enchantments that are mapped by the editor.
+                        </Help>
+                    </h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <Search TItem="EnchantmentSpec" Items="MappedEnchantments.Where(i => !ItemEnchantable.HasEnchantment(i))" ItemSearchable="b => b.Name" Context="item" OnSelect="a => ItemEnchantable.AddEnchantmentFact(a.Item)" Height="ElementSize.Small">
+                        <ResultItemTemplate>
+                            @item.Name
+                        </ResultItemTemplate>
+                    </Search>
+                </div>
+            </div>
         }
         @if (Item?.ItemType == ItemType.Usable) {
             <div class="row"><h3 class="col-md-12">Crafted item</h3></div>
@@ -148,7 +194,8 @@ else {
     private Modal modalEditItem;
     private ItemModel Item;
     private CraftedPartItemModel ItemCrafted;
-    private IEnchantmentLevelItemModel ItemEnchantable;
+    private IEnchantableItemModel ItemEnchantable;
+    private IReadOnlyList<EnchantmentSpec> MappedEnchantments;
 
     private string GetItemTypeIconUrl(ItemModel item)
     {
@@ -187,14 +234,27 @@ else {
 
     private bool CanEdit(ItemModel item)
     {
-        return item.ItemType == ItemType.Usable; // || item is IEnchantmentLevelItemModel;
+        return item.ItemType == ItemType.Usable
+            || item.ItemType == ItemType.Weapon
+            || item.ItemType == ItemType.Armor
+            //|| item.ItemType == ItemType.Shield
+            ;
     }
 
     private async Task StartEditItemAsync(ItemModel item)
     {
         Item = item;
         ItemCrafted = item.Parts.Items.OfType<CraftedPartItemModel>().FirstOrDefault();
-        ItemEnchantable = item as IEnchantmentLevelItemModel;
+        ItemEnchantable = item as IEnchantableItemModel;
+        if (item is WeaponItemModel) {
+            MappedEnchantments = Enchantments.Weapon.All;
+        }
+        else if (item is ArmorItemModel) {
+            MappedEnchantments = Enchantments.Armor.All;
+        }
+        else if (item is ShieldItemModel) {
+            MappedEnchantments = Enchantments.Shield.All;
+        }
         await modalEditItem.OpenAsync();
     }
 
@@ -233,6 +293,14 @@ else {
         ElectronNET.API.Electron.Clipboard.WriteText(i.Blueprint);
     }
 
+    private void CopyEnchantmentData(EnchantmentFactItemModel fact)
+    {
+        ElectronNET.API.Electron.Clipboard.WriteText(string.Concat(
+            fact.DisplayName, Environment.NewLine,
+            fact.Blueprint, Environment.NewLine,
+            string.Join(Environment.NewLine, fact.Components.Keys)));
+    }
+
     private int CalculateScore(ItemModel i)
     {
         var t = SearchTerm;
@@ -255,5 +323,10 @@ else {
     private void Duplicate(ItemModel item)
     {
         Inventory.Duplicate(item);
+    }
+
+    private void RemoveEnchantmentFact(EnchantmentFactItemModel fact)
+    {
+        ItemEnchantable.Facts.Items.Remove(fact);
     }
 }

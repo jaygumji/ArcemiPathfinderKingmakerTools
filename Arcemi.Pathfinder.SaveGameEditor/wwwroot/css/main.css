@@ -364,6 +364,9 @@ ul.search-result {
   overflow-y: auto !important;
   max-height: 350px;
 }
+ul.search-result.sm {
+  max-height: 200px;
+}
 ul.search-result li.toggled {
   box-shadow: 1px 1px inset;
   background-color: #eef;
