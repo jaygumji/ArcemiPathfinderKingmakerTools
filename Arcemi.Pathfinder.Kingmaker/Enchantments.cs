@@ -18,7 +18,8 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public static bool IsMapped(string blueprint)
         {
-            return Weapon.All.Any(e => e.Blueprint.Eq(blueprint));
+            return Weapon.All.Any(e => e.Blueprint.Eq(blueprint))
+                || Armor.All.Any(e => e.Blueprint.Eq(blueprint));
         }
 
         public static class Weapon
@@ -198,6 +199,15 @@ namespace Arcemi.Pathfinder.Kingmaker
             );
         }
 
+        public static class Equipment
+        {
+            public static class Components
+            {
+                public const string StatBonus = "$AddStatBonusEquipment$666b4f87-5f4e-4833-a7c8-0b087b41efdf";
+            }
+            public static EnchantmentSpec Constitution4 { get; } = new EnchantmentSpec("Constitution 4", "4b9573fa2b0e74043a4682740e9ae138", Components.StatBonus);
+        }
+
         public static class Armor
         {
             public static class Components
@@ -213,11 +223,88 @@ namespace Arcemi.Pathfinder.Kingmaker
                 public const string Stats3 = "$AdvanceArmorStats$f787b7e4-5fef-434f-bdb5-64c67478736b";
                 public const string Stats4 = "$AdvanceArmorStats$8655dc3a-fe68-48d3-9b07-19d000a169e1";
                 public const string Stats5 = "$AdvanceArmorStats$8de57ec6-0c32-4f18-b2cc-60c0507b35a6";
+
+                public const string Mithral = "$MithralEnchantment$454f5e24-f45a-413b-a43c-4d43e97a5f3a";
+                public const string MithralStats = "$AdvanceArmorStats$d1822197-d530-4b06-ad17-4d0d00d814dc";
+                public const string FactEquipment = "$AddFactEquipment$f68e9844-d2e9-45b8-a1ce-46e0ee16369a";
             }
-            public static EnchantmentSpec Mithral { get; } = new EnchantmentSpec("Mithral", "7b95a819181574a4799d93939aa99aff", "$MithralEnchantment$454f5e24-f45a-413b-a43c-4d43e97a5f3a", "$AdvanceArmorStats$d1822197-d530-4b06-ad17-4d0d00d814dc");
+
+            public static EnchantmentSpec AcidResistance10 { get; } = new EnchantmentSpec("Acid Resistance 10", "dd0e096412423d646929d9b945fd6d4c", Components.FactEquipment);
+            public static EnchantmentSpec AcidResistance15 { get; } = new EnchantmentSpec("Acid Resistance 15", "09e0be00530efec4693a913d6a7efe23", Components.FactEquipment);
+            public static EnchantmentSpec AcidResistance20 { get; } = new EnchantmentSpec("Acid Resistance 20", "1346633e0ff138148a9a925e330314b5", Components.FactEquipment);
+            public static EnchantmentSpec AcidResistance30 { get; } = new EnchantmentSpec("Acid Resistance 30", "e6fa2f59c7f1bb14ebfc429f17d0a4c6", Components.FactEquipment);
+            public static EnchantmentSpec AdamantineArmorHeavy { get; } = new EnchantmentSpec("Adamantine Armor Heavy", "933456ff83c454146a8bf434e39b1f93", Components.FactEquipment, "$AdvanceArmorStats$f7609921-9ca8-4eeb-b32e-b7e45ebb9e9a");
+            public static EnchantmentSpec AdamantineArmorLight { get; } = new EnchantmentSpec("Adamantine Armor Light", "5faa3aaee432ac444b101de2b7b0faf7", Components.FactEquipment, "$AdvanceArmorStats$a478b692-b697-493f-a9c2-6cc0c8cc640b");
+            public static EnchantmentSpec AdamantineArmorMedium { get; } = new EnchantmentSpec("Adamantine Armor Medium", "aa25531ab5bb58941945662aa47b73e7", Components.FactEquipment, "$AdvanceArmorStats$e251b65b-f190-4424-8ac8-332666d32b3f");
+            public static EnchantmentSpec AntiToxin { get; } = new EnchantmentSpec("Anti Toxin", "30c370f2385b56045814e2f37b34cc96", Components.FactEquipment);
+            public static EnchantmentSpec ArrowCatcher { get; } = new EnchantmentSpec("Arrow Catcher", "2940acde07f54421b8bd137dc7b2a6fa", "$AddUnitFactEquipment$471000aa-2255-4bae-ac09-62afebca8290");
+            public static EnchantmentSpec ColdResistance10 { get; } = new EnchantmentSpec("Cold Resistance 10", "c872314ecfab32949ad2e0eebd834919", Components.FactEquipment);
+            public static EnchantmentSpec ColdResistance15 { get; } = new EnchantmentSpec("Cold Resistance 15", "581c22e55f03e4e4f9f9ea619d89af5f", Components.FactEquipment);
+            public static EnchantmentSpec ColdResistance20 { get; } = new EnchantmentSpec("Cold Resistance 20", "510d87d2a949587469882061ee186522", Components.FactEquipment);
+            public static EnchantmentSpec ColdResistance30 { get; } = new EnchantmentSpec("Cold Resistance 30", "7ef70c319ca74fe4cb5eddea792bb353", Components.FactEquipment);
+            public static EnchantmentSpec ElectricityResistance10 { get; } = new EnchantmentSpec("Electricity Resistance 10", "1e4dcaf8ffa56c24788e392dae886166", Components.FactEquipment);
+            public static EnchantmentSpec ElectricityResistance15 { get; } = new EnchantmentSpec("Electricity Resistance 15", "2ed92b92b5381ef488282eb506170322", Components.FactEquipment);
+            public static EnchantmentSpec ElectricityResistance20 { get; } = new EnchantmentSpec("Electricity Resistance 20", "fcfd9515adbd07a43b490280c06203f9", Components.FactEquipment);
+            public static EnchantmentSpec ElectricityResistance30 { get; } = new EnchantmentSpec("Electricity Resistance 30", "26b91513989a653458986fabce24ba95", Components.FactEquipment);
+            public static EnchantmentSpec EnergyResistance10n10 { get; } = new EnchantmentSpec("Energy Resistance 10neg 10pos", "bc67a01b94164ea4a843028edfcbab01", Components.FactEquipment);
+            public static EnchantmentSpec FireResistance10 { get; } = new EnchantmentSpec("Fire Resistance 10", "47f45701cc9545049b3745ef949d7446", Components.FactEquipment);
+            public static EnchantmentSpec FireResistance15 { get; } = new EnchantmentSpec("Fire Resistance 15", "85c2f44721922e4409130791f913d4b4", Components.FactEquipment);
+            public static EnchantmentSpec FireResistance20 { get; } = new EnchantmentSpec("Fire Resistance 20", "e7af6912cc308df4e9ee63c8824f2738", Components.FactEquipment);
+            public static EnchantmentSpec FireResistance30 { get; } = new EnchantmentSpec("Fire Resistance 30", "0e98403449de8ce4c846361c6df30d1f", Components.FactEquipment);
+            public static EnchantmentSpec Fortification25 { get; } = new EnchantmentSpec("Fortification 25", "1e69e9029c627914eb06608dad707b36", Components.FactEquipment);
+            public static EnchantmentSpec Fortification50 { get; } = new EnchantmentSpec("Fortification 50", "62ec0b22425fb424c82fd52d7f4c02a5", Components.FactEquipment);
+            public static EnchantmentSpec Fortification75 { get; } = new EnchantmentSpec("Fortification 75", "9b1538c732e06544bbd955fee570a2be", Components.FactEquipment);
+            public static EnchantmentSpec NegativeEnergyResistance10 { get; } = new EnchantmentSpec("Negative Energy Resistance 10", "34504fb2cecda144aaff34929ba10202", Components.FactEquipment);
+            public static EnchantmentSpec NegativeEnergyResistance20 { get; } = new EnchantmentSpec("Negative Energy Resistance 20", "1bd448c554f14fc44878bbc983605710", Components.FactEquipment);
+            public static EnchantmentSpec NegativeEnergyResistance30 { get; } = new EnchantmentSpec("Negative Energy Resistance 30", "27e95849860301b4ab257f72df627149", Components.FactEquipment);
+            public static EnchantmentSpec PositiveEnergyResistance30 { get; } = new EnchantmentSpec("Positive Energy Resistance 30", "80453601b93f0ef43b215087a484d517", Components.FactEquipment);
+            public static EnchantmentSpec Mithral { get; } = new EnchantmentSpec("Mithral", "7b95a819181574a4799d93939aa99aff", Components.Mithral, Components.MithralStats);
+            public static EnchantmentSpec SingingSteel { get; } = new EnchantmentSpec("Singing Steel", "451601816a45311419b77b83f253b75b", Components.Mithral, Components.MithralStats, "$AddUnitFactEquipment$5242bea5-bb52-4e35-89f6-5f6698b76ea5");
+            public static EnchantmentSpec SonicResistance10 { get; } = new EnchantmentSpec("Sonic Resistance 10", "6e2dfcafe4faf8941b1426a86a76c368", Components.FactEquipment);
+            public static EnchantmentSpec SonicResistance30 { get; } = new EnchantmentSpec("Sonic Resistance 30", "8b940da1e47fb6843aacdeac9410ec41", Components.FactEquipment);
+            public static EnchantmentSpec SpellResistance13 { get; } = new EnchantmentSpec("Spell Resistance 13", "4bc20fd0e137e1645a18f030b961ef3d", Components.FactEquipment);
+            public static EnchantmentSpec SpellResistance15 { get; } = new EnchantmentSpec("Spell Resistance 15", "ad0f81f6377180d4292a2316efb950f2", Components.FactEquipment);
+            public static EnchantmentSpec SpellResistance17 { get; } = new EnchantmentSpec("Spell Resistance 17", "49fe9e1969afd874181ed7613120c250", Components.FactEquipment);
+            public static EnchantmentSpec SpellResistance19 { get; } = new EnchantmentSpec("Spell Resistance 19", "583938eaafc820f49ad94eca1e5a98ca", Components.FactEquipment);
 
             public static IReadOnlyList<EnchantmentSpec> All { get; } = new[] {
-                Mithral
+                AcidResistance10,
+                AcidResistance15,
+                AcidResistance20,
+                AcidResistance30,
+                AdamantineArmorHeavy,
+                AdamantineArmorLight,
+                AdamantineArmorMedium,
+                AntiToxin,
+                ArrowCatcher,
+                ColdResistance10,
+                ColdResistance15,
+                ColdResistance20,
+                ColdResistance30,
+                ElectricityResistance10,
+                ElectricityResistance15,
+                ElectricityResistance20,
+                ElectricityResistance30,
+                EnergyResistance10n10,
+                FireResistance10,
+                FireResistance15,
+                FireResistance20,
+                FireResistance30,
+                Fortification25,
+                Fortification50,
+                Fortification75,
+                NegativeEnergyResistance10,
+                NegativeEnergyResistance20,
+                NegativeEnergyResistance30,
+                PositiveEnergyResistance30,
+                Mithral,
+                SingingSteel,
+                SonicResistance10,
+                SonicResistance30,
+                SpellResistance13,
+                SpellResistance15,
+                SpellResistance17,
+                SpellResistance19
             };
 
             public static EnchantmentLevel Level { get; } = new EnchantmentLevel(
