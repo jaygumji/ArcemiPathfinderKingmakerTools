@@ -4,12 +4,21 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public class AlignmentMaskView
     {
-        public AlignmentMaskView()
+        public AlignmentMaskView(Action<AlignmentMaskView> onChanged)
         {
-
+            _onChanged = onChanged;
         }
 
-        public Alignment AlignmentMask { get; private set; }
+        private Alignment _alignmentMask;
+        private readonly Action<AlignmentMaskView> _onChanged;
+
+        public Alignment AlignmentMask {
+            get => _alignmentMask;
+            private set {
+                _alignmentMask = value;
+                _onChanged?.Invoke(this);
+            }
+        }
         
         public void Set(string mask)
         {
@@ -19,6 +28,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         public void Set(Alignment mask)
         {
             AlignmentMask = mask;
+        }
+
+        public override string ToString()
+        {
+            return AlignmentMask.ToString();
         }
 
         public bool IsAlignmentAllowed(Alignment alignment)

@@ -355,7 +355,7 @@
 
     protected override void OnInitialized()
     {
-        AlignmentMask = new AlignmentMaskView();
+        AlignmentMask = new AlignmentMaskView(UpdateAlignmentMask);
     }
 
     protected override void OnParametersSet()
@@ -366,6 +366,13 @@
         }
         else {
             AlignmentMask.Set(Alignment.Any);
+        }
+    }
+
+    private void UpdateAlignmentMask(AlignmentMaskView sender)
+    {
+        if (Character?.Alignment != null) {
+            Character.Alignment.LockedAlignmentMask = sender.ToString();
         }
     }
 
