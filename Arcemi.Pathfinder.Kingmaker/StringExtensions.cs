@@ -110,5 +110,15 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             return value?.StartsWith(other, System.StringComparison.OrdinalIgnoreCase) ?? false;
         }
+
+        public static bool IEnd(this string value, string other)
+        {
+            return value?.EndsWith(other, System.StringComparison.OrdinalIgnoreCase) ?? false;
+        }
+
+        public static bool IWord(this string value, string other)
+        {
+            return value.IStart(other + " ") || value.IEnd(" " + other) || value.ILike(string.Concat(' ', other, ' '));
+        }
     }
 }

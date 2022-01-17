@@ -13,25 +13,25 @@
             if (x.Name.Original.ILike("Backgrounds")) {
                 return true;
             }
-            if (x.Name.Original.ILike("Test")) {
+            if (x.Name.DisplayName.IStart("Test ")) {
                 return true;
             }
-            if (x.Name.Original.ILike("Ability")) {
+            if (x.Name.DisplayName.IEnd(" Test")) {
                 return true;
             }
-            if (x.Name.Original.ILike("Quest")) {
+            if (x.Name.DisplayName.IWord("Ability")) {
                 return true;
             }
-            if (x.Name.Original.ILike("Staff")) {
+            if (x.Name.DisplayName.IStart("Quest ")) {
                 return true;
             }
-            if (x.Name.Original.ILike("Puzzle")) {
+            if (x.Name.DisplayName.IEnd("Puzzle Trap")) {
                 return true;
             }
-            if (x.Name.Original.ILike("RegQ")) {
+            if (x.Name.Original.IEnd("RegQ2")) {
                 return true;
             }
-            if (x.Name.Original.IStart("Army")) {
+            if (x.Name.DisplayName.IStart("Army ")) {
                 return true;
             }
             if (x.Name.Original.IStart("CastleOfKnives")) {
