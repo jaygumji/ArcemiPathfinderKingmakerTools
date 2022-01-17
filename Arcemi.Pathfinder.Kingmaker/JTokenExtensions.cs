@@ -9,7 +9,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static JToken Export(this JToken token, bool deep)
         {
             if (token == null || token.Type == JTokenType.Null) {
-                return JToken.FromObject(null);
+                return JValue.CreateNull();
             }
             if (token.Type == JTokenType.Array) {
                 var arr = new JArray();
