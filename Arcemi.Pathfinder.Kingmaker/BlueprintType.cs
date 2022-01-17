@@ -41,7 +41,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         };
 
         public static IReadOnlyList<BlueprintType> AddableItems = new[] {
-            BlueprintTypes.ItemArmor,
+            //BlueprintTypes.ItemArmor,
             BlueprintTypes.ItemEquipmentBelt,
             BlueprintTypes.ItemEquipmentFeet,
             BlueprintTypes.ItemEquipmentGlasses,

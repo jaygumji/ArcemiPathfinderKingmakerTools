@@ -45,7 +45,7 @@
                                 <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
                                 <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
                                     <option value="">Select item...</option>
-                                    @foreach (var blueprint in Resources.Blueprints.GetEntries(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
+                                    @foreach (var blueprint in Resources.Blueprints.GetEntries(AddBlueprintItemType).Where(IsAddableItem).OrderBy(x => x.DisplayName)) {
                                         <option value="@blueprint.Id">@blueprint.DisplayName</option>
                                     }
                                 </select>
@@ -64,7 +64,7 @@
 <div class="col-md-1">
     <Help>
         Adding weapons, shields and armors are restricted in the inventory view. To add those item categories,
-        go to state and vendors and add the item to a vendor, then buy it from the vendor in game.
+        go to state and then vendors and add the item to a vendor, then buy it from the vendor in game.
     </Help>
 </div>
 
@@ -76,8 +76,16 @@
     public EventCallback<ItemModel> OnItemAdded { get; set; }
 
     private IEnumerable<IBlueprint> SearchableItems => AddBlueprintItemType.HasValue()
-        ? Resources.Blueprints.GetEntries(AddBlueprintItemType).OrderBy(x => x.DisplayName)
-        : BlueprintType.AddableItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).OrderBy(x => x.DisplayName);
+        ? Resources.Blueprints.GetEntries(AddBlueprintItemType).Where(IsAddableItem).OrderBy(x => x.DisplayName)
+        : BlueprintType.AddableItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).Where(IsAddableItem).OrderBy(x => x.DisplayName);
+
+    private static bool IsAddableItem(IBlueprint x)
+    {
+        if (x.Type == BlueprintTypes.ItemWeapon) {
+            return x.Id.Eq(Blueprints.Weapons.PurpleStoneKnife);
+        }
+        return true;
+    }
 
     private string _AddBlueprintItemType;
     private string AddBlueprintItemType {

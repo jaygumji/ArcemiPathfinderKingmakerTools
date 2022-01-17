@@ -21,7 +21,7 @@ namespace Arcemi.Pathfinder.Tests
         [MemberData(nameof(NameDisplayTestData))]
         public void NameDisplay(BlueprintType type, string name, string expectedDisplayName)
         {
-            var target = BlueprintName.Detect(type, name);
+            var target = BlueprintName.Detect("", type, name);
             Assert.Equal(expectedDisplayName, target.DisplayName);
         }
     }

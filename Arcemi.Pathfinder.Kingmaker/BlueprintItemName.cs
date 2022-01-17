@@ -109,9 +109,12 @@ namespace Arcemi.Pathfinder.Kingmaker
             return true;
         }
 
-        public static new BlueprintName Detect(BlueprintType type, string name)
+        public static new BlueprintName Detect(string id, BlueprintType type, string name)
         {
             if (string.IsNullOrEmpty(name)) return new BlueprintName(type, name, name);
+            if (id.Eq(Blueprints.Weapons.PurpleStoneKnife)) {
+                return new BlueprintItemName(type, "Purple Stone Knife", name, new[] { "Purple", "Stone", "Knife" }, enhancement: 1);
+            }
             var parts = new List<string>();
             var enhancement = 0;
 

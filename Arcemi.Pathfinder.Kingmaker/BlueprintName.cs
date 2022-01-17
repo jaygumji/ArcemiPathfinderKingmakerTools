@@ -17,10 +17,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string DisplayName { get; }
         public string Original { get; }
 
-        public static BlueprintName Detect(BlueprintType type, string name)
+        public static BlueprintName Detect(string id, BlueprintType type, string name)
         {
             if (type.Category == BlueprintTypeCategory.Item) {
-                return BlueprintItemName.Detect(type, name);
+                return BlueprintItemName.Detect(id, type, name);
             }
             if (ReferenceEquals(type, BlueprintTypes.Unit)) {
                 return Simple(type, name, prefix: "Army");
