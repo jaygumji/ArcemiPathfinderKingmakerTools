@@ -70,6 +70,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             public static EnchantmentSpec BaneVermin { get; } = new EnchantmentSpec("Bane Vermin", "c3428441c00354c4fabe27629c6c64dd", Components.ConditionalEnhancementBonus, Components.ConditionalDamageDice);
             public static EnchantmentSpec BaneVermin1d8 { get; } = new EnchantmentSpec("Bane Vermin 1d8", "e535fc007d0d7e74da45021d4607e607", Components.ConditionalEnhancementBonus, Components.ConditionalDamageDice);
             public static EnchantmentSpec Bleed { get; } = new EnchantmentSpec("Bleed", "ac0108944bfaa7e48aa74f407e3944e3", "$AddInitiatorAttackWithWeaponTrigger$68fcacc1-f262-466e-a20d-63e32aff65c5");
+            public static EnchantmentSpec Bliz { get; } = new EnchantmentSpec("The Bliz", "f1891b0dd34740d4aa97957e8f9240b5", "$AddInitiatorAttackWithWeaponTrigger$c3bcf325-3c41-4082-8584-e0ded444b3eb");
             public static EnchantmentSpec Brass { get; } = new EnchantmentSpec("Brass", "5e0e5de297c229f42b00c5b1738b50fa", Components.EnergyDamageDice);
             public static EnchantmentSpec BrilliantEnergy { get; } = new EnchantmentSpec("Brilliant Energy", "66e9e299c9002ea4bb65b6f300e43770", "$BrilliantEnergy$cec1a7bf-c950-4d57-a917-8252e4443484", "$MissAgainstFactOwner$8521181c-1ce7-4ccf-a856-bfdaafcad246");
             public static EnchantmentSpec ColdIron { get; } = new EnchantmentSpec("Cold Iron", "e5990dc76d2a613409916071c898eee8", Components.Material);
@@ -77,6 +78,8 @@ namespace Arcemi.Pathfinder.Kingmaker
             public static EnchantmentSpec Corrosive2d6 { get; } = new EnchantmentSpec("Corrosive 2d6", "2becfef47bec13940b9ee71f1b14d2dd", Components.EnergyDamageDice);
             public static EnchantmentSpec CorrosiveBurst { get; } = new EnchantmentSpec("Corrosive Burst", "0cf34703e67e37b40905845ca14b1380", Components.EnergyBurst);
             public static EnchantmentSpec Cruel { get; } = new EnchantmentSpec("Cruel", "629c383ffb407224398bb71d1bd95d14", "$AddInitiatorAttackWithWeaponTrigger$f798bc3d-4a60-47fd-ac63-ccf55e5ba994", "$AddInitiatorAttackWithWeaponTrigger$db5a4e45-dc87-45d4-b98f-fc6452a4ef7b");
+            //public static EnchantmentSpec CrystalDagger { get; } = new EnchantmentSpec("Crystal Dagger", "ac3b2efb35ed4c04d8be2db24f013847", new RuntimeComponentSpec("$AddUnitFactEquipment$53aa5b64-e439-402c-8a4c-d24763b0d274", addedFact: new FactFeatureSpec("b5a8f5bb6503c9846bdea9428d3d442a", "$IncreaseSpellSchoolDC$1a6713a4-08c1-4ea9-a50c-2f3f7473dc43")));
+            public static EnchantmentSpec CrystalDagger { get; } = new EnchantmentSpec("Crystal Dagger", "ac3b2efb35ed4c04d8be2db24f013847", "$AddUnitFactEquipment$53aa5b64-e439-402c-8a4c-d24763b0d274");
             public static EnchantmentSpec DeathPact { get; } = new EnchantmentSpec("Death Pact", "0433071606d94ed3b4006fa1b6348272", "$AdditionalDiceOnAttack$c744a5ce-2534-4a81-99bd-9c29a534a9b0", "$AddInitiatorAttackWithWeaponTrigger$7b1fa38a-782e-4a96-8006-18df48d8a813");
             public static EnchantmentSpec Devitalizer { get; } = new EnchantmentSpec("Devitalizer", "577af31035b34142a2235083c09220be", "$AddInitiatorAttackWithWeaponTrigger$7685cb0b-eafc-46f1-afa4-826232f02358");
             public static EnchantmentSpec Disruption { get; } = new EnchantmentSpec("Disruption", "0f20d79b7049c0f4ca54ca3d1ea44baa", "$AddInitiatorAttackWithWeaponTrigger$279973fd-a35c-430b-9188-fb4ba0e71921");
@@ -87,7 +90,9 @@ namespace Arcemi.Pathfinder.Kingmaker
             public static EnchantmentSpec Flaming { get; } = new EnchantmentSpec("Flaming", "30f90becaaac51f41bf56641966c4121", Components.EnergyDamageDice);
             public static EnchantmentSpec FlamingBurst { get; } = new EnchantmentSpec("Flaming Burst", "3f032a3cd54e57649a0cdad0434bf221", Components.EnergyBurst);
             public static EnchantmentSpec Frost { get; } = new EnchantmentSpec("Frost", "421e54078b7719d40915ce0672511d0b", Components.EnergyDamageDice);
+            public static EnchantmentSpec Frost2d8 { get; } = new EnchantmentSpec("Frost 2d8", "83e7559124cb78a4c9d61360d3a4c3c2", Components.EnergyDamageDice);
             public static EnchantmentSpec Furious { get; } = new EnchantmentSpec("Furious", "b606a3f5daa76cc40add055613970d2a", Components.ConditionalEnhancementBonus);
+            public static EnchantmentSpec Furyborn { get; } = new EnchantmentSpec("Furyborn", "091e2f6b2fad84a45ae76b8aac3c55c3", "$IncreaseWeaponEnhancementBonusOnTargetFocus$b303ff25-7b48-4c37-bd59-f3f059882670");
             public static EnchantmentSpec GhostTouch { get; } = new EnchantmentSpec("Ghost touch", "47857e1a5a3ec1a46adf6491b1423b4f", Components.Reality);
             public static EnchantmentSpec GoreFeaster { get; } = new EnchantmentSpec("Gore Feaster", "d8891abf13224fc39c0b94f8e2549200", "$AddUnitFeatureEquipment$f88721fe-5cb4-44d0-8b6e-f716162a884f", "$AddInitiatorAttackWithWeaponTrigger$749e9f16-5df6-4ab8-bbb4-5e24830c4bda");
             public static EnchantmentSpec GreatclubOfSacredCinders { get; } = new EnchantmentSpec("Greatclub Of Sacred Cinders", "e6716f81a0e3495a9442237b3ce9f380", "$AddInitiatorAttackWithWeaponTrigger$190fd062-d0a0-477d-ba55-a3ec66ca577a", "$AddUnitFeatureEquipment$c733097d-bd78-444c-99b9-e021840880ce");
@@ -104,6 +109,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             public static EnchantmentSpec Radiant { get; } = new EnchantmentSpec("Radiant", "5ac5c88157f7dde48a2a5b24caf40131", Components.EnergyDamageDice);
             public static EnchantmentSpec Sacrificial { get; } = new EnchantmentSpec("Sacrificial", "b7f029a31452b26408bc75d715227993", Components.ConditionalEnhancementBonus);
             public static EnchantmentSpec Shock { get; } = new EnchantmentSpec("Shock", "7bda5277d36ad114f9f9fd21d0dab658", Components.EnergyDamageDice);
+            public static EnchantmentSpec Shock2d6 { get; } = new EnchantmentSpec("Shock 2d6", "b1de8528121b80844bd7cf09d9e1cf00", Components.EnergyDamageDice);
             public static EnchantmentSpec ShockingBurst { get; } = new EnchantmentSpec("Shocking Burst", "914d7ee77fb09d846924ca08bccee0ff", Components.EnergyBurst);
             public static EnchantmentSpec Speed { get; } = new EnchantmentSpec("Speed", "f1c0c50108025d546b2554674ea1c006", Components.ExtraAttack);
             public static EnchantmentSpec StrengthComposite { get; } = new EnchantmentSpec("Strength Composite", "c3209eb058d471548928a200d70765e0", Components.DamageMultiplierStatReplacement);
@@ -145,6 +151,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 BaneVermin,
                 BaneVermin1d8,
                 Bleed,
+                Bliz,
                 Brass,
                 BrilliantEnergy,
                 ColdIron,
@@ -152,6 +159,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 Corrosive2d6,
                 CorrosiveBurst,
                 Cruel,
+                CrystalDagger,
                 DeathPact,
                 Devitalizer,
                 Disruption,
@@ -162,7 +170,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                 Flaming,
                 FlamingBurst,
                 Frost,
+                Frost2d8,
                 Furious,
+                Furyborn,
                 GhostTouch,
                 GoreFeaster,
                 GreatclubOfSacredCinders,
@@ -178,6 +188,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 Radiant,
                 Sacrificial,
                 Shock,
+                Shock2d6,
                 ShockingBurst,
                 Speed,
                 StrengthComposite,
@@ -259,6 +270,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             public static EnchantmentSpec NegativeEnergyResistance30 { get; } = new EnchantmentSpec("Negative Energy Resistance 30", "27e95849860301b4ab257f72df627149", Components.FactEquipment);
             public static EnchantmentSpec PositiveEnergyResistance30 { get; } = new EnchantmentSpec("Positive Energy Resistance 30", "80453601b93f0ef43b215087a484d517", Components.FactEquipment);
             public static EnchantmentSpec Mithral { get; } = new EnchantmentSpec("Mithral", "7b95a819181574a4799d93939aa99aff", Components.Mithral, Components.MithralStats);
+            public static EnchantmentSpec ShadowArmor { get; } = new EnchantmentSpec("Shadow Armor", "d64d7aa52626bc24da3906dce17dbc7d", "$AddStatBonusEquipment$1d9322ee-f053-4154-931c-c5512a0c34be");
             public static EnchantmentSpec SingingSteel { get; } = new EnchantmentSpec("Singing Steel", "451601816a45311419b77b83f253b75b", Components.Mithral, Components.MithralStats, "$AddUnitFactEquipment$5242bea5-bb52-4e35-89f6-5f6698b76ea5");
             public static EnchantmentSpec SonicResistance10 { get; } = new EnchantmentSpec("Sonic Resistance 10", "6e2dfcafe4faf8941b1426a86a76c368", Components.FactEquipment);
             public static EnchantmentSpec SonicResistance30 { get; } = new EnchantmentSpec("Sonic Resistance 30", "8b940da1e47fb6843aacdeac9410ec41", Components.FactEquipment);
@@ -275,8 +287,6 @@ namespace Arcemi.Pathfinder.Kingmaker
                 AdamantineArmorHeavy,
                 AdamantineArmorLight,
                 AdamantineArmorMedium,
-                AntiToxin,
-                ArrowCatcher,
                 ColdResistance10,
                 ColdResistance15,
                 ColdResistance20,
@@ -312,8 +322,8 @@ namespace Arcemi.Pathfinder.Kingmaker
                 new EnchantmentSpec("Level 2", "758b77a97640fd747abf149f5bf538d0", Components.BonusAC2, Components.Stats2),
                 new EnchantmentSpec("Level 3", "9448d3026111d6d49b31fc85e7f3745a", Components.BonusAC3, Components.Stats3),
                 new EnchantmentSpec("Level 4", "eaeb89df5be2b784c96181552414ae5a", Components.BonusAC4, Components.Stats4),
-                new EnchantmentSpec("Level 5", "6628f9d77fd07b54c911cd8930c0d531", Components.BonusAC5, Components.Stats5)
-            //new EnchantmentSpec("Level 6", "de15272d1f4eb7244aa3af47dbb754ef", "", "")
+                new EnchantmentSpec("Level 5", "6628f9d77fd07b54c911cd8930c0d531", Components.BonusAC5, Components.Stats5),
+                new EnchantmentSpec("Level 6", "de15272d1f4eb7244aa3af47dbb754ef", Components.BonusAC5, Components.Stats5)
             );
         }
 

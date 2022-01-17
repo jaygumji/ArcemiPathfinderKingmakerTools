@@ -6,7 +6,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 {
     public static class JTokenExtensions
     {
-        public static JToken Export(this JToken token, bool deep, bool incSys)
+        public static JToken Export(this JToken token, bool deep)
         {
             if (token == null || token.Type == JTokenType.Null) {
                 return JToken.FromObject(null);
@@ -17,19 +17,19 @@ namespace Arcemi.Pathfinder.Kingmaker
                     if (!deep && item.Type == JTokenType.Object) {
                         continue;
                     }
-                    arr.Add(Export(item, deep, incSys));
+                    arr.Add(Export(item, deep));
                 }
                 return arr;
             }
             if (token.Type == JTokenType.Object) {
                 var obj = new JObject();
                 foreach (var property in ((JObject)token).Properties()) {
-                    if (!incSys && property.IsSystemProperty()) {
+                    if (property.IsIdProperty() || property.IsRefIdProperty()) {
                         continue;
                     }
                     if (!deep && property.Type == JTokenType.Object) continue;
 
-                    obj.Add(property.Name, Export(property.Value, deep, incSys));
+                    obj.Add(property.Name, Export(property.Value, deep));
                 }
                 return obj;
             }
@@ -59,14 +59,14 @@ namespace Arcemi.Pathfinder.Kingmaker
                 var destObj = (JObject)dest;
                 if (options.Objects == ImportObjectOptions.Replace) {
                     var destObjPropertyNames = destObj.Properties()
-                        .Where(p => !p.Value.IsReference() && (options.IncludeSystemProperties || !p.IsSystemProperty()))
+                        .Where(p => !p.Value.IsReference() && !p.IsSystemProperty())
                         .Select(p => p.Name).ToArray();
                     foreach (var destName in destObjPropertyNames) {
                         destObj.Remove(destName);
                     }
                 }
                 foreach (var srcProp in ((JObject)src).Properties()) {
-                    if (!options.IncludeSystemProperties && srcProp.IsSystemProperty()) {
+                    if (srcProp.IsIdProperty() || srcProp.IsRefIdProperty()) {
                         continue;
                     }
 
@@ -95,6 +95,16 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static bool IsSystemProperty(this JProperty property)
         {
             return property.Name.StartsWith("$", StringComparison.Ordinal);
+        }
+
+        public static bool IsIdProperty(this JProperty property)
+        {
+            return property.Name.Equals("$id", StringComparison.Ordinal);
+        }
+
+        public static bool IsRefIdProperty(this JProperty property)
+        {
+            return property.Name.Equals("$ref", StringComparison.Ordinal);
         }
 
         public static bool TryGetValue<T>(this JToken token, string name, out T value)

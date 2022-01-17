@@ -24,7 +24,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             fact.Blueprint = enchantment.Blueprint;
             fact.ActivateCustomEnchantments();
             foreach (var component in enchantment.Components) {
-                fact.Components.AddNull(component);
+                component.AddTo(fact.Components);
             }
             return fact;
         }

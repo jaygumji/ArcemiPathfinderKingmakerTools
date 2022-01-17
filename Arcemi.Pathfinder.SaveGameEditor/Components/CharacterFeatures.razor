@@ -34,7 +34,10 @@
     <div class="col-md-2">
         <label class="form-label">@feature.Components.Count</label>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
+        <button class="btn btn-sm btn-secondary" @onclick="() => ExportFeature(feature)">
+            <span class="oi oi-clipboard"></span>
+        </button>
         @if (feature.IsRanked) {
         <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
             <span class="oi oi-arrow-thick-bottom"></span>
@@ -79,6 +82,12 @@
         }
 
         feature.RankToSource.RemoveAt(feature.RankToSource.Count - 1);
+    }
+
+    private void ExportFeature(FeatureFactItemModel feature)
+    {
+        var code = feature.Export();
+        ElectronNET.API.Electron.Clipboard.WriteText(code);
     }
 
     private void RemoveFeature(FeatureFactItemModel feature)

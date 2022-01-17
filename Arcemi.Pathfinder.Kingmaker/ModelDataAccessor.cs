@@ -43,7 +43,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public string ExportCode()
         {
-            var obj = _obj.Export(deep: true, incSys: false);
+            var obj = _obj.Export(deep: true);
             var json = obj.ToString(Formatting.None);
             var bytes = System.Text.Encoding.UTF8.GetBytes(json);
             return Convert.ToBase64String(bytes);
@@ -105,6 +105,19 @@ namespace Arcemi.Pathfinder.Kingmaker
             var obj = _refs.GetOrCreateObject(_obj, name, factory, createIfNull);
             _changeTracker?.On(name, propertyName);
             return obj;
+        }
+
+        public T NewObject<T>(string name, Action<IReferences, JObject> preparation = null, Func<ModelDataAccessor, T> factory = null)
+        {
+            var obj = typeof(T).IsSubclassOf(typeof(RefModel))
+                ? _refs.Create()
+                : new JObject();
+
+            preparation?.Invoke(_refs, obj);
+
+            _obj[name] = obj;
+
+            return Object(name, factory);
         }
 
         public ListD2Accessor<T> ListD2<T>([CallerMemberName] string name = null, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false, [CallerMemberName] string propertyName = null)

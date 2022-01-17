@@ -32,17 +32,35 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public int GetLevelFrom(IEnumerable<FactItemModel> facts)
         {
+            var res = 0;
             foreach (var fact in facts.OfType<EnchantmentFactItemModel>()) {
                 var level = Level(fact.Blueprint);
-                if (level > 0) return level;
+                if (level > res) res = level;
             }
-            return 0;
+            return res;
+        }
+
+        private void FindLevel(ListAccessor<FactItemModel> facts, out EnchantmentFactItemModel levelFact)
+        {
+            levelFact = null;
+            foreach (var fact in facts.OfType<EnchantmentFactItemModel>()) {
+                var level = Level(fact.Blueprint);
+                if (level > 0) {
+                    levelFact = fact;
+                    return;
+                }
+            }
         }
 
         public void SetLevelOn(ListAccessor<FactItemModel> facts, int value)
         {
             var spec = value > 0 ? Level(value) : null;
-            var fact = facts.OfType<EnchantmentFactItemModel>().Where(f => Level(f.Blueprint) > 0).FirstOrDefault();
+            FindLevel(facts, out var fact);
+            SetLevelFact(facts, fact, spec);
+        }
+
+        private void SetLevelFact(ListAccessor<FactItemModel> facts, EnchantmentFactItemModel fact, EnchantmentSpec spec)
+        {
             if (fact != null) {
                 if (spec == null) {
                     facts.Remove(fact);
@@ -52,7 +70,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 fact.ActivateCustomEnchantments();
                 fact.Components.Clear();
                 foreach (var component in spec.Components) {
-                    fact.Components.AddNull(component);
+                    component.AddTo(fact.Components);
                 }
                 return;
             }
@@ -61,7 +79,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             fact.Blueprint = spec.Blueprint;
             fact.ActivateCustomEnchantments();
             foreach (var component in spec.Components) {
-                fact.Components.AddNull(component);
+                component.AddTo(fact.Components);
             }
         }
     }

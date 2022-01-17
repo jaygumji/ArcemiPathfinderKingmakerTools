@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -25,5 +26,12 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public ListAccessor<PersistentObjectiveModel> PersistentObjectives => A.List(factory: a => new PersistentObjectiveModel(a));
+
+        public static new void Prepare(IReferences refs, JObject obj)
+        {
+            obj.Add("$type", TypeRef);
+            obj.Add(nameof(IsActive), false);
+            FactItemModel.Prepare(refs, obj);
+        }
     }
 }

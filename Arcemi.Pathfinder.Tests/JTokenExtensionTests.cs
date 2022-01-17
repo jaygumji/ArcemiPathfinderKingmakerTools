@@ -13,7 +13,7 @@ namespace Arcemi.Pathfinder.Tests
             var targetJson = Res.Get("DollData.json");
             var expectedJson = Res.Get("DollDataClone.json");
             var target = JObject.Parse(targetJson);
-            var copy = target.Export(deep: true, incSys: false);
+            var copy = target.Export(deep: true);
             var copyJson = copy.ToString(Formatting.None);
             Assert.Equal(expectedJson, copyJson);
         }
