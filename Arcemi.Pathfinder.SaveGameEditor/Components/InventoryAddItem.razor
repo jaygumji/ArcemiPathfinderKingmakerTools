@@ -82,7 +82,13 @@
     private static bool IsAddableItem(IBlueprint x)
     {
         if (x.Type == BlueprintTypes.ItemWeapon) {
-            return x.Id.Eq(Blueprints.Weapons.PurpleStoneKnife);
+            if (x.Id.Eq(Blueprints.Weapons.PurpleStoneKnife)) {
+                return true;
+            }
+            if (x.Name.Original.IStart("Pulura_SarcorianDagger_")) {
+                return true;
+            }
+            return false;
         }
         return true;
     }
