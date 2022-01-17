@@ -123,6 +123,20 @@ namespace Arcemi.Pathfinder.Kingmaker
             return obj;
         }
 
+        JArray IReferences.NewArray(int size, JToken initialValue)
+        {
+            var arr = new JArray();
+            for (var i = 0; i < size; i++) { arr.Add(initialValue); }
+            return arr;
+        }
+
+        JArray IReferences.NewArray(int size, Func<JToken> initialValue)
+        {
+            var arr = new JArray();
+            for (var i = 0; i < size; i++) { arr.Add(initialValue()); }
+            return arr;
+        }
+
         private ModelDataAccessor Get(JObject parent, string name)
         {
             var property = parent.Property(name);

@@ -16,6 +16,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         JObject Create();
         JObject CreateReference(JToken parent, string refId);
         JObject CreateReference(JToken parent, JObject refObj);
+        JArray NewArray(int size, JToken initialValue);
+        JArray NewArray(int size, Func<JToken> initialValue);
 
         T GetOrCreateObject<T>(JObject obj, Func<ModelDataAccessor, T> factory = null);
         T GetOrCreateObject<T>(JObject parent, string name, Func<ModelDataAccessor, T> factory = null, bool createIfNull = false);
