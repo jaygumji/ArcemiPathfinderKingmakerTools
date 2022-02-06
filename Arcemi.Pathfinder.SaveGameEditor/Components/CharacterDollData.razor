@@ -65,143 +65,149 @@
 </div>
 
 <div class="row"><h3 class="col-md-12">Equipment</h3></div>
-<div class="row form-list-header">
-    <div class="col-md-9">
-        <label class="form-label">Equipment entity id</label>
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-9">
+            <label class="form-label">Equipment entity id</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-info" @onclick="() => modalAddEquipment.OpenAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
+            <Modal @ref="modalAddEquipment">
+                <Title>Add equipment</Title>
+                <Body>
+                    <label class="form-label">Equipment entity id</label>
+                    <input type="text" class="form-control" @bind:event="oninput" @bind="EquipmentEntityId" />
+                </Body>
+                <Footer>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsEquipmentInvalid" @onclick="AddEquipmentAsync">
+                        Confirm
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddEquipment.CloseAsync()">Cancel</button>
+                </Footer>
+            </Modal>
+        </div>
     </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-info" @onclick="() => modalAddEquipment.OpenAsync()">
-            <span class="oi oi-plus"></span>
-        </button>
-        <Modal @ref="modalAddEquipment">
-            <Title>Add equipment</Title>
-            <Body>
-                <label class="form-label">Equipment entity id</label>
-                <input type="text" class="form-control" @bind:event="oninput" @bind="EquipmentEntityId" />
-            </Body>
-            <Footer>
-                <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsEquipmentInvalid" @onclick="AddEquipmentAsync">
-                    Confirm
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddEquipment.CloseAsync()">Cancel</button>
-            </Footer>
-        </Modal>
+    @foreach (var equipmentEntityId in DollData.EquipmentEntityIds) {
+    <div class="row">
+        <div class="col-md-9">
+            @equipmentEntityId
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-danger" @onclick="() => RemoveEquipment(equipmentEntityId)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
     </div>
+    }
 </div>
-@foreach (var equipmentEntityId in DollData.EquipmentEntityIds) {
-<div class="row">
-    <div class="col-md-9">
-        @equipmentEntityId
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-danger" @onclick="() => RemoveEquipment(equipmentEntityId)">
-            <span class="oi oi-trash"></span>
-        </button>
-    </div>
-</div>
-}
 
 <div class="row"><h3 class="col-md-12">Primary Styles</h3></div>
-<div class="row form-list-header">
-    <div class="col-md-6">
-        <label class="form-label">Key</label>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Value</label>
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-info" @onclick="() => modalAddPrimaryStyle.OpenAsync()">
-            <span class="oi oi-plus"></span>
-        </button>
-        <Modal @ref="modalAddPrimaryStyle">
-            <Title>Add primary style</Title>
-            <Body>
-                <div class="row">
-                    <div class="col-md-9">
-                        <label class="form-label">Key</label>
-                        <input type="text" class="form-control" @bind:event="oninput" @bind="PrimaryStyleKey" />
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Key</label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Value</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-info" @onclick="() => modalAddPrimaryStyle.OpenAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
+            <Modal @ref="modalAddPrimaryStyle">
+                <Title>Add primary style</Title>
+                <Body>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <label class="form-label">Key</label>
+                            <input type="text" class="form-control" @bind:event="oninput" @bind="PrimaryStyleKey" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Value</label>
+                            <input type="number" class="form-control" @bind="PrimaryStyleValue" />
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Value</label>
-                        <input type="number" class="form-control" @bind="PrimaryStyleValue" />
-                    </div>
-                </div>
-            </Body>
-            <Footer>
-                <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsPrimaryStyleInvalid" @onclick="AddPrimaryStyle">
-                    Confirm
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddPrimaryStyle.CloseAsync()">Cancel</button>
-            </Footer>
-        </Modal>
+                </Body>
+                <Footer>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsPrimaryStyleInvalid" @onclick="AddPrimaryStyle">
+                        Confirm
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddPrimaryStyle.CloseAsync()">Cancel</button>
+                </Footer>
+            </Modal>
+        </div>
     </div>
+    @foreach (var style in DollData.EntityRampIdices) {
+    <div class="row">
+        <div class="col-md-6">
+            @style.Key
+        </div>
+        <div class="col-md-3">
+            @style.Value
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-danger" @onclick="() => RemovePrimaryStyle(style)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+    </div>
+    }
 </div>
-@foreach (var style in DollData.EntityRampIdices) {
-<div class="row">
-    <div class="col-md-6">
-        @style.Key
-    </div>
-    <div class="col-md-3">
-        @style.Value
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-danger" @onclick="() => RemovePrimaryStyle(style)">
-            <span class="oi oi-trash"></span>
-        </button>
-    </div>
-</div>
-}
 
 <div class="row"><h3 class="col-md-12">Secondary Styles</h3></div>
-<div class="row form-list-header">
-    <div class="col-md-6">
-        <label class="form-label">Key</label>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Value</label>
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-info" @onclick="() => modalAddSecondaryStyle.OpenAsync()">
-            <span class="oi oi-plus"></span>
-        </button>
-        <Modal @ref="modalAddSecondaryStyle">
-            <Title>Add secondary style</Title>
-            <Body>
-                <div class="row">
-                    <div class="col-md-9">
-                        <label class="form-label">Key</label>
-                        <input type="text" class="form-control" @bind:event="oninput" @bind="SecondaryStyleKey" />
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Key</label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Value</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-info" @onclick="() => modalAddSecondaryStyle.OpenAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
+            <Modal @ref="modalAddSecondaryStyle">
+                <Title>Add secondary style</Title>
+                <Body>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <label class="form-label">Key</label>
+                            <input type="text" class="form-control" @bind:event="oninput" @bind="SecondaryStyleKey" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Value</label>
+                            <input type="number" class="form-control" @bind="SecondaryStyleValue" />
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Value</label>
-                        <input type="number" class="form-control" @bind="SecondaryStyleValue" />
-                    </div>
-                </div>
-            </Body>
-            <Footer>
-                <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsSecondaryStyleInvalid" @onclick="AddSecondaryStyle">
-                    Confirm
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddSecondaryStyle.CloseAsync()">Cancel</button>
-            </Footer>
-        </Modal>
+                </Body>
+                <Footer>
+                    <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsSecondaryStyleInvalid" @onclick="AddSecondaryStyle">
+                        Confirm
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddSecondaryStyle.CloseAsync()">Cancel</button>
+                </Footer>
+            </Modal>
+        </div>
     </div>
+    @foreach (var style in DollData.EntitySecondaryRampIdices) {
+    <div class="row">
+        <div class="col-md-6">
+            @style.Key
+        </div>
+        <div class="col-md-3">
+            @style.Value
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-danger" @onclick="() => RemoveSecondaryStyle(style)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+    </div>
+    }
 </div>
-@foreach (var style in DollData.EntitySecondaryRampIdices) {
-<div class="row">
-    <div class="col-md-6">
-        @style.Key
-    </div>
-    <div class="col-md-3">
-        @style.Value
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-danger" @onclick="() => RemoveSecondaryStyle(style)">
-            <span class="oi oi-trash"></span>
-        </button>
-    </div>
-</div>
-}
 
 <div class="row"><h3 class="col-md-12">Equipment Color</h3></div>
 <div class="row">

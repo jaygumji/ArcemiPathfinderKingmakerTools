@@ -41,9 +41,10 @@ namespace Arcemi.Pathfinder.Kingmaker
             Res = res;
         }
 
-        public string ExportCode()
+        public string ExportCode(Action<JObject> resultCallback = null)
         {
             var obj = _obj.Export(deep: true);
+            resultCallback?.Invoke((JObject)obj);
             var json = obj.ToString(Formatting.None);
             var bytes = System.Text.Encoding.UTF8.GetBytes(json);
             return Convert.ToBase64String(bytes);

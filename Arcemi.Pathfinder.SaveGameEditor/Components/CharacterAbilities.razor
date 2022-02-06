@@ -3,42 +3,44 @@
 @using Arcemi.Pathfinder.SaveGameEditor.Components
 @using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 
-<div class="row form-list-header">
-    <div class="col-md-4">
-        <label class="form-label">Name</label>
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Active</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Components</label>
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-3">
+        </div>
     </div>
-    <div class="col-md-2">
-        <label class="form-label">Active</label>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">Components</label>
-    </div>
-    <div class="col-md-1">
-    </div>
-    <div class="col-md-3">
-    </div>
-</div>
 
-@foreach (var ability in Abilities) {
-<div class="row g-3">
-    <div class="col-md-4 overflow-hidden">
-        <label class="form-label">@ability.DisplayName</label>
+    @foreach (var ability in Abilities) {
+    <div class="row">
+        <div class="col-md-4 overflow-hidden">
+            <label class="form-label">@ability.DisplayName</label>
+        </div>
+        <div class="col-md-2">
+            <Switch @bind-IsChecked="ability.IsActive" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">@ability.Components.Count</label>
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFact(ability)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
     </div>
-    <div class="col-md-2">
-        <Switch @bind-IsChecked="ability.IsActive" />
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">@ability.Components.Count</label>
-    </div>
-    <div class="col-md-1">
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFact(ability)">
-            <span class="oi oi-trash"></span>
-        </button>
-    </div>
+    }
 </div>
-}
 
 @code {
     [Parameter]

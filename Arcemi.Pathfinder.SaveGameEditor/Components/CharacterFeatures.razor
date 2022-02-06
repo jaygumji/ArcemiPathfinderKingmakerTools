@@ -1,57 +1,84 @@
 ﻿@inject CharacterViewModel Model
 @inject IGameResourcesProvider Resources
-@using Arcemi.Pathfinder.SaveGameEditor.Components
-@using Arcemi.Pathfinder.SaveGameEditor.Components.Modals;
 
-<div class="row form-list-header">
-    <div class="col-md-4">
-        <label class="form-label">Name</label>
+<div class="row">
+    <div class="col-md-12">
+        <textarea class="form-control" placeholder="Experimental! Paste feature code and import features" @bind:event="oninput" @bind="ImportCode"></textarea>
     </div>
-    <div class="col-md-1">
-        <label class="form-label">Rank</label>
-    </div>
-    <div class="col-md-1">
-        <label class="form-label" title="Last level feat was updated">Level</label>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">Components</label>
-    </div>
-    <div class="col-md-3">
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-info" disabled="@ImportCode.IsEmpty()" @onclick="() => ImportFeature()">
+            <span class="oi oi-script"></span>
+            Import Code
+        </button>
+        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+            Export a code from a feature, using the copy button next to a feature.
+            Select another character and import the feature.
+        </Help>
     </div>
 </div>
 
-@foreach (var feature in Feats) {
-<div class="row g-3">
-    <div class="col-md-4 overflow-hidden">
-        <label class="form-label">@feature.DisplayName</label>
-    </div>
-    <div class="col-md-1">
-        <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>
-    </div>
-    <div class="col-md-1">
-        <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">@feature.Components.Count</label>
-    </div>
-    <div class="col-md-4">
-        <button class="btn btn-sm btn-secondary" @onclick="() => ExportFeature(feature)">
-            <span class="oi oi-clipboard"></span>
-        </button>
-        @if (feature.IsRanked) {
-        <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
-            <span class="oi oi-arrow-thick-bottom"></span>
-        </button>
-        <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
-            <span class="oi oi-arrow-thick-top"></span>
-        </button>
-        }
-        <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFeature(feature)">
-            <span class="oi oi-trash"></span>
-        </button>
+<div class="row g-3 top-toolbar mt-3">
+    <div class="col-md-6 btn-group">
+        <label class="btn btn-info" for="search">
+            <span class="oi oi-magnifying-glass"></span>
+        </label>
+        <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
     </div>
 </div>
-}
+
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">Rank</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label" title="Last level feat was updated">Level</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Components</label>
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
+
+    @foreach (var feature in Feats) {
+    <div class="row">
+        <div class="col-md-4 overflow-hidden">
+            <label class="form-label">@feature.DisplayName</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">@feature.Components.Count</label>
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-sm btn-secondary" title="Export to clipboard" @onclick="() => ExportFeature(feature)">
+                <span class="oi oi-script"></span>
+            </button>
+            @if (feature.IsRanked) {
+            <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
+                <span class="oi oi-arrow-thick-bottom"></span>
+            </button>
+            <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
+                <span class="oi oi-arrow-thick-top"></span>
+            </button>
+            }
+            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFeature(feature)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+    </div>
+    }
+</div>
 
 @code {
     [Parameter]
@@ -60,7 +87,11 @@
     private IEnumerable<FeatureFactItemModel> Feats => Unit.Facts.Items
         .OfType<FeatureFactItemModel>()
         .Where(f => f.Context?.ParentContext?.SourceItemRef == null)
+        .Where(f => SearchTerm.IsEmpty() || f.DisplayName.ILike(SearchTerm))
         .OrderBy(f => f.DisplayName);
+
+    private string SearchTerm;
+    private string ImportCode;
 
     private void UprankFeature(FeatureFactItemModel feature)
     {
@@ -88,6 +119,19 @@
     {
         var code = feature.Export();
         ElectronNET.API.Electron.Clipboard.WriteText(code);
+    }
+
+    private void ImportFeature()
+    {
+        var codes = ImportCode?.Trim()?.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (!(codes?.Length > 0)) return;
+
+        foreach (var code in codes) {
+            var feat = (FeatureFactItemModel)Unit.Facts.Items.Add(FeatureFactItemModel.Prepare);
+            feat.Import(code);
+            //feat.SourceLevel = Character.Progression.CurrentLevel;
+        }
+        ImportCode = "";
     }
 
     private void RemoveFeature(FeatureFactItemModel feature)

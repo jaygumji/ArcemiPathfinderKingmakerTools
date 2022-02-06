@@ -170,6 +170,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 Flaming,
                 FlamingBurst,
                 Frost,
+                //Frost2d6,
                 Frost2d8,
                 Furious,
                 Furyborn,

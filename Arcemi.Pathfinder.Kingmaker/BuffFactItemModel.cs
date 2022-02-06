@@ -11,16 +11,12 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public int RoundNumber { get => A.Value<int>(); set => A.Value(value); }
-        public string UniqueId { get => A.Value<string>(); set => A.Value(value); }
         public TimeSpan TickTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public TimeSpan NextTickTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
-        public TimeSpan AttachTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
-        public bool IsActive { get => A.Value<bool>(); set => A.Value(value); }
 
         public static new void Prepare(IReferences refs, JObject obj)
         {
             obj.Add("$type", TypeRef);
-            obj.Add(nameof(IsActive), false);
             FactItemModel.Prepare(refs, obj);
         }
     }

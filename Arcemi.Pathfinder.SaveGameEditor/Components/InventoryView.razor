@@ -21,67 +21,69 @@ else {
         }
     </div>
 
-    <div class="row form-list-header">
-        <div class="col-md-4">
-            <label class="form-label">Name</label>
-        </div>
-        <div class="col-md-1">
-            <label class="form-label">Type</label>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Stack</label>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Charges</label>
-        </div>
-        <div class="col-md-3">
-        </div>
-    </div>
-    if (!Items.Any()) {
+    <div class="form-list">
         <div class="row">
-            <div class="col-md-12">
-                <p class="alert alert-info">Inventory is empty</p>
-            </div>
-        </div>
-}
-    else {
-        @foreach (var item in Items) {
-        <div class="row">
-            <div class="col-md-4 overflow-hidden">
-                <label class="form-label">@item.DisplayName</label>
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
             </div>
             <div class="col-md-1">
-                <img src="@GetItemTypeIconUrl(item)" alt="@item.DisplayType" />
+                <label class="form-label">Type</label>
             </div>
             <div class="col-md-2">
-                @if (item.IsStackable) {
-                    <input class="form-control" type="number" @bind="item.Count" />
-                }
+                <label class="form-label">Stack</label>
             </div>
             <div class="col-md-2">
-                @if (item.IsChargable) {
-                    <input class="form-control" type="number" @bind="item.Charges" />
-                }
+                <label class="form-label">Charges</label>
             </div>
             <div class="col-md-3">
-@*                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
-                    <span class="oi oi-fork"></span>
-                </button>*@
-                <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
-                    <span class="oi oi-paperclip"></span>
-                </button>
-                @if (CanEdit(item)){
-                <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => StartEditItemAsync(item)">
-                    <span class="oi oi-pencil"></span>
-                </button>
-                }
-                <button class="btn btn-sm btn-danger" title="Remove item" @onclick="() => RemoveItem(item)">
-                    <span class="oi oi-trash"></span>
-                </button>
             </div>
         </div>
+        @if (!Items.Any()) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-info">Inventory is empty</p>
+                </div>
+            </div>
         }
-    }
+        else {
+            @foreach (var item in Items) {
+            <div class="row">
+                <div class="col-md-4 overflow-hidden">
+                    <label class="form-label">@item.DisplayName</label>
+                </div>
+                <div class="col-md-1">
+                    <img src="@GetItemTypeIconUrl(item)" alt="@item.DisplayType" />
+                </div>
+                <div class="col-md-2">
+                    @if (item.IsStackable) {
+                        <input class="form-control" type="number" @bind="item.Count" />
+                    }
+                </div>
+                <div class="col-md-2">
+                    @if (item.IsChargable) {
+                        <input class="form-control" type="number" @bind="item.Charges" />
+                    }
+                </div>
+                <div class="col-md-3">
+    @*                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
+                        <span class="oi oi-fork"></span>
+                    </button>*@
+                    <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
+                        <span class="oi oi-paperclip"></span>
+                    </button>
+                    @if (CanEdit(item)){
+                    <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => StartEditItemAsync(item)">
+                        <span class="oi oi-pencil"></span>
+                    </button>
+                    }
+                    <button class="btn btn-sm btn-danger" title="Remove item" @onclick="() => RemoveItem(item)">
+                        <span class="oi oi-trash"></span>
+                    </button>
+                </div>
+            </div>
+            }
+        }
+    </div>
 }
 
 <Modal @ref="modalEditItem">

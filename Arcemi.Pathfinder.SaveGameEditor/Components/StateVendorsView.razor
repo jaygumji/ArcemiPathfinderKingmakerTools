@@ -1,75 +1,79 @@
 ﻿@inject MainViewModel Model
 @inject IGameResourcesProvider Resources
 
-<div class="row form-list-header">
-    <div class="col-md-5">
-        <label class="form-label">Name</label>
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-5">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" title="Number of entries on this vendor">Entries</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" title="Number of known items">Known</label>
+        </div>
+        <div class="col-md-3">
+        </div>
     </div>
-    <div class="col-md-2">
-        <label class="form-label" title="Number of entries on this vendor">Entries</label>
+    @foreach (var table in Model.Player.SharedVendorTables.PersistentTables) {
+    <div class="row">
+        <div class="col-md-5">
+            <label class="form-label">@table.DisplayName</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">@table.Entries.Count</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">@table.KnownItems.Count</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-info" @onclick="() => ShowAddItemAsync(table)" title="Add an item">
+                <span class="oi oi-plus"></span>
+            </button>
+            <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditVendorAsync(table)" title="Edit vendor">
+                <span class="oi oi-pencil"></span>
+            </button>
+            <button class="btn btn-sm btn-warning" @onclick="() => ResetAllItems(table)" title="Reset all items">
+                <span class="oi oi-reload"></span>
+            </button>
+            <button class="btn btn-sm btn-danger" @onclick="() => RemoveAllItems(table)" title="Remove all items">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
     </div>
-    <div class="col-md-2">
-        <label class="form-label" title="Number of known items">Known</label>
-    </div>
-    <div class="col-md-3">
-    </div>
+    }
 </div>
-@foreach (var table in Model.Player.SharedVendorTables.PersistentTables) {
-<div class="row">
-    <div class="col-md-5">
-        <label class="form-label">@table.DisplayName</label>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">@table.Entries.Count</label>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">@table.KnownItems.Count</label>
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-info" @onclick="() => ShowAddItemAsync(table)" title="Add an item">
-            <span class="oi oi-plus"></span>
-        </button>
-        <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditVendorAsync(table)" title="Edit vendor">
-            <span class="oi oi-pencil"></span>
-        </button>
-        <button class="btn btn-sm btn-warning" @onclick="() => ResetAllItems(table)" title="Reset all items">
-            <span class="oi oi-reload"></span>
-        </button>
-        <button class="btn btn-sm btn-danger" @onclick="() => RemoveAllItems(table)" title="Remove all items">
-            <span class="oi oi-trash"></span>
-        </button>
-    </div>
-</div>
-}
 
 <Modal @ref="modalEditTable">
     <Title>Edit Vendor Table</Title>
     <Body>
-        <div class="row form-list-header">
-            <div class="col-md-7">Name</div>
-            <div class="col-md-3">Count</div>
-            <div class="col-md-2"></div>
-        </div>
-        @if (EditTable?.Entries?.Count > 0) {
-            @foreach (var entry in EditTable.Entries) {
+        <div class="form-list">
+            <div class="row">
+                <div class="col-md-7">Name</div>
+                <div class="col-md-3">Count</div>
+                <div class="col-md-2"></div>
+            </div>
+            @if (EditTable?.Entries?.Count > 0) {
+                @foreach (var entry in EditTable.Entries) {
+                    <div class="row">
+                        <div class="col-md-7">@entry.ItemDisplayName</div>
+                        <div class="col-md-3"><input class="form-control" type="number" min="1" max="99" @bind="entry.Count" /></div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveEditVendorEntry(entry)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else {
                 <div class="row">
-                    <div class="col-md-7">@entry.ItemDisplayName</div>
-                    <div class="col-md-3"><input class="form-control" type="number" min="1" max="99" @bind="entry.Count" /></div>
-                    <div class="col-md-2">
-                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveEditVendorEntry(entry)">
-                            <span class="oi oi-trash"></span>
-                        </button>
+                    <div class="col-md-12">
+                        <p class="alert alert-info">Vendor has no items</p>
                     </div>
                 </div>
             }
-        }
-        else {
-            <div class="row">
-                <div class="col-md-12">
-                    <p class="alert alert-info">Vendor has no items</p>
-                </div>
-            </div>
-        }
+        </div>
     </Body>
     <Footer>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditTable.CloseAsync()">Close</button>

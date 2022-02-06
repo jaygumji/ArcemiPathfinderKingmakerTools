@@ -47,35 +47,37 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFlag.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
-<div class="row form-list-header">
-    <div class="col-md-6">
-        <label class="form-label">Name</label>
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Value</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-info" @onclick="() => modalAddFlag.OpenAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
+        </div>
     </div>
-    <div class="col-md-3">
-        <label class="form-label">Value</label>
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-info" @onclick="() => modalAddFlag.OpenAsync()">
-            <span class="oi oi-plus"></span>
-        </button>
-    </div>
-</div>
-@foreach (var flag in Flags) {
-<div class="row">
-    <div class="col-md-6">
-        <label class="form-label">@flag.DisplayName</label>
-    </div>
-    <div class="col-md-3">
-        <input type="text" class="form-control" @bind="flag.Value" />
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-sm btn-danger" @onclick="() => RemoveFlag(flag)">
-            <span class="oi oi-trash"></span>
-        </button>
-    </div>
+    @foreach (var flag in Flags) {
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">@flag.DisplayName</label>
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" @bind="flag.Value" />
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-danger" @onclick="() => RemoveFlag(flag)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
 
+    </div>
+    }
 </div>
-}
 
 @code {
     private Modal modalAddFlag;

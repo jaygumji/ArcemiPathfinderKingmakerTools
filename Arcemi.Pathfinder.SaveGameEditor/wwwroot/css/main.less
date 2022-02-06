@@ -172,11 +172,25 @@ h4 {
     color: red;
 }
 
-.form-list-header {
-    &.row {
+.form-list {
+
+    > div:first-child {
         > div {
             font-size: 1.1rem;
-            border-bottom: solid 1px lightgray;
+        }
+    }
+
+    > div:nth-child(2n) {
+        > div {
+            background-color: #d8d8d8;
+        }
+    }
+
+    &.static-content {
+        > div:nth-child(2n) {
+            > div {
+                background-color: inherit;
+            }
         }
     }
 }

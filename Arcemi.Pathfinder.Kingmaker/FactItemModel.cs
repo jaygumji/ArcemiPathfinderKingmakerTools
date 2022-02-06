@@ -6,9 +6,12 @@ namespace Arcemi.Pathfinder.Kingmaker
     public class FactItemModel : RefModel, ITypedModel
     {
         public FactItemModel(ModelDataAccessor accessor) : base(accessor) { }
-        public string DisplayName => A.Res.Blueprints.GetNameOrBlueprint(Blueprint);
+        public virtual string DisplayName => A.Res.Blueprints.GetNameOrBlueprint(Blueprint);
         public string Blueprint { get => A.Value<string>(); set => A.Value(value); }
         public string Type { get => A.Value<string>("$type"); set => A.Value(value, "$type"); }
+        public string UniqueId { get => A.Value<string>(); set => A.Value(value); }
+        public TimeSpan AttachTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
+        public bool IsActive { get => A.Value<bool>(); set => A.Value(value); }
         public FactContextModel Context { get => A.Object("m_Context", a => new FactContextModel(a)); }
         public DictionaryAccessor<ComponentModel> Components => A.Dictionary(factory: ComponentModel.Factory, createIfNull: true);
         public ParentContextModel ParentContext => A.Object(factory: a => new ParentContextModel(a), createIfNull: true);
@@ -63,12 +66,20 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         protected static void Prepare(IReferences refs, JObject obj)
         {
+            obj.Add(nameof(AttachTime), AttachTimes.GameStart.ToString());
+            obj.Add(nameof(UniqueId), Guid.NewGuid().ToString());
+            obj.Add(nameof(IsActive), true);
             obj.Add(nameof(Components), new JObject());
         }
 
-        public string Export()
+        public virtual string Export()
         {
             return A.ExportCode();
+        }
+
+        public void Import(string code)
+        {
+            A.ImportCode(code);
         }
     }
 }

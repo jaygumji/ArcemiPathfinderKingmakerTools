@@ -19,30 +19,32 @@ else {
     <div class="row">
         <h3 class="col-md-12">Attributes</h3>
     </div>
-    <div class="row form-list-header">
-        <div class="col-md-4">
-            <label class="form-label">Type</label>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Rank</label>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Value</label>
-        </div>
-    </div>
-    @foreach (var attr in Data.Stats.Attributes) {
-        <div class="row g-3">
+    <div class="form-list static-content">
+        <div class="row">
             <div class="col-md-4">
-                <label class="form-label">@attr.Type</label>
+                <label class="form-label">Type</label>
             </div>
             <div class="col-md-2">
-                <input class="form-control" type="number" @bind="@attr.Rank" />
+                <label class="form-label">Rank</label>
             </div>
             <div class="col-md-2">
-                <input class="form-control" type="number" @bind="@attr.Value" />
+                <label class="form-label">Value</label>
             </div>
         </div>
-    }
+        @foreach (var attr in Data.Stats.Attributes) {
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">@attr.Type</label>
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="number" @bind="@attr.Rank" />
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="number" @bind="@attr.Value" />
+                </div>
+            </div>
+        }
+    </div>
 
     @if (Data.MoraleState != null) {
     <div class="row g-3">

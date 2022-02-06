@@ -57,38 +57,40 @@ else {
             <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddEtude.CloseAsync()">Cancel</button>
         </Footer>
     </Modal>
-    <div class="row form-list-header">
-        <div class="col-md-6">
-            <label class="form-label">Name</label>
+    <div class="form-list">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">State</label>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-info" @onclick="() => modalAddEtude.OpenAsync()">
+                    <span class="oi oi-plus"></span>
+                </button>
+            </div>
         </div>
-        <div class="col-md-3">
-            <label class="form-label">State</label>
-        </div>
-        <div class="col-md-3">
-            <button class="btn btn-sm btn-info" @onclick="() => modalAddEtude.OpenAsync()">
-                <span class="oi oi-plus"></span>
-            </button>
-        </div>
-    </div>
-    @foreach (var etude in Etudes) {
-    <div class="row">
-        <div class="col-md-6 overflow-hidden">
-            <label class="form-label">@etude.DisplayName</label>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">@etude.Value</label>
-        </div>
-        <div class="col-md-3">
-            <button class="btn btn-sm btn-secondary" @onclick="() => EditEtudeAsync(etude)">
-                <span class="oi oi-pencil"></span>
-            </button>
-            <button class="btn btn-sm btn-danger" @onclick="() => RemoveEtude(etude)">
-                <span class="oi oi-trash"></span>
-            </button>
-        </div>
+        @foreach (var etude in Etudes) {
+        <div class="row">
+            <div class="col-md-6 overflow-hidden">
+                <label class="form-label">@etude.DisplayName</label>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@etude.Value</label>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-secondary" @onclick="() => EditEtudeAsync(etude)">
+                    <span class="oi oi-pencil"></span>
+                </button>
+                <button class="btn btn-sm btn-danger" @onclick="() => RemoveEtude(etude)">
+                    <span class="oi oi-trash"></span>
+                </button>
+            </div>
 
+        </div>
+        }
     </div>
-    }
 
     <Modal @ref="modalEditEtude">
         <Title>Edit etude @(EtudeState?.DisplayName)</Title>

@@ -149,9 +149,14 @@ h4 {
 .validation-message {
   color: red;
 }
-.form-list-header.row > div {
+.form-list > div:first-child > div {
   font-size: 1.1rem;
-  border-bottom: solid 1px lightgray;
+}
+.form-list > div:nth-child(2n) > div {
+  background-color: #d8d8d8;
+}
+.form-list.static-content > div:nth-child(2n) > div {
+  background-color: inherit;
 }
 .header-toolbar {
   display: flex;

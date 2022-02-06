@@ -70,40 +70,42 @@
 <div class="row">
     <h3 class="col-md-12">Classes</h3>
 </div>
-<div class="row form-list-header">
-    <div class="col-md-4">
-        <label class="form-label">Name</label>
+<div class="form-list static-content">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Specialization</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Level</label>
+        </div>
+        <div class="col-md-2">
+        </div>
     </div>
-    <div class="col-md-4">
-        <label class="form-label">Specialization</label>
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">Level</label>
-    </div>
-    <div class="col-md-2">
-    </div>
-</div>
 
-@foreach (var cls in Character.Progression.Classes) {
-<div class="row">
-    <div class="col-md-4 overflow-hidden">
-        <label class="form-label">@cls.TypeName</label>
+    @foreach (var cls in Character.Progression.Classes) {
+    <div class="row">
+        <div class="col-md-4 overflow-hidden">
+            <label class="form-label">@cls.TypeName</label>
+        </div>
+        <div class="col-md-4 overflow-hidden">
+            <label class="form-label">@cls.ArchetypeName</label>
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
+        </div>
+        <div class="col-md-2">
+            @if (!cls.IsMythicChampion) {
+            <button class="btn btn-sm btn-warning" disabled="@(!LevelManipulator.CanDowngrade(cls))" @onclick="() => DowngradeClass(cls)">
+                <span class="oi oi-arrow-thick-bottom"></span>
+            </button>
+            }
+        </div>
     </div>
-    <div class="col-md-4 overflow-hidden">
-        <label class="form-label">@cls.ArchetypeName</label>
-    </div>
-    <div class="col-md-2">
-        <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
-    </div>
-    <div class="col-md-2">
-        @if (!cls.IsMythicChampion) {
-        <button class="btn btn-sm btn-warning" disabled="@(!LevelManipulator.CanDowngrade(cls))" @onclick="() => DowngradeClass(cls)">
-            <span class="oi oi-arrow-thick-bottom"></span>
-        </button>
-        }
-    </div>
+    }
 </div>
-}
 
 <div class="row">
     <div class="col-md-12">
@@ -293,41 +295,43 @@
     <Title>Edit alignment history</Title>
     <Body>
         @if (Character.Alignment?.History?.Count > 0) {
-            <div class="row form-list-header">
-                <div class="col-md-3">
-                    Direction
-                </div>
-                <div class="col-md-3">
-                    Provider
-                </div>
-                <div class="col-md-3">
-                    Position
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntries()">
-                        <span class="oi oi-trash"></span>
-                        All
-                    </button>
-                </div>
-            </div>
-            foreach (var alignment in Character.Alignment.History) {
+            <div class="form-list">
                 <div class="row">
                     <div class="col-md-3">
-                        @alignment.Direction.AsDisplayable()
+                        Direction
                     </div>
                     <div class="col-md-3">
-                        @alignment.ProviderDisplayName
+                        Provider
                     </div>
                     <div class="col-md-3">
-                        @alignment.Vector.X, @(alignment.Vector.Y*-1)
+                        Position
                     </div>
                     <div class="col-md-3">
-                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntry(alignment)">
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntries()">
                             <span class="oi oi-trash"></span>
+                            All
                         </button>
                     </div>
                 </div>
-            }
+                @foreach (var alignment in Character.Alignment.History) {
+                    <div class="row">
+                        <div class="col-md-3">
+                            @alignment.Direction.AsDisplayable()
+                        </div>
+                        <div class="col-md-3">
+                            @alignment.ProviderDisplayName
+                        </div>
+                        <div class="col-md-3">
+                            @alignment.Vector.X, @(alignment.Vector.Y*-1)
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntry(alignment)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
         }
     </Body>
     <Footer>
