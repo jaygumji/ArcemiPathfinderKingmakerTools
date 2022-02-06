@@ -127,6 +127,7 @@
         if (!(codes?.Length > 0)) return;
 
         foreach (var code in codes) {
+            if (code[0] == '#') continue;
             var feat = (FeatureFactItemModel)Unit.Facts.Items.Add(FeatureFactItemModel.Prepare);
             feat.Import(code);
             //feat.SourceLevel = Character.Progression.CurrentLevel;
