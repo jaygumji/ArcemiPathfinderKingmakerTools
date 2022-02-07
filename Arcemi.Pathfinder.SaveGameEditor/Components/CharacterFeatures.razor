@@ -3,7 +3,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <textarea class="form-control" placeholder="Experimental! Paste feature code and import features" @bind:event="oninput" @bind="ImportCode"></textarea>
+        <textarea class="form-control" placeholder="Paste feature codes that you want to import" @bind:event="oninput" @bind="ImportCode"></textarea>
     </div>
 </div>
 <div class="row">
@@ -12,10 +12,12 @@
             <span class="oi oi-script"></span>
             Import Code
         </button>
-        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.ExtraLarge">
             Export a code from a feature, using the copy button next to a feature.
             Select another character and import the feature.
+            Or go to the wiki and copy a shared code.
         </Help>
+        <ExternalLink Target="ExternalLinks.WikiFeatCodes" Text="Wiki"/>
     </div>
 </div>
 

@@ -1,0 +1,34 @@
+﻿<button class="btn-link border-0 p-0" @onclick="() => OpenLinkAsync()">
+    <span class="oi oi-external-link"></span>
+    @GetText()
+</button>
+
+@code{
+    [Parameter]
+    public ExternalLinks Target { get; set; }
+
+    [Parameter]
+    public string Text{ get; set; }
+
+    private const string WikiFeatCodesUrl = "https://arcemi.fandom.com/wiki/Feat_Codes";
+
+    private string GetText()
+    {
+        return string.IsNullOrEmpty(Text) ? GetUrl() : Text;
+    }
+
+    private string GetUrl()
+    {
+        switch (Target) {
+            case ExternalLinks.WikiFeatCodes:
+                return WikiFeatCodesUrl;
+        }
+        return "";
+    }
+
+    private async Task OpenLinkAsync()
+    {
+        var url = GetUrl();
+        await ElectronNET.API.Electron.Shell.OpenExternalAsync(url);
+    }
+}
