@@ -19,9 +19,6 @@
             if (x.Name.DisplayName.IEnd(" Test")) {
                 return true;
             }
-            if (x.Name.DisplayName.IWord("Ability")) {
-                return true;
-            }
             if (x.Name.DisplayName.IStart("Quest ")) {
                 return true;
             }

@@ -28,6 +28,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor
             services.AddSingleton<CharacterViewModel>();
             services.AddSingleton<ArmiesViewModel>();
             services.AddSingleton<TasksViewModel>();
+            services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<StateManager>();
         }
 

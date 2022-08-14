@@ -1,5 +1,5 @@
 ﻿@page "/Settings"
-@inject MainViewModel Model
+@inject SettingsViewModel Model
 @inject StateManager State
 
 <fieldset class="form-controller" disabled="@State.IsBusy">
@@ -49,6 +49,12 @@
         </p>
     </div>
 </div>
+
+@if (Model.HasUnsavedConfigChanges){
+    <div>
+        <p class="alert alert-warning">You have unsaved changes.</p>
+    </div>
+}
 
 </fieldset>
 

@@ -41,6 +41,8 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         private string ConfigPath { get; set; }
         public AppUserConfiguration Config { get; private set; }
+        public AppUserConfiguration EditConfig { get; private set; }
+        public bool HasUnsavedConfigChanges => !Config.Equals(EditConfig);
 
         private readonly GameResources _resources;
         public IGameResourcesProvider Resources => _resources;
@@ -58,9 +60,11 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             ConfigPath = Path.Combine(userConfigPath, "user.config");
             try {
                 Config = await AppUserConfiguration.LoadAsync(ConfigPath);
+                EditConfig = Config.Clone();
             }
             catch (Exception ex) {
                 Config = await AppUserConfiguration.DetectAsync();
+                EditConfig = Config.Clone();
                 Electron.Dialog.ShowErrorBox("Configuration error", $"Failed to load the configuration file. Please go to settings page and setup your settings again. Error was '{FormatError(ex)}'");
             }
             LoadConfigResources();
@@ -80,16 +84,12 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public bool ValidateAppDataFolder()
         {
-            if (string.IsNullOrEmpty(Config.AppDataFolder)) return false;
-            var folder = Path.Combine(Config.AppDataFolder, "Saved Games");
-            return Directory.Exists(folder);
+            return Config?.ValidateAppDataFolder() ?? false;
         }
 
         public bool ValidateGameFolder()
         {
-            if (string.IsNullOrEmpty(Config?.GameFolder)) return false;
-            var cheatdataPath = Path.Combine(Config.GameFolder, "Bundles", "cheatdata.json");
-            return File.Exists(cheatdataPath);
+            return Config?.ValidateGameFolder() ?? false;
         }
 
         private void LoadConfigResources()
@@ -102,6 +102,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public async Task SaveConfigAsync()
         {
+            EditConfig.ApplyOn(Config);
             await Config.SaveAsync(ConfigPath);
             LoadConfigResources();
         }

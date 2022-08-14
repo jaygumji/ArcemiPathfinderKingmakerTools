@@ -12,6 +12,46 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         public string AppDataFolder { get; set; }
         public string GameFolder { get; set; }
 
+        public void ApplyOn(AppUserConfiguration target)
+        {
+            target.GameFolder = GameFolder;
+            target.AppDataFolder = AppDataFolder;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(AppDataFolder, GameFolder);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not AppUserConfiguration other) return false;
+            return string.Equals(GameFolder, other.GameFolder, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(AppDataFolder, other.AppDataFolder, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public AppUserConfiguration Clone()
+        {
+            var clone = new AppUserConfiguration();
+            ApplyOn(clone);
+            return clone;
+        }
+
+        public bool ValidateAppDataFolder()
+        {
+            if (string.IsNullOrEmpty(AppDataFolder)) return false;
+            var folder = Path.Combine(AppDataFolder, "Saved Games");
+            return Directory.Exists(folder);
+        }
+
+        public bool ValidateGameFolder()
+        {
+            if (string.IsNullOrEmpty(GameFolder)) return false;
+            var cheatdataPath = Path.Combine(GameFolder, "Bundles", "cheatdata.json");
+            return File.Exists(cheatdataPath);
+        }
+
+
         public string GetSaveGamesFolder()
         {
             return Path.Combine(AppDataFolder, "Saved Games");
