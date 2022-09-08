@@ -19,6 +19,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static FactItemModel Factory(ModelDataAccessor accessor)
         {
             var type = accessor.TypeValue();
+            if (string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(accessor.Value<string>("$ref")))
+            {
+                return new ReferenceFactItemModel(accessor);
+            }
             if (string.Equals(type, FeatureFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new FeatureFactItemModel(accessor);
             }
@@ -31,8 +35,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             if (string.Equals(type, BuffFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new BuffFactItemModel(accessor);
             }
-            if (string.Equals(type, AbilityFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
+            if (string.Equals(type, AbilityFactItemModel.TypeRef, System.StringComparison.Ordinal))
+            {
                 return new AbilityFactItemModel(accessor);
+            }
+            if (string.Equals(type, ActivatableAbilityFactItemModel.TypeRef, System.StringComparison.Ordinal))
+            {
+                return new ActivatableAbilityFactItemModel(accessor);
             }
             if (string.Equals(type, EtudeFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new EtudeFactItemModel(accessor);

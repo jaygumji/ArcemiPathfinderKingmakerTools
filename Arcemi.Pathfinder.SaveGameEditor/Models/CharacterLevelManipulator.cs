@@ -134,31 +134,49 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             }
         }
 
-        private void RemoveFeature(string blueprintId)
+        private void RemoveFeatureByBlueprint(string blueprintId)
         {
             var toRemove = Unit.Facts.Items.Where(fact => fact.Blueprint == blueprintId).ToList();
             foreach (var fact in toRemove)
             {
                 RemoveFeature(fact);
             }
-            Unit.Descriptor.UISettings.m_AlreadyAutomaticallyAdded.Remove(blueprintId);
-            // To-do: remove from hotbar
+        }
+
+        private void RemoveFeatureById(string id)
+        {
+            var toRemove = Unit.Facts.Items.Where(f => f.Id == id).ToList();
+            foreach (var fact in toRemove)
+            {
+                RemoveFeature(fact);
+            }
         }
 
         private void RemoveFeature(FactItemModel fact)
         {
+            // Remove facts added by this fact
             foreach (var component in fact.Components)
             {
                 if (component.Value is AddFactsComponentModel addFactsComponent)
                 {
                     foreach (var addedFact in addFactsComponent.Data.AppliedFacts)
                     {
-                        RemoveFeature(addedFact.Blueprint);
+                        if (addedFact is ActivatableAbilityFactItemModel activatableAbilityFact)
+                        {
+                            RemoveFeatureById(activatableAbilityFact.m_AppliedBuff.Id);
+                        }
+
+                        RemoveFeatureByBlueprint(addedFact.Blueprint);
                     }
                 }
             }
 
+            // Remove the fact itself
             Unit.Facts.Items.Remove(fact);
+            Unit.Descriptor.UISettings.m_AlreadyAutomaticallyAdded.Remove(fact.Blueprint);
+            // To-do: remove from hotbar. Might be optional.
+
+            // To-do: reference class progression and re-add any features this one replaced during level-up
         }
     }
 }
