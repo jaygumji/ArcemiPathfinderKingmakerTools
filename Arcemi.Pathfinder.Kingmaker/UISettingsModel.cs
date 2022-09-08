@@ -15,6 +15,8 @@ namespace Arcemi.Pathfinder.Kingmaker
             _characterBlueprint = characterBlueprint;
         }
 
+        public ListValueAccessor<string> m_AlreadyAutomaticallyAdded => A.ListValue<string>("m_AlreadyAutomaticallyAdded");
+
         public string PortraitPath
         {
             get {
