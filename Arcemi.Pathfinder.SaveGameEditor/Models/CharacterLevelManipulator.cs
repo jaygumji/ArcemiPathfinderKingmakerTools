@@ -15,7 +15,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 return;
             }
             ProgressionBlueprints = unit.Descriptor.Progression.Classes.Select(cls => {
-                var blueprints = (IReadOnlyList<IBlueprint>)unit.Facts.Items
+                var blueprints = (IReadOnlyList<IBlueprintMetadataEntry>)unit.Facts.Items
                     .OfType<FeatureFactItemModel>()
                     .Select(f => {
                         if (!string.Equals(cls.CharacterClass, f.Source, StringComparison.Ordinal)) return null;
@@ -33,14 +33,14 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public UnitEntityModel Unit { get; }
         public IGameResourcesProvider Resources { get; }
-        public IReadOnlyDictionary<string, IReadOnlyList<IBlueprint>> ProgressionBlueprints { get; }
+        public IReadOnlyDictionary<string, IReadOnlyList<IBlueprintMetadataEntry>> ProgressionBlueprints { get; }
 
         public bool CanDowngrade(ClassModel cls)
         {
             return cls.Level > 1 && ProgressionBlueprints.ContainsKey(cls.CharacterClass);
         }
 
-        public void DowngradeClass(ClassModel cls, bool preserveFeatures = false)
+        public void DowngradeClass(ClassModel cls, bool preserveFeatures = true)
         {
             if (cls.Level <= 1) return;
             if (!ProgressionBlueprints.TryGetValue(cls.CharacterClass, out var blueprints)) return;

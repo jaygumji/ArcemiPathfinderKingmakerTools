@@ -5,7 +5,7 @@ namespace Arcemi.Pathfinder.Kingmaker
     public interface IGameResourcesProvider
     {
         PathfinderAppData AppData { get; }
-        BlueprintData Blueprints { get; }
+        BlueprintMetadata Blueprints { get; }
 
         string GetPortraitId(string blueprint);
         string GetCharacterPotraitIdentifier(string blueprint);
@@ -16,7 +16,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         string GetCharacterName(string blueprint);
         string GetArmyUnitName(string blueprint);
-        IEnumerable<IBlueprint> GetAvailableArmyUnits();
+        IEnumerable<IBlueprintMetadataEntry> GetAvailableArmyUnits();
         bool TryGetLeader(string blueprint, out LeaderDataMapping leader);
         string GetLeaderName(string blueprint);
 
@@ -25,5 +25,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         string GetClassArchetypeName(IReadOnlyList<string> archetypes);
         bool IsMythicClass(string blueprint);
         string GetItemName(string blueprint);
+
+        FactItemModel GetFeatTemplate(string blueprint);
     }
 }

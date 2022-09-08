@@ -12,7 +12,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string UniqueId { get => A.Value<string>(); set => A.Value(value); }
         public TimeSpan AttachTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public bool IsActive { get => A.Value<bool>(); set => A.Value(value); }
-        public FactContextModel Context { get => A.Object("m_Context", a => new FactContextModel(a)); }
+        public FactContextModel Context { get => A.Object("m_Context", a => new FactContextModel(a)); set => A.Value(value.GetAccessor().UnderlyingObject.Root, "m_Context"); }
         public DictionaryAccessor<ComponentModel> Components => A.Dictionary(factory: ComponentModel.Factory, createIfNull: true);
         public ParentContextModel ParentContext => A.Object(factory: a => new ParentContextModel(a), createIfNull: true);
 
@@ -89,6 +89,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         public void Import(string code)
         {
             A.ImportCode(code);
+        }
+
+        public void Import(FactItemModel obj)
+        {
+            A.ImportCode(obj.Export());
         }
     }
 }
