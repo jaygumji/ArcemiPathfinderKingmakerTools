@@ -19,10 +19,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static FactItemModel Factory(ModelDataAccessor accessor)
         {
             var type = accessor.TypeValue();
-            if (string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(accessor.Value<string>("$ref")))
-            {
-                return new ReferenceFactItemModel(accessor);
-            }
             if (string.Equals(type, FeatureFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new FeatureFactItemModel(accessor);
             }
