@@ -3,14 +3,14 @@ using System;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class ActivatableAbilityFactItemModel : FactItemModel
+    public class AbilityFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Kingmaker.UnitLogic.ActivatableAbilities.ActivatableAbility, Assembly-CSharp";
-        public ActivatableAbilityFactItemModel(ModelDataAccessor accessor) : base(accessor)
+        public const string TypeRef = "Kingmaker.UnitLogic.Abilities.Ability, Assembly-CSharp";
+        public AbilityFactItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
 
-        public ActivatableAbilityDataModel m_AppliedBuff => A.Object(factory: a => new ActivatableAbilityDataModel(a));
+        public AbilityDataModel Data => A.Object(factory: a => new AbilityDataModel(a));
 
         public static new void Prepare(IReferences refs, JObject obj)
         {
