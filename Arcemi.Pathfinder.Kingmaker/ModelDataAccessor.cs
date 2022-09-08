@@ -22,7 +22,7 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public IGameResourcesProvider Res { get; }
 
-        JObject IModelDataAccessor.UnderlyingObject => _obj;
+        public JObject UnderlyingObject => _obj;
 
         public string TypeValue()
         {
@@ -64,6 +64,11 @@ namespace Arcemi.Pathfinder.Kingmaker
             var bytes = Convert.FromBase64String(script.Trim().Trim('\"'));
             var json = System.Text.Encoding.UTF8.GetString(bytes);
             var obj = JObject.Parse(json);
+            ImportCode(obj);
+        }
+
+        public void ImportCode(JObject obj)
+        {
             obj.ImportTo(_obj, ImportOptions.CodeScripts);
             _refs.Refresh(_obj);
         }

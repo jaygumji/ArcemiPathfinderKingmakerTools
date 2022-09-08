@@ -20,7 +20,7 @@
                                 </select>
                             </div>
                         </div>
-                        <Search TItem="IBlueprint" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddBlueprintItemBlueprint = a.Item.Id">
+                        <Search TItem="IBlueprintMetadataEntry" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddBlueprintItemBlueprint = a.Item.Id">
                             <ResultItemTemplate>
                                 @item.Name.DisplayName
                             </ResultItemTemplate>
@@ -75,11 +75,11 @@
     [Parameter]
     public EventCallback<ItemModel> OnItemAdded { get; set; }
 
-    private IEnumerable<IBlueprint> SearchableItems => AddBlueprintItemType.HasValue()
+    private IEnumerable<IBlueprintMetadataEntry> SearchableItems => AddBlueprintItemType.HasValue()
         ? Resources.Blueprints.GetEntries(AddBlueprintItemType).Where(IsAddableItem).OrderBy(x => x.DisplayName)
         : BlueprintType.AddableItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).Where(IsAddableItem).OrderBy(x => x.DisplayName);
 
-    private static bool IsAddableItem(IBlueprint x)
+    private static bool IsAddableItem(IBlueprintMetadataEntry x)
     {
         if (x.Type == BlueprintTypes.ItemWeapon) {
             if (x.Id.Eq(Blueprints.Weapons.PurpleStoneKnife)) {

@@ -96,7 +96,7 @@
                             </select>
                         </div>
                     </div>
-                    <Search TItem="IBlueprint" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddItemBlueprint = a.Item.Id">
+                    <Search TItem="IBlueprintMetadataEntry" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddItemBlueprint = a.Item.Id">
                         <ResultItemTemplate>
                             @item.Name.DisplayName
                         </ResultItemTemplate>
@@ -175,15 +175,15 @@
 
     private Modal modalAddItem;
 
-    private IEnumerable<IBlueprint> SearchableItems => AddItemType.HasValue()
+    private IEnumerable<IBlueprintMetadataEntry> SearchableItems => AddItemType.HasValue()
         ? Resources.Blueprints.GetEntries(AddItemType).Where(IsItemValid).OrderBy(x => x.DisplayName)
         : BlueprintType.AllVendorItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).Where(IsItemValid).OrderBy(x => x.DisplayName);
 
-    private IEnumerable<IBlueprint> AddableItemBlueprints => Resources.Blueprints.GetEntries(AddItemType)
+    private IEnumerable<IBlueprintMetadataEntry> AddableItemBlueprints => Resources.Blueprints.GetEntries(AddItemType)
         .Where(IsItemValid)
         .OrderBy(x => x.DisplayName);
 
-    private bool IsItemValid(IBlueprint b)
+    private bool IsItemValid(IBlueprintMetadataEntry b)
     {
             if (AddItemTable?.HasItem(b.Id) ?? false) return false;
             var name = (BlueprintItemName) b.Name;

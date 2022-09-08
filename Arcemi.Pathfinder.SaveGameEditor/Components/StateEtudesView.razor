@@ -29,7 +29,7 @@ else {
             <TabControl StartIndex="0">
                 <Tab Name="Search">
                     <Content>
-                        <Search TItem="IBlueprint" Items="AddableEtudes" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => SelectedEtude = a.Item.Id">
+                        <Search TItem="IBlueprintMetadataEntry" Items="AddableEtudes" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => SelectedEtude = a.Item.Id">
                             <ResultItemTemplate>
                                 @item.Name.DisplayName
                             </ResultItemTemplate>
@@ -154,7 +154,7 @@ else {
 }
 
 @code {
-    private IEnumerable<IBlueprint> AddableEtudes => Model.Resources.Blueprints.GetEntries(BlueprintTypes.Etude)
+    private IEnumerable<IBlueprintMetadataEntry> AddableEtudes => Model.Resources.Blueprints.GetEntries(BlueprintTypes.Etude)
         .Where(b => !EtudeCheck.Contains(b.Id))
         .OrderBy(b => b.DisplayName, StringComparer.Ordinal);
 

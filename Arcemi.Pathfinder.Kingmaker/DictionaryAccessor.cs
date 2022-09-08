@@ -46,9 +46,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public T this[string key]
         {
             get => _dict[key];
-            set {
-                throw new NotImplementedException();
-            }
+            set => _dict[key] = value;
         }
 
         public ICollection<string> Keys => _dict.Keys;

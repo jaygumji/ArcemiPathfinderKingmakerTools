@@ -46,7 +46,7 @@
         <TabControl StartIndex="0">
             <Tab Name="Search">
                 <Content>
-                    <Search TItem="IBlueprint" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
+                    <Search TItem="IBlueprintMetadataEntry" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
                         <ResultItemTemplate>
                             @item.Name.DisplayName
                         </ResultItemTemplate>
@@ -84,12 +84,12 @@
 
     private bool OrderByName = true;
 
-    private IEnumerable<IBlueprint> AvailableSpellsBase => Resources.Blueprints.GetEntries(BlueprintTypes.Ability)
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpellsBase => Resources.Blueprints.GetEntries(BlueprintTypes.Ability)
         .Where(IsValidSpell);
 
-    private IEnumerable<IBlueprint> AvailableSpells => OrderByName ? AvailableSpellsBase.OrderBy(x => x.Name.DisplayName) : AvailableSpellsBase;
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpells => OrderByName ? AvailableSpellsBase.OrderBy(x => x.Name.DisplayName) : AvailableSpellsBase;
 
-    private bool IsValidSpell(IBlueprint x)
+    private bool IsValidSpell(IBlueprintMetadataEntry x)
     {
         return !Spells.IsSpecial(x);
     }
@@ -99,7 +99,7 @@
     private int AddSpellLevel;
     private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint);
 
-    private void SelectAddSpellBlueprint(IBlueprint blueprint)
+    private void SelectAddSpellBlueprint(IBlueprintMetadataEntry blueprint)
     {
         AddSpellBlueprint = blueprint.Id;
     }

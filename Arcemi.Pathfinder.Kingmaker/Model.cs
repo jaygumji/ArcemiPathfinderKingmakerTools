@@ -30,5 +30,6 @@ namespace Arcemi.Pathfinder.Kingmaker
         ModelDataAccessor IModelAdmin.Accessor => A;
         NotifyChangeTracker IModelAdmin.ChangeTracker => N;
 
+        public ModelDataAccessor GetAccessor() => A;
     }
 }

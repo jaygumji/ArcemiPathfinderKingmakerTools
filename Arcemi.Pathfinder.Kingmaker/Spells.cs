@@ -2,7 +2,7 @@
 {
     public class Spells
     {
-        public static bool IsSpecial(IBlueprint x)
+        public static bool IsSpecial(IBlueprintMetadataEntry x)
         {
             if (x.Name.Original.ILike("Cutscene")) {
                 return true;

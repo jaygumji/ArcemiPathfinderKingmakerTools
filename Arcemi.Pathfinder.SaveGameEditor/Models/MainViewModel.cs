@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Arcemi.Pathfinder.SaveGameEditor.Models
 {
@@ -56,8 +58,8 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         {
             if (_isInitialized) return;
             _isInitialized = true;
-            var userConfigPath = await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.UserData);
-            ConfigPath = Path.Combine(userConfigPath, "user.config");
+            
+            ConfigPath = await AppUserConfiguration.GetAppUserConfigFilename();
             try {
                 Config = await AppUserConfiguration.LoadAsync(ConfigPath);
                 EditConfig = Config.Clone();
@@ -65,10 +67,14 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             catch (Exception ex) {
                 Config = await AppUserConfiguration.DetectAsync();
                 EditConfig = Config.Clone();
-                Electron.Dialog.ShowErrorBox("Configuration error", $"Failed to load the configuration file. Please go to settings page and setup your settings again. Error was '{FormatError(ex)}'");
+
+                if (HybridSupport.IsElectronActive)
+                    Electron.Dialog.ShowErrorBox("Configuration error", $"Failed to load the configuration file. Please go to settings page and setup your settings again. Error was '{FormatError(ex)}'");
             }
             LoadConfigResources();
-            Electron.App.BeforeQuit += App_BeforeQuit;
+
+            if (HybridSupport.IsElectronActive)
+                Electron.App.BeforeQuit += App_BeforeQuit;
         }
 
         private Task App_BeforeQuit(QuitEventArgs arg)
@@ -94,10 +100,31 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         private void LoadConfigResources()
         {
-            _resources.Blueprints = BlueprintData.Load(Config.GameFolder);
+            _resources.Blueprints = BlueprintMetadata.Load(Config.GameFolder);
+            LoadFeatTemplates();
 
             var wwwRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
+#if DEBUG
+            if (!Directory.Exists(wwwRoot))
+            {
+                // We're probably running in the debugger without dotnet publish
+                wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
+#endif
             _resources.AppData = new PathfinderAppData(new WwwRootResourceProvider(wwwRoot, () => Config.AppDataFolder));
+        }
+
+        private void LoadFeatTemplates()
+        {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs", "FeatTemplates.json");
+            var contents = File.ReadAllText(path);
+            var jObjects = JsonConvert.DeserializeObject<List<JObject>>(contents);
+            var templates = new List<FeatureFactItemModel>();
+            foreach (var item in jObjects)
+            {
+                templates.Add(new FeatureFactItemModel(new ModelDataAccessor(item, new References(Resources), Resources)));
+            }
+            _resources.FeatTemplates = templates;
         }
 
         public async Task SaveConfigAsync()

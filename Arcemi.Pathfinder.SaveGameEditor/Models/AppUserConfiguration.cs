@@ -101,9 +101,35 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
             KeyAppData + @"\Owlcat Games\Pathfinder Kingmaker"
         };
 
+        public static async Task<string> GetAppDataDirectory()
+        {
+            if (HybridSupport.IsElectronActive)
+            {
+                return await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.AppData);
+            }
+            else
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            }
+        }
+
+        public static async Task<string> GetAppUserConfigFilename()
+        {
+            string userConfigPath;
+            if (HybridSupport.IsElectronActive)
+            {
+                userConfigPath = await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.UserData);
+            }
+            else
+            {
+                userConfigPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            }
+            return Path.Combine(userConfigPath, "user.config");
+        }
+
         private static async Task<string> DetectAppDataFolderAsync()
         {
-            var appDataPath = await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.AppData);
+            var appDataPath = await GetAppDataDirectory();
             var localLowAppDataPath = Path.Combine(Path.GetDirectoryName(appDataPath), "LocalLow");
 
             foreach (var dir in ProfilePaths) {

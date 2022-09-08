@@ -13,6 +13,10 @@
             {
                 return new RuntimeComponentModel(accessor);
             }
+            else if (string.Equals(type, AddFactsComponentModel.TypeRef, System.StringComparison.Ordinal))
+            {
+                return new AddFactsComponentModel(accessor);
+            }
             return new ComponentModel(accessor);
         }
     }
