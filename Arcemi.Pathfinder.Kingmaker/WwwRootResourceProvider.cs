@@ -29,26 +29,32 @@ namespace Arcemi.Pathfinder.Kingmaker
             var all = new Dictionary<string, Portrait>(StringComparer.OrdinalIgnoreCase);
             var portraitsDirectory = Path.Combine(wwwDirectory, "images", "Portraits");
 
-            foreach (var uri in System.IO.Directory.EnumerateFiles(portraitsDirectory, "*", SearchOption.AllDirectories)) {
-                var extension = Path.GetExtension(uri);
-                if (!ImageExtensions.Contains(extension)) continue;
+            if (System.IO.Directory.Exists(portraitsDirectory))
+            {
+                foreach (var uri in System.IO.Directory.EnumerateFiles(portraitsDirectory, "*", SearchOption.AllDirectories))
+                {
+                    var extension = Path.GetExtension(uri);
+                    if (!ImageExtensions.Contains(extension)) continue;
 
-                var key = Path.GetFileNameWithoutExtension(uri);
-                var dir = Path.GetDirectoryName(uri);
-                var type = Path.GetFileName(dir);
-                var category = PortraitCategory.GetCategoryFor(type);
-                var portrait = new Portrait(key, uri, category);
+                    var key = Path.GetFileNameWithoutExtension(uri);
+                    var dir = Path.GetDirectoryName(uri);
+                    var type = Path.GetFileName(dir);
+                    var category = PortraitCategory.GetCategoryFor(type);
+                    var portrait = new Portrait(key, uri, category);
 
-                if (category.IsAvailable) {
-                    available.Add(portrait);
+                    if (category.IsAvailable)
+                    {
+                        available.Add(portrait);
+                    }
+
+                    if (!all.ContainsKey(key))
+                    {
+                        all.Add(key, portrait);
+                    }
                 }
 
-                if (!all.ContainsKey(key)) {
-                    all.Add(key, portrait);
-                }
+                AppendCustomPortraits(all, available);
             }
-
-            AppendCustomPortraits(all, available);
 
             return new ResourceData(all, available);
         }

@@ -7,7 +7,8 @@ namespace Arcemi.Pathfinder.Kingmaker
     public class GameResources : IGameResourcesProvider
     {
         public PathfinderAppData AppData { get; set; }
-        public BlueprintData Blueprints { get; set; }
+        public BlueprintMetadata Blueprints { get; set; }
+        public List<FeatureFactItemModel> FeatTemplates { get; set; }
 
         public IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> GetAvailablePortraits()
         {
@@ -82,7 +83,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             return Blueprints.TryGetName(blueprint, out var name) ? name : blueprint;
         }
 
-        public IEnumerable<IBlueprint> GetAvailableArmyUnits()
+        public IEnumerable<IBlueprintMetadataEntry> GetAvailableArmyUnits()
         {
             var blueprints = Blueprints.GetEntries(BlueprintTypes.Unit);
             return blueprints.Where(b => b.Name.StartsWith("Army"));
@@ -146,6 +147,11 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string GetItemName(string blueprint)
         {
             return Blueprints.TryGetName(blueprint, out var name) ? name : null;
+        }
+
+        public FactItemModel GetFeatTemplate(string blueprint)
+        {
+            return FeatTemplates.FirstOrDefault(t => t.Blueprint == blueprint);
         }
     }
 }

@@ -14,8 +14,8 @@ namespace Arcemi.Pathfinder.Tests
             var fileText = Res.Get("party_Downgrade_LevelCheck.json");
             const string mainCharacterId = "34a0b9c5-923e-47ad-8e85-bcc923a80ac9";
             var resources = new GameResources();
-            resources.Blueprints = new BlueprintData(new[] {
-                new BlueprintEntry {Guid = "b79e92dd495edd64e90fb483c504b8df", Name = "KineticistProgression", TypeFullName = BlueprintTypes.Progression.FullName}
+            resources.Blueprints = new BlueprintMetadata(new[] {
+                new BlueprintMetadataEntry {Guid = "b79e92dd495edd64e90fb483c504b8df", Name = "KineticistProgression", TypeFullName = BlueprintTypes.Progression.FullName}
             });
 
             var saveFileProvider = MockSaveFileProvider.FromPartyJson(fileText, mainCharacterId, resources);

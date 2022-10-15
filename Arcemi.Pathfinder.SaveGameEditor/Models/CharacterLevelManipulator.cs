@@ -15,7 +15,7 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 return;
             }
             ProgressionBlueprints = unit.Descriptor.Progression.Classes.Select(cls => {
-                var blueprints = (IReadOnlyList<IBlueprint>)unit.Facts.Items
+                var blueprints = (IReadOnlyList<IBlueprintMetadataEntry>)unit.Facts.Items
                     .OfType<FeatureFactItemModel>()
                     .Select(f => {
                         if (!string.Equals(cls.CharacterClass, f.Source, StringComparison.Ordinal)) return null;
@@ -33,14 +33,14 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
 
         public UnitEntityModel Unit { get; }
         public IGameResourcesProvider Resources { get; }
-        public IReadOnlyDictionary<string, IReadOnlyList<IBlueprint>> ProgressionBlueprints { get; }
+        public IReadOnlyDictionary<string, IReadOnlyList<IBlueprintMetadataEntry>> ProgressionBlueprints { get; }
 
         public bool CanDowngrade(ClassModel cls)
         {
             return cls.Level > 1 && ProgressionBlueprints.ContainsKey(cls.CharacterClass);
         }
 
-        public void DowngradeClass(ClassModel cls)
+        public void DowngradeClass(ClassModel cls, bool preserveFeatures = true)
         {
             if (cls.Level <= 1) return;
             if (!ProgressionBlueprints.TryGetValue(cls.CharacterClass, out var blueprints)) return;
@@ -64,43 +64,119 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
                 : new HashSet<string>(StringComparer.Ordinal);
             clsBlueprints.Add(cls.CharacterClass);
 
+            // Decrease the level on the class
             foreach (var item in progression.Items) {
-                if (item.Value.Level == level) {
-                    item.Value.Level--;
-                    continue;
+                // Lower the overall character level
+                if (!cls.IsMythic)
+                {
+                    if (item.Value.Level == level)
+                    {
+                        item.Value.Level--;
+                        continue;
+                    }
                 }
+
+                // Lower the individual class level
                 if (!progressionLookup.Contains(item.Key)) continue;
                 if (item.Value.Level == clsLevel) {
                     item.Value.Level--;
                 }
             }
+            cls.Level = clsLevel - 1;
 
+            // Remove things selected when leveling up to the level we're removing
             var clsLevelStr = clsLevel.ToString();
             var levelStr = level.ToString();
             for (var i = progression.Selections.Count - 1; i >= 0; i--) {
                 var selection = progression.Selections[i];
 
-                if (!cls.IsMythic && selection.Value.ByLevel.ContainsKey(levelStr)) {
-                    selection.Value.ByLevel.Remove(levelStr);
-                    if (selection.Value.ByLevel.Count == 0) {
-                        progression.Selections.RemoveAt(i);
-                    }
-                    continue;
+                // Remove class selections
+                if (progressionLookup.Contains(selection.Value.Source.Blueprint))
+                {
+                    RemoveSelection(progression, i, clsLevelStr, preserveFeatures);
                 }
 
-                if (progressionLookup.Contains(selection.Value.Source.Blueprint)) {
-                    if (selection.Value.ByLevel.ContainsKey(clsLevelStr)) {
-                        selection.Value.ByLevel.Remove(clsLevelStr);
-                        if (selection.Value.ByLevel.Count == 0) {
-                            progression.Selections.RemoveAt(i);
+                // Remove character selections
+                if (!cls.IsMythic)
+                {
+                    RemoveSelection(progression, i, levelStr, preserveFeatures);
+                }
+            }
+        }
+
+        private void RemoveSelection(ProgressionModel progression, int i, string levelStr, bool preserveFeatures)
+        {
+            var selection = progression.Selections[i];
+
+            if (selection.Value.ByLevel.ContainsKey(levelStr))
+            {
+                if (!preserveFeatures)
+                {
+                    RemoveClassFeatures(selection.Value.Source.Blueprint, int.Parse(levelStr));
+                }
+
+                selection.Value.ByLevel.Remove(levelStr);
+                if (selection.Value.ByLevel.Count == 0)
+                {
+                    progression.Selections.RemoveAt(i);
+                }
+            }
+        }
+
+        private void RemoveClassFeatures(string classProgressionBlueprintId, int level)
+        {
+            var toRemove = Unit.Facts.Items.Where(fact => fact is FeatureFactItemModel feature
+                && feature.Source == classProgressionBlueprintId
+                && feature.SourceLevel == level).ToList();
+            foreach (var fact in toRemove)
+            {
+                RemoveFeature(fact);
+            }
+        }
+
+        private void RemoveFeatureByBlueprint(string blueprintId)
+        {
+            var toRemove = Unit.Facts.Items.Where(fact => fact.Blueprint == blueprintId).ToList();
+            foreach (var fact in toRemove)
+            {
+                RemoveFeature(fact);
+            }
+        }
+
+        private void RemoveFeatureById(string id)
+        {
+            var toRemove = Unit.Facts.Items.Where(f => f.Id == id).ToList();
+            foreach (var fact in toRemove)
+            {
+                RemoveFeature(fact);
+            }
+        }
+
+        private void RemoveFeature(FactItemModel fact)
+        {
+            // Remove facts added by this fact
+            foreach (var component in fact.Components)
+            {
+                if (component.Value is AddFactsComponentModel addFactsComponent)
+                {
+                    foreach (var addedFact in addFactsComponent.Data.AppliedFacts)
+                    {
+                        if (addedFact is ActivatableAbilityFactItemModel activatableAbilityFact)
+                        {
+                            RemoveFeatureById(activatableAbilityFact.m_AppliedBuff.Id);
                         }
-                        continue;
+
+                        RemoveFeatureByBlueprint(addedFact.Blueprint);
                     }
                 }
             }
 
-            cls.Level = clsLevel - 1;
-        }
+            // Remove the fact itself
+            Unit.Facts.Items.Remove(fact);
+            Unit.Descriptor.UISettings.m_AlreadyAutomaticallyAdded.Remove(fact.Blueprint);
+            // To-do: remove from hotbar. Might be optional.
 
+            // To-do: reference class progression and re-add any features this one replaced during level-up
+        }
     }
 }

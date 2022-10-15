@@ -19,7 +19,7 @@
         <TabControl StartIndex="0">
             <Tab Name="Search">
                 <Content>
-                    <Search TItem="IBlueprint" Items="AddableFlags" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => SelectedFlag = a.Item.Id">
+                    <Search TItem="IBlueprintMetadataEntry" Items="AddableFlags" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => SelectedFlag = a.Item.Id">
                         <ResultItemTemplate>
                             @item.Name.DisplayName
                         </ResultItemTemplate>
@@ -86,7 +86,7 @@
 
     private List<KeyValuePairModel<int>> OrderedBase;
     private HashSet<string> FlagCheck;
-    private IEnumerable<IBlueprint> AddableFlags => Model.Resources.Blueprints.GetEntries(BlueprintTypes.UnlockableFlag)
+    private IEnumerable<IBlueprintMetadataEntry> AddableFlags => Model.Resources.Blueprints.GetEntries(BlueprintTypes.UnlockableFlag)
         .Where(b => !FlagCheck.Contains(b.Id))
         .OrderBy(b => b.DisplayName, StringComparer.Ordinal);
 

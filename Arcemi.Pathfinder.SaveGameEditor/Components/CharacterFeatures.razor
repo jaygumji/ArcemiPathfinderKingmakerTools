@@ -45,9 +45,12 @@
             <label class="form-label overflow-hidden" title="Components">Components</label>
         </div>
         <div class="col-md-3">
+            <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddFeatAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
         </div>
     </div>
-
+    
     @foreach (var feature in Feats) {
     <div class="row">
         <div class="col-md-6 overflow-hidden">
@@ -82,6 +85,45 @@
     }
 </div>
 
+<Modal @ref="modalAddFeat">
+    <Title>Add feat</Title>
+    <Body>
+        <b>Warning: </b> <span>This feature is experimental. Be sure to keep a backup of your save. If you encounter problems, consider using feat codes instead.</span>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="IBlueprintMetadataEntry" Items="AvailableFeatsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddFeatBlueprint = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.Name.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Feat</label>
+                            <select class="form-control" @bind="AddFeatBlueprint">
+                                <option value="">Select feat...</option>
+                                @foreach (var blueprint in AvailableFeatsBase) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddFeatIsInvalid" @onclick="AddFeatAsync">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFeat.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
 @code {
     [Parameter]
     public UnitEntityModel Unit { get; set; }
@@ -92,8 +134,36 @@
         .Where(f => SearchTerm.IsEmpty() || f.DisplayName.ILike(SearchTerm))
         .OrderBy(f => f.DisplayName);
 
+    private IEnumerable<IBlueprintMetadataEntry> AvailableFeatsBase => Resources.Blueprints.GetEntries(BlueprintTypes.Feature)
+        .Where(IsValidFeat);
+
     private string SearchTerm;
     private string ImportCode;
+
+    private Modal modalAddFeat;
+    private string AddFeatBlueprint;
+    private bool AddFeatIsInvalid => string.IsNullOrEmpty(AddFeatBlueprint);
+
+    private bool IsValidFeat(IBlueprintMetadataEntry x)
+    {
+        return true;
+    }
+
+    private async Task OpenAddFeatAsync()
+    {
+        await modalAddFeat.OpenAsync();
+    }
+
+    private async Task AddFeatAsync()
+    {
+        if (!IsDuplicateBlueprintId(AddFeatBlueprint))
+        {
+            var feat = (FeatureFactItemModel)Unit.Facts.Items.Add(FeatureFactItemModel.Prepare);
+            feat.Import(Resources.GetFeatTemplate(AddFeatBlueprint));
+        }
+
+        await modalAddFeat.CloseAsync();
+    }
 
     private void UprankFeature(FeatureFactItemModel feature)
     {
@@ -139,6 +209,12 @@
             return feats.Any(f => f.Param?.SpellSchool.Eq(param) ?? false);
         }
         return true;
+    }
+
+    private bool IsDuplicateBlueprintId(string blueprint)
+    {
+        var feats = Feats.Where(f => f.Blueprint.Eq(blueprint));
+        return feats.Any();
     }
 
     private void ImportFeature()
