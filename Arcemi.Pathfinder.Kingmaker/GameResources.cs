@@ -8,7 +8,7 @@ using System.Resources;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class GameResources : IGameResourcesProvider
+    public class GameResources : IGameResourcesProvider, IDisposable
     {
         private bool _isDevelopmentModeEnabled;
 
@@ -232,6 +232,13 @@ namespace Arcemi.Pathfinder.Kingmaker
             }
 
             return FeatTemplates?.FirstOrDefault(t => t.Blueprint == blueprint);
+        }
+
+        public void Dispose()
+        {
+            if (BlueprintsArchive is object) {
+                BlueprintsArchive.Dispose();
+            }
         }
     }
 }

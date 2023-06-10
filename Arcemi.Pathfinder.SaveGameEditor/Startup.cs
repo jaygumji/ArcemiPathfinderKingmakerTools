@@ -1,3 +1,4 @@
+using Arcemi.Pathfinder.Kingmaker;
 using Arcemi.Pathfinder.SaveGameEditor.Models;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
@@ -22,8 +23,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddSingleton<GameResources>();
+            services.AddSingleton<IGameResourcesProvider>(p => p.GetService<GameResources>());
             services.AddSingleton<MainViewModel>();
-            services.AddTransient(p => p.GetService<MainViewModel>().Resources);
             services.AddSingleton<ISaveDataProvider>(p => p.GetService<MainViewModel>());
             services.AddSingleton<CharacterViewModel>();
             services.AddSingleton<ArmiesViewModel>();

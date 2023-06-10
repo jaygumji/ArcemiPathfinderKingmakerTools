@@ -49,9 +49,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         private readonly GameResources _resources;
         public IGameResourcesProvider Resources => _resources;
 
-        public MainViewModel()
+        public MainViewModel(GameResources resources)
         {
-            _resources = new GameResources();
+            _resources = resources;
         }
 
         public async Task InitializeAsync()
