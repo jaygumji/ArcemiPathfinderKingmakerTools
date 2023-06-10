@@ -11,11 +11,14 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
     {
         public string AppDataFolder { get; set; }
         public string GameFolder { get; set; }
+        public AppUserDevelopmentConfiguration Development { get; set; } = new AppUserDevelopmentConfiguration();
 
         public void ApplyOn(AppUserConfiguration target)
         {
             target.GameFolder = GameFolder;
             target.AppDataFolder = AppDataFolder;
+            if (target.Development is null) target.Development = new AppUserDevelopmentConfiguration();
+            target.Development.IsEnabled = Development?.IsEnabled ?? false;
         }
 
         public override int GetHashCode()
@@ -55,6 +58,16 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         public string GetSaveGamesFolder()
         {
             return Path.Combine(AppDataFolder, "Saved Games");
+        }
+
+        public async void Save(string path)
+        {
+            var bckPath = Path.ChangeExtension(path, ".bck.config");
+            if (File.Exists(bckPath)) File.Delete(bckPath);
+            if (File.Exists(path)) File.Move(path, bckPath);
+
+            using var stream = File.OpenWrite(path);
+            JsonSerializer.Serialize(stream, this);
         }
 
         public async Task SaveAsync(string path)

@@ -33,5 +33,9 @@ namespace Arcemi.Pathfinder.SaveGameEditor.Models
         {
             await main.SaveConfigAsync();
         }
+        public void SaveConfig()
+        {
+            main.SaveConfig();
+        }
     }
 }

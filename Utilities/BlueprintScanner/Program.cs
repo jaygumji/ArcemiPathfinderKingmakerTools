@@ -1,43 +1,45 @@
 ﻿using Arcemi.Pathfinder.Kingmaker;
-using Arcemi.Pathfinder.SaveGameEditor.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.IO.Compression;
 
-var extractedBlueprintsDirectory = args[0];
-var gameDirectory = args[1];
+if (args.Length < 1) {
+    Console.WriteLine("Must supply atleast 1 argument");
+    Console.WriteLine("1: Game directory");
+    Console.WriteLine("E. g. BlueprintScanner.exe \"C:\\Games\\Pathfinder Wrath of the Righteous\"");
+    return;
+}
+var gameDirectory = args[0];
 
-var viewModel = new MainViewModel();
-await viewModel.InitializeAsync();
+Console.WriteLine($"Game directory: {gameDirectory}");
 
-var blueprintData = BlueprintMetadata.Load(gameDirectory);
+Console.WriteLine("Scanning files...");
+var resources = new GameResources();
+resources.LoadGameFolder(gameDirectory);
+
 var factTemplates = new List<JObject>();
-var references = new References(viewModel.Resources);
-foreach (var featureBlueprintReference in blueprintData.GetEntries(BlueprintTypes.Feature))
-{
-    Console.WriteLine(featureBlueprintReference.DisplayName);
+var references = new References(resources);
+var features = resources.Blueprints.GetEntries(BlueprintTypes.Feature);
 
-    var blueprintPath = Path.Combine(extractedBlueprintsDirectory, featureBlueprintReference.Path);
-    if (!File.Exists(blueprintPath))
-    {
+foreach (var feature in features) {
+    Console.WriteLine(feature.DisplayName);
+
+    var blueprintAccessor = resources.BlueprintsArchive.Load(feature);
+    if (blueprintAccessor is null) {
         Console.WriteLine("Doesn't exist");
         continue;
     }
 
-    var blueprintJson = JObject.Parse(File.ReadAllText(blueprintPath));
-    var blueprintAccessor = new Blueprint(new ModelDataAccessor(blueprintJson, references, viewModel.Resources));
-
     var factTemplateRaw = new JObject();
     FeatureFactItemModel.Prepare(references, factTemplateRaw);
-    var factTemplateAccessor = new ModelDataAccessor(factTemplateRaw, new References(viewModel.Resources), viewModel.Resources);
+    var factTemplateAccessor = new ModelDataAccessor(factTemplateRaw, new References(resources), resources);
     var factTemplate = FactItemModel.Factory(factTemplateAccessor);
-    factTemplate.Blueprint = featureBlueprintReference.Id;
-    factTemplate.Context = new FactContextModel(new ModelDataAccessor(new JObject(), references, viewModel.Resources));
-    factTemplate.Context.AssociatedBlueprint = featureBlueprintReference.Id;
-        
-    foreach (var component in blueprintAccessor.Data.Components)
-    {
-        if (factTemplate.Components.ContainsKey(component.Name))
-        {
+    factTemplate.Blueprint = feature.Id;
+    factTemplate.Context = new FactContextModel(new ModelDataAccessor(new JObject(), references, resources));
+    factTemplate.Context.AssociatedBlueprint = feature.Id;
+
+    foreach (var component in blueprintAccessor.Data.Components) {
+        if (factTemplate.Components.ContainsKey(component.Name)) {
             Console.WriteLine("Warning - Duplicate component: " + component.Name);
             continue;
         }

@@ -273,6 +273,16 @@
         {"id": "aaf7ace9642192d4389eab95e6cd04fd", "name": "Proclaimer"},
         {"id": "d34dcc10e74961f44a81f72b54377b24", "name": "Shieldbearer"}
       ]
+    },
+    {"id": "a406d6ebea5c46bba3160246be03e96f", "name": "Shifter", "archetypes": [
+        {"id": "1a51b5856d3b48d78b3e967dc5f20bd6", "name": "Child Of Manticore"},
+        {"id": "2d5b06e413a9408cbd5bb999b5a4cc4a", "name": "Dragonblood Shifter"},
+        {"id": "1cdfc7d306d1430eac19427539b62091", "name": "Feyform Shifter"},
+        {"id": "f5d22b6b5a7940d49a4d494f67a91efa", "name": "Fiendflesh Shifter"},
+        {"id": "aed5b306ad734a6da5d5638edcb667c9", "name": "Griffonheart Shifter"},
+        {"id": "41d5b44e421048d09d32623689173e11", "name": "Rageshaper Shifter"},
+        {"id": "c42d338616fa46ab9bcc67c94bca7609", "name": "Wild Effigy Shifter"}
+      ]
     }
     //{"id": "", "name": "", "archetypes": [
     //    {"id": "", "name": ""}
@@ -339,6 +349,7 @@
     { "id": "16426365939c42dda587f90b5ad594c6", "name": "Smilodon (PreOrder)", "portrait": "b3712a85095646141b2d43129d19983e" },
     { "id": "28d1986d57a7081439fbb581aa6f960c", "name": "Velociraptor", "portrait": "f03d5a6461a8437facfa77f8c276c45b" },
     { "id": "eab864d9ca3415644a792792fd81bf87", "name": "Wolf", "portrait": "af3fe1a30c9e2844eb9af74fca39f322" },
+    { "id": "42f0d5ec3dc844feb44b04507a7c1bfc", "name": "Ulbrig", "portrait": "1faff0d995004389a6638388d6d4b5f2" },
     //{ "id": "34cbc3fbf30269740b259c4053a1f581", "name": "Deer", "portrait": "9d8a2cddc5550da4490ab5b692e0bd98" },
     //{ "id": "", "name": "Pig", "portrait": "f8f62a718fbcac343a50d495f7d12a29" },
     //{ "id": "", "name": "", "portrait": "" },

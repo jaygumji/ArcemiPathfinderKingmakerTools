@@ -1,30 +1,85 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Resources;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
     public class GameResources : IGameResourcesProvider
     {
-        public PathfinderAppData AppData { get; set; }
-        public BlueprintMetadata Blueprints { get; set; }
-        public List<FeatureFactItemModel> FeatTemplates { get; set; }
+        private bool _isDevelopmentModeEnabled;
+
+        public PathfinderAppData AppData { get; private set; }
+        public BlueprintMetadata Blueprints { get; private set; }
+        public List<FeatureFactItemModel> FeatTemplates { get; private set; }
+        public GameBlueprintsArchive BlueprintsArchive { get; private set; }
+
+        public GameResources()
+        {
+            Blueprints = BlueprintMetadata.Empty;
+        }
+
+        public void LoadGameFolder(string gameFolder)
+        {
+            Blueprints = BlueprintMetadata.Load(gameFolder);
+            if (BlueprintsArchive is object) BlueprintsArchive.Dispose();
+            BlueprintsArchive = new GameBlueprintsArchive(gameFolder, this);
+        }
+
+        public void SetStaticBlueprints(params BlueprintMetadataEntry[] entries)
+        {
+            Blueprints = new BlueprintMetadata(entries);
+        }
+
+        public void LoadFeatTemplates()
+        {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs", "FeatTemplates.json");
+            var contents = File.ReadAllText(path);
+            var jObjects = JsonConvert.DeserializeObject<List<JObject>>(contents);
+            var templates = new List<FeatureFactItemModel>();
+            foreach (var item in jObjects) {
+                templates.Add(new FeatureFactItemModel(new ModelDataAccessor(item, new References(this), this)));
+            }
+            FeatTemplates = templates;
+        }
+
+        public void SetDevelopmentMode(bool isEnabled)
+        {
+            _isDevelopmentModeEnabled = isEnabled;
+        }
+
+        public void LoadAppDataWwwRoot(string appDataFolder)
+        {
+            var wwwRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot");
+#if DEBUG
+            if (!Directory.Exists(wwwRoot)) {
+                // We're probably running in the debugger without dotnet publish
+                wwwRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            }
+#endif
+            var resourceProvider = new WwwRootResourceProvider(wwwRoot, () => appDataFolder);
+            AppData = new PathfinderAppData(resourceProvider);
+        }
 
         public IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> GetAvailablePortraits()
         {
-            //var unknownUri = AppData.Portraits.GetUnknownUri();
-            //var unmappedPortraits = Blueprints.GetEntries(BlueprintTypes.Portrait)
-            //    .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) < 0)
-            //    .Where(e => !AppData.Portraits.Available.Any(p => string.Equals(p.Key, e.Id, StringComparison.Ordinal)))
-            //    .Select(e => new Portrait(e.Id, unknownUri, PortraitCategory.Unmapped, name: e.DisplayName))
-            //    .ToArray();
-
             var res = AppData.Portraits.Available
                 .GroupBy(p => p.Category)
                 .OrderBy(g => g.Key.Order)
                 .ToDictionary(g => g.Key, g => (IReadOnlyList<Portrait>)g.ToArray());
 
-            //res.Add(PortraitCategory.Unmapped, unmappedPortraits);
+            var unknownUri = AppData.Portraits.GetUnknownUri();
+            var unmappedPortraits = Blueprints.GetEntries(BlueprintTypes.Portrait)
+                .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) < 0)
+                .Where(e => !AppData.Portraits.Available.Any(p => string.Equals(p.Key, e.Id, StringComparison.Ordinal)))
+                .Select(e => new Portrait(e.Id, unknownUri, PortraitCategory.Unmapped, name: e.DisplayName))
+                .ToArray();
+
+            res.Add(PortraitCategory.Unmapped, unmappedPortraits);
+
             return res;
         }
 
@@ -151,7 +206,32 @@ namespace Arcemi.Pathfinder.Kingmaker
 
         public FactItemModel GetFeatTemplate(string blueprint)
         {
-            return FeatTemplates.FirstOrDefault(t => t.Blueprint == blueprint);
+            var metadata = Blueprints.Get(blueprint);
+            var blueprintAccessor = BlueprintsArchive.Load(metadata);
+            if (blueprintAccessor is object) {
+                var factTemplateRaw = new JObject();
+                var refs = new References(this);
+                FeatureFactItemModel.Prepare(refs, factTemplateRaw);
+                var factTemplateAccessor = new ModelDataAccessor(factTemplateRaw, refs, this);
+                var factTemplate = FactItemModel.Factory(factTemplateAccessor);
+                factTemplate.Blueprint = metadata.Id;
+                factTemplate.Context = new FactContextModel(new ModelDataAccessor(new JObject(), refs, this));
+                factTemplate.Context.AssociatedBlueprint = metadata.Id;
+
+                foreach (var component in blueprintAccessor.Data.Components) {
+                    if (factTemplate.Components.ContainsKey(component.Name)) {
+                        continue;
+                    }
+
+                    // Not all components need to be added,
+                    // and some components need extra data
+                    // Luckily, the game corrects both these problems for us
+                    factTemplate.Components.AddNull(component.Name);
+                }
+                return factTemplate;
+            }
+
+            return FeatTemplates?.FirstOrDefault(t => t.Blueprint == blueprint);
         }
     }
 }

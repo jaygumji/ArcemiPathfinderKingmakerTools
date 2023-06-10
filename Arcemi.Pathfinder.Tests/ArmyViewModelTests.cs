@@ -13,7 +13,7 @@ namespace Arcemi.Pathfinder.Tests
         private static ArmyViewModel CreateVm(string resourceName)
         {
             var json = Res.Get(resourceName);
-            var res = new GameResources { Blueprints = new BlueprintMetadata(Array.Empty<BlueprintMetadataEntry>()) };
+            var res = new GameResources();
             var refs = new References(res);
             var obj = JObject.Parse(json);
             refs.VisitTree(null, obj);

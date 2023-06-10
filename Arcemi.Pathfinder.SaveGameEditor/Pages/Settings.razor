@@ -5,13 +5,7 @@
 <fieldset class="form-controller" disabled="@State.IsBusy">
 
 <div>
-    <p class="alert alert-info">Changing the settings will take effect immediately after your save.</p>
-</div>
-<div>
-    <button class="btn btn-info" @onclick="SaveFile">
-        <span class="oi oi-data-transfer-download"></span>
-        Save
-    </button>
+    <p class="alert alert-info">Changing the settings will take effect immediately.</p>
 </div>
 <hr />
 
@@ -27,7 +21,7 @@
             <div class="btn @(IsValidAppDataFolder ? "btn-success": "btn-default")">
                 <span class="oi @(IsValidAppDataFolder ? "oi-thumb-up" : "oi-thumb-down")"></span>
             </div>
-            <input class="form-control" type="text" @bind="@Model.Config.AppDataFolder" />
+            <input class="form-control" type="text" @bind="AppDataFolder" />
             <button class="btn btn-info" @onclick="SelectAppDataFolder">...</button>
         </div>
         <p>The path to the application data folder. There should be 2 folders inside ("Saved Games" and "Portraits").</p>
@@ -40,7 +34,7 @@
             <div class="btn @(IsValidGameFolder ? "btn-success": "btn-default")">
                 <span class="oi @(IsValidGameFolder ? "oi-thumb-up" : "oi-thumb-down")"></span>
             </div>
-            <input class="form-control" type="text" @bind="@Model.Config.GameFolder" />
+            <input class="form-control" type="text" @bind="GameFolder" />
             <button class="btn btn-info" @onclick="SelectGameFolder">...</button>
         </div>
         <p>The path to the game folder where the game is installed.
@@ -50,15 +44,33 @@
     </div>
 </div>
 
-@if (Model.HasUnsavedConfigChanges){
+@if (!string.IsNullOrEmpty(_saveMessage)) {
     <div>
-        <p class="alert alert-warning">You have unsaved changes.</p>
+        <p class="alert alert-warning">@_saveMessage</p>
     </div>
 }
 
 </fieldset>
 
 @code {
+
+    protected string AppDataFolder
+    {
+        get => Model.Config.AppDataFolder;
+        set {
+            Model.Config.AppDataFolder = value;
+            Save();
+        }
+    }
+
+    protected string GameFolder
+    {
+        get => Model.Config.GameFolder;
+        set {
+            Model.Config.GameFolder = value;
+            Save();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -74,12 +86,12 @@
             var options = new ElectronNET.API.Entities.OpenDialogOptions {
                 Title = "Select the app data folder",
                 Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory},
-                DefaultPath = Model.Config.AppDataFolder
+                DefaultPath = AppDataFolder
             };
             var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
             var file = files?.FirstOrDefault();
             if (!string.IsNullOrEmpty(file)) {
-                Model.Config.AppDataFolder = file;
+                AppDataFolder = file;
             }
         });
     }
@@ -91,12 +103,12 @@
             var options = new ElectronNET.API.Entities.OpenDialogOptions {
                 Title = "Select the game folder",
                 Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory},
-                DefaultPath = Model.Config.GameFolder
+                DefaultPath = GameFolder
             };
             var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
             var file = files?.FirstOrDefault();
             if (!string.IsNullOrEmpty(file)) {
-                Model.Config.GameFolder = file;
+                GameFolder = file;
             }
         });
     }
@@ -104,10 +116,27 @@
     private bool IsValidGameFolder => Model.ValidateGameFolder();
     private bool IsValidAppDataFolder => Model.ValidateAppDataFolder();
 
-    async Task SaveFile()
+    private string _saveMessage;
+    private int _saveMarker;
+    private int _isSaving;
+    private void Save()
     {
-        await State.ExecuteAsync(async () => {
-            await Model.SaveConfigAsync();
+        System.Threading.Interlocked.Increment(ref _saveMarker);
+        var s = System.Threading.Interlocked.CompareExchange(ref _isSaving, 1, 0);
+        if (s == 1) return; // Already saving
+        _saveMessage = null;
+
+        Task.Factory.StartNew(async () => {
+            while (_saveMarker > 0) {
+                System.Threading.Interlocked.Exchange(ref _saveMarker, 0);
+                try {
+                    await Model.SaveConfigAsync();
+                }
+                catch (Exception ex) {
+                    _saveMessage = "Error when saving: " + ex.Message;
+                }
+            }
+            System.Threading.Interlocked.Exchange(ref _isSaving, 0);
         });
     }
 }

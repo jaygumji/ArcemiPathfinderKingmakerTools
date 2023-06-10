@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Arcemi.Pathfinder.SaveGameEditor\Arcemi.Pathfinder.SaveGameEditor.csproj" />
+    <ProjectReference Include="..\..\Arcemi.Pathfinder.Kingmaker\Arcemi.Pathfinder.Kingmaker.csproj" />
   </ItemGroup>
 
 </Project>

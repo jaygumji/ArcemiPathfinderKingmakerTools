@@ -30,6 +30,15 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-6">
+        <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddFeatAsync()">
+            <span class="oi oi-plus"></span>
+            Add feat from list
+        </button>
+    </div>
+</div>
+
 <div class="form-list">
     <div class="row">
         <div class="col-md-6">
@@ -43,11 +52,6 @@
         </div>
         <div class="col-md-1">
             <label class="form-label overflow-hidden" title="Components">Components</label>
-        </div>
-        <div class="col-md-3">
-            <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddFeatAsync()">
-                <span class="oi oi-plus"></span>
-            </button>
         </div>
     </div>
     
@@ -159,7 +163,11 @@
         if (!IsDuplicateBlueprintId(AddFeatBlueprint))
         {
             var feat = (FeatureFactItemModel)Unit.Facts.Items.Add(FeatureFactItemModel.Prepare);
-            feat.Import(Resources.GetFeatTemplate(AddFeatBlueprint));
+            feat.Blueprint = AddFeatBlueprint;
+            var template = Resources.GetFeatTemplate(AddFeatBlueprint);
+            if (template is object) {
+                feat.Import(template);
+            }
         }
 
         await modalAddFeat.CloseAsync();

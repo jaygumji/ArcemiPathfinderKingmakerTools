@@ -1,11 +1,14 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
+using System.Resources;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
-    public class BlueprintMetadata
+    public class BlueprintMetadata : IDisposable
     {
         private readonly Dictionary<string, BlueprintMetadataEntry> _lookup;
 
@@ -115,6 +118,11 @@ namespace Arcemi.Pathfinder.Kingmaker
                 return Empty;
             }
             return new BlueprintMetadata(cheatdata.Entries);
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }

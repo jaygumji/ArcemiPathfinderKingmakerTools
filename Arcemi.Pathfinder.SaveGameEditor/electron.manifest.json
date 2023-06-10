@@ -4,14 +4,14 @@
     "imageFile": ""
   },
   "name": "ArcemiPathfinderSaveGameEditor",
-  "author": "",
+  "author": "Arcemi",
   "singleInstance": false,
   "environment": "Production",
   "build": {
     "appId": "com.Arcemi.Pathfinder.SaveGameEditor.app",
     "productName": "Arcemi Pathfinder Save Game Editor",
     "copyright": "Copyright © 2022",
-    "buildVersion": "1.13.0",
+    "buildVersion": "1.15.0",
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"

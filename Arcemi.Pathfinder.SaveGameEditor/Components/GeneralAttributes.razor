@@ -1,0 +1,28 @@
+﻿<div class="alert alert-info">
+    The game re-calculates these stats when loading the save file.
+</div>
+<div class="form-list static-content">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Value</label>
+        </div>
+    </div>
+    @foreach (var attr in Unit.Stats) {
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">@attr.Name</label>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control" type="number" readonly="readonly" @bind="@attr.BaseValue" />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public PlayerLeaderModel Unit { get; set; }
+}
