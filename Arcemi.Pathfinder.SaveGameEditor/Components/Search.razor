@@ -61,8 +61,8 @@
     }
 
     private IEnumerable<TItem> FilteredItems => Term.HasValue()
-        ? Items.Where(x => ItemSearchable(x).ILike(Term)).Take(100)
-        : Items.Take(100);
+        ? Items.Where(x => ItemSearchable(x).ILike(Term) || (x is IBlueprintMetadataEntry e && e.Id.IEq(Term))).Take(300)
+        : Items.Take(300);
 
     private async Task SelectAsync(TItem item)
     {
