@@ -41,7 +41,8 @@ namespace Arcemi.Pathfinder.Kingmaker
         };
 
         public static IReadOnlyList<BlueprintType> AddableItems = new[] {
-            //BlueprintTypes.ItemArmor,
+            BlueprintTypes.ItemArmor,
+            BlueprintTypes.ItemShield,
             BlueprintTypes.ItemEquipmentBelt,
             BlueprintTypes.ItemEquipmentFeet,
             BlueprintTypes.ItemEquipmentGlasses,
@@ -75,7 +76,9 @@ namespace Arcemi.Pathfinder.Kingmaker
         };
 
         public bool IsItemWeapon => Equals(BlueprintTypes.ItemWeapon);
-        public bool IsItemArmorOrShield => Equals(BlueprintTypes.ItemArmor) || Equals(BlueprintTypes.ItemShield);
+        public bool IsItemArmorOrShield => IsItemArmor || IsItemShield;
+        public bool IsItemArmor => Equals(BlueprintTypes.ItemArmor);
+        public bool IsItemShield => Equals(BlueprintTypes.ItemShield);
         public bool IsItemAccessory => ItemAccessories.Contains(this);
         public bool IsItemIngredient => Equals(BlueprintTypes.Ingredient);
         public bool IsItemUsable => Equals(BlueprintTypes.ItemEquipmentUsable);

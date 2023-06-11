@@ -26,6 +26,9 @@ namespace Arcemi.Pathfinder.Kingmaker
         bool IsMythicClass(string blueprint);
         string GetItemName(string blueprint);
 
+        ItemModel GetItemTemplate(string blueprint);
+        ItemModel GetItemTemplate(IBlueprintMetadataEntry metadata);
         FactItemModel GetFeatTemplate(string blueprint);
+        FactItemModel GetFeatTemplate(IBlueprintMetadataEntry metadata);
     }
 }

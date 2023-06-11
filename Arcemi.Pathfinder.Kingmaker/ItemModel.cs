@@ -39,6 +39,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
         }
 
+        public WeaponComponentModel WeaponComponent => A.Object(factory: a => new WeaponComponentModel(a));
         public ArmorComponentModel ArmorComponent => A.Object(factory: a => new ArmorComponentModel(a));
         FactsContainerModel IEnchantableItemModel.Facts => ArmorComponent.Facts;
 
@@ -49,6 +50,42 @@ namespace Arcemi.Pathfinder.Kingmaker
         }
 
         public int MaxEnchantmentLevel => Enchantments.Shield.Level.Levels.Count;
+
+        public void EnsureWeaponComponent(IReferences refs)
+        {
+            if (A.UnderlyingObject.Property(nameof(WeaponComponent)) is null) {
+                var component = refs.Create();
+
+                var parts = refs.Create();
+                parts.Add("m_Parts", new JArray());
+                component.Add("Parts", parts);
+
+                var facts = refs.Create();
+                facts.Add("m_Facts", new JArray());
+                component.Add("Facts", facts);
+
+                component.Add("IsIdentified", false);
+                A.UnderlyingObject.Add(nameof(WeaponComponent), component);
+            }
+        }
+
+        public void EnsureArmorComponent(IReferences refs)
+        {
+            if (A.UnderlyingObject.Property(nameof(ArmorComponent)) is null) {
+                var component = refs.Create();
+
+                var parts = refs.Create();
+                parts.Add("m_Parts", new JArray());
+                component.Add("Parts", parts);
+
+                var facts = refs.Create();
+                facts.Add("m_Facts", new JArray());
+                component.Add("Facts", facts);
+
+                component.Add("IsIdentified", false);
+                A.UnderlyingObject.Add(nameof(ArmorComponent), component);
+            }
+        }
     }
 
     public class ArmorItemModel : ItemModel, IEnchantableItemModel
@@ -174,40 +211,36 @@ namespace Arcemi.Pathfinder.Kingmaker
             item.A.ShallowMerge(jObj);
             jObj.Remove("m_WielderRef");
         }
+        
+        private static ItemType GetTypeOf(IBlueprintMetadataEntry metadata)
+        {
+            if (metadata.Type.IsItemWeapon) return Kingmaker.ItemType.Weapon;
+            if (metadata.Type.IsItemArmor) return Kingmaker.ItemType.Armor;
+            if (metadata.Type.IsItemShield) return Kingmaker.ItemType.Shield;
+            if (metadata.Type.IsItemUsable) return Kingmaker.ItemType.Usable;
+            return Kingmaker.ItemType.Simple;
+        }
+
+        public static void Prepare(IReferences refs, JObject jObj, IBlueprintMetadataEntry metadata)
+        {
+            var type = GetTypeOf(metadata);
+            AddRequiredItemProperties(jObj, type);
+        }
 
         public static void Prepare(InventoryModel inventory, IReferences refs, JObject jObj, ItemType itemType)
         {
             AddRequiredItemProperties(jObj, itemType);
             jObj.Add("Collection", refs.CreateReference(jObj, inventory.Id));
-
-            //var addArmorComponent = itemType == ItemType.Shield;
-            //if (addArmorComponent) {
-            //    var component = refs.Create();
-            //    AddDefaultItemProperties(component);
-            //    component.Add("m_ModifierDescriptor", "Shield");
-            //    component.Add("m_Modifiers", null);
-            //    component.Add("m_DexBonusLimeterAC", null);
-            //    component.Add("m_InventorySlotIndex", -1);
-            //    component.Add("Collection", null);
-            //    component.Add("Charges", 0);
-            //    if (rawData != null && rawData.TryGetComponent(ItemType.Armor, out var item)) {
-            //        component.Add("m_Blueprint", item.Blueprint);
-            //    }
-            //    jObj.Add("ArmorComponent", component);
-            //}
-
-            //var addWeaponComponent = itemType == ItemType.Weapon;
-            //if (addWeaponComponent) {
-            //    var component = refs.Create();
-            //    AddDefaultItemProperties(component);
-            //    component.Add("Second", null);
-            //    component.Add("ForceSecondary", false);
-            //    component.Add("IsSecondPartOfDoubleWeapon", false);
-            //    component.Add("IsShield", true);
-            //    component.Add("Collection", null);
-            //    component.Add("Charges", 0);
-            //    jObj.Add("WeaponComponent", component);
-            //}
         }
+
+        public string Export()
+        {
+            return A.ExportCode();
+        }
+        public void Import(ItemModel obj)
+        {
+            A.ImportCode(obj.Export());
+        }
+
     }
 }

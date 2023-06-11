@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 #endregion
 using System.Linq;
+using System.Resources;
 
 namespace Arcemi.Pathfinder.Kingmaker
 {
@@ -29,6 +30,10 @@ namespace Arcemi.Pathfinder.Kingmaker
         {
             var list = A.List<ItemModel>("m_Items");
             var item = list.Add((refs, jObj) => ItemModel.Prepare(this, refs, jObj, itemType));
+            var template = A.Res.GetItemTemplate(blueprint);
+            if (template is object) {
+                item.Import(template);
+            }
             SetInventorySlotIndexToLast(item);
             item.Blueprint = blueprint;
             item.Parts.Items.Touch();

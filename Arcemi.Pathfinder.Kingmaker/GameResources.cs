@@ -204,34 +204,120 @@ namespace Arcemi.Pathfinder.Kingmaker
             return Blueprints.TryGetName(blueprint, out var name) ? name : null;
         }
 
+        public ItemModel GetItemTemplate(string blueprint)
+        {
+            var metadata = Blueprints.Get(blueprint);
+            return GetItemTemplate(metadata);
+        }
+
+        private void SetupFactItemModel(References refs, IBlueprintMetadataEntry metadata, Blueprint blueprintAccessor, FactItemModel template)
+        {
+            template.Blueprint = metadata.Id;
+            template.Context = new FactContextModel(new ModelDataAccessor(new JObject(), refs, this));
+            template.Context.AssociatedBlueprint = metadata.Id;
+
+            if (template is FeatureFactItemModel feat) {
+                if (blueprintAccessor.Data.Ranks > 1) {
+                    feat.Rank = 1;
+                    var rankToSource = feat.RankToSource.Insert(0);
+                    rankToSource.Blueprint = feat.Blueprint;
+                    rankToSource.Level = 1;
+                }
+            }
+
+            foreach (var component in blueprintAccessor.Data.Components) {
+                if (template.Components.ContainsKey(component.Name)) {
+                    continue;
+                }
+
+                // Not all components need to be added,
+                // and some components need extra data
+                // Luckily, the game corrects both these problems for us
+                template.Components.AddNull(component.Name);
+            }
+        }
+
+        private void SetupEnchantments(References refs, Blueprint blueprintAccessor, FactsContainerModel facts)
+        {
+            if (blueprintAccessor.Data.Enchantments is null) return;
+            if (blueprintAccessor.Data.Enchantments.Count <= 0) return;
+
+            foreach (var enchantmentId in blueprintAccessor.Data.Enchantments) {
+                if (enchantmentId == null || enchantmentId.Length < 5) continue;
+                var encBlueprint = enchantmentId.Remove(0, 4); // Starts with "!bp_"
+                var encMetadata = Blueprints.Get(encBlueprint);
+                if (encMetadata is null) continue;
+
+                var encBlueprintAccessor = BlueprintsArchive.Load(encMetadata);
+                if (encBlueprintAccessor is null) continue;
+
+                var enchantmentFact = facts.Items.Add(EnchantmentFactItemModel.Prepare);
+                SetupFactItemModel(refs, encMetadata, blueprintAccessor, enchantmentFact);
+            }
+        }
+
+        public ItemModel GetItemTemplate(IBlueprintMetadataEntry metadata)
+        {
+            var blueprintAccessor = BlueprintsArchive.Load(metadata);
+            if (blueprintAccessor is object) {
+                var templateRaw = new JObject();
+                var refs = new References(this);
+                ItemModel.Prepare(refs, templateRaw, metadata);
+                var itemAccessor = new ModelDataAccessor(templateRaw, refs, this);
+                var template = ItemModel.Create(itemAccessor);
+                template.Blueprint = metadata.Id;
+
+                SetupEnchantments(refs, blueprintAccessor, template.Facts);
+
+                if (template is ShieldItemModel shield) {
+                    if (blueprintAccessor.Data.WeaponComponent != null && blueprintAccessor.Data.WeaponComponent.Length > 4) {
+                        var weapBlueprint = blueprintAccessor.Data.WeaponComponent.Remove(0, 4); // Starts with "!bp_"
+                        var weapMetadata = Blueprints.Get(weapBlueprint);
+                        if (weapMetadata is object) {
+                            var weapBlueprintAccessor = BlueprintsArchive.Load(weapMetadata);
+                            if (weapBlueprintAccessor is object) {
+                                shield.EnsureWeaponComponent(refs);
+                                SetupEnchantments(refs, weapBlueprintAccessor, shield.WeaponComponent.Facts);
+                            }
+                        }
+                    }
+                    if (blueprintAccessor.Data.ArmorComponent != null && blueprintAccessor.Data.ArmorComponent.Length > 4) {
+                        var armorBlueprint = blueprintAccessor.Data.ArmorComponent.Remove(0, 4); // Starts with "!bp_"
+                        var armorMetadata = Blueprints.Get(armorBlueprint);
+                        if (armorMetadata is object) {
+                            var armorBlueprintAccessor = BlueprintsArchive.Load(armorMetadata);
+                            if (armorBlueprintAccessor is object) {
+                                shield.EnsureArmorComponent(refs);
+                                SetupEnchantments(refs, armorBlueprintAccessor, shield.ArmorComponent.Facts);
+                            }
+                        }
+                    }
+                }
+
+                return template;
+            }
+            return null;
+        }
+
         public FactItemModel GetFeatTemplate(string blueprint)
         {
             var metadata = Blueprints.Get(blueprint);
+            return GetFeatTemplate(metadata);
+        }
+        public FactItemModel GetFeatTemplate(IBlueprintMetadataEntry metadata)
+        {
             var blueprintAccessor = BlueprintsArchive.Load(metadata);
             if (blueprintAccessor is object) {
                 var factTemplateRaw = new JObject();
                 var refs = new References(this);
                 FeatureFactItemModel.Prepare(refs, factTemplateRaw);
                 var factTemplateAccessor = new ModelDataAccessor(factTemplateRaw, refs, this);
-                var factTemplate = FactItemModel.Factory(factTemplateAccessor);
-                factTemplate.Blueprint = metadata.Id;
-                factTemplate.Context = new FactContextModel(new ModelDataAccessor(new JObject(), refs, this));
-                factTemplate.Context.AssociatedBlueprint = metadata.Id;
-
-                foreach (var component in blueprintAccessor.Data.Components) {
-                    if (factTemplate.Components.ContainsKey(component.Name)) {
-                        continue;
-                    }
-
-                    // Not all components need to be added,
-                    // and some components need extra data
-                    // Luckily, the game corrects both these problems for us
-                    factTemplate.Components.AddNull(component.Name);
-                }
+                var factTemplate = (FeatureFactItemModel)FactItemModel.Factory(factTemplateAccessor);
+                SetupFactItemModel(refs, metadata, blueprintAccessor, factTemplate);
                 return factTemplate;
             }
 
-            return FeatTemplates?.FirstOrDefault(t => t.Blueprint == blueprint);
+            return FeatTemplates?.FirstOrDefault(t => t.Blueprint == metadata.Id);
         }
 
         public void Dispose()
