@@ -33,7 +33,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public static new void Prepare(IReferences refs, JObject obj)
         {
             obj.Add("$type", TypeRef);
-            obj.Add(nameof(RankToSource), new JArray());
+            obj.Add("m_RankToSource", new JArray());
             FactItemModel.Prepare(refs, obj);
         }
 

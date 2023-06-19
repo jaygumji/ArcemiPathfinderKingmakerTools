@@ -89,7 +89,8 @@
         .OrderBy(s => s.DisplayName);
 
     private IEnumerable<IBlueprintMetadataEntry> AvailableFeatsBase => Resources.Blueprints.GetEntries(BlueprintTypes.LeaderSkill)
-        .Where(IsValidFeat);
+        .Where(IsValidFeat)
+        .OrderBy(s => s.DisplayName);
 
     private string SearchTerm;
  

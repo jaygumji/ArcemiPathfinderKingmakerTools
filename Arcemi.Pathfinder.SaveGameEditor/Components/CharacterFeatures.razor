@@ -139,7 +139,8 @@
         .OrderBy(f => f.DisplayName);
 
     private IEnumerable<IBlueprintMetadataEntry> AvailableFeatsBase => Resources.Blueprints.GetEntries(BlueprintTypes.Feature)
-        .Where(IsValidFeat);
+        .Where(IsValidFeat)
+        .OrderBy(f => f.DisplayName);
 
     private string SearchTerm;
     private string ImportCode;
