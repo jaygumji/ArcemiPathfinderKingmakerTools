@@ -118,7 +118,6 @@
 
         var item = Inventory.AddItem(type, AddBlueprintItemBlueprint);
         await addBlueprintItemModal.CloseAsync();
-        AddBlueprintItemType = null;
         await OnItemAdded.InvokeAsync(item);
     }
 }

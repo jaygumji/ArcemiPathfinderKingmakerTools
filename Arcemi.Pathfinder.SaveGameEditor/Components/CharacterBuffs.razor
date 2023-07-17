@@ -11,12 +11,13 @@
         <div class="col-md-2">
             <label class="form-label">Active</label>
         </div>
-        <div class="col-md-2">
-            <label class="form-label">Components</label>
+        <div class="col-md-5">
+            <label class="form-label">Duration</label>
+            <Help Size="ElementSize.Small" Position="TooltipPosition.BottomRight">
+                From left to right: Days, hours, minutes, seconds
+            </Help>
         </div>
         <div class="col-md-1">
-        </div>
-        <div class="col-md-3">
         </div>
     </div>
     @foreach (var buff in Buffs) {
@@ -24,15 +25,23 @@
         <div class="col-md-4 overflow-hidden">
             <label class="form-label">@buff.DisplayName</label>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
             <Switch @bind-IsChecked="buff.IsActive" />
         </div>
-        <div class="col-md-2">
-            <label class="form-label">@buff.Components.Count</label>
+        <div class="col-md-5">
+            @if (buff.Duration == TimeSpan.Zero){
+                <label class="text-center">-</label>
+            }
+            else {
+                <div class="time-parts for-list">
+                    <input type="number" @bind="buff.DurationParts.Days" />
+                    <input type="number" @bind="buff.DurationParts.Hours" />
+                    <input type="number" @bind="buff.DurationParts.Minutes" />
+                    <input type="number" @bind="buff.DurationParts.Seconds" />
+                </div>
+            }
         </div>
         <div class="col-md-1">
-        </div>
-        <div class="col-md-3">
             <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFact(buff)">
                 <span class="oi oi-trash"></span>
             </button>

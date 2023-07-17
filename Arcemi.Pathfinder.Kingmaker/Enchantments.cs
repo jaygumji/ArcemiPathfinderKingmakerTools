@@ -39,6 +39,9 @@ namespace Arcemi.Pathfinder.Kingmaker
                 public const string ConditionalEnhancementBonus = "$WeaponConditionalEnhancementBonus$c3420665-b0ee-4913-85da-cf1c29966347";
                 public const string ConditionalDamageDice = "$WeaponConditionalDamageDice$ee0200bb-90c1-4625-855c-dab0de0d4557";
                 public const string DamageMultiplierStatReplacement = "$WeaponDamageMultiplierStatReplacement$0c0776ac-6832-4bc3-bba6-9be70b963566";
+                public const string WeaponCriticalMultiplierIncrease = "$WeaponCriticalMultiplierIncrease$877c2a29-704e-425b-8892-365d91dfbce3";
+                public const string IgnoreConcealmentAgainstFactOwner = "$IgnoreConcealmentAgainstFactOwner$5152b558-f134-45d7-99c7-e3580d890557";
+                public const string IgnoreTargetDREnchantment = "$IgnoreTargetDREnchantment$dae4ebd7-548e-42d7-9cb4-0cbaed7423cb";
             }
             public static EnchantmentSpec Adamantine { get; } = new EnchantmentSpec("Adamantine", "ab39e7d59dd12f4429ffef5dca88dc7b");
             public static EnchantmentSpec Agile { get; } = new EnchantmentSpec("Agile", "a36ad92c51789b44fa8a1c5c116a1328", Components.DamageStatReplacementIncrease);
@@ -81,6 +84,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             //public static EnchantmentSpec CrystalDagger { get; } = new EnchantmentSpec("Crystal Dagger", "ac3b2efb35ed4c04d8be2db24f013847", new RuntimeComponentSpec("$AddUnitFactEquipment$53aa5b64-e439-402c-8a4c-d24763b0d274", addedFact: new FactFeatureSpec("b5a8f5bb6503c9846bdea9428d3d442a", "$IncreaseSpellSchoolDC$1a6713a4-08c1-4ea9-a50c-2f3f7473dc43")));
             public static EnchantmentSpec CrystalDagger { get; } = new EnchantmentSpec("Crystal Dagger", "ac3b2efb35ed4c04d8be2db24f013847", "$AddUnitFactEquipment$53aa5b64-e439-402c-8a4c-d24763b0d274");
             public static EnchantmentSpec DeathPact { get; } = new EnchantmentSpec("Death Pact", "0433071606d94ed3b4006fa1b6348272", "$AdditionalDiceOnAttack$c744a5ce-2534-4a81-99bd-9c29a534a9b0", "$AddInitiatorAttackWithWeaponTrigger$7b1fa38a-782e-4a96-8006-18df48d8a813");
+            public static EnchantmentSpec Destructive { get; } = new EnchantmentSpec("Destructive", "5b1550c536bd09740bf43a6ddd1ad919", Components.WeaponCriticalMultiplierIncrease);
             public static EnchantmentSpec Devitalizer { get; } = new EnchantmentSpec("Devitalizer", "577af31035b34142a2235083c09220be", "$AddInitiatorAttackWithWeaponTrigger$7685cb0b-eafc-46f1-afa4-826232f02358");
             public static EnchantmentSpec Disruption { get; } = new EnchantmentSpec("Disruption", "0f20d79b7049c0f4ca54ca3d1ea44baa", "$AddInitiatorAttackWithWeaponTrigger$279973fd-a35c-430b-9188-fb4ba0e71921");
             public static EnchantmentSpec ElderCorrosive { get; } = new EnchantmentSpec("Elder Corrosive", "c7fa5c82d5bb4baf8458dd30981908d1", Components.EnergyDamageDice, "$IgnoreResistanceForDamageFromEnchantment$cc8b00cc-137f-4673-8baf-b4ff0f937be0");
@@ -96,6 +100,7 @@ namespace Arcemi.Pathfinder.Kingmaker
             public static EnchantmentSpec GhostTouch { get; } = new EnchantmentSpec("Ghost touch", "47857e1a5a3ec1a46adf6491b1423b4f", Components.Reality);
             public static EnchantmentSpec GoreFeaster { get; } = new EnchantmentSpec("Gore Feaster", "d8891abf13224fc39c0b94f8e2549200", "$AddUnitFeatureEquipment$f88721fe-5cb4-44d0-8b6e-f716162a884f", "$AddInitiatorAttackWithWeaponTrigger$749e9f16-5df6-4ab8-bbb4-5e24830c4bda");
             public static EnchantmentSpec GreatclubOfSacredCinders { get; } = new EnchantmentSpec("Greatclub Of Sacred Cinders", "e6716f81a0e3495a9442237b3ce9f380", "$AddInitiatorAttackWithWeaponTrigger$190fd062-d0a0-477d-ba55-a3ec66ca577a", "$AddUnitFeatureEquipment$c733097d-bd78-444c-99b9-e021840880ce");
+            public static EnchantmentSpec Heartseeker { get; } = new EnchantmentSpec("Heartseeker", "e252b26686ab66241afdf33f2adaead6", Components.IgnoreConcealmentAgainstFactOwner, Components.IgnoreTargetDREnchantment);
             public static EnchantmentSpec Holy { get; } = new EnchantmentSpec("Holy", "28a9964d81fedae44bae3ca45710c140", Components.DamageAgainstAlignment);
             public static EnchantmentSpec Ice2d6 { get; } = new EnchantmentSpec("Ice 2d6", "00049f6046b20394091b29702c6e9617", Components.EnergyDamageDice);
             public static EnchantmentSpec IcyBurst { get; } = new EnchantmentSpec("Icy Burst", "564a6924b246d254c920a7c44bf2a58b", Components.EnergyBurst2);
@@ -161,6 +166,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 Cruel,
                 CrystalDagger,
                 DeathPact,
+                Destructive,
                 Devitalizer,
                 Disruption,
                 ElderCorrosive,
@@ -177,6 +183,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 GhostTouch,
                 GoreFeaster,
                 GreatclubOfSacredCinders,
+                Heartseeker,
                 Holy,
                 Ice2d6,
                 IcyBurst,

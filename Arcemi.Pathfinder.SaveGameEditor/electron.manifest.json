@@ -10,8 +10,8 @@
   "build": {
     "appId": "com.Arcemi.Pathfinder.SaveGameEditor.app",
     "productName": "Arcemi Pathfinder Save Game Editor",
-    "copyright": "Copyright © 2022",
-    "buildVersion": "1.15.1",
+    "copyright": "Copyright © 2023",
+    "buildVersion": "1.16.0",
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"

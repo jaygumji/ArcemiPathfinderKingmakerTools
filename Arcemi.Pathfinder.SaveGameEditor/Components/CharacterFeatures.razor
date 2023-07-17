@@ -96,9 +96,9 @@
         <TabControl StartIndex="0">
             <Tab Name="Search">
                 <Content>
-                    <Search TItem="IBlueprintMetadataEntry" Items="AvailableFeatsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddFeatBlueprint = a.Item.Id">
+                    <Search TItem="SelectableFeat" Items="AvailableFeatsBase" ItemSearchable="b => b.DisplayName" Context="item" OnSelect="a => AddFeatBlueprint = a.Item.Id">
                         <ResultItemTemplate>
-                            @item.Name.DisplayName
+                            @item.DisplayName
                         </ResultItemTemplate>
                     </Search>
                 </Content>
@@ -138,9 +138,7 @@
         .Where(f => SearchTerm.IsEmpty() || f.DisplayName.ILike(SearchTerm))
         .OrderBy(f => f.DisplayName);
 
-    private IEnumerable<IBlueprintMetadataEntry> AvailableFeatsBase => Resources.Blueprints.GetEntries(BlueprintTypes.Feature)
-        .Where(IsValidFeat)
-        .OrderBy(f => f.DisplayName);
+    private IEnumerable<SelectableFeat> AvailableFeatsBase => PredefinedFeats.Combine(Resources.Blueprints.GetEntries(BlueprintTypes.Feature).Where(IsValidFeat));
 
     private string SearchTerm;
     private string ImportCode;
@@ -161,8 +159,10 @@
 
     private async Task AddFeatAsync()
     {
-        if (!IsDuplicateBlueprintId(AddFeatBlueprint))
-        {
+        if (PredefinedFeats.TryGet(AddFeatBlueprint, out var spec)) {
+            spec.AddTo(Unit.Facts.Items);
+        }
+        else if (!IsDuplicateBlueprintId(AddFeatBlueprint)) {
             var feat = (FeatureFactItemModel)Unit.Facts.Items.Add(FeatureFactItemModel.Prepare);
             feat.Blueprint = AddFeatBlueprint;
             var template = Resources.GetFeatTemplate(AddFeatBlueprint);
