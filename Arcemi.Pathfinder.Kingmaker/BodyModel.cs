@@ -28,9 +28,11 @@ namespace Arcemi.Pathfinder.Kingmaker
                     yield return new HoldingSlotEntry("Weapon Set Secondary #" + index++, equipmentSet.SecondaryHand);
                 }
                 yield return new HoldingSlotEntry("Head", Head);
+                yield return new HoldingSlotEntry("Glasses", Glasses);
                 yield return new HoldingSlotEntry("Neck", Neck);
                 yield return new HoldingSlotEntry("Shoulders", Shoulders);
                 yield return new HoldingSlotEntry("Armor", Armor);
+                yield return new HoldingSlotEntry("Shirt", Shirt);
                 yield return new HoldingSlotEntry("Belt", Belt);
                 yield return new HoldingSlotEntry("Wrist", Wrist);
                 yield return new HoldingSlotEntry("Ring #1", Ring1);
@@ -49,11 +51,13 @@ namespace Arcemi.Pathfinder.Kingmaker
         public IReadOnlyList<HoldingSlotModel> QuickSlots => A.List<HoldingSlotModel>("m_QuickSlots");
 
         public HoldingSlotModel Armor => A.Object<HoldingSlotModel>();
+        public HoldingSlotModel Shirt => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Belt => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Head => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Feet => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Gloves => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Neck => A.Object<HoldingSlotModel>();
+        public HoldingSlotModel Glasses => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Ring1 => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Ring2 => A.Object<HoldingSlotModel>();
         public HoldingSlotModel Wrist => A.Object<HoldingSlotModel>();

@@ -30,5 +30,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         ItemModel GetItemTemplate(IBlueprintMetadataEntry metadata);
         FactItemModel GetFeatTemplate(string blueprint);
         FactItemModel GetFeatTemplate(IBlueprintMetadataEntry metadata);
+
+        IReadOnlyList<EnchantmentSpec> GetEnchantments(ItemModel item);
     }
 }

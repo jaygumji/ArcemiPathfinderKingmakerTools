@@ -40,6 +40,7 @@ namespace Arcemi.Pathfinder.Kingmaker
                 public const string ConditionalDamageDice = "$WeaponConditionalDamageDice$ee0200bb-90c1-4625-855c-dab0de0d4557";
                 public const string DamageMultiplierStatReplacement = "$WeaponDamageMultiplierStatReplacement$0c0776ac-6832-4bc3-bba6-9be70b963566";
                 public const string WeaponCriticalMultiplierIncrease = "$WeaponCriticalMultiplierIncrease$877c2a29-704e-425b-8892-365d91dfbce3";
+                public const string WeaponCriticalMultiplierIncreaseImproved = "$WeaponCriticalMultiplierIncrease$880a548a-2625-4c96-bc24-41d333ced1e1";
                 public const string IgnoreConcealmentAgainstFactOwner = "$IgnoreConcealmentAgainstFactOwner$5152b558-f134-45d7-99c7-e3580d890557";
                 public const string IgnoreTargetDREnchantment = "$IgnoreTargetDREnchantment$dae4ebd7-548e-42d7-9cb4-0cbaed7423cb";
             }

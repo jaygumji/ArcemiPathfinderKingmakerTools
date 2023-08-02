@@ -44,6 +44,9 @@
     [Parameter]
     public Func<TItem, string> ItemSearchable { get; set; }
 
+    [Parameter]
+    public int MaxCount { get; set; } = 300;
+
     public string Term { get; private set; }
     public TItem Current { get; private set; }
 
@@ -62,7 +65,7 @@
 
     private IEnumerable<TItem> FilteredItems => Term.HasValue()
         ? Items.Where(x => ItemSearchable(x).ILike(Term) || (x is IBlueprintMetadataEntry e && e.Id.IEq(Term))).Take(300)
-        : Items.Take(300);
+        : Items.Take(MaxCount);
 
     private async Task SelectAsync(TItem item)
     {

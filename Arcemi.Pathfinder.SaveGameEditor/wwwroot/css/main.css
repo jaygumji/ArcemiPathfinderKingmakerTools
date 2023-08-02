@@ -523,6 +523,24 @@ ul.portraits li span {
 .character-alignment-grid > div:nth-child(3) {
   border-bottom: solid 1px black;
 }
+.character-equipment-slot {
+  margin-bottom: 10px;
+  height: 90px;
+  margin: 5px;
+  border: solid 1px #cecece;
+  border-radius: 5px 5px;
+  padding: 10px;
+}
+.character-equipment-slot .item-icon {
+  text-align: center;
+  vertical-align: middle;
+}
+.character-equipment-slot .data-header {
+  margin-bottom: 5px;
+}
+.character-equipment-slot .data-content {
+  overflow: hidden;
+}
 #blazor-error-ui {
   background: lightyellow;
   bottom: 0;

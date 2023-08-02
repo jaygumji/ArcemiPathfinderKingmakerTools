@@ -6,7 +6,7 @@
 }
 else {
 
-    <div class="row g-3 top-toolbar">
+    <div class="row top-toolbar">
         <div class="col-md-6 btn-group">
             <label class="btn btn-info" for="search">
                 <span class="oi oi-magnifying-glass"></span>
@@ -19,6 +19,23 @@ else {
         else {
             <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
         }
+        <div class="col-md-1">
+            <Help>
+                For some reason the game is adding natural weapons to the inventory which doesn't get removed properly,
+                so I've started to hide them, with an option to display and remove them
+            </Help>
+        </div>
+        <div class="col-md-2">
+            <Switch Id="show-invalid" @bind-IsChecked="ShowInvalidItems">
+                <Label>Show invalid</Label>
+            </Switch>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-danger text-nowrap" @onclick="() => RemoveInvalidItems()" title="Remove invalid items">
+                <span class="oi oi-trash"></span>
+                Invalid
+            </button>
+        </div>
     </div>
 
     <div class="form-list">
@@ -52,7 +69,7 @@ else {
                     <label class="form-label">@item.DisplayName</label>
                 </div>
                 <div class="col-md-1">
-                    <img src="@GetItemTypeIconUrl(item)" alt="@item.DisplayType" />
+                    <img src="@item.GetIconUrl(Resources)" alt="@item.DisplayType" />
                 </div>
                 <div class="col-md-2">
                     @if (item.IsStackable) {
@@ -71,8 +88,8 @@ else {
                     <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
                         <span class="oi oi-paperclip"></span>
                     </button>
-                    @if (CanEdit(item)){
-                    <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => StartEditItemAsync(item)">
+                    @if (item.CanEdit()){
+                    <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => editItemModal.StartEditItemAsync(item)">
                         <span class="oi oi-pencil"></span>
                     </button>
                     }
@@ -86,199 +103,57 @@ else {
     </div>
 }
 
-<Modal @ref="modalEditItem">
-    <Title>Edit item characteristics</Title>
-    <Body>
-        @if (ItemEnchantable != null) {
-            <div class="row"><h3 class="col-md-12">Enchantments</h3></div>
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">Level</label>
-                    <input class="form-control" type="number" min="0" max="@ItemEnchantable.MaxEnchantmentLevel" @bind="ItemEnchantable.EnchantmentLevel" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4>
-                        Current
-                        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
-                            You will only be able to remove enchantments that have been mapped.
-                        </Help>
-                    </h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    @foreach (var fact in ItemEnchantable.Facts.Items.OfType<EnchantmentFactItemModel>().Where(f => !f.IsLevel)) {
-                        <span class="badge badge-secondary m-1">
-                            @fact.DisplayName
-                            @if (!fact.IsMapped) {
-                                <button class="btn btn-sm btn-secondary" @onclick="() => CopyEnchantmentData(fact)">
-                                    <span class="oi oi-paperclip"></span>
-                                </button>
-                            }
-                            <button class="btn btn-sm btn-secondary" @onclick="() => RemoveEnchantmentFact(fact)">
-                                &times;
-                            </button>
-                        </span>
-                    }
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <h4>
-                        Add new
-                        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
-                            You will only be able to add enchantments that are mapped by the editor.
-                        </Help>
-                    </h4>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <Search TItem="EnchantmentSpec" Items="MappedEnchantments.Where(i => !ItemEnchantable.HasEnchantment(i))" ItemSearchable="b => b.Name" Context="item" OnSelect="a => ItemEnchantable.AddEnchantmentFact(a.Item)" Height="ElementSize.Small">
-                        <ResultItemTemplate>
-                            @item.Name
-                        </ResultItemTemplate>
-                    </Search>
-                </div>
-            </div>
-        }
-        @if (Item?.ItemType == ItemType.Usable) {
-            <div class="row"><h3 class="col-md-12">Crafted item</h3></div>
-            if (ItemCrafted != null) {
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Caster level</label>
-                        <Help Size="ElementSize.Small" Position="TooltipPosition.BottomRight">
-                            The higher the caster level the greater the duration, damage, effect.
-                        </Help>
-                        <input class="form-control" type="number" min="1" max="20" @bind="ItemCrafted.CasterLevel" />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Spell level</label>
-                        <Help Size="ElementSize.Small" Position="TooltipPosition.BottomRight">
-                            For scrolls only you will need to roll 1d20 + your "Use Magic Device" against the spell level &times; 2.
-                            I recommend you set this to a low value.
-                        </Help>
-                        <input class="form-control" type="number" min="1" max="20" @bind="ItemCrafted.SpellLevel" />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Ability DC</label>
-                        <Help Size="ElementSize.Small">
-                            This is the DC the target must overcome.
-                        </Help>
-                        <input class="form-control" type="number" min="1" max="100" @bind="ItemCrafted.AbilityDC" />
-                    </div>
-                </div>
-            }
-            else {
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <button class="btn btn-info" @onclick="() => UnlockCraftedItem()">
-                            <span class="oi oi-lock-locked"></span>
-                            Set as crafted
-                        </button>
-                    </div>
-                </div>
-            }
-        }
-    </Body>
-    <Footer>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditItem.CloseAsync()">Close</button>
-    </Footer>
-</Modal>
+<InventoryEditItemModal @ref="editItemModal" />
 
 @code {
     [Parameter]
     public InventoryModel Inventory { get; set; }
 
-    private Modal modalEditItem;
+    private InventoryEditItemModal editItemModal;
     private ItemModel Item;
-    private CraftedPartItemModel ItemCrafted;
-    private IEnchantableItemModel ItemEnchantable;
-    private IReadOnlyList<EnchantmentSpec> MappedEnchantments;
-
-    private string GetItemTypeIconUrl(ItemModel item)
-    {
-        if (Resources.Blueprints.TryGet(item.Blueprint, out var blueprint)) {
-            if (blueprint.Type.IsItemWeapon) {
-                return "/images/ItemTypes/Weapons.png";
-            }
-            if (blueprint.Type.IsItemArmorOrShield) {
-                return "/images/ItemTypes/ArmorsAndShields.png";
-            }
-            if (blueprint.Type.IsItemAccessory) {
-                return "/images/ItemTypes/Accessories.png";
-            }
-            if (blueprint.Type.IsItemIngredient) {
-                return "/images/ItemTypes/Ingredients.png";
-            }
-            if (blueprint.Type.IsItemUsable) {
-                return "/images/ItemTypes/Usable.png";
-            }
-            if (blueprint.Type.IsItemNotable) {
-                return "/images/ItemTypes/Notable.png";
-            }
-            return "/images/ItemTypes/Other.png";
-        }
-        switch (item.ItemType) {
-            case ItemType.Weapon:
-                return "/images/ItemTypes/Weapons.png";
-            case ItemType.Armor:
-            case ItemType.Shield:
-                return "/images/ItemTypes/ArmorsAndShields.png";
-            case ItemType.Usable:
-                return "/images/ItemTypes/Usable.png";
-        }
-        return "/images/ItemTypes/Other.png";
-    }
-
-    private bool CanEdit(ItemModel item)
-    {
-        return item.ItemType == ItemType.Usable
-            || item.ItemType == ItemType.Weapon
-            || item.ItemType == ItemType.Armor
-            //|| item.ItemType == ItemType.Shield
-            ;
-    }
-
-    private async Task StartEditItemAsync(ItemModel item)
-    {
-        Item = item;
-        ItemCrafted = item.Parts.Items.OfType<CraftedPartItemModel>().FirstOrDefault();
-        ItemEnchantable = item as IEnchantableItemModel;
-        if (item is WeaponItemModel) {
-            MappedEnchantments = Enchantments.Weapon.All;
-        }
-        else if (item is ArmorItemModel) {
-            MappedEnchantments = Enchantments.Armor.All;
-        }
-        else if (item is ShieldItemModel) {
-            MappedEnchantments = Enchantments.Shield.All;
-        }
-        await modalEditItem.OpenAsync();
-    }
+    private bool ShowInvalidItems;
 
     private void RemoveItem(ItemModel item)
     {
         Inventory.Items.Remove(item);
     }
 
-    private void UnlockCraftedItem()
+    private void RemoveInvalidItems()
     {
-        ItemCrafted = Item.SetAsCrafted();
+        for (var idx = Inventory.Items.Count - 1; idx >= 0; idx--) {
+            var i = Inventory.Items[idx];
+            if (!string.IsNullOrEmpty(i.WielderRef)) continue;
+            if (i.HoldingSlot != null) continue;
+            if (ItemFilter.Contains(i.Blueprint)) continue;
+            if (!IsInvalidItem(i)) continue;
+
+            Inventory.Items.RemoveAt(idx);
+        }
     }
 
     private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {
         "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
     };
 
+    private bool IsInvalidItem(ItemModel i)
+    {
+        if (Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) {
+            if (blueprint.Path.StartsWith("Blueprints\\Classes\\", StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+            if (blueprint.Path.IndexOf("\\NaturalWeapon\\", StringComparison.OrdinalIgnoreCase) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private bool IsVisibleItem(ItemModel i)
     {
         if (!string.IsNullOrEmpty(i.WielderRef)) return false;
         if (i.HoldingSlot != null) return false;
         if (ItemFilter.Contains(i.Blueprint)) return false;
+        if (!ShowInvalidItems && IsInvalidItem(i)) return false;
         return true;
         //if (!Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) return true;
         //if (!(blueprint.Name is BlueprintItemName itemName)) return true;
@@ -293,14 +168,6 @@ else {
     private void CopyBlueprintIdentifier(ItemModel i)
     {
         ElectronNET.API.Electron.Clipboard.WriteText(i.Blueprint);
-    }
-
-    private void CopyEnchantmentData(EnchantmentFactItemModel fact)
-    {
-        ElectronNET.API.Electron.Clipboard.WriteText(string.Concat(
-            fact.DisplayName, Environment.NewLine,
-            fact.Blueprint, Environment.NewLine,
-            string.Join(Environment.NewLine, fact.Components.Keys)));
     }
 
     private int CalculateScore(ItemModel i)
@@ -325,10 +192,5 @@ else {
     private void Duplicate(ItemModel item)
     {
         Inventory.Duplicate(item);
-    }
-
-    private void RemoveEnchantmentFact(EnchantmentFactItemModel fact)
-    {
-        ItemEnchantable.Facts.Items.Remove(fact);
     }
 }

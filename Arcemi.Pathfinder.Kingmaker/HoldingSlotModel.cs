@@ -19,6 +19,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         public string Type { get => A.Value<string>("$type"); }
         public bool IsActive { get => A.Value<bool>("m_Active"); set => A.Value(value, "m_Active"); }
         public ItemModel Item => A.Object<ItemModel>("m_Item");
+        public string ItemRef => A.Value<string>("m_ItemRef");
         public CharacterModel Owner => A.Object<CharacterModel>();
     }
 }

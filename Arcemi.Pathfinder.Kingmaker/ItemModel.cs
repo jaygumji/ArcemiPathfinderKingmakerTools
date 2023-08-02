@@ -157,6 +157,7 @@ namespace Arcemi.Pathfinder.Kingmaker
         //public object ActivatableAbility => A.Object();
         //public object Enchantments => A.Object("m_Enchantments");
         public string WielderRef => A.Value<string>("m_WielderRef");
+        public string UniqueId => A.Value<string>();
         public HoldingSlotModel HoldingSlot => A.Object(factory: a => new HoldingSlotModel(a));
 
         public CraftedPartItemModel SetAsCrafted()

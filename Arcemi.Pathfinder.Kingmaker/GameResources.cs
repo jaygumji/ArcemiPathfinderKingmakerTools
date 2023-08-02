@@ -320,6 +320,61 @@ namespace Arcemi.Pathfinder.Kingmaker
             return FeatTemplates?.FirstOrDefault(t => t.Blueprint == metadata.Id);
         }
 
+        private IReadOnlyList<EnchantmentSpec> _weaponEnchantments;
+        private IReadOnlyList<EnchantmentSpec> _armorEnchantments;
+        private IReadOnlyList<EnchantmentSpec> _shieldEnchantments;
+
+        private IReadOnlyList<EnchantmentSpec> LoadEnchantments(BlueprintType type, IEnumerable<EnchantmentSpec> predefined)
+        {
+            string DisplayName(IBlueprintMetadataEntry m)
+            {
+                var name = m.DisplayName;
+                if (name.IEnd("Enchantment")) name = name.Remove(name.Length - 12);
+                return name;
+            }
+
+            var blueprintEnchantments =
+                from b in Blueprints.GetEntries(type)
+                where !predefined.Any(e => e.Blueprint.Eq(b.Id))
+                let bspec = BlueprintsArchive.Load(b)
+                select new EnchantmentSpec(DisplayName(b), b.Id, bspec.Data.Components.Select(c => c.Name).ToArray());
+
+            return blueprintEnchantments
+                    .Concat(predefined)
+                    .OrderBy(e => e.Name)
+                    .ToArray();
+        }
+
+        private IReadOnlyList<EnchantmentSpec> WeaponEnchantments
+        {
+            get {
+                if (_weaponEnchantments is object) return _weaponEnchantments;
+                return _weaponEnchantments = LoadEnchantments(BlueprintTypes.WeaponEnchantment, Enchantments.Weapon.All);
+            }
+        }
+
+        private IReadOnlyList<EnchantmentSpec> ArmorEnchantments
+        {
+            get {
+                if (_armorEnchantments is object) return _armorEnchantments;
+                return _armorEnchantments = LoadEnchantments(BlueprintTypes.ArmorEnchantment, Enchantments.Armor.All);
+            }
+        }
+
+        public IReadOnlyList<EnchantmentSpec> GetEnchantments(ItemModel item)
+        {
+            if (item is WeaponItemModel) {
+                return WeaponEnchantments;
+            }
+            else if (item is ArmorItemModel) {
+                return ArmorEnchantments;
+            }
+            else if (item is ShieldItemModel) {
+                return _shieldEnchantments ?? (_shieldEnchantments = Enchantments.Shield.All);
+            }
+            return Array.Empty<EnchantmentSpec>();
+        }
+
         public void Dispose()
         {
             if (BlueprintsArchive is object) {
