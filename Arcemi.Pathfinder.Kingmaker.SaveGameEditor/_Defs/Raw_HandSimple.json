@@ -1,5 +1,0 @@
-﻿{
-  "HandSimple": [
-		{"className": "BlueprintItemEquipmentHandSimple", "name": "FirstWorldLantern", "blueprint": "54b95e1080509004cb0500b8ac76ab1d", "isStackable": false, "cost": 1, "weight": 2, "isNotable": true, "dc": 11}
-  ]
-}

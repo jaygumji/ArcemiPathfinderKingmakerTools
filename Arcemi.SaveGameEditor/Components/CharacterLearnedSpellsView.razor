@@ -1,0 +1,129 @@
+﻿@inject IGameResourcesProvider Resources
+
+@if (LearnedSpells?.Count > 0) {
+    for (var i = 0; i < LearnedSpells.Count; i++){
+        var thisLevel = i;
+        var arr = LearnedSpells[thisLevel];
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Level @thisLevel</h4>
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddSpellAsync(thisLevel)">
+                    <span class="oi oi-plus"></span>
+                </button>
+            </div>
+        </div>
+        if (arr.Count == 0) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-info">
+                        No spells
+                    </p>
+                </div>
+            </div>
+        }
+        else {
+            foreach (var spell in arr) {
+                <div class="row">
+                    <div class="col-md-6">
+                        @Resources.Blueprints.GetNameOrBlueprint(spell.Blueprint)
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(spell)">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    }
+}
+
+<Modal @ref="modalAddSpell">
+    <Title>Add spell for level @AddSpellLevel</Title>
+    <Body>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="IBlueprintMetadataEntry" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.Name.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Spell</label>
+                            <select class="form-control" @bind="AddSpellBlueprint">
+                                <option value="">Select spell...</option>
+                                @foreach (var blueprint in AvailableSpells) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddSpellIsInvalid" @onclick="AddSpellAsync">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddSpell.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+@code {
+    [Parameter]
+    public ListD2Accessor<LearnedSpellModel> LearnedSpells { get; set; }
+
+    private bool OrderByName = true;
+
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpellsBase => Resources.Blueprints.GetEntries(BlueprintTypeId.Ability)
+        .Where(IsValidSpell);
+
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpells => OrderByName ? AvailableSpellsBase.OrderBy(x => x.Name.DisplayName) : AvailableSpellsBase;
+
+    private bool IsValidSpell(IBlueprintMetadataEntry x)
+    {
+        return !Spells.IsSpecial(x);
+    }
+
+    private Modal modalAddSpell;
+    private string AddSpellBlueprint;
+    private int AddSpellLevel;
+    private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint);
+
+    private void SelectAddSpellBlueprint(IBlueprintMetadataEntry blueprint)
+    {
+        AddSpellBlueprint = blueprint.Id;
+    }
+
+    private async Task OpenAddSpellAsync(int level)
+    {
+        AddSpellLevel = level;
+        await modalAddSpell.OpenAsync();
+    }
+
+    private async Task AddSpellAsync()
+    {
+        var spell = LearnedSpells.Add(AddSpellLevel);
+        spell.Blueprint = AddSpellBlueprint;
+        spell.CopiedFromScroll = false;
+        spell.UniqueId = Guid.NewGuid().ToString();
+
+        AddSpellBlueprint = null;
+        AddSpellLevel = 0;
+        await modalAddSpell.CloseAsync();
+    }
+
+    private void RemoveSpell(LearnedSpellModel spell)
+    {
+        LearnedSpells.Remove(spell);
+    }
+}

@@ -1,0 +1,63 @@
+@page "/"
+@using System.IO
+@inject IEditFileSession Session
+@inject NavigationManager NavManager
+@inject IGameResourcesProvider Resources
+@inject StateManager State
+@inject EditorConfiguration Config
+
+<fieldset class="form-controller" disabled="@State.IsBusy">
+
+<div class="row">
+    <div class="col-md-6">
+        <button class="btn btn-info" @onclick="OpenFile">
+            <span class="oi oi-file"></span>
+            Open file dialog
+        </button>
+    </div>
+</div>
+
+<SaveGamesView>
+    <SaveFileToolbar Context="header">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-sm btn-info w-100" @onclick="() => OpenFile(header)">
+                    <span class="oi oi-file"></span>
+                    Open
+                </button>
+            </div>
+        </div>
+    </SaveFileToolbar>
+</SaveGamesView>
+
+</fieldset>
+
+@code {
+    async Task OpenFile()
+    {
+        await State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+
+            var options = new ElectronNET.API.Entities.OpenDialogOptions {
+                Title = "Select the save game file",
+                Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openFile},
+                Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } },
+                DefaultPath = null
+            };
+            var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+            var file = files?.FirstOrDefault();
+            if (!string.IsNullOrEmpty(file)) {
+                Session.Open(file);
+                NavManager.NavigateTo("/Overview");
+            }
+        });
+    }
+
+    async Task OpenFile(SaveFileHeader header)
+    {
+        await State.ExecuteAsync(() => {
+            Session.Open(header.Location.FilePath);
+            NavManager.NavigateTo("/Overview");
+        });
+    }
+}

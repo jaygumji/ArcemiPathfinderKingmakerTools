@@ -1,0 +1,51 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Active</label>
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
+
+    @foreach (var ability in Abilities) {
+    <div class="row">
+        <div class="col-md-4 overflow-hidden">
+            <label class="form-label">@ability.DisplayName</label>
+        </div>
+        <div class="col-md-2">
+            <Switch @bind-IsChecked="ability.IsActive" />
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveAbility(ability)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+    </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IGameUnitModel Unit { get; set; }
+    private IEnumerable<IGameUnitAbilityEntry> Abilities => Unit.Abilities
+        .OrderBy(b => b.DisplayName);
+
+    private void RemoveAbility(IGameUnitAbilityEntry ability)
+    {
+        Unit.Abilities.Remove(ability);
+    }
+}

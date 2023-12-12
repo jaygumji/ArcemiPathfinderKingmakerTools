@@ -1,0 +1,184 @@
+@page "/Characters"
+@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+@inject EditorConfiguration Config
+
+@if (!Model.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else {
+    <ul class="portraits">
+        @foreach (var unit in Model.Characters) {
+        <li @onclick="() => SelectCharacter(unit)" class="@(Unit == unit ? "toggled" : "")" title="@unit.Name">
+            <img src="file://@unit.Portrait.Path" alt="Portrait" />
+            <span>@(unit.CustomName ?? unit.Name)</span>
+        </li>
+        }
+    </ul>
+
+    @if (Unit is object) {
+        <div class="row g-3 character-shared-edit">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input class="form-control" type="text" @bind="Unit.CustomName" placeholder="@Unit.DefaultName" />
+            </div>
+            @if (Config.Instance.Development.IsEnabled) {
+                <div class="col-md-1">
+                    <div>
+                        <label>&nbsp;</label>
+                    </div>
+                    <button class="btn btn-info" title="Copy portrait blueprint" @onclick="() => CopyPortraitBlueprint()">
+                        <span class="oi oi-clipboard"></span>
+                    </button>
+                </div>
+            }
+            <div class="col-md-3">
+                <div>
+                    <label>&nbsp;</label>
+                </div>
+                <div>
+                <button class="btn btn-info w-100" @onclick="() => modalChosePortrait.OpenAsync()">
+                    <span class="oi oi-person"></span>
+                    Portrait
+                </button>
+                <Modal @ref="modalChosePortrait">
+                    <Title>Select new portrait</Title>
+                    <Body>
+                        <TabControl StartIndex="0">
+                            @foreach (var catKV in AvailablePortraits){
+                                <Tab Name="@catKV.Key.Name">
+                                    <Content>
+                                        <ul class="portraits portraits-selection">
+                                            @foreach (var portrait in catKV.Value) {
+                                            <li @onclick="() => SelectPortrait(portrait)" title="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))">
+                                                <img src="file://@portrait.Uri" alt="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))" />
+                                            </li>
+                                            }
+                                        </ul>
+                                    </Content>
+                                </Tab>
+                            }
+                        </TabControl>
+                    </Body>
+                    <Footer>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalChosePortrait.CloseAsync()">Cancel</button>
+                    </Footer>
+                </Modal>
+                </div>
+            </div>
+
+            @if (Unit.Type == UnitEntityType.Mercenary || (Unit.Type == UnitEntityType.Pet && Model.GetOwnerOf(Unit) == null)) {
+            <div class="col-md-3">
+                <div>
+                    <label>&nbsp;</label>
+                </div>
+                <div>
+                <button class="btn btn-danger w-100" @onclick="() => modalConfirmDelete.OpenAsync()">
+                    <span class="oi oi-trash"></span>
+                    Delete
+                </button>
+                <Modal @ref="modalConfirmDelete">
+                    <Title>Confirm Delete</Title>
+                    <Body>
+                        <p>This is a destructive action. It can also potentially corrupt your save file,
+                            so make sure you have a backup to load.</p>
+                    </Body>
+                    <Footer>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="DeleteCharacter">
+                            <span class="oi oi-trash"></span>
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalConfirmDelete.CloseAsync()">Cancel</button>
+                    </Footer>
+                </Modal>
+                </div>
+            </div>
+            }
+        </div>
+        <TabControl StartIndex="0">
+            <Tab Name="Overview">
+                <Content>
+                    <CharacterOverview Unit="Unit" />
+                </Content>
+            </Tab>
+            @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel){
+                <Tab Name="Appearance">
+                    <Content>
+                        <CharacterAppearance Unit="Unit.Ref" />
+                    </Content>
+                </Tab>
+                <Tab Name="Equipment">
+                    <Content>
+                        <CharacterEquipment Unit="Unit.Ref" />
+                    </Content>
+                </Tab>
+            }
+            <Tab Name="Facts">
+                <Content>
+                    <CharacterFacts Unit="Unit" />
+                </Content>
+            </Tab>
+            @if (Unit.Stats.IsSupported) {
+                <Tab Name="Stats">
+                    <Content>
+                        <CharacterStats Unit="Unit" />
+                    </Content>
+                </Tab>
+            }
+            @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
+                <Tab Name="Spellbooks">
+                    <Content>
+                        <CharacterSpellbook Unit="Unit.Ref" />
+                    </Content>
+                </Tab>
+                <Tab Name="Misc">
+                    <Content>
+                        <CharacterMisc Unit="Unit.Ref" />
+                    </Content>
+                </Tab>
+            }
+        </TabControl>
+    }
+}
+
+@code {
+    private IGameUnitModel Unit;
+
+    private Modal modalChosePortrait;
+    private Modal modalConfirmDelete;
+
+    private IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> AvailablePortraits;
+
+    protected override void OnInitialized()
+    {
+        AvailablePortraits = Resources?.GetAvailablePortraits() ?? new Dictionary<PortraitCategory, IReadOnlyList<Portrait>>();
+    }
+
+    public void SelectCharacter(IGameUnitModel unit)
+    {
+        Unit = unit;
+    }
+
+    private void CopyPortraitBlueprint()
+    {
+        if (string.IsNullOrEmpty(Unit.Portrait.Blueprint)) return;
+        ElectronNET.API.Electron.Clipboard.WriteText(Unit.Portrait.Blueprint);
+    }
+
+    private async Task SelectPortrait(Portrait portrait)
+    {
+        Unit.Portrait.Set(portrait);
+        await modalChosePortrait.CloseAsync();
+    }
+
+    private async Task DeleteCharacter()
+    {
+        var pets = Model.Characters.Where(c => c.Type == UnitEntityType.Pet && Model.GetOwnerOf(c) == Unit).ToArray();
+        foreach (var pet in pets) {
+            Model.DeleteCharacter(pet);
+        }
+        Model.DeleteCharacter(Unit);
+        Unit = null;
+        await modalConfirmDelete.CloseAsync();
+    }
+}

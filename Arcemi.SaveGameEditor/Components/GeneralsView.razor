@@ -1,0 +1,53 @@
+﻿@using System.IO
+@inject IEditFileSession Session
+
+@if (!Members.Any()) {
+    <p class="alert alert-info">None found.</p>
+}
+else {
+    <ul class="portraits leaders">
+        @foreach (var member in Members) {
+        <li @onclick="() => SelectMember(member)" class="@(Member == member ? "toggled" : "")">
+            <img src="file://@member.PortraitPath" alt="Portrait" />
+            <span>@member.Name</span>
+        </li>
+        }
+    </ul>
+    @if (Member != null) {
+        <TabControl StartIndex="0">
+            <Tab Name="Overview">
+                <Content>
+                    <GeneralOverview Member="Member" />
+                </Content>
+            </Tab>
+            @if (Member is Arcemi.Models.PathfinderWotr.WotrGameManagementMemberModelEntry wotr) {
+                <Tab Name="Attributes">
+                    <Content>
+                        <GeneralAttributes Unit="wotr.Model" />
+                    </Content>
+                </Tab>
+                <Tab Name="Feats (Skills)">
+                    <Content>
+                        <GeneralSkills Unit="wotr.Model" />
+                    </Content>
+                </Tab>
+@*            <Tab Name="Ritual">
+                <Content>
+                    <GeneralRitual Unit="Unit" />
+                </Content>
+            </Tab>*@
+            }
+        </TabControl>
+    }
+}
+
+@code {
+    private IGameManagementMemberModelEntry Member;
+
+    private IEnumerable<IGameManagementMemberModelEntry> Members => Session.Game.Management.Members;
+
+    private void SelectMember(IGameManagementMemberModelEntry member)
+    {
+        Member = member;
+    }
+}

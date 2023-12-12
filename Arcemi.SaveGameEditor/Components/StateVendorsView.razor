@@ -1,0 +1,225 @@
+﻿@inject IEditFileSession Session
+@inject IGameResourcesProvider Resources
+
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-5">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" title="Number of entries on this vendor">Entries</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" title="Number of known items">Known</label>
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
+    @foreach (var table in Session.Player.SharedVendorTables.PersistentTables) {
+    <div class="row">
+        <div class="col-md-5">
+            <label class="form-label">@table.DisplayName(Resources)</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">@table.Entries.Count</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">@table.KnownItems.Count</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-info" @onclick="() => ShowAddItemAsync(table)" title="Add an item">
+                <span class="oi oi-plus"></span>
+            </button>
+            <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditVendorAsync(table)" title="Edit vendor">
+                <span class="oi oi-pencil"></span>
+            </button>
+            <button class="btn btn-sm btn-warning" @onclick="() => ResetAllItems(table)" title="Reset all items">
+                <span class="oi oi-reload"></span>
+            </button>
+            <button class="btn btn-sm btn-danger" @onclick="() => RemoveAllItems(table)" title="Remove all items">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+    </div>
+    }
+</div>
+
+<Modal @ref="modalEditTable">
+    <Title>Edit Vendor Table</Title>
+    <Body>
+        <div class="form-list">
+            <div class="row">
+                <div class="col-md-7">Name</div>
+                <div class="col-md-3">Count</div>
+                <div class="col-md-2"></div>
+            </div>
+            @if (EditTable?.Entries?.Count > 0) {
+                @foreach (var entry in EditTable.Entries) {
+                    <div class="row">
+                        <div class="col-md-7">@Resources.Blueprints.GetNameOrBlueprint(entry.Item)</div>
+                        <div class="col-md-3"><input class="form-control" type="number" min="1" max="99" @bind="entry.Count" /></div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveEditVendorEntry(entry)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else {
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="alert alert-info">Vendor has no items</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditTable.CloseAsync()">Close</button>
+    </Footer>
+</Modal>
+
+<Modal @ref="modalAddItem">
+    <Title>Add a new item</Title>
+    <Body>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <select class="form-control" @bind="AddItemType">
+                                <option value="">All Types</option>
+                                @foreach (var type in BlueprintType.AllVendorItems) {
+                                    <option value="@type.FullName">@type.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <Search TItem="IBlueprintMetadataEntry" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddItemBlueprint = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.Name.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="By category">
+                <Content>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="add-item-type" class="form-label">Item type</label>
+                            <select id="add-item-type" class="form-control" @bind="AddItemType">
+                                <option value="">Select item type...</option>
+                                @foreach (var type in BlueprintType.AllVendorItems) {
+                                    <option value="@type.FullName">@type.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-10">
+                            <label for="add-item-blueprint" class="form-label">Item</label>
+                            <select id="add-item-blueprint" class="form-control" @bind="AddItemBlueprint">
+                                <option value="">Select item...</option>
+                                @foreach (var blueprint in AddableItemBlueprints) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="add-item-count" class="form-label">Amount</label>
+                            <input type="number" min="1" max="99" class="form-control" readonly="@IsAddItemInvalid" @bind="AddItemCount" />
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsAddItemInvalid" @onclick="() => AddItemAsync()">Confirm</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddItem.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+
+@code {
+    private Modal modalEditTable;
+    private VendorTableModel EditTable;
+
+    private async Task ShowEditVendorAsync(VendorTableModel table)
+    {
+        EditTable = table;
+        await modalEditTable.OpenAsync();
+    }
+
+    private void RemoveEditVendorEntry(VendorTableEntryModel entry)
+    {
+        EditTable.Entries.Remove(entry);
+    }
+
+    private VendorTableModel AddItemTable;
+    private string _AddItemType;
+    private string AddItemType {
+        get {
+            return _AddItemType;
+        }
+        set {
+            _AddItemType = value;
+            AddItemBlueprint = null;
+            AddItemCount = BlueprintType.IsStackableAtVendor(_AddItemType) ? 99 : 1;
+        }
+    }
+    private string AddItemBlueprint;
+    private int AddItemCount;
+    private bool IsAddItemInvalid => string.IsNullOrEmpty(AddItemBlueprint);
+
+    private Modal modalAddItem;
+
+    private IEnumerable<IBlueprintMetadataEntry> SearchableItems => AddItemType.HasValue()
+        ? Resources.Blueprints.GetEntries(AddItemType).Where(IsItemValid).OrderBy(x => x.DisplayName)
+        : BlueprintType.AllVendorItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).Where(IsItemValid).OrderBy(x => x.DisplayName);
+
+    private IEnumerable<IBlueprintMetadataEntry> AddableItemBlueprints => Resources.Blueprints.GetEntries(AddItemType)
+        .Where(IsItemValid)
+        .OrderBy(x => x.DisplayName);
+
+    private bool IsItemValid(IBlueprintMetadataEntry b)
+    {
+            if (AddItemTable?.HasItem(b.Id) ?? false) return false;
+            var name = (BlueprintItemName) b.Name;
+            if (name.IsComponent()) return false;
+            if (name.IsNaturalWeapon()) return false;
+            if (name.IsSpecialWeapon()) return false;
+            return true;
+    }
+
+    private async Task ShowAddItemAsync(VendorTableModel table)
+    {
+        AddItemTable = table;
+        await modalAddItem.OpenAsync();
+    }
+
+    private async Task AddItemAsync()
+    {
+        var entry = AddItemTable.Entries.Add();
+        entry.Item = AddItemBlueprint;
+        entry.Count = AddItemCount;
+        await modalAddItem.CloseAsync();
+        AddItemType = null;
+        AddItemBlueprint = null;
+    }
+
+    private void ResetAllItems(VendorTableModel table)
+    {
+        table.Entries.Clear();
+        foreach (var knownItem in table.KnownItems) {
+            var entry = table.Entries.Add();
+            entry.Item = knownItem.Key;
+            entry.Count = knownItem.Value;
+        }
+    }
+    private void RemoveAllItems(VendorTableModel table)
+    {
+        table.Entries.Clear();
+    }
+}

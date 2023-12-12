@@ -1,0 +1,42 @@
+﻿@page "/Management"
+@inject IEditFileSession Session
+
+@if (!Session.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else if (!Session.Game.Management.IsSupported) {
+    <p><em>Not available.</em></p>
+}
+else {
+    <TabControl StartIndex="0">
+        <Tab Name="@Session.Game.Management.DisplayName">
+            <Content>
+                <KingdomView />
+            </Content>
+        </Tab>
+        <Tab Name="@Session.Game.Management.MemberTypeName">
+            <Content>
+                <GeneralsView />
+            </Content>
+        </Tab>
+        @if (Session.Game.Management.IsArmiesEnabled) {
+            <Tab Name="Armies">
+                <Content>
+                    <ArmiesView />
+                </Content>
+            </Tab>
+        }
+        <Tab Name="Tasks">
+            <Content>
+                <TasksView />
+            </Content>
+        </Tab>
+        @if (Session.Game.Management.IsPlacesEnabled) {
+            <Tab Name="Settlements">
+                <Content>
+                    <SettlementsView />
+                </Content>
+            </Tab>
+        }
+    </TabControl>
+}

@@ -1,0 +1,66 @@
+﻿@inject EditorConfiguration Config
+
+<TabControl>
+    @foreach (var game in Games) {
+        <Tab Name="@game.Definition.Name">
+            <Content>
+                @if (!game.Config.ValidateGameFolder()) {
+                    <p class="alert alert-warning">
+                        Appdata folder is not configured in settings, enhanced UI has been disabled.
+                        Set the appdata folder in the settings to enable the enhanced UI for a better experience.
+                    </p>
+                }
+                <div class="accordion">
+                    @foreach (var saveGroup in game.SaveGroups) {
+                        <div class="accordion-item">
+                            <h4 class="accordion-header">
+                                <button class="accordion-button @(saveGroup.IsExpanded ? "" : "collapsed") w-100" type="button" @onclick:stopPropagation="true" @onclick="() => saveGroup.ToggleExpansion()">
+                                    <span>@saveGroup.PlayerCharacterName</span>
+                                </button>
+                            </h4>
+                            <div class="accordion-collapse collapse @(saveGroup.IsExpanded ? "show" : "")">
+                                <div class="accordion-body">
+                                    @foreach (var header in saveGroup.Headers) {
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">@header.Header.Name</h5>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <p class="card-text">@game.Definition.Resources.Blueprints.GetNameOrBlueprint(header.Header.Area)</p>
+                                                            </div>
+                                                            <div class="col-md-5">
+                                                                <p class="card-text">Game time: @header.Header.GameSaveTime.AsDisplayableDayHourMinute()</p>
+                                                                <p class="card-text">Real time: @header.Header.GameTotalTime.AsDisplayableDayHourMinute()</p>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @SaveFileToolbar(header)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </Content>
+        </Tab>
+    }
+</TabControl>
+
+@code {
+    [Parameter]
+    public RenderFragment<SaveFileHeader> SaveFileToolbar { get; set; }
+
+    private IReadOnlyList<GamesForSavedGamesView> Games { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Games = GamesForSavedGamesView.Create(Config);
+    }
+}

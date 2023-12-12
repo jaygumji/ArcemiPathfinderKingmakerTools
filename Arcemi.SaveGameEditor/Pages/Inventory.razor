@@ -1,0 +1,23 @@
+﻿@page "/Inventory"
+@inject IEditFileSession Session
+
+@if (!Session.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else {
+    <TabControl StartIndex="0">
+        <Tab Name="Party">
+            <Content>
+                <InventoryView Inventory="Session.Game.MainCharacter.Ref.Descriptor.Inventory"></InventoryView>
+            </Content>
+        </Tab>
+        <Tab Name="Stash">
+            <Content>
+                <InventoryView Inventory="Session.Player.SharedStash"></InventoryView>
+            </Content>
+        </Tab>
+    </TabControl>
+}
+
+@code {
+}

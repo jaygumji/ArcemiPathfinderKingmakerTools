@@ -1,0 +1,135 @@
+﻿@inject IEditFileSession Session
+@inject IGameResourcesProvider Resources
+
+<p class="alert alert-warning">Be very careful if you are considering to change any of these values.
+    They may very well break the save game for you.</p>
+
+<div class="row top-toolbar">
+    <div class="col-md-6 btn-group">
+        <label class="btn btn-info" for="search-state-flags">
+            <span class="oi oi-magnifying-glass"></span>
+        </label>
+        <input id="search-state-flags" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
+    </div>
+</div>
+
+<Modal @ref="modalAddFlag">
+    <Title>Add new flag</Title>
+    <Body>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="IBlueprintMetadataEntry" Items="AddableFlags" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => SelectedFlag = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.Name.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <select class="form-control" @bind="SelectedFlag">
+                                <option value="">Select flag...</option>
+                                @foreach (var type in AddableFlags) {
+                                    <option value="@type.Id">@type.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(string.IsNullOrEmpty(SelectedFlag))" @onclick="() => AddFlagAsync()">Confirm</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFlag.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Value</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-info" @onclick="() => modalAddFlag.OpenAsync()">
+                <span class="oi oi-plus"></span>
+            </button>
+        </div>
+    </div>
+    @foreach (var flag in Flags) {
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">@flag.DisplayName(Resources)</label>
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" @bind="flag.Value" />
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-danger" @onclick="() => RemoveFlag(flag)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+
+    </div>
+    }
+</div>
+
+@code {
+    private Modal modalAddFlag;
+    private string SelectedFlag;
+    private string SearchTerm;
+
+    private List<KeyValuePairModel<int>> OrderedBase;
+    private HashSet<string> FlagCheck;
+    private IEnumerable<IBlueprintMetadataEntry> AddableFlags => Resources.Blueprints.GetEntries(BlueprintTypeId.UnlockableFlag)
+        .Where(b => !FlagCheck.Contains(b.Id))
+        .OrderBy(b => b.DisplayName, StringComparer.Ordinal);
+
+    private IEnumerable<KeyValuePairModel<int>> Flags
+    {
+        get {
+            if (string.IsNullOrEmpty(SearchTerm)) {
+                return OrderedBase;
+            }
+            return OrderedBase.Where(e => e.DisplayName(Resources)?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ?? false);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Session.CanEdit) {
+            FlagCheck = new HashSet<string>(StringComparer.Ordinal);
+            OrderedBase = Session.Player.UnlockableFlags.Items
+                .OrderBy(f => f.DisplayName(Resources), StringComparer.Ordinal)
+                .Select(f => {
+                    FlagCheck.Add(f.Key);
+                    return f;
+                })
+                .ToList();
+        }
+    }
+
+    private async Task AddFlagAsync()
+    {
+        var blueprint = Resources.Blueprints.Get(SelectedFlag);
+        var flag = Session.Player.UnlockableFlags.Items.Add();
+        flag.Key = SelectedFlag;
+        flag.Value = 0;
+        FlagCheck.Add(SelectedFlag);
+        OrderedBase.Add(flag);
+        OrderedBase.Sort((l, r) => l.DisplayName(Resources).CompareTo(r.DisplayName(Resources)));
+        await modalAddFlag.CloseAsync();
+    }
+
+    private void RemoveFlag(KeyValuePairModel<int> flag)
+    {
+        FlagCheck.Remove(flag.Key);
+        OrderedBase.Remove(flag);
+        Session.Player.UnlockableFlags.Items.Remove(flag);
+    }
+}

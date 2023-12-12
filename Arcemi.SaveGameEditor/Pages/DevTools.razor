@@ -1,0 +1,84 @@
+﻿@page "/DevTools"
+@inject IGameResourcesProvider Resources
+@inject EditorConfiguration Config;
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Generate definitions</h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <button class="btn btn-info" @onclick="() => ProcureArmyUnitMappings()">
+            <span class="oi oi-play-circle"></span>
+            Army Mappings
+        </button>
+    </div>
+    @foreach (var game in Config.Instance.Games.Where(g => g.ValidateGameFolder())) {
+        <div class="col-md-2">
+            <button class="btn btn-info" @onclick="() => GenerateBlueprintTypes(game)">
+                <span class="oi oi-play-circle"></span>
+                @game.DefinitionId blueprint types
+            </button>
+        </div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <textarea class="form-control" style="height: 400px;" @bind="Output">
+        </textarea>
+    </div>
+</div>
+
+@code{
+    private string Output;
+    public void ProcureArmyUnitMappings()
+    {
+        var newArmyUnits = Resources.GetAvailableArmyUnits()
+            .OrderBy(x => x.DisplayName)
+            .Where(x => !Mappings.ArmyUnits.ContainsKey(x.Id));
+
+        var b = new System.Text.StringBuilder();
+        foreach (var au in newArmyUnits) {
+            b.Append("\t\t{ \"id\": \"").Append(au.Id).Append("\", \"name\": \"").Append(au.DisplayName).AppendLine("\", \"size\": \"Default\"},");
+        }
+        Output = b.ToString();
+    }
+
+    public void GenerateBlueprintTypes(EditorGameConfiguration game) {
+        var cheatDataFile = System.IO.Path.Combine(game.GameFolder, "Bundles", "cheatdata.json");
+        if (!System.IO.File.Exists(cheatDataFile)) {
+            Output = "Could not find cheatdata.json @ " + cheatDataFile;
+        }
+        string NameOf(string fn)
+        {
+            var commaIdx = fn.IndexOf(',');
+            var n = commaIdx >= 0 ? fn.Substring(0, commaIdx) : fn;
+            var dotIdx = n.LastIndexOf('.');
+            n = dotIdx >= 0 && n.Length > dotIdx + 1 ? n.Substring(dotIdx + 1) : n;
+            if (n.StartsWith("Blueprint", StringComparison.Ordinal)) {
+                n = n.Remove(0, 9);
+            }
+            return n;
+        }
+        var serializer = new Newtonsoft.Json.JsonSerializer();
+        using (var stream = new System.IO.FileStream(cheatDataFile, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+        using (var reader = new System.IO.StreamReader(stream))
+        using (var jsonReader = new Newtonsoft.Json.JsonTextReader(reader)) {
+            var cheatdata = serializer.Deserialize<BlueprintMetadataContainer>(jsonReader);
+            var typeNames = cheatdata.Entries.Select(e => e.TypeFullName).Distinct(StringComparer.Ordinal).Select(x => new { Name = NameOf(x), FullName = x }).OrderBy(x => x.Name).ToArray();
+            var b = new System.Text.StringBuilder();
+            foreach (var typeName in typeNames) {
+                b.AppendLine($"public static BlueprintType {typeName.Name} {{ get; }} = new BlueprintType(\"\", \"{typeName.FullName}\");");
+            }
+            b.AppendLine();
+            b.AppendLine("private static readonly Dictionary<string, BlueprintType> LookupFullName = new Dictionary<string, BlueprintType>(StringComparer.Ordinal) {");
+            foreach (var typeName in typeNames) {
+                b.AppendLine($"\t{{{typeName.Name}.FullName, {typeName.Name}}},");
+            }
+            b.AppendLine("}");
+            Output = b.ToString();
+        }
+    }
+}

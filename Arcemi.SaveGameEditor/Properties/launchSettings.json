@@ -22,7 +22,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Arcemi.Pathfinder.SaveGameEditor": {
+    "Arcemi.SaveGameEditor": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

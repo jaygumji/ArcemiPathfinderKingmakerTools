@@ -1,0 +1,28 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+
+@if (DollDataPart == null) {
+    <p class="alert alert-info">Character has no appearance data</p>
+}
+else {
+<p class="alert alert-info">
+    Easiest way to change appearance is to use appearance codes
+</p>
+<AccordionContainer>
+    <Accordion HeaderText="Main appearance" StartAsExpanded="true">
+        <CharacterDollData DollData="DollDataPart.Default" />
+    </Accordion>
+    @if (DollDataPart.Special?.KitsunePolymorph != null) {
+    <Accordion HeaderText="Kitsune polymorph">
+        <CharacterDollData DollData="DollDataPart.Special.KitsunePolymorph" />
+    </Accordion>
+    }
+</AccordionContainer>
+}
+
+@code {
+    [Parameter]
+    public UnitEntityModel Unit { get; set; }
+    private CharacterModel Character => Unit.Descriptor;
+    private UnitDollDataPartItemModel DollDataPart => Unit.Parts.Items.OfType<UnitDollDataPartItemModel>().FirstOrDefault();
+}

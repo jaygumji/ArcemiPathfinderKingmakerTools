@@ -1,0 +1,237 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+
+<div class="row">
+    <div class="col-md-12">
+        <textarea class="form-control" placeholder="Paste feature codes that you want to import" @bind:event="oninput" @bind="ImportCode"></textarea>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-info" disabled="@ImportCode.IsEmpty()" @onclick="() => ImportFeature()">
+            <span class="oi oi-script"></span>
+            Import Code
+        </button>
+        <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+            Export a code from a feature, using the copy button next to a feature.
+            Select another character and import the feature.
+            Or go to the wiki and copy a shared code.
+        </Help>
+        <ExternalLink Target="ExternalLinks.WikiFeatCodes" Text="Wiki"/>
+    </div>
+</div>
+
+<div class="row g-3 top-toolbar mt-3">
+    <div class="col-md-6 btn-group">
+        <label class="btn btn-info" for="search">
+            <span class="oi oi-magnifying-glass"></span>
+        </label>
+        <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
+    </div>
+</div>
+
+@if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
+    <div class="row">
+        <div class="col-md-6">
+            <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddFeatAsync()">
+                <span class="oi oi-plus"></span>
+                Add feat from list
+            </button>
+        </div>
+    </div>
+}
+
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">Rank</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label" title="Last level feat was updated">Level</label>
+        </div>
+    </div>
+    
+    @foreach (var feature in Feats) {
+    <div class="row">
+        <div class="col-md-6 overflow-hidden">
+            <label class="form-label">@feature.DisplayName</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-sm btn-secondary" title="Export to clipboard" @onclick="() => ExportFeature(feature)">
+                <span class="oi oi-script"></span>
+            </button>
+            @if (feature.IsRanked) {
+            <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
+                <span class="oi oi-arrow-thick-bottom"></span>
+            </button>
+            <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
+                <span class="oi oi-arrow-thick-top"></span>
+            </button>
+            }
+            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFeature(feature)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+    </div>
+    }
+</div>
+
+<Modal @ref="modalAddFeat">
+    <Title>Add feat</Title>
+    <Body>
+        <b>Warning: </b> <span>This feature is experimental. Be sure to keep a backup of your save. If you encounter problems, consider using feat codes instead.</span>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="SelectableFeat" Items="AvailableFeatsBase" ItemSearchable="b => b.DisplayName" Context="item" OnSelect="a => AddFeatBlueprint = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Feat</label>
+                            <select class="form-control" @bind="AddFeatBlueprint">
+                                <option value="">Select feat...</option>
+                                @foreach (var blueprint in AvailableFeatsBase) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddFeatIsInvalid" @onclick="AddFeatAsync">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFeat.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+@code {
+    [Parameter]
+    public IGameUnitModel Unit { get; set; }
+    private IEnumerable<IGameUnitFeatEntry> Feats => Unit.Feats
+        .Where(f => SearchTerm.IsEmpty() || f.DisplayName.ILike(SearchTerm))
+        .OrderBy(f => f.DisplayName);
+
+    private IEnumerable<SelectableFeat> AvailableFeatsBase => PredefinedFeats.Combine(Resources.Blueprints.GetEntries(BlueprintTypeId.Feature).Where(IsValidFeat));
+
+    private string SearchTerm;
+    private string ImportCode;
+
+    private Modal modalAddFeat;
+    private string AddFeatBlueprint;
+    private bool AddFeatIsInvalid => string.IsNullOrEmpty(AddFeatBlueprint);
+
+    private bool IsValidFeat(IBlueprintMetadataEntry x)
+    {
+        return true;
+    }
+
+    private async Task OpenAddFeatAsync()
+    {
+        await modalAddFeat.OpenAsync();
+    }
+
+    private async Task AddFeatAsync()
+    {
+        if (PredefinedFeats.TryGet(AddFeatBlueprint, out var spec)) {
+            spec.AddTo(Unit.Ref.Facts.Items);
+        }
+        else if (!IsDuplicateBlueprintId(AddFeatBlueprint)) {
+            var feat = (FeatureFactItemModel)Unit.Ref.Facts.Items.Add(FeatureFactItemModel.Prepare);
+            feat.Blueprint = AddFeatBlueprint;
+            var template = Resources.GetFeatTemplate(AddFeatBlueprint);
+            if (template is object) {
+                feat.Import(template);
+            }
+        }
+
+        await modalAddFeat.CloseAsync();
+    }
+
+    private void UprankFeature(IGameUnitFeatEntry feature)
+    {
+        feature.Rank += 1;
+    }
+
+    private void DownrankFeature(IGameUnitFeatEntry feature)
+    {
+        feature.Rank -= 1;
+    }
+
+    private void ExportFeature(IGameUnitFeatEntry feature)
+    {
+        var code = feature.Export();
+        ElectronNET.API.Electron.Clipboard.WriteText(code);
+    }
+
+    private bool IsDuplicate(string code)
+    {
+        var obj = CodeExport.FromCode(code);
+        if (!obj.TryGetValue(nameof(FeatureFactItemModel.Blueprint), out string blueprint)) return false;
+        var feats = Feats.Where(f => f.Blueprint.Eq(blueprint)).ToArray();
+        if (feats.Length == 0) return false;
+
+        var paramToken = obj[nameof(FeatureFactItemModel.Param)];
+        if (paramToken == null) return true;
+        if (paramToken.TryGetValue(nameof(FeatureParamModel.WeaponCategory), out string param)) {
+            return feats.Any(f => f.Category.Eq(param));
+        }
+        if (paramToken.TryGetValue(nameof(FeatureParamModel.SpellSchool), out param)) {
+            return feats.Any(f => f.Category.Eq(param));
+        }
+        return true;
+    }
+
+    private bool IsDuplicateBlueprintId(string blueprint)
+    {
+        var feats = Feats.Where(f => f.Blueprint.Eq(blueprint));
+        return feats.Any();
+    }
+
+    private void ImportFeature()
+    {
+        var codes = ImportCode?.Trim()?.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (!(codes?.Length > 0)) return;
+
+        var allowDuplicates = false;
+        foreach (var code in codes) {
+            if (code[0] == '#') continue;
+            if (code.IEq("$allow-dups")) {
+                allowDuplicates = true;
+                continue;
+            }
+            if (code.IEq("$deny-dups")) {
+                allowDuplicates = false;
+                continue;
+            }
+            if (code[0] == '$') continue;
+            if (!allowDuplicates && IsDuplicate(code)) continue;
+            var feat = Unit.Feats.AddCode(code);
+        }
+        ImportCode = "";
+    }
+
+    private void RemoveFeature(IGameUnitFeatEntry feature)
+    {
+        Unit.Feats.Remove(feature);
+    }
+}

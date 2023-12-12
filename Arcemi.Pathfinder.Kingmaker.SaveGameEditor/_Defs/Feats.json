@@ -1,9 +1,0 @@
-﻿{
-  "type": "Kingmaker.UnitLogic.Feature, Assembly-CSharp",
-  "list": [
-    {"name": "Kinetic Blast", "capabilities": "R", "blueprint": "93efbde2764b5504e98e6824cab3d27c"},
-    {"name": "Point Blank Shot", "capabilities": "AD", "blueprint": "5eaa5e956007ddf45979b4785d9356fd", "source": "a5da720ab9f2fcd43807226a5146e4c6"},
-    {"name": "Extended Range", "capabilities": "AD", "blueprint": "0da0c194d6e1d43419eb8d990b28e0ab", "source": "0da0c194d6e1d43419eb8d990b28e0ab"}
-    //{"name": "", "blueprint": "", "capabilities": "ADR"},
-  ]
-}

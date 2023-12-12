@@ -1,0 +1,194 @@
+﻿@inject IGameResourcesProvider Resources;
+
+@if (Inventory == null) {
+    <p class="alert alert-warning">Inventory was not found.</p>
+}
+else {
+
+    <div class="row top-toolbar">
+        <div class="col-md-6 btn-group">
+            <label class="btn btn-info" for="search">
+                <span class="oi oi-magnifying-glass"></span>
+            </label>
+            <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
+        </div>
+        @if (Resources.Blueprints.GetEntries(BlueprintTypeId.Item).Count == 0) {
+            <InventoryAddItemFallback Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
+        }
+        else {
+            <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
+        }
+        <div class="col-md-1">
+            <Help>
+                For some reason the game is adding natural weapons to the inventory which doesn't get removed properly,
+                so I've started to hide them, with an option to display and remove them
+            </Help>
+        </div>
+        <div class="col-md-2">
+            <Switch Id="show-invalid" @bind-IsChecked="ShowInvalidItems">
+                <Label>Show invalid</Label>
+            </Switch>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-danger text-nowrap" @onclick="() => RemoveInvalidItems()" title="Remove invalid items">
+                <span class="oi oi-trash"></span>
+                Invalid
+            </button>
+        </div>
+    </div>
+
+    <div class="form-list">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">Type</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Stack</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Charges</label>
+            </div>
+            <div class="col-md-3">
+            </div>
+        </div>
+        @if (!Items.Any()) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-info">Inventory is empty</p>
+                </div>
+            </div>
+        }
+        else {
+            @foreach (var item in Items) {
+            <div class="row">
+                <div class="col-md-4 overflow-hidden">
+                    <label class="form-label">@item.DisplayName(Resources)</label>
+                </div>
+                <div class="col-md-1">
+                    <img src="@item.GetIconUrl(Resources)" alt="@item.DisplayType" />
+                </div>
+                <div class="col-md-2">
+                    @if (item.IsStackable) {
+                        <input class="form-control" type="number" @bind="item.Count" />
+                    }
+                </div>
+                <div class="col-md-2">
+                    @if (item.IsChargable) {
+                        <input class="form-control" type="number" @bind="item.Charges" />
+                    }
+                </div>
+                <div class="col-md-3">
+    @*                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
+                        <span class="oi oi-fork"></span>
+                    </button>*@
+                    <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
+                        <span class="oi oi-paperclip"></span>
+                    </button>
+                    @if (item.CanEdit()){
+                    <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => editItemModal.StartEditItemAsync(item)">
+                        <span class="oi oi-pencil"></span>
+                    </button>
+                    }
+                    <button class="btn btn-sm btn-danger" title="Remove item" @onclick="() => RemoveItem(item)">
+                        <span class="oi oi-trash"></span>
+                    </button>
+                </div>
+            </div>
+            }
+        }
+    </div>
+}
+
+<InventoryEditItemModal @ref="editItemModal" />
+
+@code {
+    [Parameter]
+    public InventoryModel Inventory { get; set; }
+
+    private InventoryEditItemModal editItemModal;
+    private bool ShowInvalidItems;
+
+    private void RemoveItem(ItemModel item)
+    {
+        Inventory.Items.Remove(item);
+    }
+
+    private void RemoveInvalidItems()
+    {
+        for (var idx = Inventory.Items.Count - 1; idx >= 0; idx--) {
+            var i = Inventory.Items[idx];
+            if (!string.IsNullOrEmpty(i.WielderRef)) continue;
+            if (i.HoldingSlot != null) continue;
+            if (ItemFilter.Contains(i.Blueprint)) continue;
+            if (!IsInvalidItem(i)) continue;
+
+            Inventory.Items.RemoveAt(idx);
+        }
+    }
+
+    private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {
+        "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
+    };
+
+    private bool IsInvalidItem(ItemModel i)
+    {
+        if (Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) {
+            if (blueprint.Path.StartsWith("Blueprints\\Classes\\", StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+            if (blueprint.Path.IndexOf("\\NaturalWeapon\\", StringComparison.OrdinalIgnoreCase) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool IsVisibleItem(ItemModel i)
+    {
+        if (!string.IsNullOrEmpty(i.WielderRef)) return false;
+        if (i.HoldingSlot != null) return false;
+        if (ItemFilter.Contains(i.Blueprint)) return false;
+        if (!ShowInvalidItems && IsInvalidItem(i)) return false;
+        return true;
+        //if (!Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) return true;
+        //if (!(blueprint.Name is BlueprintItemName itemName)) return true;
+        //return !itemName.IsFinnean && !itemName.IsNaturalWeapon();
+    }
+
+    private string SearchTerm;
+    private IEnumerable<ItemModel> Items => Inventory.Items
+        .Where(IsVisibleItem)
+        .OrderByDescending(i => CalculateScore(i)).ThenBy(i => i.InventorySlotIndex);
+
+    private void CopyBlueprintIdentifier(ItemModel i)
+    {
+        ElectronNET.API.Electron.Clipboard.WriteText(i.Blueprint);
+    }
+
+    private int CalculateScore(ItemModel i)
+    {
+        var t = SearchTerm;
+        if (string.IsNullOrEmpty(t)) return 0;
+        bool M(string v) => string.Equals(t, v, StringComparison.OrdinalIgnoreCase);
+        bool C(string v) => v != null && v.Contains(t, StringComparison.OrdinalIgnoreCase);
+
+        var s = 0;
+        if (M(i.Blueprint)) s += 200;
+        if (M(i.DisplayName(Resources))) s += 200;
+        if (M(i.DisplayType)) s += 200;
+        if (C(i.Blueprint)) s += 100;
+        if (C(i.DisplayName(Resources))) s += 100;
+        if (C(i.DisplayType)) s += 100;
+        if (C(i.DisplayDescription)) s += 50;
+
+        return s;
+    }
+
+    private void Duplicate(ItemModel item)
+    {
+        Inventory.Duplicate(item);
+    }
+}

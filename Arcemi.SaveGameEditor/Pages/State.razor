@@ -1,0 +1,39 @@
+﻿@page "/State"
+@inject IEditFileSession Session
+
+@if (!Session.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else {
+<TabControl StartIndex="0">
+    <Tab Name="Vendors">
+        <Content>
+            <StateVendorsView />
+        </Content>
+    </Tab>
+    @if (Session.Player.UnlockableFlags?.Items != null) {
+    <Tab Name="Flags">
+        <Content>
+            <StateFlagsView />
+        </Content>
+    </Tab>
+    }
+    @if (Session.Player.EtudesSystem != null) {
+    <Tab Name="Etudes">
+        <Content>
+            <StateEtudesView />
+        </Content>
+    </Tab>
+    }
+    <Tab Name="Quests Started">
+        <Content>
+            <QuestView EnableSpoilerAlert="true" Quests="Session.Player.QuestBook.Facts.Items.OfType<QuestFactItemModel>().Where(q => !q.IsCompleted)" />
+        </Content>
+    </Tab>
+    <Tab Name="Quests Completed">
+        <Content>
+            <QuestView EnableSpoilerAlert="false" Quests="Session.Player.QuestBook.Facts.Items.OfType<QuestFactItemModel>().Where(q => q.IsCompleted)" />
+        </Content>
+    </Tab>
+</TabControl>
+}

@@ -1,0 +1,241 @@
+﻿@inject IEditFileSession Session
+@inject IGameResourcesProvider Resources
+
+<p class="alert alert-warning">
+    Experimental. Do not play around with this unless you know what you're doing
+    or feel like experimenting with safe backups.
+</p>
+
+@if (OrderedBase == null) {
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+}
+else {
+    <div class="row top-toolbar">
+        <div class="col-md-6 btn-group">
+            <label class="btn btn-info" for="search-etudes">
+                <span class="oi oi-magnifying-glass"></span>
+            </label>
+            <input id="search-etudes" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
+        </div>
+    </div>
+
+    <Modal @ref="modalAddEtude">
+        <Title>Add new etude</Title>
+        <Body>
+            <TabControl StartIndex="0">
+                <Tab Name="Search">
+                    <Content>
+                        <Search TItem="IBlueprintMetadataEntry" Items="AddableEtudes" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => SelectedEtude = a.Item.Id">
+                            <ResultItemTemplate>
+                                @item.Name.DisplayName
+                            </ResultItemTemplate>
+                        </Search>
+                    </Content>
+                </Tab>
+                <Tab Name="All">
+                    <Content>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <select class="form-control" @bind="SelectedEtude">
+                                    <option value="">Select etude...</option>
+                                    @foreach (var type in AddableEtudes) {
+                                        <option value="@type.Id">@type.DisplayName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </Content>
+                </Tab>
+            </TabControl>
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(string.IsNullOrEmpty(SelectedEtude))" @onclick="() => AddEtudeAsync()">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddEtude.CloseAsync()">Cancel</button>
+        </Footer>
+    </Modal>
+    <div class="form-list">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">State</label>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-info" @onclick="() => modalAddEtude.OpenAsync()">
+                    <span class="oi oi-plus"></span>
+                </button>
+            </div>
+        </div>
+        @foreach (var etude in Etudes) {
+        <div class="row">
+            <div class="col-md-6 overflow-hidden">
+                <label class="form-label">@etude.DisplayName(Resources)</label>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@etude.Value</label>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-secondary" @onclick="() => EditEtudeAsync(etude)">
+                    <span class="oi oi-pencil"></span>
+                </button>
+                <button class="btn btn-sm btn-danger" @onclick="() => RemoveEtude(etude)">
+                    <span class="oi oi-trash"></span>
+                </button>
+            </div>
+
+        </div>
+        }
+    </div>
+
+    <Modal @ref="modalEditEtude">
+        <Title>Edit etude @(EtudeState?.DisplayName(Resources))</Title>
+        <Body>
+            @if (EtudeState != null) {
+                <div class="row">
+                    <div class="col-md-4">
+                        <select class="form-control" @bind="EtudeState.Value">
+                            @foreach (var state in EtudeStates.All){
+                                <option value="@state">@state</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    @if (EtudeFact == null) {
+                        <p class="alert alert-warning">
+                            This does not add components which a few etudes require,
+                            and therefor this might not work with all etudes.
+                        </p>
+                        <div class="col-md-12">
+                            <button class="btn btn-info" @onclick="UnlockFact">
+                                <span class="oi oi-lock-locked"></span>
+                                Unlock active options
+                            </button>
+                        </div>
+                    }
+                    else {
+                        <div class="col-md-2">
+                            <div>
+                                <label for="etude-is-active" class="form-label-centered">Active</label>
+                            </div>
+                            <div class="text-center">
+                                <Switch Id="etude-is-active" @bind-IsChecked="EtudeFact.IsActive" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div>
+                                <label for="etude-is-completed" class="form-label-centered">Completed</label>
+                            </div>
+                            <div class="text-center">
+                                <Switch Id="etude-is-completed" @bind-IsChecked="EtudeFact.IsCompleted" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div>
+                                <label for="etude-is-completion-inprogress" class="form-label-centered">In progress</label>
+                            </div>
+                            <div class="text-center">
+                                <Switch Id="etude-is-completion-inprogress" @bind-IsChecked="EtudeFact.CompletionInProgress" />
+                            </div>
+                    </div>
+                    }
+                </div>
+            }
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditEtude.CloseAsync()">Done</button>
+        </Footer>
+    </Modal>
+}
+
+@code {
+    private IEnumerable<IBlueprintMetadataEntry> AddableEtudes => Resources.Blueprints.GetEntries(BlueprintTypeId.Etude)
+        .Where(b => !EtudeCheck.Contains(b.Id))
+        .OrderBy(b => b.DisplayName, StringComparer.Ordinal);
+
+    private Modal modalAddEtude;
+    private Modal modalEditEtude;
+    private string SelectedEtude;
+    private string SearchTerm;
+    private List<KeyValuePairModel<string>> OrderedBase;
+    private EtudeFactItemModel EtudeFact;
+    private HashSet<string> EtudeCheck;
+    private KeyValuePairModel<string> EtudeState;
+    private Dictionary<string, EtudeFactItemModel> EtudeFacts;
+
+    private IEnumerable<KeyValuePairModel<string>> Etudes
+    {
+        get {
+            if (string.IsNullOrEmpty(SearchTerm)) {
+                return OrderedBase;
+            }
+            return OrderedBase.Where(e => e.DisplayName(Resources)?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ?? false);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Session.CanEdit) {
+            EtudeCheck = new HashSet<string>(StringComparer.Ordinal);
+            OrderedBase = Session.Player.EtudesSystem.EtudesData
+                .OrderBy(e => e.DisplayName(Resources), StringComparer.Ordinal)
+                .Select(e => {
+                    EtudeCheck.Add(e.Key);
+                    return e;
+                })
+                .ToList();
+
+            EtudeFacts = Session.Player.EtudesSystem.Facts.Items
+                .OfType<EtudeFactItemModel>()
+                .ToDictionary(e => e.Blueprint, StringComparer.Ordinal);
+        }
+    }
+
+    private void UnlockFact()
+    {
+        var etude = (EtudeFactItemModel)Session.Player.EtudesSystem.Facts.Items.Add(EtudeFactItemModel.Prepare);
+        etude.Blueprint = EtudeState.Key;
+        etude.Components.Touch();
+        EtudeFact = etude;
+    }
+
+    private async Task AddEtudeAsync()
+    {
+        var blueprint = Resources.Blueprints.Get(SelectedEtude);
+        var etudeState = Session.Player.EtudesSystem.EtudesData.Add();
+        etudeState.Key = SelectedEtude;
+        etudeState.Value = EtudeStates.Started;
+        EtudeCheck.Add(SelectedEtude);
+        OrderedBase.Add(etudeState);
+        OrderedBase.Sort((l, r) => l.DisplayName(Resources).CompareTo(r.DisplayName(Resources)));
+
+        await modalAddEtude.CloseAsync();
+
+        EtudeState = etudeState;
+        EtudeFact = null;
+        await modalEditEtude.OpenAsync();
+    }
+
+    private async Task EditEtudeAsync(KeyValuePairModel<string> etude)
+    {
+        EtudeFact = EtudeFacts.TryGetValue(etude.Key, out var etudeFact) ? etudeFact : null;
+        EtudeState = etude;
+        await modalEditEtude.OpenAsync();
+    }
+
+    private void RemoveEtude(KeyValuePairModel<string> etude)
+    {
+        EtudeCheck.Remove(etude.Key);
+        OrderedBase.Remove(etude);
+        Session.Player.EtudesSystem.EtudesData.Remove(etude);
+
+        if (EtudeFacts.TryGetValue(etude.Key, out var fact)) {
+            Session.Player.EtudesSystem.Facts.Items.Remove(fact);
+        }
+    }
+}

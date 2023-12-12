@@ -1,0 +1,129 @@
+﻿@page "/Settings"
+@inject EditorConfiguration Config
+@inject StateManager State
+
+<fieldset class="form-controller" disabled="@State.IsBusy">
+
+    <div>
+        <p class="alert alert-info">Changing the settings will take effect immediately.</p>
+    </div>
+    <hr />
+
+    @if (Games is object) {
+        <TabControl>
+            @foreach (var game in Games) {
+                <Tab Name="@game.Definition.Name">
+                    <Content>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">App Data Folder</label>
+                                <div class="input-group mb-3">
+                                    <div class="btn @(game.IsValidAppDataFolder ? "btn-success": "btn-default")">
+                                        <span class="oi @(game.IsValidAppDataFolder ? "oi-thumb-up" : "oi-thumb-down")"></span>
+                                    </div>
+                                    <input class="form-control" type="text" @bind="game.AppDataFolder" />
+                                    <button class="btn btn-info" @onclick="() => SelectAppDataFolder(game)">...</button>
+                                </div>
+                                <p>The path to the application data folder. There should be 2 folders inside ("Saved Games" and "Portraits").</p>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Game Folder</label>
+                                <div class="input-group">
+                                    <div class="btn @(game.IsValidGameFolder ? "btn-success": "btn-default")">
+                                        <span class="oi @(game.IsValidGameFolder ? "oi-thumb-up" : "oi-thumb-down")"></span>
+                                    </div>
+                                    <input class="form-control" type="text" @bind="game.GameFolder" />
+                                    <button class="btn btn-info" @onclick="() => SelectGameFolder(game)">...</button>
+                                </div>
+                                <p>
+                                    The path to the game folder where the game is installed.
+                                    Setting this will enable the editor to access game resources directly.
+                                    It's used to look up names of items and more.
+                                </p>
+                            </div>
+                        </div>
+                    </Content>
+                </Tab>
+            }
+        </TabControl>
+    }
+
+    @if (!string.IsNullOrEmpty(_saveMessage)) {
+        <div>
+            <p class="alert alert-warning">@_saveMessage</p>
+        </div>
+    }
+
+</fieldset>
+
+@code {
+    private IReadOnlyList<EditorConfigurationGameView> Games { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await State.ExecuteAsync(async () => {
+            await Config.InitializeAsync();
+            Games = Config.GetGamesView(() => this.Save());
+        });
+    }
+
+    async Task SelectAppDataFolder(EditorConfigurationGameView game)
+    {
+        await State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+            var options = new ElectronNET.API.Entities.OpenDialogOptions {
+                    Title = "Select the app data folder",
+                    Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory },
+                    DefaultPath = game.AppDataFolder
+                };
+            var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+            var file = files?.FirstOrDefault();
+            if (!string.IsNullOrEmpty(file)) {
+                game.AppDataFolder = file;
+            }
+        });
+    }
+
+    async Task SelectGameFolder(EditorConfigurationGameView game)
+    {
+        await State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+            var options = new ElectronNET.API.Entities.OpenDialogOptions {
+                    Title = "Select the game folder",
+                    Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory },
+                    DefaultPath = game.GameFolder
+                };
+            var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+            var file = files?.FirstOrDefault();
+            if (!string.IsNullOrEmpty(file)) {
+                game.GameFolder = file;
+            }
+        });
+    }
+
+    private string _saveMessage;
+    private int _saveMarker;
+    private int _isSaving;
+    private void Save()
+    {
+        System.Threading.Interlocked.Increment(ref _saveMarker);
+        var s = System.Threading.Interlocked.CompareExchange(ref _isSaving, 1, 0);
+        if (s == 1) return; // Already saving
+        _saveMessage = null;
+
+        Task.Factory.StartNew(async () => {
+            while (_saveMarker > 0) {
+                System.Threading.Interlocked.Exchange(ref _saveMarker, 0);
+                try {
+                    await Config.SaveConfigAsync();
+                }
+                catch (Exception ex) {
+                    _saveMessage = "Error when saving: " + ex.Message;
+                }
+            }
+            System.Threading.Interlocked.Exchange(ref _isSaving, 0);
+        });
+    }
+}

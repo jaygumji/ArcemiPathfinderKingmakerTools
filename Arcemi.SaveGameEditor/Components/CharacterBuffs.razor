@@ -1,0 +1,61 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+
+<div class="form-list">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Active</label>
+        </div>
+        <div class="col-md-5">
+            <label class="form-label">Duration</label>
+            <Help Size="ElementSize.Small" Position="TooltipPosition.BottomRight">
+                From left to right: Days, hours, minutes, seconds
+            </Help>
+        </div>
+        <div class="col-md-1">
+        </div>
+    </div>
+    @foreach (var buff in Buffs) {
+    <div class="row">
+        <div class="col-md-4 overflow-hidden">
+            <label class="form-label">@buff.DisplayName</label>
+        </div>
+        <div class="col-md-1">
+            <Switch @bind-IsChecked="buff.IsActive" />
+        </div>
+        <div class="col-md-5">
+            @if (buff.Duration?.IsEmpty ?? true){
+                <label class="text-center">-</label>
+            }
+            else {
+                <div class="time-parts for-list">
+                    <input type="number" @bind="buff.Duration.Days" />
+                    <input type="number" @bind="buff.Duration.Hours" />
+                    <input type="number" @bind="buff.Duration.Minutes" />
+                    <input type="number" @bind="buff.Duration.Seconds" />
+                </div>
+            }
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => Remove(buff)">
+                <span class="oi oi-trash"></span>
+            </button>
+        </div>
+    </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IGameUnitModel Unit { get; set; }
+    private IEnumerable<IGameUnitBuffEntry> Buffs => Unit.Buffs
+        .OrderBy(b => b.DisplayName);
+
+    private void Remove(IGameUnitBuffEntry buff)
+    {
+        Unit.Buffs.Remove(buff);
+    }
+}

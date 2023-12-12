@@ -1,0 +1,117 @@
+﻿@inject IGameResourcesProvider Resources
+
+<div class="col-md-1">
+    <button class="btn btn-primary" @onclick="() => addBlueprintItemModal.OpenAsync()">
+        <span class="oi oi-plus"></span>
+    </button>
+    <Modal @ref="addBlueprintItemModal">
+        <Title>Add a new item</Title>
+        <Body>
+            <TabControl StartIndex="0">
+                <Tab Name="Search">
+                    <Content>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <select class="form-control" @bind="AddBlueprintItemType">
+                                    <option value="">All Types</option>
+                                    @foreach (var type in BlueprintType.AddableItems) {
+                                        <option value="@type.FullName">@type.DisplayName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <Search TItem="IBlueprintMetadataEntry" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddBlueprintItemBlueprint = a.Item.Id">
+                            <ResultItemTemplate>
+                                @item.Name.DisplayName
+                            </ResultItemTemplate>
+                        </Search>
+                    </Content>
+                </Tab>
+                <Tab Name="By category">
+                    <Content>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="add-blueprint-item-type" class="form-label">Item type</label>
+                                <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
+                                    <option value="">Select item type...</option>
+                                    @foreach (var type in BlueprintType.AddableItems) {
+                                        <option value="@type.FullName">@type.DisplayName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
+                                <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
+                                    <option value="">Select item...</option>
+                                    @foreach (var blueprint in Resources.Blueprints.GetEntries(AddBlueprintItemType).Where(IsAddableItem).OrderBy(x => x.DisplayName)) {
+                                        <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </Content>
+                </Tab>
+            </TabControl>
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsBlueprintItemInputInvalid" @onclick="() => AddBlueprintItemAsync()">Confirm</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => addBlueprintItemModal.CloseAsync()">Cancel</button>
+        </Footer>
+    </Modal>
+</div>
+
+@code {
+    [Parameter]
+    public InventoryModel Inventory { get; set; }
+
+    [Parameter]
+    public EventCallback<ItemModel> OnItemAdded { get; set; }
+
+    private IEnumerable<IBlueprintMetadataEntry> SearchableItems => AddBlueprintItemType.HasValue()
+        ? Resources.Blueprints.GetEntries(AddBlueprintItemType).Where(IsAddableItem).OrderBy(x => x.DisplayName)
+        : BlueprintType.AddableItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).Where(IsAddableItem).OrderBy(x => x.DisplayName);
+
+    private static bool IsAddableItem(IBlueprintMetadataEntry x)
+    {
+        //if (x.Type == BlueprintTypes.ItemWeapon) {
+        //    if (x.Id.Eq(Blueprints.Weapons.PurpleStoneKnife)) {
+        //        return true;
+        //    }
+        //    if (x.Name.Original.IStart("Pulura_SarcorianDagger_")) {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+        return true;
+    }
+
+    private string _AddBlueprintItemType;
+    private string AddBlueprintItemType {
+        get {
+            return _AddBlueprintItemType;
+        }
+        set {
+            _AddBlueprintItemType = value;
+            AddBlueprintItemBlueprint = null;
+        }
+    }
+    private string AddBlueprintItemBlueprint;
+
+    private Modal addBlueprintItemModal;
+
+    private bool IsBlueprintItemInputInvalid => string.IsNullOrEmpty(AddBlueprintItemBlueprint);
+
+    private async Task AddBlueprintItemAsync()
+    {
+        var typeStr = AddBlueprintItemType.HasValue()
+            ? AddBlueprintItemType
+            : Resources.Blueprints.Get(AddBlueprintItemBlueprint).Type.FullName;
+        var type = BlueprintType.GetItemType(typeStr);
+
+        var item = Inventory.AddItem(Resources, type, AddBlueprintItemBlueprint);
+        await addBlueprintItemModal.CloseAsync();
+        await OnItemAdded.InvokeAsync(item);
+    }
+}

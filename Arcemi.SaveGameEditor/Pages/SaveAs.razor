@@ -1,0 +1,104 @@
+﻿@page "/SaveAs"
+@using System.IO
+@inject IEditFileSession Model
+@inject EditorConfiguration Config
+@inject NavigationManager NavManager
+@inject StateManager State
+
+@if (!Model.CanEdit) {
+    <p><em>Save file not loaded.</em></p>
+}
+else {
+<fieldset class="form-controller" disabled="@State.IsBusy">
+
+<div class="row">
+    <div class="col-md-6">
+        <button class="btn btn-info" @onclick="SaveFile">
+            <span class="oi oi-data-transfer-download"></span>
+            Save file dialog
+        </button>
+    </div>
+</div>
+
+@if (GameConfig.ValidateAppDataFolder()) {
+    <div class="row">
+        <h3 class="col-md-12">New manual save</h3>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p class="alert alert-info">New manual saves will not show up in game until you restart the game.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" class="form-control" @bind="NewSaveFileName" @bind:event="oninput" />
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <button class="btn btn-info w-100" disabled="@NewSaveIsInvalid" @onclick="SaveNewFile">
+                <span class="oi oi-data-transfer-download"></span>
+                Save
+            </button>
+        </div>
+    </div>
+}
+
+<SaveGamesView>
+    <SaveFileToolbar Context="header">
+        @if (header.Header.IsManual) {
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-info w-100" @onclick="() => SaveFile(header)">
+                        <span class="oi oi-data-transfer-download"></span>
+                        Replace
+                    </button>
+                </div>
+            </div>
+        }
+    </SaveFileToolbar>
+</SaveGamesView>
+
+</fieldset>
+}
+
+@code {
+    private string NewSaveFileName;
+    private bool NewSaveIsInvalid => string.IsNullOrEmpty(NewSaveFileName);
+
+    private EditorGameConfiguration GameConfig;
+
+    public void Initialize()
+    {
+        GameConfig = Config.Instance.GetGame(Model.Game.Definition);
+    }
+
+    void SaveNewFile()
+    {
+        Model.Save(new SaveFileLocation(GameConfig.GetSaveGamesFolder(), NewSaveFileName));
+        NavManager.NavigateTo("/Overview");
+    }
+
+    async Task SaveFile()
+    {
+        await State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+            var options = new ElectronNET.API.SaveDialogOptions {
+                Title = "Save the game file",
+                Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } },
+                DefaultPath = Model.Location.FilePath
+            };
+            var file = await ElectronNET.API.Electron.Dialog.ShowSaveDialogAsync(window, options);
+            if (!string.IsNullOrEmpty(file)) {
+                Model.Save(new SaveFileLocation(file));
+                NavManager.NavigateTo("/Overview");
+            }
+        });
+    }
+
+    async Task SaveFile(SaveFileHeader header)
+    {
+        await State.ExecuteAsync(() => {
+            Model.Save(header.Location);
+            NavManager.NavigateTo("/Overview");
+        });
+    }
+}

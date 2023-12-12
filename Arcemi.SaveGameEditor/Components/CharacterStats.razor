@@ -1,0 +1,39 @@
+﻿@inject CharacterViewModel Model
+@inject IGameResourcesProvider Resources
+
+@foreach (var grouping in Unit.Stats.Groupings.Where(g => g.Count > 0)) {
+    <div class="row">
+        <h3 class="col-md-12">@grouping.Name</h3>
+    </div>
+    <div class="form-list static-content">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">Name</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Value</label>
+            </div>
+            <div class="col-md-2">
+               <label class="form-label">@grouping.InfoHeader</label>
+            </div>
+        </div>
+        @foreach (var stat in grouping) {
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">@stat.Name</label>
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="number" @bind="@stat.Value" />
+                </div>
+                <div class="col-md-2">
+                    @stat.Info
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public IGameUnitModel Unit { get; set; }
+}
