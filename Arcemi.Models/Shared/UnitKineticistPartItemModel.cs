@@ -2,7 +2,7 @@
 {
     public class UnitKineticistPartItemModel : PartItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.Class.Kineticist.UnitPartKineticist, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.Class.Kineticist.UnitPartKineticist, Assembly-CSharp";
         public UnitKineticistPartItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

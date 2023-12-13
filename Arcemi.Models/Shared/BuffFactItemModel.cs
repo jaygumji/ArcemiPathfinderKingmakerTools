@@ -5,7 +5,7 @@ namespace Arcemi.Models
 {
     public class BuffFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.Buffs.Buff, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.Buffs.Buff, Assembly-CSharp";
         public BuffFactItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

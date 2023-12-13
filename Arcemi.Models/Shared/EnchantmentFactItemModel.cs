@@ -5,8 +5,8 @@ namespace Arcemi.Models
 {
     public class EnchantmentFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Models.Blueprints.Items.Ecnchantments.ItemEnchantment, Assembly-CSharp";
-        public EnchantmentFactItemModel(ModelDataAccessor accessor) : base(accessor) { }
+        public const string TypeRef = "Kingmaker.Blueprints.Items.Ecnchantments.ItemEnchantment, Assembly-CSharp";
+        public EnchantmentFactItemModel(ModelDataAccessor accessor) : base(accessor) { }    
 
         public void ActivateCustomEnchantments()
         {

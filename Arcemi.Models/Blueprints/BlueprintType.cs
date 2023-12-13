@@ -24,7 +24,7 @@ namespace Arcemi.Models
             PathfinderWotr.WotrBlueprintTypeProvider.ItemArmor,
             PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentBelt,
             PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentFeet,
-            PathfinderWotr.WotrBlueprintTypeProvider    .ItemEquipmentGlasses,
+            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGlasses,
             PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGloves,
             PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentHead,
             PathfinderWotr.WotrBlueprintTypeProvider.Ingredient,
@@ -114,6 +114,16 @@ namespace Arcemi.Models
                 || type.Equals(PathfinderWotr.WotrBlueprintTypeProvider.Ingredient)
                 || type.Equals(PathfinderWotr.WotrBlueprintTypeProvider.Item)
                 || type.Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemThiefTool);
+        }
+
+        public override int GetHashCode()
+        {
+            return FullName?.GetHashCode() ?? 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is BlueprintType other && string.Equals(FullName, other.FullName, System.StringComparison.Ordinal);
         }
     }
 }

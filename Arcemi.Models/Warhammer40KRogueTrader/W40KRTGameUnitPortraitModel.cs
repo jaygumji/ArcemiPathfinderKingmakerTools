@@ -1,4 +1,6 @@
-﻿namespace Arcemi.Models.Warhammer40KRogueTrader
+﻿using System.Linq;
+
+namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     public class W40KRTGameUnitPortraitModel : IGameUnitPortraitModel
     {
@@ -26,6 +28,14 @@
                 }
                 if (Res.TryGetPortraitsUri(unitBlueprint, out var uri)) {
                     return uri;
+                }
+                var name = Res.GetCharacterName(unitBlueprint);
+                if (name.HasValue()) {
+                    if (name.Eq("Abelard")) name = "Abeliard"; // Misspell in game resources
+                    name = name + "_Portrait";
+                    var entry = Res.Blueprints.GetEntries(BlueprintTypeId.Portrait).FirstOrDefault(e => e.Name.Original.Eq(name));
+                    if (entry is object)
+                        return Res.GetPortraitsUri(entry.Id);
                 }
                 var portraitId = Res.GetCharacterPotraitIdentifier(unitBlueprint);
                 return Res.GetPortraitsUri(portraitId);

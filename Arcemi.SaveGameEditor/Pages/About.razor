@@ -1,7 +1,11 @@
 ﻿@page "/About"
 
-<h1>Arcemi Pathfinder Editor</h1>
-<p>Edit save game files for Pathfinder Wrath of the Righteous.</p>
+<h1>Arcemi Save Game Editor</h1>
+<ul>
+    @foreach (var game in SupportedGames.All) {
+        <li>@game.Name</li>
+    }
+</ul>
 <p>The editor utilizes a way that only reads and sets data that has been confirmed and leaves all other data untouched.
     This helps when the game is patched, since it's most likely gonna work without any changes to the editor.</p>
 <h2>Get started</h2>
@@ -15,17 +19,10 @@
 <p>Adding an item to a vendor table works around this. Armors, shields and weapons are not restricted there, so you can go to
     State > Vendors and add armor, shields and weapons to the vendor table.</p>
 <h2>Limitations</h2>
-<p>The save game file does not save your current level, it is calculated based on the experience of your characters.</p>
 <p>
     When a feat is added onto a character, the game simply doesn't add a flag on the character that says it not has the feat.
     Rather it adds much more complicated data. The same goes for adding items such as weapons, armors and shields.<br />
     There is however a way to export and import feat codes. Clicking the code button on a feat will export a code to
     the clipboard which you can then import on another character. Codes will be posted on the wiki
     <ExternalLink Target="ExternalLinks.WikiFeatCodes"/>
-</p>
-<h2>Tricks</h2>
-<p>
-    Army generals has stats, but it can not be edited via the editor. The game would ignore those changes.<br />
-    You can however get multiple feats on a level up. This is achieved by de-leveling the general in the editor. Which will
-    not remove the selected feats chosen on that level. You can then level up the general again in the game and add another feat.
 </p>

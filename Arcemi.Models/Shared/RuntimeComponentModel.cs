@@ -4,7 +4,7 @@ namespace Arcemi.Models
 {
     public class RuntimeComponentModel : ComponentModel
     {
-        public const string TypeRef = "Models.EntitySystem.EntityFactComponentDelegate`2+ComponentRuntime[[Models.Items.ItemEntity, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[Models.Designers.Mechanics.EquipmentEnchants.AddUnitFactEquipmentData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+        public const string TypeRef = "Kingmaker.EntitySystem.EntityFactComponentDelegate`2+ComponentRuntime[[Models.Items.ItemEntity, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[Models.Designers.Mechanics.EquipmentEnchants.AddUnitFactEquipmentData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
 
         public RuntimeComponentModel(ModelDataAccessor accessor) : base(accessor)
         {

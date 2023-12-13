@@ -5,7 +5,7 @@ namespace Arcemi.Models
 {
     public class ActivatableAbilityFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.ActivatableAbilities.ActivatableAbility, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.ActivatableAbilities.ActivatableAbility, Assembly-CSharp";
         public ActivatableAbilityFactItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

@@ -5,7 +5,7 @@ namespace Arcemi.Models
 {
     public class AbilityFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.Abilities.Ability, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.Abilities.Ability, Assembly-CSharp";
         public AbilityFactItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

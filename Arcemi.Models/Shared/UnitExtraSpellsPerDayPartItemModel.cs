@@ -5,7 +5,7 @@ namespace Arcemi.Models
 {
     public class UnitExtraSpellsPerDayPartItemModel : PartItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.Parts.UnitPartExtraSpellsPerDay, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.Parts.UnitPartExtraSpellsPerDay, Assembly-CSharp";
 
         public static UnitExtraSpellsPerDayPartItemModel AddTo(PartsContainerModel parts)
         {

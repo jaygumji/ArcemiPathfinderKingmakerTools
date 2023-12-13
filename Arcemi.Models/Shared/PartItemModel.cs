@@ -4,7 +4,7 @@ namespace Arcemi.Models
 {
     public class CraftedPartItemModel : PartItemModel
     {
-        public const string TypeRef = "Models.Craft.CraftedItemPart, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.Craft.CraftedItemPart, Assembly-CSharp";
         public CraftedPartItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

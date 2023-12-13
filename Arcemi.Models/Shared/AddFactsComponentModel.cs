@@ -7,7 +7,7 @@ namespace Arcemi.Models
 {
     public class AddFactsComponentModel : ComponentModel
     {
-        public const string TypeRef = "Models.EntitySystem.EntityFactComponentDelegate`2+ComponentRuntime[[Models.EntitySystem.Entities.UnitEntityData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[Models.UnitLogic.FactLogic.AddFactsData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+        public const string TypeRef = "Kingmaker.EntitySystem.EntityFactComponentDelegate`2+ComponentRuntime[[Models.EntitySystem.Entities.UnitEntityData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null],[Kingmaker.UnitLogic.FactLogic.AddFactsData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
 
         public AddFactsComponentModel(ModelDataAccessor accessor) : base(accessor)
         {

@@ -10,7 +10,7 @@ namespace Arcemi.Models
 {
     public class WeaponItemModel : ItemModel, IEnchantableItemModel
     {
-        public const string TypeRef = "Models.Items.ItemEntityWeapon, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.Items.ItemEntityWeapon, Assembly-CSharp";
         public WeaponItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
@@ -26,7 +26,7 @@ namespace Arcemi.Models
 
     public class UsableItemModel : ItemModel
     {
-        public const string TypeRef = "Models.Items.ItemEntityUsable, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.Items.ItemEntityUsable, Assembly-CSharp";
         public UsableItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
@@ -34,7 +34,7 @@ namespace Arcemi.Models
 
     public class ShieldItemModel : ItemModel, IEnchantableItemModel
     {
-        public const string TypeRef = "Models.Items.ItemEntityShield, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.Items.ItemEntityShield, Assembly-CSharp";
         public ShieldItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
@@ -90,7 +90,7 @@ namespace Arcemi.Models
 
     public class ArmorItemModel : ItemModel, IEnchantableItemModel
     {
-        public const string TypeRef = "Models.Items.ItemEntityArmor, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.Items.ItemEntityArmor, Assembly-CSharp";
         public ArmorItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }
@@ -106,7 +106,7 @@ namespace Arcemi.Models
 
     public class SimpleItemModel : ItemModel
     {
-        public const string TypeRef = "Models.Items.ItemEntitySimple, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.Items.ItemEntitySimple, Assembly-CSharp";
         public SimpleItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

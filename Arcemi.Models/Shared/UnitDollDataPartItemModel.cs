@@ -2,7 +2,7 @@
 {
     public class UnitDollDataPartItemModel : PartItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.Parts.UnitPartDollData, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.Parts.UnitPartDollData, Assembly-CSharp";
         public UnitDollDataPartItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

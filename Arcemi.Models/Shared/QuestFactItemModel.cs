@@ -5,7 +5,8 @@ namespace Arcemi.Models
 {
     public class QuestFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Models.AreaLogic.QuestSystem.Quest, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.AreaLogic.QuestSystem.Quest, Assembly-CSharp";
+        public const string TypeRefCode = "Kingmaker.AreaLogic.QuestSystem.Quest, Code";
 
         public QuestFactItemModel(ModelDataAccessor accessor) : base(accessor)
         {

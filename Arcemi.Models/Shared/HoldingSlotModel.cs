@@ -7,10 +7,10 @@ namespace Arcemi.Models
 {
     public class HoldingSlotModel : RefModel
     {
-        private const string TypeHandSlot = "Models.Items.Slots.HandSlot, Assembly-CSharp";
-        private const string TypeArmorSlot = "Models.Items.Slots.ArmorSlot, Assembly-CSharp";
-        private const string TypeWeaponSlot = "Models.Items.Slots.WeaponSlot, Assembly-CSharp";
-        private const string TypeUsableSlot = "Models.Items.Slots.UsableSlot, Assembly-CSharp";
+        private const string TypeHandSlot = "Kingmaker.Items.Slots.HandSlot, Assembly-CSharp";
+        private const string TypeArmorSlot = "Kingmaker.Items.Slots.ArmorSlot, Assembly-CSharp";
+        private const string TypeWeaponSlot = "Kingmaker.Items.Slots.WeaponSlot, Assembly-CSharp";
+        private const string TypeUsableSlot = "Kingmaker.Items.Slots.UsableSlot, Assembly-CSharp";
 
         public HoldingSlotModel(ModelDataAccessor accessor) : base(accessor)
         {

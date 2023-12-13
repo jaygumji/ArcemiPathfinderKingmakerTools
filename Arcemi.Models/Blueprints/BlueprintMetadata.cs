@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Resources;
@@ -18,6 +19,7 @@ namespace Arcemi.Models
         public BlueprintMetadata(IBlueprintTypeProvider typeProvider) : this(Array.Empty<BlueprintMetadataEntry>(), typeProvider) { }
         public BlueprintMetadata(IReadOnlyList<BlueprintMetadataEntry> entries, IBlueprintTypeProvider typeProvider)
         {
+            TypeProvider = typeProvider;
             _lookup = new Dictionary<string, BlueprintMetadataEntry>(StringComparer.Ordinal);
             _byType = new Dictionary<BlueprintType, List<BlueprintMetadataEntry>>();
 
@@ -37,7 +39,6 @@ namespace Arcemi.Models
                 }
                 list.Add(entry);
             }
-            TypeProvider = typeProvider;
         }
 
         public bool IsEmpty => _lookup.Count == 0;

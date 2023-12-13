@@ -4,7 +4,7 @@ namespace Arcemi.Models
 {
     public class UnitWearinessPartItemModel : PartItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.Parts.UnitPartWeariness, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.Parts.UnitPartWeariness, Assembly-CSharp";
         public UnitWearinessPartItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

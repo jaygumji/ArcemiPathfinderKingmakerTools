@@ -4,7 +4,7 @@ namespace Arcemi.Models
 {
     public class EtudeFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Models.AreaLogic.Etudes.Etude, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.AreaLogic.Etudes.Etude, Assembly-CSharp";
         public EtudeFactItemModel(ModelDataAccessor accessor) : base(accessor)
         {
         }

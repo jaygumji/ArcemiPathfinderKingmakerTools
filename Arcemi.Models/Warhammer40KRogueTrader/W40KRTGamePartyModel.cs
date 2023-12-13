@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
@@ -8,7 +9,12 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public W40KRTGamePartyModel(PlayerModel player)
         {
             Player = player;
-            Resources = Array.Empty<IGamePartyResourceEntry>();
+            var A = player.GetAccessor();
+            Resources = new IGamePartyResourceEntry[] {
+                A.Object<W40KRTScrapResourceEntry>("Scrap"),
+                A.Object<W40KRTProfitFactorResourceEntry>("ProfitFactor"),
+            }.Concat(A.List<KeyValuePairModel<int>>("FractionsReputation").Select(x => new W40KRTGamePartyFactionResourceEntry(x))
+            ).ToArray();
         }
 
         public PlayerModel Player { get; }

@@ -4,7 +4,7 @@ namespace Arcemi.Models
 {
     public class FeatureFactItemModel : FactItemModel
     {
-        public const string TypeRef = "Models.UnitLogic.Feature, Assembly-CSharp";
+        public const string TypeRef = "Kingmaker.UnitLogic.Feature, Assembly-CSharp";
         public FeatureFactItemModel(ModelDataAccessor accessor) : base(accessor) { }
 
         public override string DisplayName(IGameResourcesProvider res)

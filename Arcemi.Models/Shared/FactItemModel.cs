@@ -25,7 +25,8 @@ namespace Arcemi.Models
             if (string.Equals(type, EnchantmentFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
                 return new EnchantmentFactItemModel(accessor);
             }
-            if (string.Equals(type, QuestFactItemModel.TypeRef, System.StringComparison.Ordinal)) {
+            if (string.Equals(type, QuestFactItemModel.TypeRef, System.StringComparison.Ordinal)
+                || string.Equals(type, QuestFactItemModel.TypeRefCode, System.StringComparison.Ordinal)) {
                 return new QuestFactItemModel(accessor);
             }
             if (string.Equals(type, BuffFactItemModel.TypeRef, System.StringComparison.Ordinal)) {

@@ -20,10 +20,12 @@ namespace Arcemi.Models
                 new PortraitCategory("main", "Main", isAvailable: true, order: 1),
                 new PortraitCategory("supernatural", "Supernaturals", isAvailable: true, order: 10),
                 Custom,
+                new PortraitCategory("ships", "Ships", isAvailable: true, order: 180),
                 new PortraitCategory("animals", "Animals", isAvailable: true, order: 200),
                 new PortraitCategory("creatures", "Creatures", isAvailable: true, order: 201),
                 new PortraitCategory("special", "Special", isAvailable: false, order: 10000),
                 Others,
+                new PortraitCategory("duplicates", "Duplicates", isAvailable: false, order: 100010),
                 Unmapped
             }.ToDictionary(x => x.Key, StringComparer.OrdinalIgnoreCase);
 

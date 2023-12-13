@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Arcemi.Models
 {
-    [SaveFileType("Models.EntitySystem.Entities.UnitEntityData, Assembly-CSharp")]
+    [SaveFileType("Kingmaker.EntitySystem.Entities.UnitEntityData, Assembly-CSharp")]
     public class UnitEntityModel : RefModel
     {
         public UnitEntityModel(ModelDataAccessor accessor) : base(accessor)
