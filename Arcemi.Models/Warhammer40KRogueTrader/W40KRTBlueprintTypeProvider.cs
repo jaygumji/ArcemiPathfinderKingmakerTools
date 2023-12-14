@@ -256,7 +256,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public static BlueprintType StackingUnitProperty { get; } = new BlueprintType("", "Kingmaker.Mechanics.Blueprints.BlueprintStackingUnitProperty, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType Star { get; } = new BlueprintType("", "Kingmaker.Globalmap.Blueprints.SystemMap.BlueprintStar, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType Starship { get; } = new BlueprintType("", "Warhammer.SpaceCombat.Blueprints.BlueprintStarship, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-        public static BlueprintType StarshipAmmo { get; } = new BlueprintType("", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipAmmo, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        public static BlueprintType StarshipAmmo { get; } = new BlueprintType("Starship Ammo", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipAmmo, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StarshipBrain { get; } = new BlueprintType("", "Warhammer.SpaceCombat.AI.BlueprintStarshipBrain, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StarshipSoundSettings { get; } = new BlueprintType("", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipSoundSettings, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StarshipWeapon { get; } = new BlueprintType("", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipWeapon, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");

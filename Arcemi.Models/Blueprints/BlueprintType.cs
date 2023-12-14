@@ -40,28 +40,6 @@ namespace Arcemi.Models
             PathfinderWotr.WotrBlueprintTypeProvider.Item
         };
 
-        public static IReadOnlyList<BlueprintType> AddableItems = new[] {
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemArmor,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemShield,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentBelt,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentFeet,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGlasses,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGloves,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentHead,
-            PathfinderWotr.WotrBlueprintTypeProvider.Ingredient,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentNeck,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentRing,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentShirt,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentShoulders,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentUsable,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentWrist,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemKey,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemNote,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemThiefTool,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemWeapon,
-            PathfinderWotr.WotrBlueprintTypeProvider.Item
-        };
-
         private static ISet<BlueprintType> ItemAccessories { get; } = new HashSet<BlueprintType> {
             PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentBelt,
             PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentFeet,

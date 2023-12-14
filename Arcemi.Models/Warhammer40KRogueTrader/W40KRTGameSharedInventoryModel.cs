@@ -46,6 +46,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
            //W40KRTBlueprintTypeProvider.ItemPlasmaDrives,
            //W40KRTBlueprintTypeProvider.ItemResourceMiner,
            //W40KRTBlueprintTypeProvider.ItemVoidShieldGenerator,
+           //W40KRTBlueprintTypeProvider.StarshipWeapon,
+           //W40KRTBlueprintTypeProvider.StarshipAmmo,
         };
 
         public IEnumerable<IBlueprintMetadataEntry> GetAddableItems(string typeFullName = null)

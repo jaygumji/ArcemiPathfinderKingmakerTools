@@ -39,9 +39,8 @@ namespace Arcemi.Models.PathfinderWotr
                     if (template is object) {
                         args.Model.Import(template);
                     }
-                    ItemModel item = null;
-                    Ref.SetInventorySlotIndexToLast(item);
-                    item.Blueprint = args.Blueprint;
+                    Ref.SetInventorySlotIndexToLast(args.Model);
+                    args.Model.Blueprint = args.Blueprint;
                 }
             }
 
