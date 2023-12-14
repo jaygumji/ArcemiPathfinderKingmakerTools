@@ -225,7 +225,7 @@
             }
             if (code[0] == '$') continue;
             if (!allowDuplicates && IsDuplicate(code)) continue;
-            var feat = Unit.Feats.AddCode(code);
+            var feat = Unit.Feats.AddByCode(code);
         }
         ImportCode = "";
     }

@@ -34,7 +34,7 @@
                                 <label for="add-blueprint-item-type" class="form-label">Item type</label>
                                 <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
                                     <option value="">Select item type...</option>
-                                    @foreach (var type in BlueprintType.AddableItems) {
+                                    @foreach (var type in Inventory.AddableTypes) {
                                         <option value="@type.FullName">@type.DisplayName</option>
                                     }
                                 </select>
@@ -45,7 +45,7 @@
                                 <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
                                 <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
                                     <option value="">Select item...</option>
-                                    @foreach (var blueprint in Resources.Blueprints.GetEntries(AddBlueprintItemType).Where(IsAddableItem).OrderBy(x => x.DisplayName)) {
+                                    @foreach (var blueprint in Inventory.GetAddableItems(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
                                         <option value="@blueprint.Id">@blueprint.DisplayName</option>
                                     }
                                 </select>
@@ -64,28 +64,12 @@
 
 @code {
     [Parameter]
-    public InventoryModel Inventory { get; set; }
+    public IGameInventoryModel Inventory { get; set; }
 
     [Parameter]
-    public EventCallback<ItemModel> OnItemAdded { get; set; }
+    public EventCallback<IGameItemEntry> OnItemAdded { get; set; }
 
-    private IEnumerable<IBlueprintMetadataEntry> SearchableItems => AddBlueprintItemType.HasValue()
-        ? Resources.Blueprints.GetEntries(AddBlueprintItemType).Where(IsAddableItem).OrderBy(x => x.DisplayName)
-        : BlueprintType.AddableItems.SelectMany(t => Resources.Blueprints.GetEntries(t)).Where(IsAddableItem).OrderBy(x => x.DisplayName);
-
-    private static bool IsAddableItem(IBlueprintMetadataEntry x)
-    {
-        //if (x.Type == BlueprintTypes.ItemWeapon) {
-        //    if (x.Id.Eq(Blueprints.Weapons.PurpleStoneKnife)) {
-        //        return true;
-        //    }
-        //    if (x.Name.Original.IStart("Pulura_SarcorianDagger_")) {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-        return true;
-    }
+    private IEnumerable<IBlueprintMetadataEntry> SearchableItems => Inventory.GetAddableItems(AddBlueprintItemType).OrderBy(x => x.DisplayName);
 
     private string _AddBlueprintItemType;
     private string AddBlueprintItemType {
@@ -105,12 +89,7 @@
 
     private async Task AddBlueprintItemAsync()
     {
-        var typeStr = AddBlueprintItemType.HasValue()
-            ? AddBlueprintItemType
-            : Resources.Blueprints.Get(AddBlueprintItemBlueprint).Type.FullName;
-        var type = BlueprintType.GetItemType(typeStr);
-
-        var item = Inventory.AddItem(Resources, type, AddBlueprintItemBlueprint);
+        var item = Inventory.Items.AddByBlueprint(AddBlueprintItemBlueprint);
         await addBlueprintItemModal.CloseAsync();
         await OnItemAdded.InvokeAsync(item);
     }

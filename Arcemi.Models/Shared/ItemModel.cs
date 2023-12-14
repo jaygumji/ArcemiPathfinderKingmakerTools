@@ -232,6 +232,8 @@ namespace Arcemi.Models
         {
             AddRequiredItemProperties(jObj, itemType);
             jObj.Add("Collection", refs.CreateReference(jObj, inventory.Id));
+            jObj.Add("Parts", new JObject { { "m_Parts", new JArray() } });
+            jObj.Add("Facts", new JObject { { "m_Facts", new JArray() } });
         }
 
         public void Import(ItemModel obj)

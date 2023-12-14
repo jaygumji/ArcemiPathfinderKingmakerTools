@@ -60,7 +60,7 @@ namespace Arcemi.Models
             return newItem;
         }
 
-        private void SetInventorySlotIndexToLast(ItemModel item)
+        internal void SetInventorySlotIndexToLast(ItemModel item)
         {
             var list = A.List<ItemModel>("m_Items");
             int FindFirstAvailable()

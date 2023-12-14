@@ -13,6 +13,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public UnitEntityModel Ref { get; }
         public UnitDescriptionPartItemModel RefDescriptor { get; }
+        public PartItemModel RefInventory { get; }
 
         public IGameUnitPortraitModel Portrait { get; }
         public IGameUnitCompanionModel Companion { get; }
@@ -31,6 +32,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         {
             Ref = unit;
             foreach (var part in unit.Parts.Container) {
+                var type = part.GetAccessor().TypeValue();
                 if (part is UnitDescriptionPartItemModel descriptor) {
                     RefDescriptor = descriptor;
                 }
@@ -55,6 +57,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 else if (part is StatsContainerPartItemModel stats) {
                     Stats = new W40KRTGameUnitStatsModel(stats);
                 }
+                else if (type.Eq("Kingmaker.UnitLogic.Parts.PartInventory, Code")) {
+                    RefInventory = part;
+                }
             }
             if (Portrait is null) Portrait = new W40KRTGameUnitPortraitModel(null, null);
             if (Companion is null) Companion = new W40KRTGameUnitCompanionModel(null);
@@ -64,9 +69,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             if (Progression is null) Progression = new W40KRTGameUnitProgressionModel(null);
             if (Stats is null) Stats = new W40KRTGameUnitStatsModel(null);
 
-            Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitFeatEntry(x), x => x is W40KRTFeatFactItemModel, W40KRTFeatFactItemModel.Prepare);
-            Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitAbilityEntry(x), x => x is W40KRTAbilityFactItemModel, W40KRTAbilityFactItemModel.Prepare);
-            Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitBuffEntry(x), x => x is W40KRTBuffFactItemModel, W40KRTBuffFactItemModel.Prepare);
+            Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitFeatEntry(x), x => x is W40KRTFeatFactItemModel, new W40KRTGameModelFeatCollectionWriter());
+            Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitAbilityEntry(x), x => x is W40KRTAbilityFactItemModel, new W40KRTGameModelAbilityCollectionWriter());
+            Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitBuffEntry(x), x => x is W40KRTBuffFactItemModel, new W40KRTGameModelBuffCollectionWriter());
         }
 
         private string Blueprint => A.Value<string>();

@@ -3,7 +3,7 @@
 <div class="character-equipment-slot">
     <div class="row">
         <div class="col-md-2 item-icon">
-            <img src="@(Item is object ? Item.GetIconUrl(Resources) : ItemType.GetIconUrl())" alt="@(Item is object ? Item.DisplayName(Resources) : ItemType.DisplayName)" />
+            <img src="@(Item is object ? ItemEntry.IconUrl : ItemType.GetIconUrl())" alt="@(Item is object ? Item.DisplayName(Resources) : ItemType.DisplayName)" />
         </div>
         <div class="col-md-10">
             <div class="data-header">
@@ -16,7 +16,7 @@
                             <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(Item)">
                                 <span class="oi oi-paperclip"></span>
                             </button>
-                            @if (Item.CanEdit()) {
+                            @if (ItemEntry.CanEdit) {
                                 <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => Callback?.Invoke(this, new CharacterEquipmentSlotItemExecuteArgs(Item, isEdit: true))">
                                     <span class="oi oi-pencil"></span>
                                 </button>
@@ -47,6 +47,9 @@
 
     private BlueprintType _ItemType;
     public BlueprintType ItemType => _ItemType ?? (_ItemType = Resources.Blueprints.TypeProvider.Get(ItemTypeId));
+
+    private Arcemi.Models.PathfinderWotr.WotrGameItemEntry _ItemEntry;
+    public IGameItemEntry ItemEntry => _ItemEntry ?? (_ItemEntry = new Arcemi.Models.PathfinderWotr.WotrGameItemEntry(Item));
 
     [Parameter]
     public Func<CharacterEquipmentSlot, CharacterEquipmentSlotItemExecuteArgs, Task> Callback { get; set; }

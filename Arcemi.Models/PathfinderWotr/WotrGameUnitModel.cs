@@ -38,11 +38,11 @@ namespace Arcemi.Models.PathfinderWotr
             Progression = new WotrGameUnitProgressionModel(unit);
             Stats = new WotrGameUnitStatsModel(unit);
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitFeatEntry(x), x => x is FeatureFactItemModel feat
-                && x.Context?.ParentContext?.SourceItemRef == null, FeatureFactItemModel.Prepare);
+                && x.Context?.ParentContext?.SourceItemRef == null, new WotrGameModelCollectionFeatWriter());
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitAbilityEntry(x), x => x is AbilityFactItemModel feat,
-                AbilityFactItemModel.Prepare);
+                new WotrGameModelCollectionAbilityWriter());
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x), x => x is BuffFactItemModel feat,
-                BuffFactItemModel.Prepare);
+                new WotrGameModelCollectionBuffWriter());
         }
 
         public UnitEntityType Type

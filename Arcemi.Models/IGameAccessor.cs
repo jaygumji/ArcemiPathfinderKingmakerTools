@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
 
 namespace Arcemi.Models
 {
@@ -91,18 +89,24 @@ namespace Arcemi.Models
 
     public interface IGameInventoryModel : IGameModel
     {
+        IGameModelCollection<IGameItemEntry> Items { get; }
+        IReadOnlyList<BlueprintType> AddableTypes { get; }
+        IEnumerable<IBlueprintMetadataEntry> GetAddableItems(string typeFullName = null);
     }
 
-    public class DefaultGameInventoryModel : IGameInventoryModel
+    public interface IGameItemEntry
     {
-        private readonly InventoryModel _model;
-
-        public bool IsSupported => true;
-
-        public DefaultGameInventoryModel(InventoryModel model)
-        {
-            _model = model;
-        }
+        string Name { get; }
+        string Blueprint { get; }
+        string Type { get; }
+        string Description { get; }
+        int Index { get; }
+        bool IsChargable { get; }
+        int Charges { get; set; }
+        bool IsStackable { get; }
+        int Count { get; set; }
+        bool CanEdit { get; }
+        string IconUrl { get; }
     }
 
     public interface IGameUnitModel : IGameModel

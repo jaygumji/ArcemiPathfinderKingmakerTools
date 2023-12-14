@@ -12,29 +12,12 @@ else {
             </label>
             <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
         </div>
-        @if (Resources.Blueprints.GetEntries(BlueprintTypeId.Item).Count == 0) {
-            <InventoryAddItemFallback Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
-        }
-        else {
+        @if (Resources.Blueprints.GetEntries(BlueprintTypeId.Item).Count > 0) {
             <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
         }
-        <div class="col-md-1">
-            <Help>
-                For some reason the game is adding natural weapons to the inventory which doesn't get removed properly,
-                so I've started to hide them, with an option to display and remove them
-            </Help>
-        </div>
-        <div class="col-md-2">
-            <Switch Id="show-invalid" @bind-IsChecked="ShowInvalidItems">
-                <Label>Show invalid</Label>
-            </Switch>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-danger text-nowrap" @onclick="() => RemoveInvalidItems()" title="Remove invalid items">
-                <span class="oi oi-trash"></span>
-                Invalid
-            </button>
-        </div>
+        else if (Inventory is Arcemi.Models.PathfinderWotr.WotrGameInventoryModel) {
+            <InventoryAddItemFallback Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
+        }
     </div>
 
     <div class="form-list">
@@ -65,10 +48,10 @@ else {
             @foreach (var item in Items) {
             <div class="row">
                 <div class="col-md-4 overflow-hidden">
-                    <label class="form-label">@item.DisplayName(Resources)</label>
+                    <label class="form-label">@item.Name</label>
                 </div>
                 <div class="col-md-1">
-                    <img src="@item.GetIconUrl(Resources)" alt="@item.DisplayType" />
+                    <img src="@item.IconUrl" alt="@item.Type" />
                 </div>
                 <div class="col-md-2">
                     @if (item.IsStackable) {
@@ -87,8 +70,8 @@ else {
                     <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
                         <span class="oi oi-paperclip"></span>
                     </button>
-                    @if (item.CanEdit()){
-                    <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => editItemModal.StartEditItemAsync(item)">
+                    @if (item.CanEdit){
+                    <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => editItemModal.StartEditItemAsync(((Arcemi.Models.PathfinderWotr.WotrGameItemEntry)item).Ref)">
                         <span class="oi oi-pencil"></span>
                     </button>
                     }
@@ -106,69 +89,26 @@ else {
 
 @code {
     [Parameter]
-    public InventoryModel Inventory { get; set; }
+    public IGameInventoryModel Inventory { get; set; }
 
     private InventoryEditItemModal editItemModal;
     private bool ShowInvalidItems;
 
-    private void RemoveItem(ItemModel item)
+    private void RemoveItem(IGameItemEntry item)
     {
         Inventory.Items.Remove(item);
     }
 
-    private void RemoveInvalidItems()
-    {
-        for (var idx = Inventory.Items.Count - 1; idx >= 0; idx--) {
-            var i = Inventory.Items[idx];
-            if (!string.IsNullOrEmpty(i.WielderRef)) continue;
-            if (i.HoldingSlot != null) continue;
-            if (ItemFilter.Contains(i.Blueprint)) continue;
-            if (!IsInvalidItem(i)) continue;
-
-            Inventory.Items.RemoveAt(idx);
-        }
-    }
-
-    private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {
-        "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
-    };
-
-    private bool IsInvalidItem(ItemModel i)
-    {
-        if (Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) {
-            if (blueprint.Path.StartsWith("Blueprints\\Classes\\", StringComparison.OrdinalIgnoreCase)) {
-                return true;
-            }
-            if (blueprint.Path.IndexOf("\\NaturalWeapon\\", StringComparison.OrdinalIgnoreCase) >= 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private bool IsVisibleItem(ItemModel i)
-    {
-        if (!string.IsNullOrEmpty(i.WielderRef)) return false;
-        if (i.HoldingSlot != null) return false;
-        if (ItemFilter.Contains(i.Blueprint)) return false;
-        if (!ShowInvalidItems && IsInvalidItem(i)) return false;
-        return true;
-        //if (!Resources.Blueprints.TryGet(i.Blueprint, out var blueprint)) return true;
-        //if (!(blueprint.Name is BlueprintItemName itemName)) return true;
-        //return !itemName.IsFinnean && !itemName.IsNaturalWeapon();
-    }
-
     private string SearchTerm;
-    private IEnumerable<ItemModel> Items => Inventory.Items
-        .Where(IsVisibleItem)
-        .OrderByDescending(i => CalculateScore(i)).ThenBy(i => i.InventorySlotIndex);
+    private IEnumerable<IGameItemEntry> Items => Inventory.Items
+        .OrderByDescending(i => CalculateScore(i)).ThenBy(i => i.Index);
 
-    private void CopyBlueprintIdentifier(ItemModel i)
+    private void CopyBlueprintIdentifier(IGameItemEntry i)
     {
         ElectronNET.API.Electron.Clipboard.WriteText(i.Blueprint);
     }
 
-    private int CalculateScore(ItemModel i)
+    private int CalculateScore(IGameItemEntry i)
     {
         var t = SearchTerm;
         if (string.IsNullOrEmpty(t)) return 0;
@@ -177,18 +117,18 @@ else {
 
         var s = 0;
         if (M(i.Blueprint)) s += 200;
-        if (M(i.DisplayName(Resources))) s += 200;
-        if (M(i.DisplayType)) s += 200;
+        if (M(i.Name)) s += 200;
+        if (M(i.Type)) s += 200;
         if (C(i.Blueprint)) s += 100;
-        if (C(i.DisplayName(Resources))) s += 100;
-        if (C(i.DisplayType)) s += 100;
-        if (C(i.DisplayDescription)) s += 50;
+        if (C(i.Name)) s += 100;
+        if (C(i.Type)) s += 100;
+        if (C(i.Description)) s += 50;
 
         return s;
     }
 
-    private void Duplicate(ItemModel item)
+    private void Duplicate(IGameItemEntry item)
     {
-        Inventory.Duplicate(item);
+        Inventory.Items.Duplicate(item);
     }
 }

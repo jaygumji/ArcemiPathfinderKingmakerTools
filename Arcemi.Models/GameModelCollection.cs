@@ -8,9 +8,18 @@ namespace Arcemi.Models
 {
     public interface IGameModelCollection<T> : IReadOnlyList<T>
     {
-        T AddCode(string code);
+        T AddByCode(string code);
+        T AddByBlueprint(string blueprint, object data = null);
+        T Duplicate(T model);
         bool Remove(T model);
         void Clear();
+    }
+    public abstract class GameModelCollectionWriter<TGameModel, TModel>
+    {
+        public abstract void BeforeAdd(BeforeAddCollectionItemArgs args);
+        public virtual void AfterAdd(AfterAddCollectionItemArgs<TGameModel, TModel> args)
+        {
+        }
     }
     public class GameModelCollection<TGameModel, TModel> : IGameModelCollection<TGameModel>
         where TModel : Model
@@ -18,10 +27,10 @@ namespace Arcemi.Models
         private readonly List<TGameModel> _inner;
         private readonly ListAccessor<TModel> _accessor;
         private readonly Func<TModel, TGameModel> _factory;
-        private readonly Action<IReferences, JObject> _prepare;
+        private readonly GameModelCollectionWriter<TGameModel, TModel> writer;
         private readonly Dictionary<TGameModel, TModel> _reverse;
 
-        public GameModelCollection(ListAccessor<TModel> accessor, Func<TModel, TGameModel> factory, Func<TModel, bool> predicate = null, Action<IReferences, JObject> prepare = null)
+        public GameModelCollection(ListAccessor<TModel> accessor, Func<TModel, TGameModel> factory, Func<TModel, bool> predicate = null, GameModelCollectionWriter<TGameModel, TModel> writer = null)
         {
             _inner = new List<TGameModel>();
             _reverse = new Dictionary<TGameModel, TModel>();
@@ -35,7 +44,7 @@ namespace Arcemi.Models
             }
             _accessor = accessor;
             _factory = factory;
-            _prepare = prepare;
+            this.writer = writer;
         }
 
         public TGameModel this[int index] => _inner[index];
@@ -60,14 +69,34 @@ namespace Arcemi.Models
             _accessor.Clear();
         }
 
-        public TGameModel AddCode(string code)
+        public TGameModel AddByCode(string code)
         {
-            var model = _accessor.Add(_prepare);
+            var model = _accessor.Add((r, o) => writer?.BeforeAdd(new BeforeAddCollectionItemArgs(r, o, null, null)));
             model.Import(code);
             var gameModel = _factory(model);
+            writer?.AfterAdd(new AfterAddCollectionItemArgs<TGameModel, TModel>(gameModel, model, null, null));
+
             _inner.Add(gameModel);
             _reverse.Add(gameModel, model);
             return gameModel;
+        }
+
+        public TGameModel AddByBlueprint(string blueprint, object data = null)
+        {
+            var model = _accessor.Add((r, o) => writer?.BeforeAdd(new BeforeAddCollectionItemArgs(r, o, blueprint, data)));
+            var gameModel = _factory(model);
+            writer?.AfterAdd(new AfterAddCollectionItemArgs<TGameModel, TModel>(gameModel, model, blueprint, data));
+            
+            _inner.Add(gameModel);
+            _reverse.Add(gameModel, model);
+            return gameModel;
+        }
+
+        public TGameModel Duplicate(TGameModel model)
+        {
+            var data = _reverse[model];
+            var blueprint = data.GetAccessor().Value<string>("Blueprint");
+            return blueprint.HasValue() ? AddByBlueprint(blueprint) : AddByCode(data.Export());
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 using System;
 
 namespace Arcemi.Models.PathfinderWotr
@@ -17,10 +16,10 @@ namespace Arcemi.Models.PathfinderWotr
         {
             File = file;
             Party = new WotrGamePartyModel(file.Player);
-            SharedStash = new DefaultGameInventoryModel(file.Player.SharedStash);
+            SharedStash = new WotrGameInventoryModel(file.Player.SharedStash);
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new WotrGameUnitModel(a), a => a.Descriptor is object);
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
-            SharedInventory = new DefaultGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory);
+            SharedInventory = new WotrGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory);
             Management = new WotrGameManagementModel(file.Player);
             State = new WotrGameStateModel(file.Player);
         }
@@ -64,7 +63,7 @@ namespace Arcemi.Models.PathfinderWotr
         {
             MainCharacterId = unit.UniqueId;
             MainCharacter = unit;
-            SharedInventory = new DefaultGameInventoryModel(unit.Ref.Descriptor.Inventory);
+            SharedInventory = new WotrGameInventoryModel(unit.Ref.Descriptor.Inventory);
         }
     }
 }

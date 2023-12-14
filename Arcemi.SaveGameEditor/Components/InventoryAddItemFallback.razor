@@ -40,10 +40,10 @@
     private bool IsItemInputInvalid => string.IsNullOrEmpty(AddItemBlueprint) || AddItemType == null;
 
     [Parameter]
-    public InventoryModel Inventory { get; set; }
+    public IGameInventoryModel Inventory { get; set; }
 
     [Parameter]
-    public EventCallback<ItemModel> OnItemAdded { get; set; }
+    public EventCallback<IGameItemEntry> OnItemAdded { get; set; }
 
     private static bool IsDisabledType(ItemType? itemType)
     {
@@ -58,7 +58,7 @@
 
     private async Task AddItemAsync()
     {
-        var item = Inventory.AddItem(Resources, AddItemType.Value, AddItemBlueprint);
+        var item = Inventory.Items.AddByBlueprint(AddItemBlueprint, AddItemType.Value);
         await addItemModal.CloseAsync();
         AddItemType = null;
         AddItemBlueprint = null;

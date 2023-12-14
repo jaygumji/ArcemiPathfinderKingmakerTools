@@ -13,7 +13,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Resources = new IGamePartyResourceEntry[] {
                 A.Object<W40KRTScrapResourceEntry>("Scrap"),
                 A.Object<W40KRTProfitFactorResourceEntry>("ProfitFactor"),
-            }.Concat(A.List<KeyValuePairModel<int>>("FractionsReputation").Select(x => new W40KRTGamePartyFactionResourceEntry(x))
+            }.Concat(A.List<KeyValuePairModel<int>>("FractionsReputation").Where(x => !x.Key.IEq("None")).Select(x => new W40KRTGamePartyFactionResourceEntry(x))
             ).ToArray();
         }
 

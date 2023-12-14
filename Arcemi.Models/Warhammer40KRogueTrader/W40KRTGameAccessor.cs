@@ -12,10 +12,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         {
             File = file;
             Party = new W40KRTGamePartyModel(file.Player);
-            SharedInventory = new W40KRTGameSharedInventoryModel();
-            SharedStash = new DefaultGameInventoryModel(file.Player.SharedStash);
+            SharedStash = new W40KRTGameSharedInventoryModel(file.Player.GetAccessor().Object<RefModel>("SharedStash"));
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new W40KRTGameUnitModel(a));
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
+            SharedInventory = new W40KRTGameSharedInventoryModel(((W40KRTGameUnitModel)MainCharacter)?.RefInventory);
             Management = new W40KRTGameManagementModel(file.Player);
             State = new W40KRTGameStateModel(file.Player);
         }

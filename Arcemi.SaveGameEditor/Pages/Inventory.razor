@@ -6,16 +6,20 @@
 }
 else {
     <TabControl StartIndex="0">
-        <Tab Name="Party">
-            <Content>
-                <InventoryView Inventory="Session.Game.MainCharacter.Ref.Descriptor.Inventory"></InventoryView>
-            </Content>
-        </Tab>
-        <Tab Name="Stash">
-            <Content>
-                <InventoryView Inventory="Session.Player.SharedStash"></InventoryView>
-            </Content>
-        </Tab>
+        @if (Session.Game.SharedInventory.IsSupported) {
+            <Tab Name="Party">
+                <Content>
+                    <InventoryView Inventory="Session.Game.SharedInventory"></InventoryView>
+                </Content>
+            </Tab>
+        }
+        @if (Session.Game.SharedStash.IsSupported) {
+            <Tab Name="Stash">
+                <Content>
+                    <InventoryView Inventory="Session.Game.SharedStash"></InventoryView>
+                </Content>
+            </Tab>
+        }
     </TabControl>
 }
 
