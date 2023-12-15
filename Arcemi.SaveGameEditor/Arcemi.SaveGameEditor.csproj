@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
 	  <RuntimeIdentifiers>win10-x64;linux-x64</RuntimeIdentifiers>
-    <Version>1.1.0</Version>
+    <Version>0.1.1</Version>
     <StartupObject></StartupObject>
   </PropertyGroup>
   <ItemGroup>

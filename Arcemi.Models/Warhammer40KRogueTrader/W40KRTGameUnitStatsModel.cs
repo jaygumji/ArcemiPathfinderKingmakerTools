@@ -16,6 +16,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public W40KRTGameUnitStatsModel(StatsContainerPartItemModel stats)
         {
             Stats = stats;
+            if (stats is null) {
+                Groupings = Array.Empty<GameStatsGrouping>();
+                return;
+            }
             foreach (var stat in stats.Container.ContainerConverter) {
                 GroupStat(stat);
             }

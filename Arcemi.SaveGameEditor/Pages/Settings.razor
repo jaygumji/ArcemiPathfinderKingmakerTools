@@ -8,7 +8,12 @@
         <p class="alert alert-info">Changing the settings will take effect immediately.</p>
     </div>
     <hr />
-
+    @if (Config.Instance.Development.IsEnabled) {
+        <div>
+            Path: @Config.ConfigPath
+        </div>
+        <hr />
+    }
     @if (Games is object) {
         <TabControl>
             @foreach (var game in Games) {
@@ -50,9 +55,9 @@
         </TabControl>
     }
 
-    @if (!string.IsNullOrEmpty(_saveMessage)) {
+    @if (!string.IsNullOrEmpty(Config.SaveMessage)) {
         <div>
-            <p class="alert alert-warning">@_saveMessage</p>
+            <p class="alert alert-warning">@Config.SaveMessage</p>
         </div>
     }
 
@@ -65,7 +70,7 @@
     {
         await State.ExecuteAsync(async () => {
             await Config.InitializeAsync();
-            Games = Config.GetGamesView(() => this.Save());
+            Games = Config.GetGamesView();
         });
     }
 
@@ -100,30 +105,6 @@
             if (!string.IsNullOrEmpty(file)) {
                 game.GameFolder = file;
             }
-        });
-    }
-
-    private string _saveMessage;
-    private int _saveMarker;
-    private int _isSaving;
-    private void Save()
-    {
-        System.Threading.Interlocked.Increment(ref _saveMarker);
-        var s = System.Threading.Interlocked.CompareExchange(ref _isSaving, 1, 0);
-        if (s == 1) return; // Already saving
-        _saveMessage = null;
-
-        Task.Factory.StartNew(async () => {
-            while (_saveMarker > 0) {
-                System.Threading.Interlocked.Exchange(ref _saveMarker, 0);
-                try {
-                    await Config.SaveConfigAsync();
-                }
-                catch (Exception ex) {
-                    _saveMessage = "Error when saving: " + ex.Message;
-                }
-            }
-            System.Threading.Interlocked.Exchange(ref _isSaving, 0);
         });
     }
 }

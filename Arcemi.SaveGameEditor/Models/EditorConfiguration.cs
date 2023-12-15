@@ -57,9 +57,9 @@ namespace Arcemi.SaveGameEditor.Models
             LoadConfigResources();
         }
 
-        public IReadOnlyList<EditorConfigurationGameView> GetGamesView(Action save)
+        public IReadOnlyList<EditorConfigurationGameView> GetGamesView()
         {
-            return Instance.Games.Select(g => new EditorConfigurationGameView(g, save)).ToArray();
+            return Instance.Games.Select(g => new EditorConfigurationGameView(g, Save)).ToArray();
         }
 
         private void LoadConfigResources()
@@ -74,16 +74,36 @@ namespace Arcemi.SaveGameEditor.Models
             }
         }
 
-        public async Task SaveConfigAsync()
+        private async Task SaveConfigAsync()
         {
             await Instance.SaveAsync(ConfigPath);
             LoadConfigResources();
         }
 
-        public void SaveConfig()
+        public string SaveMessage { get; private set; }
+
+        private int _saveMarker;
+        private int _isSaving;
+        public void Save()
         {
-            Instance.Save(ConfigPath);
-            LoadConfigResources();
+            System.Threading.Interlocked.Increment(ref _saveMarker);
+            var s = System.Threading.Interlocked.CompareExchange(ref _isSaving, 1, 0);
+            if (s == 1) return; // Already saving
+            SaveMessage = null;
+
+            Task.Factory.StartNew(async () => {
+                while (_saveMarker > 0) {
+                    System.Threading.Interlocked.Exchange(ref _saveMarker, 0);
+                    try {
+                        await SaveConfigAsync();
+                    }
+                    catch (Exception ex) {
+                        SaveMessage = "Error when saving: " + ex.Message;
+                    }
+                }
+                System.Threading.Interlocked.Exchange(ref _isSaving, 0);
+            });
         }
+
     }
 }

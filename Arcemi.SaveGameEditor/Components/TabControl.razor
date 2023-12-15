@@ -5,7 +5,7 @@
     <ul class="nav nav-tabs" role="tablist">
         @foreach (var tab in Tabs) {
             <li class="nav-item" role="tab">
-                <button class="nav-link @(tab.Index == CurrentIndex ? "active" : "")" @onclick="() => SelectTab(tab)">@tab.Name</button>
+                <button class="nav-link @(tab.Index == CurrentIndex ? "active" : "")" @onclick="async () => await SelectTabAsync(tab)">@tab.Name</button>
             </li>
         }
     </ul>
@@ -31,14 +31,20 @@
 
     public int CurrentIndex { get; set; } = -1;
 
+    [Parameter]
+    public EventCallback<TabIndexChangedArgs> OnIndexChanged { get; set; }
+
     protected override void OnInitialized()
     {
         CurrentIndex = StartIndex;
     }
 
-    private void SelectTab(ITabControl tab)
+    private async Task SelectTabAsync(ITabControl tab)
     {
+        var newIndex = tab.Index;
+        var oldIndex = CurrentIndex;
         CurrentIndex = tab.Index;
+        await OnIndexChanged.InvokeAsync(new TabIndexChangedArgs(tab, newIndex, oldIndex));
     }
 
     void ITabController.Attach(ITabControl tab)

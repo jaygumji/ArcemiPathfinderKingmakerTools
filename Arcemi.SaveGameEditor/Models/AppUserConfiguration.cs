@@ -57,6 +57,7 @@ namespace Arcemi.SaveGameEditor.Models
     }
     public class AppUserConfiguration
     {
+        public string LastGameDefinitionId { get; set; }
         public AppUserDevelopmentConfiguration Development { get; set; } = new AppUserDevelopmentConfiguration();
         public List<EditorGameConfiguration> Games { get; set; } = new List<EditorGameConfiguration>();
 

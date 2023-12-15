@@ -1,6 +1,7 @@
 ﻿@inject EditorConfiguration Config
+@inject IEditFileSession Session
 
-<TabControl>
+<TabControl OnIndexChanged="OnTabIndexChangedAsync" StartIndex="TabIndex">
     @foreach (var game in Games) {
         <Tab Name="@game.Definition.Name">
             <Content>
@@ -57,10 +58,35 @@
     [Parameter]
     public RenderFragment<SaveFileHeader> SaveFileToolbar { get; set; }
 
+    [Parameter]
+    public GameDefinition GameMustBe { get; set; }
+
     private IReadOnlyList<GamesForSavedGamesView> Games { get; set; }
+    private int TabIndex { get; set; }
 
     protected override void OnInitialized()
     {
         Games = GamesForSavedGamesView.Create(Config);
+        if (Games.Count == 0) return;
+        if (GameMustBe is object) {
+            Games = Games.Where(g => g.Definition == GameMustBe).ToArray(); 
+        }
+        else if (Config.Instance.LastGameDefinitionId.HasValue()) {
+            TabIndex = 0;
+            for (var i = 0; i < Games.Count; i++) {
+                if (Games[i].Definition.Id.Eq(Config.Instance.LastGameDefinitionId)) {
+                    TabIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    private Task OnTabIndexChangedAsync(TabIndexChangedArgs args)
+    {
+        if (Games.Count <= args.NewIndex || args.NewIndex < 0) return Task.CompletedTask;
+        Config.Instance.LastGameDefinitionId = Games[args.NewIndex].Definition.Id;
+        Config.Save();
+        return Task.CompletedTask;
     }
 }
