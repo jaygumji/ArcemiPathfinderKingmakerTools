@@ -15,16 +15,21 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public UnitUISettingsPartItemModel UiSettings { get; }
 
-        public string Blueprint => UiSettings.m_Portrait;
+        public string Blueprint => UiSettings?.m_Portrait;
 
         public string Path
         {
             get {
+                if (UiSettings is null) return Res.AppData.Portraits.GetUnknownUri();
+
                 if (!string.IsNullOrEmpty(UiSettings.m_CustomPortrait?.CustomPortraitId)) {
                     return Res.GetPortraitsUri(UiSettings.m_CustomPortrait.CustomPortraitId);
                 }
                 if (!string.IsNullOrEmpty(Blueprint)) {
                     return Res.GetPortraitsUri(Blueprint);
+                }
+                if (string.IsNullOrEmpty(unitBlueprint)) {
+                    return Res.AppData.Portraits.GetUnknownUri();
                 }
                 if (Res.TryGetPortraitsUri(unitBlueprint, out var uri)) {
                     return uri;

@@ -17,7 +17,7 @@
             Select another character and import the feature.
             Or go to the wiki and copy a shared code.
         </Help>
-        <ExternalLink Target="ExternalLinks.WikiFeatCodes" Text="Wiki"/>
+        <ExternalLink Target="ExternalLinks.WikiFeatCodes" Text="Wiki" />
     </div>
 </div>
 
@@ -30,16 +30,16 @@
     </div>
 </div>
 
-@if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
-    <div class="row">
-        <div class="col-md-6">
-            <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddFeatAsync()">
-                <span class="oi oi-plus"></span>
-                Add feat from list
-            </button>
-        </div>
+@* @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) { *@
+<div class="row">
+    <div class="col-md-6">
+        <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddFeatAsync()">
+            <span class="oi oi-plus"></span>
+            Add feat from list
+        </button>
     </div>
-}
+</div>
+@* } *@
 
 <div class="form-list">
     <div class="row">
@@ -53,42 +53,43 @@
             <label class="form-label" title="Last level feat was updated">Level</label>
         </div>
     </div>
-    
+
     @foreach (var feature in Feats) {
-    <div class="row">
-        <div class="col-md-6 overflow-hidden">
-            <label class="form-label">@feature.DisplayName</label>
+        <div class="row">
+            <div class="col-md-6 overflow-hidden">
+                <label class="form-label">@feature.DisplayName</label>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-secondary" title="Export to clipboard" @onclick="() => ExportFeature(feature)">
+                    <span class="oi oi-script"></span>
+                </button>
+                @if (feature.IsRanked) {
+                    <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
+                        <span class="oi oi-arrow-thick-bottom"></span>
+                    </button>
+                    <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
+                        <span class="oi oi-arrow-thick-top"></span>
+                    </button>
+                }
+                <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFeature(feature)">
+                    <span class="oi oi-trash"></span>
+                </button>
+            </div>
         </div>
-        <div class="col-md-1">
-            <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>
-        </div>
-        <div class="col-md-1">
-            <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
-        </div>
-        <div class="col-md-3">
-            <button class="btn btn-sm btn-secondary" title="Export to clipboard" @onclick="() => ExportFeature(feature)">
-                <span class="oi oi-script"></span>
-            </button>
-            @if (feature.IsRanked) {
-            <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
-                <span class="oi oi-arrow-thick-bottom"></span>
-            </button>
-            <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
-                <span class="oi oi-arrow-thick-top"></span>
-            </button>
-            }
-            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFeature(feature)">
-                <span class="oi oi-trash"></span>
-            </button>
-        </div>
-    </div>
     }
 </div>
 
 <Modal @ref="modalAddFeat">
     <Title>Add feat</Title>
     <Body>
-        <b>Warning: </b> <span>This feature is experimental. Be sure to keep a backup of your save. If you encounter problems, consider using feat codes instead.</span>
+        <b>Warning: </b>
+        <span>This feature is experimental. Be sure to keep a backup of your save. If you encounter problems, consider using feat codes instead.</span>
         <TabControl StartIndex="0">
             <Tab Name="Search">
                 <Content>
@@ -131,7 +132,9 @@
         .Where(f => SearchTerm.IsEmpty() || f.DisplayName.ILike(SearchTerm))
         .OrderBy(f => f.DisplayName);
 
-    private IEnumerable<SelectableFeat> AvailableFeatsBase => PredefinedFeats.Combine(Resources.Blueprints.GetEntries(BlueprintTypeId.Feature).Where(IsValidFeat));
+    private IEnumerable<SelectableFeat> AvailableFeatsBase => Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel
+        ? PredefinedFeats.Combine(Resources.Blueprints.GetEntries(BlueprintTypeId.Feature).Where(IsValidFeat))
+        : Unit.Feats.AvailableEntries.Where(IsValidFeat).Select(e => new SelectableFeat(e)).OrderBy(f => f.DisplayName);
 
     private string SearchTerm;
     private string ImportCode;
@@ -152,16 +155,21 @@
 
     private async Task AddFeatAsync()
     {
-        if (PredefinedFeats.TryGet(AddFeatBlueprint, out var spec)) {
-            spec.AddTo(Unit.Ref.Facts.Items);
-        }
-        else if (!IsDuplicateBlueprintId(AddFeatBlueprint)) {
-            var feat = (FeatureFactItemModel)Unit.Ref.Facts.Items.Add(FeatureFactItemModel.Prepare);
-            feat.Blueprint = AddFeatBlueprint;
-            var template = Resources.GetFeatTemplate(AddFeatBlueprint);
-            if (template is object) {
-                feat.Import(template);
+        if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
+            if (PredefinedFeats.TryGet(AddFeatBlueprint, out var spec)) {
+                spec.AddTo(Unit.Ref.Facts.Items);
             }
+            else if (!IsDuplicateBlueprintId(AddFeatBlueprint)) {
+                var feat = (FeatureFactItemModel)Unit.Ref.Facts.Items.Add(FeatureFactItemModel.Prepare);
+                feat.Blueprint = AddFeatBlueprint;
+                var template = Resources.GetFeatTemplate(AddFeatBlueprint);
+                if (template is object) {
+                    feat.Import(template);
+                }
+            }
+        }
+        else {
+            Unit.Feats.AddByBlueprint(AddFeatBlueprint);
         }
 
         await modalAddFeat.CloseAsync();
@@ -203,8 +211,7 @@
 
     private bool IsDuplicateBlueprintId(string blueprint)
     {
-        var feats = Feats.Where(f => f.Blueprint.Eq(blueprint));
-        return feats.Any();
+        return Feats.Any(f => f.Blueprint.Eq(blueprint));
     }
 
     private void ImportFeature()

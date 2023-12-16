@@ -193,10 +193,18 @@ namespace Arcemi.Models
     public interface IGameUnitProgressionModel : IGameModel
     {
         int Experience { get; set; }
-        int CurrentLevel { get; }
+        int CurrentLevel { get; set; }
+        bool IsLevelReadOnly { get; }
 
+        IReadOnlyList<IGameUnitSelectionProgressionEntry> Selections { get; }
         IReadOnlyList<IGameUnitUltimateProgressionEntry> Ultimates { get; }
         IReadOnlyList<IGameUnitClassProgressionEntry> Classes { get; }
+    }
+
+    public interface IGameUnitSelectionProgressionEntry
+    {
+        string Name { get; }
+        string Feature { get; }
     }
 
     public interface IGameUnitClassProgressionEntry

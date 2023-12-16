@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Models.PathfinderWotr
@@ -17,10 +18,12 @@ namespace Arcemi.Models.PathfinderWotr
         public UnitEntityModel Unit { get; }
         public int Experience { get => Unit.Descriptor.Progression.Experience; set => Unit.Descriptor.Progression.Experience = value; }
 
-        public int CurrentLevel => Unit.Descriptor.Progression.CurrentLevel;
+        public int CurrentLevel { get => Unit.Descriptor.Progression.CurrentLevel; set { } }
+        public bool IsLevelReadOnly => true;
 
         public IReadOnlyList<IGameUnitUltimateProgressionEntry> Ultimates { get; }
         public IReadOnlyList<IGameUnitClassProgressionEntry> Classes { get; }
+        public IReadOnlyList<IGameUnitSelectionProgressionEntry> Selections { get; } = Array.Empty<IGameUnitSelectionProgressionEntry>();
 
         public bool IsSupported => true;
     }

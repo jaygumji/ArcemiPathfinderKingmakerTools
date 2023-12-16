@@ -13,12 +13,19 @@ namespace Arcemi.Models
         T Duplicate(T model);
         bool Remove(T model);
         void Clear();
+
+        IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries { get; }
     }
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
     {
         public abstract void BeforeAdd(BeforeAddCollectionItemArgs args);
         public virtual void AfterAdd(AfterAddCollectionItemArgs<TGameModel, TModel> args)
         {
+        }
+
+        public virtual IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<TGameModel> current)
+        {
+            return Array.Empty<IBlueprintMetadataEntry>();
         }
     }
     public class GameModelCollection<TGameModel, TModel> : IGameModelCollection<TGameModel>
@@ -49,6 +56,9 @@ namespace Arcemi.Models
 
         public TGameModel this[int index] => _inner[index];
         public int Count => _inner.Count;
+
+        public IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries => writer.GetAvailableEntries(_inner);
+
         public IEnumerator<TGameModel> GetEnumerator() => _inner.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

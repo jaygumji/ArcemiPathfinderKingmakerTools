@@ -54,6 +54,35 @@ namespace Arcemi.SaveGameEditor.Models
             }
             return GameDefinition.NotSet;
         }
+
+        public async Task DetectAppDataFolderAsync()
+        {
+            var appDataPath = await GetAppDataDirectory();
+            var path = Path.Combine(appDataPath, GetDefinition().WindowsRelativeAppDataPath);
+
+            if (Directory.Exists(path)) {
+                AppDataFolder = path;
+                return;
+            }
+
+            path = Path.Combine(Path.GetDirectoryName(appDataPath), GetDefinition().WindowsRelativeAppDataPath);
+
+            if (Directory.Exists(path)) {
+                AppDataFolder = path;
+                return;
+            }
+        }
+
+        private static async Task<string> GetAppDataDirectory()
+        {
+            if (HybridSupport.IsElectronActive) {
+                return await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.AppData);
+            }
+            else {
+                return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            }
+        }
+
     }
     public class AppUserConfiguration
     {
@@ -184,21 +213,10 @@ namespace Arcemi.SaveGameEditor.Models
             var cfg = new AppUserConfiguration();
             foreach (var def in SupportedGames.All) {
                 var game = new EditorGameConfiguration { DefinitionId = def.Id };
-                game.AppDataFolder = await DetectAppDataFolderAsync(def);
+                await game.DetectAppDataFolderAsync();
+                cfg.Games.Add(game);
             }
             return cfg;
-        }
-
-        public static async Task<string> GetAppDataDirectory()
-        {
-            if (HybridSupport.IsElectronActive)
-            {
-                return await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.AppData);
-            }
-            else
-            {
-                return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-            }
         }
 
         public static async Task<string> GetAppUserConfigFilename()
@@ -213,18 +231,6 @@ namespace Arcemi.SaveGameEditor.Models
                 userConfigPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             }
             return Path.Combine(userConfigPath, "user.config");
-        }
-
-        private static async Task<string> DetectAppDataFolderAsync(GameDefinition def)
-        {
-            var appDataPath = await GetAppDataDirectory();
-            var path = Path.Combine(Path.GetDirectoryName(appDataPath), def.WindowsRelativeAppDataPath);
-
-            if (Directory.Exists(path)) {
-                return path;
-            }
-
-            return null;
         }
     }
 }

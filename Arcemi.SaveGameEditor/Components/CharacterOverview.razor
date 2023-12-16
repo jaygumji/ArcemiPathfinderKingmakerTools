@@ -2,110 +2,141 @@
 
 <div class="row">
     @if (Unit.Type == UnitEntityType.Pet) {
-    <div class="col-md-4">
-        <label class="form-label">Owner</label>
-        <input class="form-control" type="text" readonly="readonly" value="@(Model.GetOwnerOf(Unit)?.Name ?? "N/A")" />
-    </div>
+        <div class="col-md-4">
+            <label class="form-label">Owner</label>
+            <input class="form-control" type="text" readonly="readonly" value="@(Model.GetOwnerOf(Unit)?.Name ?? "N/A")" />
+        </div>
     }
     else if (Unit.Race.IsSupported) {
-    <div class="col-md-4">
-        <label class="form-label">Race</label>
-        <input class="form-control" type="text" readonly="readonly" value="@Unit.Race.DisplayName" />
-    </div>
+        <div class="col-md-4">
+            <label class="form-label">Race</label>
+            <input class="form-control" type="text" readonly="readonly" value="@Unit.Race.DisplayName" />
+        </div>
     }
     <div class="col-md-4">
         <label class="form-label">Voice</label>
-        <select class="form-control" @bind="Unit.Asks.Custom">
-            <option value="">Default</option>
-            @foreach (var blueprint in Model.Resources.Blueprints.GetEntries(BlueprintTypeId.UnitAsksList).OrderBy(b => b.DisplayName)) {
-            <option value="@blueprint.Id">@blueprint.DisplayName</option>
-            }
-        </select>
+        @if (Unit.Asks.IsSupported) {
+            <select class="form-control" @bind="Unit.Asks.Custom">
+                <option value="">Default</option>
+                @foreach (var blueprint in Model.Resources.Blueprints.GetEntries(BlueprintTypeId.UnitAsksList).OrderBy(b => b.DisplayName)) {
+                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                }
+            </select>
+        }
+        else {
+            <select class="form-control">
+                <option value="" selected="selected">Default</option>
+            </select>
+        }
     </div>
     @if (Unit.Companion.IsSupported) {
-    <div class="col-md-4">
-        <label class="form-label">State</label>
-        <select class="form-control" disabled="@Unit.Type == UnitEntityType.Player" @bind="Unit.Companion.State">
-            @foreach (var state in Unit.Companion.AllStates){
-                <option value="@state.Value">@state.Name</option>
-            }
-        </select>
-    </div>
+        <div class="col-md-4">
+            <label class="form-label">State</label>
+            <select class="form-control" disabled="@Unit.Type == UnitEntityType.Player" @bind="Unit.Companion.State">
+                @foreach (var state in Unit.Companion.AllStates) {
+                    <option value="@state.Value">@state.Name</option>
+                }
+            </select>
+        </div>
     }
 </div>
 
 @if (Model.IsPlayerButNotMainCharacter(Unit)) {
-<div class="row">
-    <div class="col-md-3">
-        <button class="btn btn-info w-100" @onclick="() => Model.SetAsHero(Unit)" title="You are not set as the main character, fix it by pressing this button">
-            <span class="oi oi-wrench"></span>
-            Main Char
-        </button>
-    </div>
-</div>
-}
-
-<div class="row">
-    <div class="col-md-4">
-        <label class="form-label">Experience</label>
-        <input class="form-control" type="number" @bind="@Unit.Progression.Experience" />
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">
-            Level
-            <Help Size="ElementSize.Small">
-                The save game file does not save your current level, it is calculated based on the experience of your characters.
-            </Help>
-        </label>
-        <input class="form-control" type="number" readonly="readonly" value="@Unit.Progression.CurrentLevel" />
-    </div>
-    @foreach (var ultimate in Unit.Progression.Ultimates) {
-        <div class="col-md-2">
-            <label class="form-label" title="@ultimate.Name level (@ultimate.MinLevel-@ultimate.MaxLevel)">@ultimate.Name</label>
-            <input class="form-control" type="number" min="@ultimate.MinLevel" max="@ultimate.MaxLevel" title="@ultimate.Name level (@ultimate.MinLevel-@ultimate.MaxLevel)" @bind="ultimate.Level" />
-        </div>
-    }
-</div>
-
-<div class="row">
-    <h3 class="col-md-12">Classes</h3>
-</div>
-<div class="form-list static-content">
     <div class="row">
-        <div class="col-md-4">
-            <label class="form-label">Name</label>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Specialization</label>
-        </div>
-        <div class="col-md-2">
-            <label class="form-label">Level</label>
-        </div>
-        <div class="col-md-2">
-        </div>
-    </div>
-
-    @foreach (var cls in Unit.Progression.Classes) {
-    <div class="row">
-        <div class="col-md-4 overflow-hidden">
-            <label class="form-label">@cls.Name</label>
-        </div>
-        <div class="col-md-4 overflow-hidden">
-            <label class="form-label">@cls.SpecializationName</label>
-        </div>
-        <div class="col-md-2">
-            <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
-        </div>
-        @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel){
-        <div class="col-md-2">
-            <button class="btn btn-sm btn-warning" disabled="@(!LevelManipulator.CanDowngrade(cls))" @onclick="() => DowngradeClass(cls)">
-                <span class="oi oi-arrow-thick-bottom"></span>
+        <div class="col-md-3">
+            <button class="btn btn-info w-100" @onclick="() => Model.SetAsHero(Unit)" title="You are not set as the main character, fix it by pressing this button">
+                <span class="oi oi-wrench"></span>
+                Main Char
             </button>
         </div>
+    </div>
+}
+
+@if (Unit.Progression.IsSupported){
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label">Experience</label>
+            <input class="form-control" type="number" @bind="@Unit.Progression.Experience" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">
+                Level
+                @if (Unit.Progression.IsLevelReadOnly) {
+                    <Help Size="ElementSize.Small">
+                        The save game file does not save your current level, it is calculated based on the experience of your characters.
+                    </Help>
+                }
+            </label>
+            <input class="form-control" type="number" readonly="@Unit.Progression.IsLevelReadOnly" @bind="@Unit.Progression.CurrentLevel" />
+        </div>
+        @foreach (var ultimate in Unit.Progression.Ultimates) {
+            <div class="col-md-2">
+                <label class="form-label" title="@ultimate.Name level (@ultimate.MinLevel-@ultimate.MaxLevel)">@ultimate.Name</label>
+                <input class="form-control" type="number" min="@ultimate.MinLevel" max="@ultimate.MaxLevel" title="@ultimate.Name level (@ultimate.MinLevel-@ultimate.MaxLevel)" @bind="ultimate.Level" />
+            </div>
         }
     </div>
+
+    @if (Unit.Progression.Selections.Count > 0) {
+        <div class="row">
+            <h3 class="col-md-12">Selections</h3>
+        </div>
+        <div class="row">
+            @foreach (var sel in Unit.Progression.Selections) {
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body overflow-hidden text-nowrap">
+                            <h5 class="card-title">@sel.Name</h5>
+                            <p class="card-text">@sel.Feature</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     }
-</div>
+
+    @if (Unit.Progression.Classes.Count > 0) {
+        <div class="row">
+            <h3 class="col-md-12">Classes</h3>
+        </div>
+        <div class="form-list static-content">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Name</label>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Specialization</label>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Level</label>
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+
+            @foreach (var cls in Unit.Progression.Classes) {
+                <div class="row">
+                    <div class="col-md-4 overflow-hidden">
+                        <label class="form-label">@cls.Name</label>
+                    </div>
+                    <div class="col-md-4 overflow-hidden">
+                        <label class="form-label">@cls.SpecializationName</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" type="number" readonly="readonly" value="@cls.Level" />
+                    </div>
+                    @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
+                        <div class="col-md-2">
+                            <button class="btn btn-sm btn-warning" disabled="@(!LevelManipulator.CanDowngrade(cls))" @onclick="() => DowngradeClass(cls)">
+                                <span class="oi oi-arrow-thick-bottom"></span>
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+}
 @if (Unit.Alignment.IsSupported) {
     <div class="row">
         <div class="col-md-12">
@@ -323,7 +354,7 @@
                             @alignment.Provider
                         </div>
                         <div class="col-md-3">
-                            @alignment.X, @(alignment.Y*-1)
+                            @alignment.X, @(alignment.Y * -1)
                         </div>
                         <div class="col-md-3">
                             <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntry(alignment)">
@@ -349,9 +380,9 @@
     private const int OffsetX = 20;
     private const int OffsetY = 6;
     private int AlignmentX => Unit.Alignment.X + 100 + OffsetX;
-    private int AlignmentY => Unit.Alignment.Y *-1 + 100 + OffsetY;
+    private int AlignmentY => Unit.Alignment.Y * -1 + 100 + OffsetY;
     private int EditAlignmentX { get => Unit.Alignment.X; set => Unit.Alignment.X = value; }
-    private int EditAlignmentY { get => Unit.Alignment.Y *-1; set => Unit.Alignment.Y = value*-1; }
+    private int EditAlignmentY { get => Unit.Alignment.Y * -1; set => Unit.Alignment.Y = value * -1; }
 
     private AlignmentMaskView AlignmentMask;
     private bool IsAlignmentAllowed => AlignmentMask.IsAlignmentAllowed(Unit.Alignment.Direction);
@@ -364,17 +395,19 @@
     protected override void OnParametersSet()
     {
         LevelManipulator = new CharacterLevelManipulator(Unit, Model.Resources);
-        if (Model.CanEdit) {
-            AlignmentMask.Set(Unit.Alignment.LockedAlignmentMask);
-        }
-        else {
-            AlignmentMask.Set(Alignment.Any);
+        if (Unit.Alignment.IsSupported){
+            if (Model.CanEdit) {
+                AlignmentMask.Set(Unit.Alignment.LockedAlignmentMask);
+            }
+            else {
+                AlignmentMask.Set(Alignment.Any);
+            }
         }
     }
 
     private void UpdateAlignmentMask(AlignmentMaskView sender)
     {
-        if (Unit.Alignment != null) {
+        if (Unit.Alignment.IsSupported) {
             Unit.Alignment.LockedAlignmentMask = sender.ToString();
         }
     }
