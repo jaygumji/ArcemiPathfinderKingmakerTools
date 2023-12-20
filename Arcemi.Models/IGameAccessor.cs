@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -89,11 +90,15 @@ namespace Arcemi.Models
 
     public interface IGameInventoryModel : IGameModel
     {
+        IReadOnlyList<IGameItemSection> Sections { get; }
+    }
+    public interface IGameItemSection
+    {
+        string Name { get; }
         IGameModelCollection<IGameItemEntry> Items { get; }
         IReadOnlyList<BlueprintType> AddableTypes { get; }
         IEnumerable<IBlueprintMetadataEntry> GetAddableItems(string typeFullName = null);
     }
-
     public interface IGameItemEntry
     {
         string Name { get; }
@@ -124,9 +129,50 @@ namespace Arcemi.Models
         IGameUnitRaceModel Race { get; }
         IGameUnitProgressionModel Progression { get; }
         IGameUnitStatsModel Stats { get; }
+        IGameUnitAppearanceModel Appearance { get; }
         IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
+        IReadOnlyList<IGameUnitFactSection> FactSections { get; }
+    }
+
+    public interface IGameUnitFactSection
+    {
+        string Name { get; }
+        IGameModelCollection<IGameUnitFactEntry> Items { get; }
+    }
+
+    public interface IGameUnitFactEntry
+    {
+        string DisplayName { get; }
+        string Blueprint { get; }
+    }
+
+    public interface IGameUnitAppearanceModel : IGameModel
+    {
+        IReadOnlyList<IGameUnitDollModel> Dolls { get; }
+    }
+
+    public interface IGameUnitDollModel : IGameModel
+    {
+        string Name { get; }
+        string Gender { get; set; }
+        IReadOnlyList<GenderOption> GenderOptions { get; }
+        string Race { get; set; }
+        IReadOnlyList<BlueprintOption> RaceOptions { get; }
+
+        int ClothesPrimaryIndex { get; set; }
+        int ClothesSecondaryIndex { get; set; }
+        ListValueAccessor<string> EquipmentEntityIds { get; }
+        IReadOnlyList<GameKeyValueEntry<int>> EntityRampIdices { get; }
+        void AddEntityRampIdices(GameKeyValueEntry<int> item);
+        void RemoveEntityRampIdices(GameKeyValueEntry<int> item);
+        IReadOnlyList<GameKeyValueEntry<int>> EntitySecondaryRampIdices { get; }
+        void AddEntitySecondaryRampIdices(GameKeyValueEntry<int> item);
+        void RemoveEntitySecondaryRampIdices(GameKeyValueEntry<int> item);
+
+        string Export();
+        void Import(string code);
     }
 
     public interface IGameUnitBuffEntry
@@ -204,7 +250,9 @@ namespace Arcemi.Models
     public interface IGameUnitSelectionProgressionEntry
     {
         string Name { get; }
-        string Feature { get; }
+        string Feature { get; set; }
+        IReadOnlyList<BlueprintOption> Options { get; }
+        bool IsReadOnly { get; }
     }
 
     public interface IGameUnitClassProgressionEntry
@@ -241,6 +289,7 @@ namespace Arcemi.Models
     {
         IReadOnlyList<GameEnumValue> AllStates { get; }
         string State { get; set; }
+        bool IsReadOnly { get; }
     }
 
     public interface IGameUnitAlignmentModel : IGameModel

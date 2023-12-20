@@ -1,9 +1,9 @@
 ﻿namespace Arcemi.Models.Warhammer40KRogueTrader
 {
-    internal class W40RTGameItemEntry : IGameItemEntry
+    internal class W40RTGameCargoItemEntry : IGameItemEntry
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
-        public W40RTGameItemEntry(RefModel @ref)
+        public W40RTGameCargoItemEntry(RefModel @ref)
         {
             Ref = @ref;
             A = Ref.GetAccessor();
@@ -20,9 +20,7 @@
         public int Index => A.Value<int>("m_InventorySlotIndex");
         public bool IsChargable => W40KRTItemType.Usable.TypeRef.Eq(A.TypeValue());
         public int Charges { get => A.Value<int>(); set => A.Value(value); }
-        public bool IsStackable => W40KRTItemType.Usable.TypeRef.Eq(A.TypeValue())
-            || W40KRTItemType.StarshipAmmo.TypeRef.Eq(A.TypeValue())
-            || W40KRTItemType.Mechadendrite.TypeRef.Eq(A.TypeValue());
+        public bool IsStackable => true;
         public int Count { get => A.Value<int>("m_Count"); set => A.Value(value, "m_Count"); }
         public bool CanEdit => false;
         public string IconUrl => "/images/ItemTypes/Other.png";

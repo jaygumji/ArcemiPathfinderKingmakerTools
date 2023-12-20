@@ -11,11 +11,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public static W40KRTItemType StarshipVoidShieldGenerator { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.Equipment.ItemEntityVoidShieldGenerator, Code",
             W40KRTBlueprintTypeProvider.ItemVoidShieldGenerator);
         public static W40KRTItemType StarshipAugerArray { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.StarshipItemEntity`1[[Warhammer.SpaceCombat.Blueprints.BlueprintStarshipItem, Code]], Code",
-            W40KRTBlueprintTypeProvider.ItemAugerArray, W40KRTBlueprintTypeProvider.ItemArmorPlating);
+            W40KRTBlueprintTypeProvider.ItemAugerArray, W40KRTBlueprintTypeProvider.ItemArmorPlating, W40KRTBlueprintTypeProvider.ItemLifeSustainer);
         public static W40KRTItemType StarshipWeapon { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.Weapon.ItemEntityStarshipWeapon, Code",
             W40KRTBlueprintTypeProvider.StarshipWeapon);
         public static W40KRTItemType StarshipAmmo { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.Weapon.ItemEntityStarshipAmmo, Code",
             W40KRTBlueprintTypeProvider.StarshipAmmo);
+        public static W40KRTItemType Mechadendrite { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityMechadendrite, Code",
+            W40KRTBlueprintTypeProvider.ItemMechadendrite);
         public static W40KRTItemType Weapon { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityWeapon, Code",
             W40KRTBlueprintTypeProvider.ItemWeapon);
         public static W40KRTItemType Armor { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityArmor, Code",

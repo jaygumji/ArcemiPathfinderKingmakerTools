@@ -12,11 +12,13 @@ else {
             </label>
             <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
         </div>
-        @if (Resources.Blueprints.GetEntries(BlueprintTypeId.Item).Count > 0) {
-            <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
-        }
-        else if (Inventory is Arcemi.Models.PathfinderWotr.WotrGameInventoryModel) {
-            <InventoryAddItemFallback Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
+        @if (Inventory.Items.IsAddEnabled) {
+            if (Resources.Blueprints.GetEntries(BlueprintTypeId.Item).Count > 0) {
+                <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
+            }
+            else if (Inventory is Arcemi.Models.PathfinderWotr.WotrGameInventoryModel) {
+                <InventoryAddItemFallback Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
+            }
         }
     </div>
 
@@ -75,9 +77,11 @@ else {
                         <span class="oi oi-pencil"></span>
                     </button>
                     }
-                    <button class="btn btn-sm btn-danger" title="Remove item" @onclick="() => RemoveItem(item)">
-                        <span class="oi oi-trash"></span>
-                    </button>
+                    @if (Inventory.Items.IsRemoveEnabled){
+                        <button class="btn btn-sm btn-danger" title="Remove item" @onclick="() => RemoveItem(item)">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    }
                 </div>
             </div>
             }
@@ -89,7 +93,7 @@ else {
 
 @code {
     [Parameter]
-    public IGameInventoryModel Inventory { get; set; }
+    public IGameItemSection Inventory { get; set; }
 
     private InventoryEditItemModal editItemModal;
     private bool ShowInvalidItems;

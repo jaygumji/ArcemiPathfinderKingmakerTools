@@ -14,6 +14,8 @@ namespace Arcemi.Models
         bool Remove(T model);
         void Clear();
 
+        bool IsAddEnabled { get; }
+        bool IsRemoveEnabled { get; }
         IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries { get; }
     }
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
@@ -54,6 +56,7 @@ namespace Arcemi.Models
             this.writer = writer;
         }
 
+        public string Name { get; }
         public TGameModel this[int index] => _inner[index];
         public int Count => _inner.Count;
 
@@ -78,6 +81,9 @@ namespace Arcemi.Models
             _reverse.Clear();
             _accessor.Clear();
         }
+
+        public bool IsAddEnabled => _accessor is object && writer is object;
+        public bool IsRemoveEnabled => _accessor is object;
 
         public TGameModel AddByCode(string code)
         {

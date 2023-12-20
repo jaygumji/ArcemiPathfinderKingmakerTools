@@ -50,15 +50,16 @@
     <div class="col-md-6">
         <label class="form-label">Gender</label>
         <select class="form-control" @bind="DollData.Gender">
-            <option value="Female">Female</option>
-            <option value="Male">Male</option>
+            @foreach (var option in DollData.GenderOptions) {
+                <option value="@option.Id">@option.Name</option>
+            }
         </select>
     </div>
     <div class="col-md-6">
         <label class="form-label">Race</label>
-        <select class="form-control" @bind="DollData.RacePreset">
-            @foreach (var blueprint in Resources.Blueprints.GetEntries(BlueprintTypeId.RaceVisualPreset).OrderBy(x => x.DisplayName)) {
-            <option value="@blueprint.Id">@blueprint.DisplayName</option>
+        <select class="form-control" @bind="DollData.Race">
+            @foreach (var option in DollData.RaceOptions) {
+                <option value="@option.Id">@option.Name</option>
             }
         </select>
     </div>
@@ -223,7 +224,7 @@
 
 @code {
     [Parameter]
-    public DollDataModel DollData { get; set; }
+    public IGameUnitDollModel DollData { get; set; }
 
     private Modal modalImport;
     private string ImportScript;
@@ -277,28 +278,28 @@
         EquipmentEntityId = null;
     }
 
-    private void RemovePrimaryStyle(KeyValuePair<string, int> style)
+    private void RemovePrimaryStyle(GameKeyValueEntry<int> style)
     {
-        DollData.EntityRampIdices.Remove(style.Key);
+        DollData.RemoveEntityRampIdices(style);
     }
 
     private async Task AddPrimaryStyle()
     {
         await modalAddPrimaryStyle.CloseAsync();
-        DollData.EntityRampIdices.Add(PrimaryStyleKey, PrimaryStyleValue);
+        DollData.AddEntityRampIdices(new GameKeyValueEntry<int>(PrimaryStyleKey, PrimaryStyleValue));
         PrimaryStyleKey = null;
         PrimaryStyleValue = 0;
     }
 
-    private void RemoveSecondaryStyle(KeyValuePair<string, int> style)
+    private void RemoveSecondaryStyle(GameKeyValueEntry<int> style)
     {
-        DollData.EntitySecondaryRampIdices.Remove(style.Key);
+        DollData.RemoveEntitySecondaryRampIdices(style);
     }
 
     private async Task AddSecondaryStyle()
     {
         await modalAddSecondaryStyle.CloseAsync();
-        DollData.EntitySecondaryRampIdices.Add(SecondaryStyleKey, SecondaryStyleValue);
+        DollData.AddEntitySecondaryRampIdices(new GameKeyValueEntry<int>(SecondaryStyleKey, SecondaryStyleValue));
         SecondaryStyleKey = null;
         SecondaryStyleValue = 0;
     }

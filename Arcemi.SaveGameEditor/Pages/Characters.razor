@@ -101,12 +101,14 @@ else {
                     <CharacterOverview Unit="Unit" />
                 </Content>
             </Tab>
-            @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel){
+            @if (Unit.Appearance.IsSupported){
                 <Tab Name="Appearance">
                     <Content>
-                        <CharacterAppearance Unit="Unit.Ref" />
+                        <CharacterAppearance Appearance="Unit.Appearance" />
                     </Content>
                 </Tab>
+            }
+            @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel){
                 <Tab Name="Equipment">
                     <Content>
                         <CharacterEquipment Unit="Unit.Ref" />

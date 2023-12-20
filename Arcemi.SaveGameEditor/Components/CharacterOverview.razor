@@ -32,7 +32,7 @@
     @if (Unit.Companion.IsSupported) {
         <div class="col-md-4">
             <label class="form-label">State</label>
-            <select class="form-control" disabled="@Unit.Type == UnitEntityType.Player" @bind="Unit.Companion.State">
+            <select class="form-control" disabled="@Unit.Companion.IsReadOnly" @bind="Unit.Companion.State">
                 @foreach (var state in Unit.Companion.AllStates) {
                     <option value="@state.Value">@state.Name</option>
                 }
@@ -80,6 +80,10 @@
     @if (Unit.Progression.Selections.Count > 0) {
         <div class="row">
             <h3 class="col-md-12">Selections</h3>
+            <div class="col-md-12 alert alert-info">
+                This is best used after an in game respec of the character you're changing.
+                If the character is level 1, the talents and abilities can be selected from earliest possible.
+            </div>
         </div>
         <div class="row">
             @foreach (var sel in Unit.Progression.Selections) {
@@ -87,7 +91,13 @@
                     <div class="card">
                         <div class="card-body overflow-hidden text-nowrap">
                             <h5 class="card-title">@sel.Name</h5>
-                            <p class="card-text">@sel.Feature</p>
+                            <p class="card-text">
+                                <select class="form-control" disabled="@sel.IsReadOnly" @bind="sel.Feature">
+                                    @foreach (var option in sel.Options) {
+                                        <option value="@option.Id">@option.Name</option>
+                                    }
+                                </select>
+                            </p>
                         </div>
                     </div>
                 </div>

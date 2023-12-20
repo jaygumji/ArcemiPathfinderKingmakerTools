@@ -1,22 +1,22 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
-    internal class W40KRTGameModelFeatCollectionWriter : GameModelCollectionWriter<IGameUnitFeatEntry, FactItemModel>
+    internal class W40KRTGameUnitSoulMarkCollectionWriter : GameModelCollectionWriter<IGameUnitFactEntry, FactItemModel>
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
         private readonly string ownerUniqueId;
 
-        public W40KRTGameModelFeatCollectionWriter(string ownerUniqueId)
+        public W40KRTGameUnitSoulMarkCollectionWriter(string ownerUniqueId)
         {
             this.ownerUniqueId = ownerUniqueId;
         }
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
         {
-            args.Obj.Add("$type", "Kingmaker.UnitLogic.Feature, Code");
+            args.Obj.Add("$type", "Kingmaker.UnitLogic.SoulMark, Code");
             var factUniqueId = Guid.NewGuid().ToString("N");
             args.Obj.Add("m_Context", new JObject {
                 {"m_OwnerRef",  ownerUniqueId},
@@ -44,13 +44,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             args.Obj.Add("IsActive", true);
         }
 
-        public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameUnitFeatEntry> current)
+        public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameUnitFactEntry> current)
         {
             var currentIds = new HashSet<string>(current.Select(x => x.Blueprint), StringComparer.Ordinal);
-            return Res.Blueprints.GetEntries(BlueprintTypeId.Feature)
-                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.CareerPath))
-                .Where(e => !currentIds.Contains(e.Id))
-                .ToArray();
+            return Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.SoulMark).Where(e => !currentIds.Contains(e.Id)).ToArray();
         }
     }
 }

@@ -4,11 +4,13 @@ using System.Linq;
 
 namespace Arcemi.Models.PathfinderWotr
 {
-    public class WotrGameInventoryModel : IGameInventoryModel
+    public class WotrGameInventoryModel : IGameInventoryModel, IGameItemSection
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
         private readonly InventoryModel _model;
 
+        public string Name { get; }
+        public IReadOnlyList<IGameItemSection> Sections { get; }
         public bool IsSupported => true;
 
         private class WotrGameInventoryItemWriter : GameModelCollectionWriter<IGameItemEntry, ItemModel>
@@ -63,9 +65,11 @@ namespace Arcemi.Models.PathfinderWotr
         }
         public IGameModelCollection<IGameItemEntry> Items { get; }
 
-        public WotrGameInventoryModel(InventoryModel model)
+        public WotrGameInventoryModel(InventoryModel model, string name)
         {
             _model = model;
+            Name = name;
+            Sections = new IGameItemSection[] { this };
             Items = new GameModelCollection<IGameItemEntry, ItemModel>(model.Items, x => new WotrGameItemEntry(x), IsValidItem, new WotrGameInventoryItemWriter(model));
         }
 

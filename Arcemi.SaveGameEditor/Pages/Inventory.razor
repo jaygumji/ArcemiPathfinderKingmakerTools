@@ -7,18 +7,22 @@
 else {
     <TabControl StartIndex="0">
         @if (Session.Game.SharedInventory.IsSupported) {
-            <Tab Name="Party">
-                <Content>
-                    <InventoryView Inventory="Session.Game.SharedInventory"></InventoryView>
-                </Content>
-            </Tab>
+            foreach (var sect in Session.Game.SharedInventory.Sections) {
+                <Tab Name="@sect.Name">
+                    <Content>
+                        <InventoryView Inventory="sect"></InventoryView>
+                    </Content>
+                </Tab>
+            }
         }
         @if (Session.Game.SharedStash.IsSupported) {
-            <Tab Name="Stash">
-                <Content>
-                    <InventoryView Inventory="Session.Game.SharedStash"></InventoryView>
-                </Content>
-            </Tab>
+            foreach (var sect in Session.Game.SharedStash.Sections) {
+                <Tab Name="@sect.Name">
+                    <Content>
+                        <InventoryView Inventory="sect"></InventoryView>
+                    </Content>
+                </Tab>
+            }
         }
     </TabControl>
 }

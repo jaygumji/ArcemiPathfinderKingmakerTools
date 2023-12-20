@@ -40,7 +40,7 @@
     private bool IsItemInputInvalid => string.IsNullOrEmpty(AddItemBlueprint) || AddItemType == null;
 
     [Parameter]
-    public IGameInventoryModel Inventory { get; set; }
+    public IGameItemSection Inventory { get; set; }
 
     [Parameter]
     public EventCallback<IGameItemEntry> OnItemAdded { get; set; }

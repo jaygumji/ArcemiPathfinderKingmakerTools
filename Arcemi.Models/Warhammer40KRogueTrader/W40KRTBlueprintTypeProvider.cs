@@ -259,7 +259,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public static BlueprintType StarshipAmmo { get; } = new BlueprintType("Starship Ammo", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipAmmo, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StarshipBrain { get; } = new BlueprintType("", "Warhammer.SpaceCombat.AI.BlueprintStarshipBrain, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StarshipSoundSettings { get; } = new BlueprintType("", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipSoundSettings, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-        public static BlueprintType StarshipWeapon { get; } = new BlueprintType("", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipWeapon, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        public static BlueprintType StarshipWeapon { get; } = new BlueprintType("Starship Weapon", "Warhammer.SpaceCombat.Blueprints.BlueprintStarshipWeapon, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StarSystemMap { get; } = new BlueprintType("", "Kingmaker.Globalmap.Blueprints.BlueprintStarSystemMap, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StarSystemObject { get; } = new BlueprintType("", "Kingmaker.Globalmap.Blueprints.SystemMap.BlueprintStarSystemObject, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType StatProgression { get; } = new BlueprintType("", "Kingmaker.UnitLogic.Levelup.Obsolete.Blueprints.BlueprintStatProgression, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
