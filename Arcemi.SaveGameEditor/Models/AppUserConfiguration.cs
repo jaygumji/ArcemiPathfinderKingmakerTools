@@ -55,9 +55,11 @@ namespace Arcemi.SaveGameEditor.Models
             return GameDefinition.NotSet;
         }
 
-        public async Task DetectAppDataFolderAsync()
+        public async Task DetectFoldersAsync()
         {
             var appDataPath = await GetAppDataDirectory();
+            DetectGameFolder(appDataPath);
+
             var path = Path.Combine(appDataPath, GetDefinition().WindowsRelativeAppDataPath);
 
             if (Directory.Exists(path)) {
@@ -70,6 +72,25 @@ namespace Arcemi.SaveGameEditor.Models
             if (Directory.Exists(path)) {
                 AppDataFolder = path;
                 return;
+            }
+        }
+
+        private void DetectGameFolder(string appDataPath)
+        {
+            var root = Path.GetPathRoot(appDataPath);
+            bool FolderExists(string folder, out string path)
+            {
+                path = Path.Combine(root, folder, "Steam", "steamapps", GetDefinition().WindowsGameFolderName);
+                return Directory.Exists(path);
+            }
+            if (FolderExists("Program Files", out var path)) {
+                GameFolder = path;
+            }
+            else if (FolderExists("Programs", out path)) {
+                GameFolder = path;
+            }
+            else if (FolderExists("Games", out path)) {
+                GameFolder = path;
             }
         }
 
@@ -213,7 +234,7 @@ namespace Arcemi.SaveGameEditor.Models
             var cfg = new AppUserConfiguration();
             foreach (var def in SupportedGames.All) {
                 var game = new EditorGameConfiguration { DefinitionId = def.Id };
-                await game.DetectAppDataFolderAsync();
+                await game.DetectFoldersAsync();
                 cfg.Games.Add(game);
             }
             return cfg;

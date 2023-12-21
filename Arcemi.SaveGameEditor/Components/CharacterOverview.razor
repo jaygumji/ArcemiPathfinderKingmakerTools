@@ -66,8 +66,13 @@
                         The save game file does not save your current level, it is calculated based on the experience of your characters.
                     </Help>
                 }
+                else {
+                    <Help Size="ElementSize.Small">
+                        You can not increase the level, it would break the progression selections.
+                    </Help>
+                }
             </label>
-            <input class="form-control" type="number" readonly="@Unit.Progression.IsLevelReadOnly" @bind="@Unit.Progression.CurrentLevel" />
+            <input class="form-control" type="number" readonly="@Unit.Progression.IsLevelReadOnly" @bind="@Unit.Progression.CurrentLevel" min="1" max="@Unit.Progression.CurrentLevel" />
         </div>
         @foreach (var ultimate in Unit.Progression.Ultimates) {
             <div class="col-md-2">
@@ -81,9 +86,8 @@
         <div class="row">
             <h3 class="col-md-12">Selections</h3>
             <div class="col-md-12 alert alert-info">
-                Changing the career path (Archetype) is best used after an in game respec of the character you're changing.
-                It still works if you are higher level, but you might need to add some talents and abilities manually afterwards.
-                If the character is not level 1, you can also set the level to 1 manually.
+                Changing the career path (Archetype) is best used either by doing it just after a respec, or at the same time change the level of the character to level 1.
+                If you change it on a character above level 1 without changing the level you will need to do manual changes or the game UI can be locked.
             </div>
         </div>
         <div class="row">

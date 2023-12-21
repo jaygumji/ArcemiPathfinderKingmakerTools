@@ -99,9 +99,9 @@ namespace Arcemi.SaveGameEditor
             //};
             //Electron.Menu.SetApplicationMenu(menu);
 
-            window.OnClosed += () => {
-                Electron.App.Quit();
-            };
+            //window.OnClosed += () => {
+            //};
+            Electron.App.WindowAllClosed += Electron.App.Quit;
         }
     }
 }

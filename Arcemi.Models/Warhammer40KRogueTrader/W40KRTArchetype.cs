@@ -31,6 +31,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IReadOnlyList<BlueprintOption> SelectionOptions { get; }
 
         private readonly HashSet<string> _Blueprints;
+        public IReadOnlyCollection<string> Blueprints => _Blueprints;
 
         public static W40KRTArchetypes Tier1 { get; } = new W40KRTArchetypes("Tier 1", 1, "f889a299ac7746cfb9b59438fc79018e", new[] {
             new W40KRTArchetype("Officer", "33725d84e95e4323ac46d8fbf899b250", "93d2b8c0a10d4cd0a20a897124cbf3e5", "a5a17fc75f8a45279a39a7b40c1f86f6"),
@@ -51,6 +52,12 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public static W40KRTArchetypes Tier3 { get; } = new W40KRTArchetypes("Tier 2", 36, "", new[] {
             new W40KRTArchetype("Exemplar", "bcefe9c41c7841c9a99b1dbac1793025", "", ""),
         });
+
+        public static IReadOnlyList<W40KRTArchetypes> All { get; } = new[] {
+            Tier1,
+            Tier2,
+            Tier3
+        };
 
         public bool Has(string blueprint)
         {
