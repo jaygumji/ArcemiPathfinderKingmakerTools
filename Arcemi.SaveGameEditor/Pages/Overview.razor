@@ -67,8 +67,8 @@ else {
 <div class="row g-3">
     <h3 class="col-md-12">Game Settings</h3>
 </div>
-@if (Session.Game is Arcemi.Models.PathfinderWotr.WotrGameAccessor){
-    <div class="row g-3">
+@if (Session.Game is Arcemi.Models.PathfinderWotr.WotrGameAccessor && Session.Player?.SettingsList?.AutoCrusade != null) {
+<div class="row g-3">
         <div class="col-md-12">
             <p class="alert alert-warning">
                 Changing the auto crusade option should be done before crusade is enabled in game.

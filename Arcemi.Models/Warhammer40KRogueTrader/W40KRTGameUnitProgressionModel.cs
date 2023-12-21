@@ -21,7 +21,24 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public UnitProgressionPartItemModel Model { get; }
 
         public int Experience { get => Model.Experience; set => Model.Experience = value; }
-        public int CurrentLevel { get => Model.CharacterLevel; set => Model.CharacterLevel = value; }
+        public int CurrentLevel
+        {
+            get => Model.CharacterLevel;
+            set {
+                var oldLevel = Model.CharacterLevel;
+                Model.CharacterLevel = value;
+                var oldSelections = Model.Selections.Where(x => W40KRTArchetypes.ActualLevel(x.Path, x.Level) > value).ToArray();
+                var featIds = new HashSet<string>(oldSelections.Select(x => x.Feature), StringComparer.Ordinal);
+                var feats = Owner.Feats.Where(f => featIds.Contains(f.Blueprint)).ToArray();
+
+                foreach (var selection in oldSelections) {
+                    Model.Selections.Remove(selection);
+                }
+                foreach (var feat in feats) {
+                    Owner.Feats.Remove(feat);
+                }
+            }
+        }
         public bool IsLevelReadOnly => false;
 
         public IReadOnlyList<IGameUnitUltimateProgressionEntry> Ultimates { get; } = Array.Empty<IGameUnitUltimateProgressionEntry>();

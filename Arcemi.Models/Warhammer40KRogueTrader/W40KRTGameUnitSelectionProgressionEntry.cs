@@ -125,8 +125,12 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         {
             get => Ref.Feature;
             set {
+                var oldValue = Ref.Feature;
                 Ref.Feature = value;
                 if (Ref.Selection.Eq(W40KRTArchetypes.Tier1.SelectionId)) {
+                    var oldType = W40KRTArchetypes.Tier1.Get(oldValue);
+                    if (oldType is null) return;
+
                     var type = W40KRTArchetypes.Tier1.Get(value);
                     if (type is null) return;
 
@@ -136,10 +140,18 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     }
                     Owner.Feats.AddByBlueprint(type.SelectionId);
                     Owner.Feats.AddByBlueprint(type.CareerPathId);
-                    Owner.Feats.AddByBlueprint(type.KeystoneAbilityId);
+                    foreach (var keystoneAbilityId in type.KeystoneAbilityIds) {
+                        Owner.Feats.AddByBlueprint(keystoneAbilityId);
+                    }
+
+                    var part = ((W40KRTGameUnitProgressionModel)Owner.Progression).Model;
+                    var oldSelections = part.Selections.Where(x => x.Path.Eq(Ref.Path)).ToArray();
+                    foreach (var selection in oldSelections) {
+                        part.Selections.Remove(selection);
+                    }
                 }
                 else {
-                    var old = Options.FirstOrDefault(o => o.Id.Eq(Ref.Feature));
+                    var old = Options.FirstOrDefault(o => o.Id.Eq(oldValue));
                     if (old is null) return;
 
                     var @new = Options.FirstOrDefault(o => o.Id.Eq(value));
