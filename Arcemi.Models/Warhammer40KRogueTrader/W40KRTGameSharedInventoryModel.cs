@@ -47,7 +47,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
            W40KRTBlueprintTypeProvider.ItemLifeSustainer,
            W40KRTBlueprintTypeProvider.ItemMechadendrite,
            W40KRTBlueprintTypeProvider.ItemPlasmaDrives,
-           //W40KRTBlueprintTypeProvider.ItemResourceMiner,
+           W40KRTBlueprintTypeProvider.ItemResourceMiner,
            W40KRTBlueprintTypeProvider.ItemVoidShieldGenerator,
            W40KRTBlueprintTypeProvider.StarshipWeapon,
            W40KRTBlueprintTypeProvider.StarshipAmmo,

@@ -26,7 +26,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             W40KRTBlueprintTypeProvider.ItemEquipmentUsable);
         public static W40KRTItemType Simple { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntitySimple, Code",
             W40KRTBlueprintTypeProvider.ItemEquipmentFeet, W40KRTBlueprintTypeProvider.ItemEquipmentGloves, W40KRTBlueprintTypeProvider.ItemEquipmentHead,
-            W40KRTBlueprintTypeProvider.ItemEquipmentNeck, W40KRTBlueprintTypeProvider.ItemEquipmentRing, W40KRTBlueprintTypeProvider.ItemEquipmentShoulders);
+            W40KRTBlueprintTypeProvider.ItemEquipmentNeck, W40KRTBlueprintTypeProvider.ItemEquipmentRing, W40KRTBlueprintTypeProvider.ItemEquipmentShoulders,
+            W40KRTBlueprintTypeProvider.ItemResourceMiner, W40KRTBlueprintTypeProvider.ItemNote, W40KRTBlueprintTypeProvider.ItemKey, W40KRTBlueprintTypeProvider.Item);
 
         private static IReadOnlyDictionary<string, W40KRTItemType> TypeRefLookup { get; } = typeof(W40KRTItemType).GetProperties()
             .Where(p => (p.GetMethod?.IsStatic ?? false) && p.PropertyType == typeof(W40KRTItemType))

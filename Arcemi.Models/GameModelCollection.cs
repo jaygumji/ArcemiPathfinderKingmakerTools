@@ -10,9 +10,12 @@ namespace Arcemi.Models
     {
         T AddByCode(string code);
         T AddByBlueprint(string blueprint, object data = null);
+        T InsertByBlueprint(int index, string blueprint, object data = null);
         T Duplicate(T model);
         bool Remove(T model);
         void Clear();
+
+        int IndexOf(T model);
 
         bool IsAddEnabled { get; }
         bool IsRemoveEnabled { get; }
@@ -29,6 +32,10 @@ namespace Arcemi.Models
         {
             return Array.Empty<IBlueprintMetadataEntry>();
         }
+    }
+    public static class GameModelCollection<TGameModel>
+    {
+        public static IGameModelCollection<TGameModel> Empty { get; } = new GameModelCollection<TGameModel, Model>(null, x => default);
     }
     public class GameModelCollection<TGameModel, TModel> : IGameModelCollection<TGameModel>
         where TModel : Model
@@ -82,6 +89,11 @@ namespace Arcemi.Models
             _accessor.Clear();
         }
 
+        public int IndexOf(TGameModel model)
+        {
+            return _inner.IndexOf(model);
+        }
+
         public bool IsAddEnabled => _accessor is object && writer is object;
         public bool IsRemoveEnabled => _accessor is object;
 
@@ -103,6 +115,17 @@ namespace Arcemi.Models
             var gameModel = _factory(model);
             writer?.AfterAdd(new AfterAddCollectionItemArgs<TGameModel, TModel>(gameModel, model, blueprint, data));
             
+            _inner.Add(gameModel);
+            _reverse.Add(gameModel, model);
+            return gameModel;
+        }
+
+        public TGameModel InsertByBlueprint(int index, string blueprint, object data = null)
+        {
+            var model = _accessor.Insert(index, (r, o) => writer?.BeforeAdd(new BeforeAddCollectionItemArgs(r, o, blueprint, data)));
+            var gameModel = _factory(model);
+            writer?.AfterAdd(new AfterAddCollectionItemArgs<TGameModel, TModel>(gameModel, model, blueprint, data));
+
             _inner.Add(gameModel);
             _reverse.Add(gameModel, model);
             return gameModel;

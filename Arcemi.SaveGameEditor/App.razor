@@ -1,4 +1,5 @@
 ﻿@inject EditorConfiguration ConfigurationProvider
+@inject IJSRuntime JSRuntime
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -13,5 +14,18 @@
     protected override async Task OnInitializedAsync()
     {
         await ConfigurationProvider.InitializeAsync();
+        Logger.UseDeferred((o, t) => {
+            switch (t) {
+                case LogEventType.Error:
+                    JSRuntime.InvokeVoidAsync("console.error", o);
+                    break;
+                case LogEventType.Warning:
+                    JSRuntime.InvokeVoidAsync("console.warning", o);
+                    break;
+                default:
+                    JSRuntime.InvokeVoidAsync("console.log", o);
+                    break;
+            }
+        });
     }
 }

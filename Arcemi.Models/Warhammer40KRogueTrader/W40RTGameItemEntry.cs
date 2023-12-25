@@ -20,9 +20,7 @@
         public int Index => A.Value<int>("m_InventorySlotIndex");
         public bool IsChargable => W40KRTItemType.Usable.TypeRef.Eq(A.TypeValue());
         public int Charges { get => A.Value<int>(); set => A.Value(value); }
-        public bool IsStackable => W40KRTItemType.Usable.TypeRef.Eq(A.TypeValue())
-            || W40KRTItemType.StarshipAmmo.TypeRef.Eq(A.TypeValue())
-            || W40KRTItemType.Mechadendrite.TypeRef.Eq(A.TypeValue());
+        public bool IsStackable => true;
         public int Count { get => A.Value<int>("m_Count"); set => A.Value(value, "m_Count"); }
         public bool CanEdit => false;
         public string IconUrl => "/images/ItemTypes/Other.png";

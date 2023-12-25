@@ -90,10 +90,16 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public UnitEntityType Type
         {
             get {
-                if (Blueprint.Eq("3a849d3674644c0085d5099ccf6813df")) return UnitEntityType.Player;
+                if (A.TypeValue().Eq("Kingmaker.EntitySystem.Entities.UnitEntity, Code")) {
+                    if (Blueprint.Eq("3a849d3674644c0085d5099ccf6813df")) return UnitEntityType.Player;
+                    if (Blueprint.Eq("baaff53a675a84f4983f1e2113b24552")) return UnitEntityType.Mercenary;
+                    if (Ref.Parts.Items.OfType<UnitPetPartItemModel>().Any()) return UnitEntityType.Pet;
+                    return UnitEntityType.Companion;
+                }
                 if (A.TypeValue().Eq("Kingmaker.EntitySystem.Entities.StarshipEntity, Code")) return UnitEntityType.Starship;
-                if (Ref.Parts.Items.OfType<UnitPetPartItemModel>().Any()) return UnitEntityType.Pet;
-                return UnitEntityType.Companion;
+                if (A.TypeValue().Eq("Kingmaker.EntitySystem.Entities.AreaEffectEntity, Code")) return UnitEntityType.Other;
+                if (A.TypeValue().Eq("Kingmaker.Mechanics.Entities.LightweightUnitEntity, Code")) return UnitEntityType.Other;
+                return UnitEntityType.Other;
             }
         }
     }

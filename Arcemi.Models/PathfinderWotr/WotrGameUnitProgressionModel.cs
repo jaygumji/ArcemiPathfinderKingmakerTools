@@ -23,8 +23,14 @@ namespace Arcemi.Models.PathfinderWotr
 
         public IReadOnlyList<IGameUnitUltimateProgressionEntry> Ultimates { get; }
         public IReadOnlyList<IGameUnitClassProgressionEntry> Classes { get; }
-        public IReadOnlyList<IGameUnitSelectionProgressionEntry> Selections { get; } = Array.Empty<IGameUnitSelectionProgressionEntry>();
+        public IGameModelCollection<IGameUnitSelectionProgressionEntry> Selections { get; } = GameModelCollection<IGameUnitSelectionProgressionEntry>.Empty;
 
         public bool IsSupported => true;
+
+        public bool IsSelectionsRepairable => false;
+
+        public void RepairSelections()
+        {
+        }
     }
 }

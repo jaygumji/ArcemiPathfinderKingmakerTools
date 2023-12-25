@@ -9,16 +9,20 @@ else if (!Session.Game.Management.IsSupported) {
 }
 else {
     <TabControl StartIndex="0">
-        <Tab Name="@Session.Game.Management.DisplayName">
-            <Content>
-                <KingdomView />
-            </Content>
-        </Tab>
-        <Tab Name="@Session.Game.Management.MemberTypeName">
-            <Content>
-                <GeneralsView />
-            </Content>
-        </Tab>
+        @if (Session.Game.Management.IsOverviewEnabled) {
+            <Tab Name="@Session.Game.Management.DisplayName">
+                <Content>
+                    <KingdomView />
+                </Content>
+            </Tab>
+        }
+        @if (Session.Game.Management.IsMembersEnabled) {
+            <Tab Name="@Session.Game.Management.MemberTypeName.Plural">
+                <Content>
+                    <GeneralsView />
+                </Content>
+            </Tab>
+        }
         @if (Session.Game.Management.IsArmiesEnabled) {
             <Tab Name="Armies">
                 <Content>
@@ -26,13 +30,15 @@ else {
                 </Content>
             </Tab>
         }
-        <Tab Name="Tasks">
-            <Content>
-                <TasksView />
-            </Content>
-        </Tab>
+        @if (Session.Game.Management.IsTasksEnabled) {
+            <Tab Name="Tasks">
+                <Content>
+                    <TasksView />
+                </Content>
+            </Tab>
+        }
         @if (Session.Game.Management.IsPlacesEnabled) {
-            <Tab Name="Settlements">
+            <Tab Name="@Session.Game.Management.PlacesTypeName.Plural">
                 <Content>
                     <SettlementsView />
                 </Content>

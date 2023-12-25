@@ -38,8 +38,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     { "$type", "Kingmaker.UnitLogic.PartMechanicFeatures, Code" }
                 } } } });
                 args.Obj.Add("m_InventorySlotIndex", Ref.GetAccessor().List<RefModel>("m_Items").Max(i => i.GetAccessor().Value<int>("m_InventorySlotIndex")) + 1);
+                args.Obj.Add("m_Count", 1);
                 if (itemType == W40KRTItemType.Usable) {
-                    args.Obj.Add("m_Count", 1);
                     args.Obj.Add("Charges", 1);
                 }
             }

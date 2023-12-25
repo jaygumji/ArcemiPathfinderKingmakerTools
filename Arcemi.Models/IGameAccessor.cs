@@ -241,10 +241,13 @@ namespace Arcemi.Models
         int Experience { get; set; }
         int CurrentLevel { get; set; }
         bool IsLevelReadOnly { get; }
+        bool IsSelectionsRepairable { get; }
 
-        IReadOnlyList<IGameUnitSelectionProgressionEntry> Selections { get; }
+        IGameModelCollection<IGameUnitSelectionProgressionEntry> Selections { get; }
         IReadOnlyList<IGameUnitUltimateProgressionEntry> Ultimates { get; }
         IReadOnlyList<IGameUnitClassProgressionEntry> Classes { get; }
+
+        void RepairSelections();
     }
 
     public interface IGameUnitSelectionProgressionEntry
@@ -324,6 +327,28 @@ namespace Arcemi.Models
         Pet,
         Mercenary,
         Companion,
-        Starship
+        Starship,
+        Other
+    }
+
+    public static class UnitEntityTypeExtensions
+    {
+        public static bool IsCharacter(this UnitEntityType entityType)
+        {
+            switch (entityType) {
+                case UnitEntityType.Player:
+                case UnitEntityType.Mercenary:
+                case UnitEntityType.Companion:
+                case UnitEntityType.Pet:
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool IsDisplayedInCharactersPage(this UnitEntityType entityType)
+        {
+            return IsCharacter(entityType)
+                || entityType == UnitEntityType.Starship;
+        }
     }
 }

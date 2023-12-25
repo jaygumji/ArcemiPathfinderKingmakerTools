@@ -29,6 +29,10 @@
             </select>
         }
     </div>
+    <div class="col-md-4">
+        <label class="form-label">Type</label>
+        <input class="form-control" type="text" readonly="readonly" value="@Unit.Type.ToString().AsDisplayable()" />
+    </div>
     @if (Unit.Companion.IsSupported) {
         <div class="col-md-4">
             <label class="form-label">State</label>
@@ -82,32 +86,52 @@
         }
     </div>
 
-    @if (Unit.Progression.Selections.Count > 0) {
+    @if (Unit.Progression.IsSupported) {
         <div class="row">
             <h3 class="col-md-12">Selections</h3>
-            <div class="col-md-12 alert alert-info">
-                Changing the career path (Archetype) is best used either by doing it just after a respec, or at the same time change the level of the character to level 1.
-                If you change it on a character above level 1 without changing the level you will need to do manual changes or the game UI can be locked.
-            </div>
         </div>
-        <div class="row">
-            @foreach (var sel in Unit.Progression.Selections) {
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body overflow-hidden text-nowrap">
-                            <h5 class="card-title">@sel.Name</h5>
-                            <p class="card-text">
-                                <select class="form-control" disabled="@sel.IsReadOnly" @bind="sel.Feature">
-                                    @foreach (var option in sel.Options) {
-                                        <option value="@option.Id">@option.Name</option>
-                                    }
-                                </select>
-                            </p>
+
+        @if (Unit.Progression.IsSelectionsRepairable) {
+            <div class="row">
+                <div class="col-md-12 alert alert-info">
+                    Missing initial progression selections on character, do you wish to attempt a repair?
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <button class="btn btn-info w-100" @onclick="() => Unit.Progression.RepairSelections()" title="Repair initial progression selections">
+                        <span class="oi oi-wrench"></span>
+                        Repair
+                    </button>
+                </div>
+            </div>
+        }
+        @if (Unit.Progression.Selections.Count > 0) {
+            <div class="row">
+                <div class="col-md-12 alert alert-info">
+                    Changing the career path (Archetype) is best used either by doing it just after a respec, or at the same time change the level of the character to level 1.
+                    If you change it on a character above level 1 without changing the level you will need to do manual changes or the game UI can be locked.
+                </div>
+            </div>
+            <div class="row">
+                @foreach (var sel in Unit.Progression.Selections) {
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body overflow-hidden text-nowrap">
+                                <h5 class="card-title">@sel.Name</h5>
+                                <p class="card-text">
+                                    <select class="form-control" disabled="@sel.IsReadOnly" @bind="sel.Feature">
+                                        @foreach (var option in sel.Options) {
+                                            <option value="@option.Id">@option.Name</option>
+                                        }
+                                    </select>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        }
     }
 
     @if (Unit.Progression.Classes.Count > 0) {

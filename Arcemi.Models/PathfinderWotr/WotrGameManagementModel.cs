@@ -18,9 +18,12 @@ namespace Arcemi.Models.PathfinderWotr
         public PlayerModel Ref { get; }
 
         public string DisplayName => "Crusade";
-        public string MemberTypeName => "Generals";
-        public string PlacesTypeName => "Settlements";
+        public ModelTypeName MemberTypeName { get; } = new ModelTypeName("Generals", "General");
+        public ModelTypeName PlacesTypeName { get; } = new ModelTypeName("Settlements", "Settlement");
 
+        public bool IsOverviewEnabled => true;
+        public bool IsMembersEnabled => true;
+        public bool IsTasksEnabled => true;
         public bool IsArmiesEnabled => true;
         public bool IsPlacesEnabled => true;
 

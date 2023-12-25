@@ -1,29 +1,105 @@
 ﻿@inject IEditFileSession Session
 
-@if (!(Settlements?.Any() ?? false)) {
-    <p class="alert alert-info">No settlements found.</p>
+@if (Places.IsAddEnabled && Places.AvailableEntries.Count > 0) {
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-info" @onclick="() => modalAddPlace.OpenAsync()">
+                <span class="oi oi-plus"></span>
+                Add @Name.Singular
+            </button>
+        </div>
+    </div>
+}
+@if (Places.Count == 0) {
+    <p class="alert alert-info">No @Name.Plural found.</p>
 }
 else {
     <AccordionContainer>
-        @foreach (var settlement in Settlements) {
-        <Accordion HeaderText="@settlement.Name">
-            <div class="row">
-                <div class="col-md-6">
-                    <label class="form-label">Level</label>
-                    <select class="form-control" @bind="settlement.Level">
-                        @foreach (var level in SettlementLevels.All){
-                            <option value="@level.Value">@level.Name</option>
+        @foreach (var place in Places) {
+            <Accordion HeaderText="@place.Name">
+                @foreach (var grouping in place.DataGroupings) {
+                    if (grouping.Name.HasValue()) {
+                        <div class="row">
+                            <h5>@grouping.Name</h5>
+                        </div>
+                    }
+                    <div class="row">
+                        @foreach (var entry in grouping.Entries) {
+                            @if (entry is IGameManagementPlaceModelDataGroupingOptionsEntry optEntry) {
+                                <div class="col-md-6">
+                                    <label class="form-label">@entry.Label</label>
+                                    <select class="form-control" @bind="optEntry.Value">
+                                        @foreach (var option in optEntry.Options) {
+                                            <option value="@option.Id">@option.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
+                            else if (entry is IGameManagementPlaceModelDataGroupingIntegerEntry intEntry) {
+                                <div class="col-md-4">
+                                    <label class="form-label">@entry.Label @(intEntry.Modifiers > 0 ? "+" + intEntry.Modifiers : "")</label>
+                                    <input class="form-control" @bind="intEntry.Value" min="@intEntry.MinValue" max="@intEntry.MaxValue" />
+                                </div>
+                            }
                         }
-                    </select>
-                </div>
-            </div>
-        </Accordion>
+                    </div>
+                }
+            </Accordion>
         }
     </AccordionContainer>
 }
 
+<Modal @ref="modalAddPlace">
+    <Title>Add @Name.Singular</Title>
+    <Body>
+        <b>Warning: </b>
+        <span>This feature is experimental. Be sure to keep a backup of your save.</span>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="IBlueprintMetadataEntry" Items="Places.AvailableEntries" ItemSearchable="b => b.DisplayName" Context="item" OnSelect="a => AddPlaceBlueprint = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">@Name.Singular</label>
+                            <select class="form-control" @bind="AddPlaceBlueprint">
+                                <option value="">Select @Name.Singular...</option>
+                                @foreach (var blueprint in Places.AvailableEntries) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="AddPlaceAsync" disabled="@AddPlaceIsInvalid">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddPlace.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
 
 @code {
-    private IEnumerable<SettlementStateModel> Settlements =>
-        Session.Player?.Kingdom?.SettlementsManager?.SettlementStates;
+    private IGameModelCollection<IGameManagementPlaceModelEntry> Places => Session.Game.Management.Places;
+    private ModelTypeName Name => Session.Game.Management.PlacesTypeName;
+    private Modal modalAddPlace;
+    private string AddPlaceBlueprint;
+
+    private bool AddPlaceIsInvalid => string.IsNullOrEmpty(AddPlaceBlueprint);
+
+    private async Task AddPlaceAsync()
+    {
+        Places.AddByBlueprint(AddPlaceBlueprint);
+        await modalAddPlace.CloseAsync();
+    }
 }
