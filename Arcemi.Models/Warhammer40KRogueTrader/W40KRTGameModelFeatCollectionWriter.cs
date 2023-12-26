@@ -50,6 +50,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             return Res.Blueprints.GetEntries(BlueprintTypeId.Feature)
                 .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.CareerPath))
                 .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.AttributeAdvancement))
+                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.ShipPostExpertise))
                 .Where(e => !currentIds.Contains(e.Id))
                 .ToArray();
         }
