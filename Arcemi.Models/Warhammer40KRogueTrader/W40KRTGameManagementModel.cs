@@ -17,7 +17,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     return GameDataModels.Object($"{resource} - {sso}", new IGameData[] {
                         GameDataModels.Integer("Count", rm, a => a.GetAccessor().Value<int>("InitialCount"), (a, v) => a.GetAccessor().Value(v, "InitialCount"))
                     });
-                }),
+                }, mode: GameDataListMode.Rows),
                 GameDataModels.Object("Other", new [] {
                     new GameDataListOfKeyValueOfInt(Res, csa.List<KeyValuePairModel<int>>("ResourcesNotFromColonies"), "Resource", W40KRTBlueprintTypeProvider.Resource),
                 }, isCollapsable: true)
