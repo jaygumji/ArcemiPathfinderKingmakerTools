@@ -12,7 +12,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Player = player;
             var A = player.GetAccessor();
             Data = GameDataModels.Object(new IGameData[] {
-                GameDataModels.Object(new IGameData[] {
+                GameDataModels.Object("Party resources", new IGameData[] {
                     A.Object<W40KRTScrapResourceEntry>("Scrap"),
                     A.Object<W40KRTProfitFactorResourceEntry>("ProfitFactor"),
                     new W40KRTNavigatorResourceEntry(player.GetAccessor().Object<RefModel>("WarpTravelState")),
