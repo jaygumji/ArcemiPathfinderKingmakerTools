@@ -122,6 +122,24 @@ h4 {
         }
     }
 
+    .help-tooltip-bottom-middle {
+        top: 100%;
+        left: 50%;
+        margin-left: -155px; /* Width - arrow pos right - 5px (padding) */
+        margin-top: 10px; /* Move it below the button */
+
+        &::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            left: 155px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent black transparent;
+        }
+    }
+
     .help-tooltip-bottom-right {
         top: 100%;
         left: 50%;
@@ -245,16 +263,28 @@ h4 {
         }
     }
 
+    > div > div:last-child {
+        text-align: right;
+    }
+
     &.static-content {
         > div:nth-child(2n) {
             > div {
                 background-color: inherit;
             }
         }
+
+        > div > div:last-child {
+            text-align: inherit;
+        }
     }
 
-    .form-group{
+    .form-group {
         margin-bottom: 0;
+    }
+
+    .form-control {
+        height: calc(1.0em + .75rem + 2px);
     }
 }
 

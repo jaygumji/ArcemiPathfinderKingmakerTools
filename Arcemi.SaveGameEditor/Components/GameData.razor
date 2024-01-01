@@ -46,7 +46,12 @@ else if (Data is IGameDataTime timeData) {
     <div class="@SizeClass">
         <div class="form-group">
             @if (ShowHeader) {
-                <label class="form-label">@timeData.Label</label>
+                <label class="form-label">
+                    @timeData.Label
+                    <Help Size="ElementSize.Small" Position="TooltipPosition.BottomMiddle">
+                        From left to right: Days, hours, minutes, seconds
+                    </Help>
+                </label>
             }
             <TimeParts Value="@timeData.Value" IsReadOnly="@timeData.IsReadOnly"></TimeParts>
         </div>
@@ -96,6 +101,7 @@ else if (Data is IGameDataList listData) {
                                 @if (sizeLeft == 0) break;
                             }
                         }
+                        <div class="col-md-2"></div>
                     </div>
                     @foreach (var listEntry in listData.Entries) {
                         <div class="row">

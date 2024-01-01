@@ -3,6 +3,7 @@
     public enum TooltipPosition
     {
         BottomLeft,
-        BottomRight
+        BottomRight,
+        BottomMiddle
     }
 }

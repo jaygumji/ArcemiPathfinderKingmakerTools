@@ -11,16 +11,18 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             var csa = player.GetAccessor().Object<RefModel>("ColoniesState").GetAccessor();
             Resources = GameDataModels.Object("Resources", new IGameData[] {
                 new W40KRTGameManagementPlaceIntDataEntry(csa.Object<RefModel>("MinerProductivity"), "Miner Productivity"),
-                GameDataModels.List("Miner", csa.List<RefModel>("Miners"), rm => {
-                    var sso = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Sso"));
-                    var resource = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Resource"));
-                    return GameDataModels.Object($"{resource} - {sso}", new IGameData[] {
-                        GameDataModels.Integer("Count", rm, a => a.GetAccessor().Value<int>("InitialCount"), (a, v) => a.GetAccessor().Value(v, "InitialCount"))
-                    });
-                }, mode: GameDataListMode.Rows),
-                GameDataModels.Object("Other", new [] {
+                GameDataModels.Object("Not from colonies", new [] {
                     new GameDataListOfKeyValueOfInt(Res, csa.List<KeyValuePairModel<int>>("ResourcesNotFromColonies"), "Resource", W40KRTBlueprintTypeProvider.Resource),
-                }, isCollapsable: true)
+                }),
+                GameDataModels.Object("Miners (Read Only)", new[] {
+                    GameDataModels.List("Miner", csa.List<RefModel>("Miners"), rm => {
+                        var sso = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Sso"));
+                        var resource = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Resource"));
+                        return GameDataModels.Object($"{resource} - {sso}", new IGameData[] {
+                            GameDataModels.Integer("Count", rm, a => a.GetAccessor().Value<int>("InitialCount"))
+                        });
+                    }, mode: GameDataListMode.Rows),
+                }, isCollapsable: true),
             });
 
             Places = GameDataModels.Object("Colonies", new IGameData[] {

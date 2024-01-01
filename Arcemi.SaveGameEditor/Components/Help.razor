@@ -31,7 +31,8 @@
         var position = Position ?? TooltipPosition.BottomLeft;
         switch (position) {
             case TooltipPosition.BottomRight: return "help-tooltip-bottom-right";
+            case TooltipPosition.BottomLeft: return "help-tooltip-bottom-left";
         }
-        return "help-tooltip-bottom-left";
+        return "help-tooltip-bottom-middle";
     }
 }

@@ -28,10 +28,10 @@ namespace Arcemi.Models
     }
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
     {
+        public virtual bool IsAddEnabled => true;
         public abstract void BeforeAdd(BeforeAddCollectionItemArgs args);
-        public virtual void AfterAdd(AfterAddCollectionItemArgs<TGameModel, TModel> args)
-        {
-        }
+        public virtual void AfterAdd(AfterAddCollectionItemArgs<TGameModel, TModel> args) { }
+        public virtual void AfterRemove(AfterRemoveCollectionItemArgs<TGameModel, TModel> args) { }
 
         public virtual IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<TGameModel> current)
         {
@@ -83,6 +83,7 @@ namespace Arcemi.Models
             if (_inner.Remove(model) && _reverse.TryGetValue(model, out var accessorModel)) {
                 _accessor.Remove(accessorModel);
                 _reverse.Remove(model);
+                writer?.AfterRemove(new AfterRemoveCollectionItemArgs<TGameModel, TModel>(model, accessorModel));
                 return true;
             }
             return false;
@@ -100,7 +101,7 @@ namespace Arcemi.Models
             return _inner.IndexOf(model);
         }
 
-        public bool IsAddEnabled => _accessor is object && writer is object;
+        public bool IsAddEnabled => _accessor is object && writer is object && writer.IsAddEnabled;
         public bool IsRemoveEnabled => _accessor is object;
 
         public TGameModel AddByCode(string code)

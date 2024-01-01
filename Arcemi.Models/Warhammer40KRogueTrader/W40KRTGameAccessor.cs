@@ -11,7 +11,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public W40KRTGameAccessor(IGameEditFile file)
         {
             File = file;
-            Party = new W40KRTGamePartyModel(file.Player);
+            Party = new W40KRTGamePartyModel(file.Player, file.Header);
             SharedStash = new W40KRTCargoInventoryModel(file.Player.GetAccessor().Object<RefModel>("CargoState"));
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new W40KRTGameUnitModel(a));
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));

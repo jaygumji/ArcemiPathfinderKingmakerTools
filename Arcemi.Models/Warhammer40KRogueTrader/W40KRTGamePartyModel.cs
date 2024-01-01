@@ -6,7 +6,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     internal class W40KRTGamePartyModel : IGamePartyModel
     {
-        public W40KRTGamePartyModel(PlayerModel player)
+        private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
+        public W40KRTGamePartyModel(PlayerModel player, HeaderModel header)
         {
             Player = player;
             var A = player.GetAccessor();
@@ -17,7 +18,11 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     new W40KRTNavigatorResourceEntry(player.GetAccessor().Object<RefModel>("WarpTravelState")),
                     new W40KRTRespecsResourceEntry(player),
                 }),
-                GameDataModels.Object("Reputations", A.List<KeyValuePairModel<int>>("FractionsReputation").Where(x => !x.Key.IEq("None")).Select(x => new W40KRTGamePartyFactionResourceEntry(x)).ToArray())
+                GameDataModels.Object("Reputations", A.List<KeyValuePairModel<int>>("FractionsReputation").Where(x => !x.Key.IEq("None")).Select(x => new W40KRTGamePartyFactionResourceEntry(x)).ToArray()),
+                GameDataModels.Object("DLC Rewards", new[] {
+                    GameDataModels.List(null, header.GetAccessor().List<RefModel>("m_DlcRewards"), x => GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(x.GetAccessor().Value<string>("guid")), new IGameData[] {
+                    }), writer: new W40KRTDlcRewardsCollectionWriter(player), mode: GameDataListMode.Rows)
+                }, isCollapsable: true),
             });
         }
 
