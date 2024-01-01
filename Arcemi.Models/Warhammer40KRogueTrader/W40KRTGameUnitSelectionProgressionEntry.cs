@@ -54,6 +54,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     foreach (var keystoneAbilityId in type.KeystoneAbilityIds) {
                         Owner.Feats.AddByBlueprint(keystoneAbilityId);
                     }
+                    foreach (var autoFeat in type.AutomaticFeats.Where(x => x.Level <= 1)) {
+                        Owner.Feats.AddByBlueprint(autoFeat.Id);
+                    }
 
                     var part = ((W40KRTGameUnitProgressionModel)Owner.Progression).Model;
                     var oldSelections = part.Selections.Where(x => x.Path.Eq(Ref.Path)).ToArray();

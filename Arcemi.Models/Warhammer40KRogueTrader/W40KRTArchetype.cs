@@ -42,24 +42,24 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public static W40KRTArchetypes Tier1 { get; } = new W40KRTArchetypes("Tier 1", 1, 15, "f889a299ac7746cfb9b59438fc79018e", new[] {
             new W40KRTArchetype("Officer", "33725d84e95e4323ac46d8fbf899b250", "93d2b8c0a10d4cd0a20a897124cbf3e5", "a5a17fc75f8a45279a39a7b40c1f86f6", new [] {
+                new W40KRTArchetypeAutomaticFeat("2c6018eaf7c2413cbeac6f946fc5ad2d", 1), // Ascension
                 new W40KRTArchetypeAutomaticFeat("f3bbf338354744a399d0fe19e0902112", 3), // Bring it down
                 new W40KRTArchetypeAutomaticFeat("0ba4fa6cdd634bd0ac85888ba9ab78a2", 4), // Ultimate
-                new W40KRTArchetypeAutomaticFeat("2c6018eaf7c2413cbeac6f946fc5ad2d", 15) // Ascension
             }),
             new W40KRTArchetype("Soldier", "06f4f78a9c1a472b85cd79a9a142153d", "567936698f674003bba05fa02e7130ae", "7a76af1ef02c4699b62db147e2b9a172", new [] {
+                new W40KRTArchetypeAutomaticFeat("7354c0ae9bf84c49adf82f95c05d4d5c", 1), // Ascension
                 new W40KRTArchetypeAutomaticFeat("8638221f9caf46649cefcbd7574804d1", 3), // Revel in slaughter
                 new W40KRTArchetypeAutomaticFeat("618bd712c61d4b2d89e55ecf5f3a6348", 4), // Ultimate 
-                new W40KRTArchetypeAutomaticFeat("7354c0ae9bf84c49adf82f95c05d4d5c", 15) // Ascension
             }),
             new W40KRTArchetype("Operative", "1529e5a0e7844bf3bb8d0cc0501264d4", "81c325968f774360a61536404a57c2ec", "6cfd9b9830ea403db07a816843a8e39a", new [] {
+                new W40KRTArchetypeAutomaticFeat("5dc9e4fdc7284b6e8de76f421dd28f5e", 1), // Ascension
                 new W40KRTArchetypeAutomaticFeat("fbdba5fe2a264c25bada29aecd64049a", 3), // Expose Armor
                 new W40KRTArchetypeAutomaticFeat("264e8fc120fc4cdda336d31ddc0c15f7", 4), // Ultimate
-                new W40KRTArchetypeAutomaticFeat("5dc9e4fdc7284b6e8de76f421dd28f5e", 15) // Ascension
             }),
             new W40KRTArchetype("Warrior", "974496d72fbe4329b438ee15cf004bd2", "3a9169d7ece94faf86b53298067a5b4c", "6a4310c9966946a3b82ed7acc94464da", new [] {
+                new W40KRTArchetypeAutomaticFeat("a2ff69ee11a348b59f754bab649fc6a3", 1), // Ascension
                 new W40KRTArchetypeAutomaticFeat("92193f4629c84812825841ae1b01d1da", 3), // Endure
                 new W40KRTArchetypeAutomaticFeat("2ee6f62308474fd7b765a08467eb5ae6", 4), // Ultimate 
-                new W40KRTArchetypeAutomaticFeat("a2ff69ee11a348b59f754bab649fc6a3", 15) // Ascension
             }),
         });
 
