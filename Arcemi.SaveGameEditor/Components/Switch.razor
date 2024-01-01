@@ -1,5 +1,5 @@
 ﻿<div class="custom-control custom-switch">
-    <input id="@Id" type="checkbox" class="custom-control-input" @oninput="OnIsCheckedChangedAsync" @bind="IsCheckedBind" />
+    <input id="@Id" type="checkbox" class="custom-control-input" @oninput="OnIsCheckedChangedAsync" @bind="IsCheckedBind" disabled="@IsReadOnly" />
     <label for="@Id" class="custom-control-label">@Label</label>
 </div>
 
@@ -16,10 +16,14 @@
     [Parameter]
     public string Id { get; set; }
 
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+
     private bool IsCheckedBind;
 
     private async Task OnIsCheckedChangedAsync(ChangeEventArgs e)
     {
+        if (IsReadOnly) return;
         var value = (bool)e.Value;
         IsChecked = value;
         await IsCheckedChanged.InvokeAsync(value);

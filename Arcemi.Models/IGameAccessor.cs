@@ -44,15 +44,7 @@ namespace Arcemi.Models
 
     public interface IGamePartyModel : IGameModel
     {
-        IReadOnlyList<IGamePartyResourceEntry> Resources { get; }
-    }
-
-    public interface IGamePartyResourceEntry
-    {
-        string Name { get; }
-        int Value { get; set; }
-        bool IsSmall { get; }
-        bool IsReadOnly { get; }
+        IGameDataObject Data { get; }
     }
 
     public interface IGameStateModel : IGameModel
@@ -124,6 +116,7 @@ namespace Arcemi.Models
         UnitEntityModel Ref { get; }
         IGameUnitPortraitModel Portrait { get; }
         IGameUnitCompanionModel Companion { get; }
+        IGameDataObject Overview { get; }
         IGameUnitAlignmentModel Alignment { get; }
         IGameUnitAsksModel Asks { get; }
         IGameUnitRaceModel Race { get; }
@@ -133,13 +126,7 @@ namespace Arcemi.Models
         IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
-        IReadOnlyList<IGameUnitFactSection> FactSections { get; }
-    }
-
-    public interface IGameUnitFactSection
-    {
-        string Name { get; }
-        IGameModelCollection<IGameUnitFactEntry> Items { get; }
+        IReadOnlyList<IGameDataObject> Sections { get; }
     }
 
     public interface IGameUnitFactEntry

@@ -39,8 +39,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Model.CharacterLevel = value;
             var oldSelections = Model.Selections.Where(x => x.Level > 0 && W40KRTArchetypes.ActualLevel(x.Path, x.Level) > value).ToArray();
             var featIds = new HashSet<string>(oldSelections.Select(x => x.Feature)
-                .Concat(W40KRTArchetypes.All.Where(x => x.Level > value).SelectMany(x => x.Blueprints))
-                .Concat(W40KRTArchetypes.All.Where(x => x.MasteryLevel > value).SelectMany(x => x.Types.Select(t => t.CareerPathId))), StringComparer.Ordinal);
+                .Concat(W40KRTArchetypes.GetBlueprintsHigherThan(value)), StringComparer.Ordinal);
             var feats = Owner.Feats.Where(f => featIds.Contains(f.Blueprint)).ToArray();
 
             foreach (var selection in oldSelections) {

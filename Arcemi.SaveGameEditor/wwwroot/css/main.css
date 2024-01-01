@@ -210,6 +210,9 @@ h4 {
 .form-list.static-content > div:nth-child(2n) > div {
   background-color: inherit;
 }
+.form-list .form-group {
+  margin-bottom: 0;
+}
 .header-toolbar {
   display: flex;
   align-items: center;

@@ -14,6 +14,17 @@ namespace Arcemi.Models
             Name = name ?? id;
         }
 
+        public static IReadOnlyList<DataOption> Get(IEnumerable<IBlueprintMetadataEntry> entries, string id, out DataOption current)
+        {
+            var options = entries.Select(e => new DataOption(e.Id, e.Name.DisplayName)).OrderBy(o => o.Name).ToList();
+            current = options.FirstOrDefault(o => o.Id.Eq(id));
+            if (current is object) return options;
+
+            current = new DataOption(id);
+            options.Insert(0, current);
+            return options;
+        }
+
         public static IReadOnlyList<DataOption> Get(IReadOnlyList<DataOption> all, string id, out DataOption current)
         {
             current = all.FirstOrDefault(o => o.Id.Eq(id));

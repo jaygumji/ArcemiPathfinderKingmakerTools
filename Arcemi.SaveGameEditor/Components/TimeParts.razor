@@ -1,0 +1,17 @@
+﻿<div class="time-parts @(IsInList ? "for-list" : "")">
+    <input type="number" @bind="Value.Days" disabled="@IsReadOnly" />
+    <input type="number" @bind="Value.Hours" disabled="@IsReadOnly" />
+    <input type="number" @bind="Value.Minutes" disabled="@IsReadOnly" />
+    <input type="number" @bind="Value.Seconds" disabled="@IsReadOnly" />
+</div>
+
+@code {
+    [Parameter]
+    public Arcemi.Models.TimeParts Value { get; set; }
+
+    [Parameter]
+    public bool IsInList { get; set; }
+
+    [Parameter]
+    public bool IsReadOnly { get; set; }
+}

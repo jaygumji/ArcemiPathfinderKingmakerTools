@@ -8,11 +8,6 @@
     <Accordion HeaderText="Buffs">
         <CharacterBuffs Unit="Unit"/>
     </Accordion>
-    @foreach (var sect in Unit.FactSections) {
-        <Accordion HeaderText="@sect.Name">
-            <CharacterFactSection Section="sect" />
-        </Accordion>
-    }
 </AccordionContainer>
 
 

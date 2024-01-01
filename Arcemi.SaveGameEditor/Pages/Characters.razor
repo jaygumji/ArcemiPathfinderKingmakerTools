@@ -95,7 +95,7 @@ else {
             </div>
             }
         </div>
-        <TabControl StartIndex="0">
+        <TabControl @ref="tabCtrl" StartIndex="0">
             <Tab Name="Overview">
                 <Content>
                     <CharacterOverview Unit="Unit" />
@@ -127,6 +127,15 @@ else {
                     </Content>
                 </Tab>
             }
+            @if (Unit.Sections?.Count > 0) {
+                foreach (var sect in Unit.Sections) {
+                    <Tab Name="@sect.Name">
+                        <Content>
+                            <GameData Data="sect" ShowHeader="false"></GameData>
+                        </Content>
+                    </Tab>
+                }
+            }
             @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
                 <Tab Name="Spellbooks">
                     <Content>
@@ -148,6 +157,7 @@ else {
 
     private Modal modalChosePortrait;
     private Modal modalConfirmDelete;
+    private TabControl tabCtrl;
 
     private IReadOnlyDictionary<PortraitCategory, IReadOnlyList<Portrait>> AvailablePortraits;
 
@@ -159,6 +169,7 @@ else {
     public void SelectCharacter(IGameUnitModel unit)
     {
         Unit = unit;
+        ((ITabController)tabCtrl)?.ForceRefresh();
     }
 
     private void CopyPortraitBlueprint()

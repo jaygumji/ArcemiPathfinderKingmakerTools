@@ -1,0 +1,234 @@
+﻿@if (Data is IGameDataOptions optData) {
+    <div class="@SizeClass">
+        <div class="form-group">
+            @if (ShowHeader) {
+                <label class="form-label">@optData.Label</label>
+            }
+            <select class="form-control" @bind="optData.Value" disabled="@optData.IsReadOnly">
+                @foreach (var option in optData.Options) {
+                    <option value="@option.Id">@option.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+}
+else if (Data is IGameDataText textData) {
+    <div class="@SizeClass">
+        <div class="form-group">
+            @if (ShowHeader) {
+                <label class="form-label">@textData.Label</label>
+            }
+            <input class="form-control" type="text" @bind="textData.Value" disabled="@textData.IsReadOnly" />
+        </div>
+    </div>
+}
+else if (Data is IGameDataInteger intData) {
+    <div class="@SizeClass">
+        <div class="form-group">
+            @if (ShowHeader) {
+                <label class="form-label">@intData.Label @(intData.Modifiers > 0 ? "+" + intData.Modifiers : "")</label>
+            }
+            <input class="form-control" type="number" @bind="intData.Value" min="@intData.MinValue" max="@intData.MaxValue" disabled="@intData.IsReadOnly" />
+        </div>
+    </div>
+}
+else if (Data is IGameDataBoolean boolData) {
+    <div class="@SizeClass">
+        <div class="form-group">
+            @if (ShowHeader) {
+                <label class="form-label">@boolData.Label</label>
+            }
+            <Switch @bind-IsChecked="@boolData.Value" IsReadOnly="@boolData.IsReadOnly"></Switch>
+        </div>
+    </div>
+}
+else if (Data is IGameDataTime timeData) {
+    <div class="@SizeClass">
+        <div class="form-group">
+            @if (ShowHeader) {
+                <label class="form-label">@timeData.Label</label>
+            }
+            <TimeParts Value="@timeData.Value" IsReadOnly="@timeData.IsReadOnly"></TimeParts>
+        </div>
+    </div>
+}
+else if (Data is IGameDataList listData) {
+    <div class="@SizeClass">
+        @if (listData.Entries.IsAddEnabled) {
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-info" @onclick="() => SelectListEntryAsync(listData.Entries, listData.ItemName)" disabled="@(listData.Entries.AvailableEntries.Count == 0)">
+                        <span class="oi oi-plus"></span>
+                        Add @listData.ItemName
+                    </button>
+                </div>
+            </div>
+        }
+        @if (listData.Mode == GameDataListMode.Full) {
+            <AccordionContainer>
+                @foreach (var listEntry in listData.Entries) {
+                    <Accordion HeaderText="@listEntry.Name">
+                        <div class="row">
+                            <GameData Data="@listEntry" Parent="@listData" ShowHeader="false"></GameData>
+                        </div>
+                    </Accordion>
+                }
+            </AccordionContainer>
+        }
+        else if (listData.Mode == GameDataListMode.Rows) {
+            @if (listData.Entries.Count > 0) {
+                var sizeLeft = 4;
+                var first = listData.Entries.First();
+                var props = new List<int>();
+
+                <div class="form-list">
+                    <div class="row">
+                        <div class="col-md-6">Name</div>
+                        @for (var i = 0; i < first.Properties.Count; i++) {
+                            var prop = first.Properties[i];
+                            if (prop is not IGameDataValue propValue) continue;
+
+                            var size = SizeValueOf(propValue);
+                            if (size <= sizeLeft) {
+                                sizeLeft -= size;
+                                props.Add(i);
+                                <div class="col-md-@size">@propValue.Label</div>
+                                @if (sizeLeft == 0) break;
+                            }
+                        }
+                    </div>
+                    @foreach (var listEntry in listData.Entries) {
+                        <div class="row">
+                            <div class="col-md-6">@listEntry.Name</div>
+                            @foreach (var index in props) {
+                                var prop = listEntry.Properties[index];
+                                <GameData Data="@prop" Parent="@listData" ShowHeader="false"></GameData>
+                            }
+                            <div class="col-md-2">
+                                <button class="btn btn-sm btn-danger" @onclick="() => listData.Entries.Remove(listEntry)">
+                                    <span class="oi oi-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+}
+else if (Data is IGameDataObject objData) {
+    <div class="@(Parent is null ? "" : SizeClass)">
+        @if (objData.IsCollapsable) {
+            <AccordionContainer>
+                <Accordion HeaderText="@objData.Name">
+                    <div class="row">
+                        @foreach (var propData in objData.Properties) {
+                            <GameData Data="@propData" Parent="@objData"></GameData>
+                        }
+                    </div>
+                </Accordion>
+            </AccordionContainer>
+        }
+        else {
+            @if (ShowHeader && objData.Name.HasValue()) {
+                <div class="row">
+                    <h5 class="col-md-12">@objData.Name</h5>
+                </div>
+            }
+            <div class="row">
+                @foreach (var propData in objData.Properties) {
+                    <GameData Data="@propData" Parent="@objData"></GameData>
+                }
+            </div>
+        }
+    </div>
+}
+
+<Modal @ref="modalAddListEntry">
+    <Title>Add @CurrentListItemName</Title>
+    <Body>
+        @if (CurrentList is object) {
+            <TabControl StartIndex="0">
+                <Tab Name="Search">
+                    <Content>
+                        <Search TItem="IBlueprintMetadataEntry" Items="CurrentList.AvailableEntries" ItemSearchable="b => b.DisplayName" Context="item" OnSelect="a => AddListEntryBlueprint = a.Item.Id">
+                            <ResultItemTemplate>
+                                @item.DisplayName
+                            </ResultItemTemplate>
+                        </Search>
+                    </Content>
+                </Tab>
+                <Tab Name="All">
+                    <Content>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">@CurrentListItemName</label>
+                                <select class="form-control" @bind="AddListEntryBlueprint">
+                                    <option value="">Select @CurrentListItemName...</option>
+                                    @foreach (var blueprint in CurrentList.AvailableEntries) {
+                                        <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </Content>
+                </Tab>
+            </TabControl>
+        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="AddListEntryAsync" disabled="@SelectedListEntryIsInvalid">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddListEntry.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+
+@code {
+    [Parameter]
+    public IGameData Data { get; set; }
+
+    [Parameter]
+    public IGameData Parent { get; set; }
+
+    [Parameter]
+    public bool ShowHeader { get; set; } = true;
+
+    private string SizeClass
+    {
+        get {
+            if (Data is not IGameDataValue dataValue) return "col-md-12";
+            return $"col-md-{SizeValueOf(dataValue)}";
+        }
+    }
+
+    private int SizeValueOf(IGameDataValue dataValue)
+    {
+        switch (dataValue.Size) {
+            case GameDataSize.Small: return 2;
+            case GameDataSize.Medium: return 4;
+            case GameDataSize.Large: return 6;
+        }
+        return 12;
+    }
+
+    private Modal modalAddListEntry;
+    private IGameModelCollection<IGameDataObject> CurrentList;
+    private string CurrentListItemName;
+
+    private string AddListEntryBlueprint;
+    private bool SelectedListEntryIsInvalid => string.IsNullOrEmpty(AddListEntryBlueprint);
+    private async Task SelectListEntryAsync(IGameModelCollection<IGameDataObject> list, string itemName)
+    {
+        CurrentList = list;
+        CurrentListItemName = itemName;
+        await modalAddListEntry.OpenAsync();
+    }
+
+    private async Task AddListEntryAsync()
+    {
+        CurrentList.AddByBlueprint(AddListEntryBlueprint);
+        await modalAddListEntry.CloseAsync();
+    }
+}

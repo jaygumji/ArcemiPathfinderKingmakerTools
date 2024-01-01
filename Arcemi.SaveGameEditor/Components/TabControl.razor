@@ -58,4 +58,6 @@
     {
         Tabs.Remove(tab);
     }
+
+    void ITabController.ForceRefresh() => StateHasChanged();
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
-    internal class W40KRTGameManagementPlaceModelEntryWriter : GameModelCollectionWriter<IGameManagementPlaceModelEntry, RefModel>
+    internal class W40KRTGameManagementPlaceModelEntryWriter : GameModelCollectionWriter<IGameDataObject, W40KRTColonyModel>
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
@@ -68,11 +68,11 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             colony.Add("FinishedProjectsSinceLastVisit", new JArray());
             args.Obj.Add("Colony", colony);
         }
-        public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameManagementPlaceModelEntry> current)
+        public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameDataObject> current)
         {
             var res = new List<IBlueprintMetadataEntry>();
             foreach (var colony in Colonies) {
-                if (current.Any(c => c.Blueprint.Eq(colony.BlueprintId))) continue;
+                if (current.Any(c => ((W40KRTColonyModel)c.Ref).Blueprint.Eq(colony.BlueprintId))) continue;
                 if (Res.Blueprints.TryGet(colony.BlueprintId, out var metadataEntry)) {
                     res.Add(metadataEntry);
                 }

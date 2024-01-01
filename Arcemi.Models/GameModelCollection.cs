@@ -6,10 +6,16 @@ using System.Linq;
 
 namespace Arcemi.Models
 {
-    public interface IGameModelCollection<T> : IReadOnlyList<T>
+    public interface IGameModelCollection
+    {
+        object AddByBlueprint(string blueprint, object data = null);
+        bool Remove(object model);
+        IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries { get; }
+    }
+    public interface IGameModelCollection<T> : IGameModelCollection, IReadOnlyList<T>
     {
         T AddByCode(string code);
-        T AddByBlueprint(string blueprint, object data = null);
+        new T AddByBlueprint(string blueprint, object data = null);
         T InsertByBlueprint(int index, string blueprint, object data = null);
         T Duplicate(T model);
         bool Remove(T model);
@@ -19,7 +25,6 @@ namespace Arcemi.Models
 
         bool IsAddEnabled { get; }
         bool IsRemoveEnabled { get; }
-        IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries { get; }
     }
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
     {
@@ -72,6 +77,7 @@ namespace Arcemi.Models
         public IEnumerator<TGameModel> GetEnumerator() => _inner.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        bool IGameModelCollection.Remove(object model) => Remove((TGameModel)model);
         public bool Remove(TGameModel model)
         {
             if (_inner.Remove(model) && _reverse.TryGetValue(model, out var accessorModel)) {
@@ -109,6 +115,7 @@ namespace Arcemi.Models
             return gameModel;
         }
 
+        object IGameModelCollection.AddByBlueprint(string blueprint, object data = null) => AddByBlueprint(blueprint, data);
         public TGameModel AddByBlueprint(string blueprint, object data = null)
         {
             var model = _accessor.Add((r, o) => writer?.BeforeAdd(new BeforeAddCollectionItemArgs(r, o, blueprint, data)));

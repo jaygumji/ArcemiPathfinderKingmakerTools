@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Resources;
 using System.Xml.Linq;
 
@@ -100,6 +101,11 @@ namespace Arcemi.Models
             if (string.IsNullOrEmpty(typeFullName)) return Array.Empty<IBlueprintMetadataEntry>();
             var type = TypeProvider.Get(typeFullName);
             return GetEntries(type);
+        }
+
+        public IReadOnlyList<IBlueprintMetadataEntry> GetEntries(IEnumerable<BlueprintType> types)
+        {
+            return types.SelectMany(GetEntries).ToArray();
         }
 
         public IReadOnlyList<IBlueprintMetadataEntry> GetEntries(BlueprintType type)

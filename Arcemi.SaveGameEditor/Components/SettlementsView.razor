@@ -1,4 +1,4 @@
-﻿@inject IEditFileSession Session
+﻿@* @inject IEditFileSession Session
 
 @if (Places.IsAddEnabled && Places.AvailableEntries.Count > 0) {
     <div class="row">
@@ -17,33 +17,7 @@ else {
     <AccordionContainer>
         @foreach (var place in Places) {
             <Accordion HeaderText="@place.Name">
-                @foreach (var grouping in place.DataGroupings) {
-                    if (grouping.Name.HasValue()) {
-                        <div class="row">
-                            <h5>@grouping.Name</h5>
-                        </div>
-                    }
-                    <div class="row">
-                        @foreach (var entry in grouping.Entries) {
-                            @if (entry is IGameManagementPlaceModelDataGroupingOptionsEntry optEntry) {
-                                <div class="col-md-6">
-                                    <label class="form-label">@entry.Label</label>
-                                    <select class="form-control" @bind="optEntry.Value">
-                                        @foreach (var option in optEntry.Options) {
-                                            <option value="@option.Id">@option.Name</option>
-                                        }
-                                    </select>
-                                </div>
-                            }
-                            else if (entry is IGameManagementPlaceModelDataGroupingIntegerEntry intEntry) {
-                                <div class="col-md-4">
-                                    <label class="form-label">@entry.Label @(intEntry.Modifiers > 0 ? "+" + intEntry.Modifiers : "")</label>
-                                    <input class="form-control" @bind="intEntry.Value" min="@intEntry.MinValue" max="@intEntry.MaxValue" />
-                                </div>
-                            }
-                        }
-                    </div>
-                }
+                <GameData Data="@place.Data"></GameData>
             </Accordion>
         }
     </AccordionContainer>
@@ -102,4 +76,4 @@ else {
         Places.AddByBlueprint(AddPlaceBlueprint);
         await modalAddPlace.CloseAsync();
     }
-}
+} *@

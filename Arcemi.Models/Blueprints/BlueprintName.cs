@@ -28,7 +28,8 @@ namespace Arcemi.Models
             if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.Feature))) {
                 return Simple(type, name, suffix: "Feature");
             }
-            if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.AbilityResource))) {
+            if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.AbilityResource))
+                || ReferenceEquals(type, Warhammer40KRogueTrader.W40KRTBlueprintTypeProvider.Resource)) {
                 return Simple(type, name, suffix: "Resource");
             }
             if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.UnitAsksList))) {

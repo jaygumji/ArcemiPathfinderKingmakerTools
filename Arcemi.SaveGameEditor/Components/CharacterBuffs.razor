@@ -31,12 +31,7 @@
                 <label class="text-center">-</label>
             }
             else {
-                <div class="time-parts for-list">
-                    <input type="number" @bind="buff.Duration.Days" />
-                    <input type="number" @bind="buff.Duration.Hours" />
-                    <input type="number" @bind="buff.Duration.Minutes" />
-                    <input type="number" @bind="buff.Duration.Seconds" />
-                </div>
+                <TimeParts Value="@buff.Duration" IsInList="true"></TimeParts>
             }
         </div>
         <div class="col-md-1">

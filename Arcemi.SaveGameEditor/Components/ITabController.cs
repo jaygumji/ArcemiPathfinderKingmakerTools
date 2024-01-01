@@ -4,6 +4,7 @@ namespace Arcemi.SaveGameEditor.Components
 {
     public interface ITabController
     {
+        void ForceRefresh();
         void Attach(ITabControl tab);
         void Detach(ITabControl tab);
     }

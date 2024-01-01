@@ -52,6 +52,9 @@ namespace Arcemi.Models
             if (string.Equals(type, W40KRTBuffFactItemModel.TypeRef, StringComparison.Ordinal)) {
                 return new W40KRTBuffFactItemModel(accessor);
             }
+            if (string.Equals(type, W40KRTSoulMarkFactItemModel.TypeRef, StringComparison.Ordinal)) {
+                return new W40KRTSoulMarkFactItemModel(accessor);
+            }
             return new FactItemModel(accessor);
         }
 

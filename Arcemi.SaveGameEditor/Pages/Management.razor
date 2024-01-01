@@ -37,10 +37,17 @@ else {
                 </Content>
             </Tab>
         }
-        @if (Session.Game.Management.IsPlacesEnabled) {
-            <Tab Name="@Session.Game.Management.PlacesTypeName.Plural">
+        @if (Session.Game.Management.Resources is not null) {
+            <Tab Name="@Session.Game.Management.Resources.Name">
                 <Content>
-                    <SettlementsView />
+                    <GameData Data="@Session.Game.Management.Resources" ShowHeader="false"></GameData>
+                </Content>
+            </Tab>
+        }
+        @if (Session.Game.Management.Places is not null) {
+            <Tab Name="@Session.Game.Management.Places.Name">
+                <Content>
+                    <GameData Data="@Session.Game.Management.Places" ShowHeader="false"></GameData>
                 </Content>
             </Tab>
         }

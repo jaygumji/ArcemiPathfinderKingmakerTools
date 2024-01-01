@@ -21,11 +21,12 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameUnitProgressionModel Progression { get; }
         public IGameUnitStatsModel Stats { get; }
         public IGameUnitAppearanceModel Appearance { get; }
+        public IGameDataObject Overview { get; }
 
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         public IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
-        public IReadOnlyList<IGameUnitFactSection> FactSections { get; } = Array.Empty<IGameUnitFactSection>();
+        public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
 
         public WotrGameUnitModel(UnitEntityModel unit)
             : base(unit.GetAccessor())

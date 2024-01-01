@@ -2,18 +2,18 @@
 
 <div class="row">
     @if (Unit.Type == UnitEntityType.Pet) {
-        <div class="col-md-4">
+        <div class="col-md-4 form-group">
             <label class="form-label">Owner</label>
             <input class="form-control" type="text" readonly="readonly" value="@(Model.GetOwnerOf(Unit)?.Name ?? "N/A")" />
         </div>
     }
     else if (Unit.Race.IsSupported) {
-        <div class="col-md-4">
+        <div class="col-md-4 form-group">
             <label class="form-label">Race</label>
             <input class="form-control" type="text" readonly="readonly" value="@Unit.Race.DisplayName" />
         </div>
     }
-    <div class="col-md-4">
+    <div class="col-md-4 form-group">
         <label class="form-label">Voice</label>
         @if (Unit.Asks.IsSupported) {
             <select class="form-control" @bind="Unit.Asks.Custom">
@@ -29,12 +29,12 @@
             </select>
         }
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 form-group">
         <label class="form-label">Type</label>
         <input class="form-control" type="text" readonly="readonly" value="@Unit.Type.ToString().AsDisplayable()" />
     </div>
     @if (Unit.Companion.IsSupported) {
-        <div class="col-md-4">
+        <div class="col-md-4 form-group">
             <label class="form-label">State</label>
             <select class="form-control" disabled="@Unit.Companion.IsReadOnly" @bind="Unit.Companion.State">
                 @foreach (var state in Unit.Companion.AllStates) {
@@ -58,11 +58,11 @@
 
 @if (Unit.Progression.IsSupported){
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 form-group">
             <label class="form-label">Experience</label>
             <input class="form-control" type="number" @bind="@Unit.Progression.Experience" />
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 form-group">
             <label class="form-label">
                 Level
                 @if (Unit.Progression.IsLevelReadOnly) {
@@ -79,12 +79,15 @@
             <input class="form-control" type="number" readonly="@Unit.Progression.IsLevelReadOnly" @bind="@Unit.Progression.CurrentLevel" min="1" max="@Unit.Progression.CurrentLevel" />
         </div>
         @foreach (var ultimate in Unit.Progression.Ultimates) {
-            <div class="col-md-2">
+            <div class="col-md-2 form-group">
                 <label class="form-label" title="@ultimate.Name level (@ultimate.MinLevel-@ultimate.MaxLevel)">@ultimate.Name</label>
                 <input class="form-control" type="number" min="@ultimate.MinLevel" max="@ultimate.MaxLevel" title="@ultimate.Name level (@ultimate.MinLevel-@ultimate.MaxLevel)" @bind="ultimate.Level" />
             </div>
         }
     </div>
+    @if (Unit.Overview is not null) {
+        <GameData Data="Unit.Overview"></GameData>
+    }
 
     @if (Unit.Progression.IsSupported) {
         <div class="row">
