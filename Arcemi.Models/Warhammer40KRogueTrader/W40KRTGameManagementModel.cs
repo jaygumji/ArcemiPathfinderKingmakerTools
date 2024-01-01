@@ -14,7 +14,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 GameDataModels.Object("Not from colonies", new [] {
                     new GameDataListOfKeyValueOfInt(Res, csa.List<KeyValuePairModel<int>>("ResourcesNotFromColonies"), "Resource", W40KRTBlueprintTypeProvider.Resource),
                 }),
-                GameDataModels.Object("Miners (Read Only)", new[] {
+                GameDataModels.Object("Miners", new[] {
                     GameDataModels.List("Miner", csa.List<RefModel>("Miners"), rm => {
                         var sso = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Sso"));
                         var resource = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Resource"));

@@ -84,8 +84,11 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitBuffEntry(x), x => x is W40KRTBuffFactItemModel, new W40KRTGameModelBuffCollectionWriter());
 
             if (Type == UnitEntityType.Starship) {
+                var starshipTypes = Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.Starship)
+                    .Where(x => x.Name.Original.IEnd("Player_Starship"));
+
                 Overview = GameDataModels.Object("Starship", new IGameData[] {
-                    GameDataModels.BlueprintOptions("Type", Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.Starship), this, x => x.Blueprint, (x, v) => x.Blueprint = v)
+                    GameDataModels.BlueprintOptions("Type", starshipTypes, this, x => x.Blueprint, (x, v) => x.Blueprint = v)
                 });
             }
             else if (Type.IsCharacter()) {

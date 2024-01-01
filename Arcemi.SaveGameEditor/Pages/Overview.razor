@@ -40,9 +40,6 @@ else {
                 <input class="form-control" type="text" readonly="readonly" value="@Session.Location?.FilePath" />
             </div>
         </div>
-        @if (Session.Game.Party.Data is not null) {
-            <GameData Data="@Session.Game.Party.Data"></GameData>
-        }
         <div class="row g-3">
             <h4 class="col-md-12">Game Time</h4>
         </div>
@@ -60,11 +57,14 @@ else {
                 <input class="form-control" type="text" @bind="Session.Player.GameTimeParts.Minutes" />
             </div>
         </div>
+        @if (Session.Game.Party.Data is not null) {
+            <GameData Data="@Session.Game.Party.Data"></GameData>
+        }
 
-        <div class="row g-3">
-            <h3 class="col-md-12">Game Settings</h3>
-        </div>
         @if (Session.Game is Arcemi.Models.PathfinderWotr.WotrGameAccessor && Session.Player?.SettingsList?.AutoCrusade != null) {
+            <div class="row g-3">
+                <h3 class="col-md-12">Game Settings</h3>
+            </div>
             <div class="row g-3">
                 <div class="col-md-12">
                     <p class="alert alert-warning">
