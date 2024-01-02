@@ -8,7 +8,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public W40KRTGameManagementModel(PlayerModel player)
         {
             Player = player;
-            var csa = player.GetAccessor().Object<RefModel>("ColoniesState").GetAccessor();
+            var csa = player.GetAccessor().Object<RefModel>("ColoniesState")?.GetAccessor();
+            if (csa is null) return;
             Resources = GameDataModels.Object("Resources", new IGameData[] {
                 new W40KRTGameManagementPlaceIntDataEntry(csa.Object<RefModel>("MinerProductivity"), "Miner Productivity"),
                 GameDataModels.Object("Not from colonies", new [] {
