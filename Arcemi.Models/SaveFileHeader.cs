@@ -25,7 +25,7 @@ namespace Arcemi.Models
             var files = Directory.EnumerateFiles(directory, "*.zks");
             return files
                 .Select(f => new SaveFileHeader(f))
-                .Where(h => h.Exception == null)
+                .Where(h => h.Exception is null && !string.IsNullOrEmpty(h.Header?.GameId))
                 .GroupBy(h => h.Header.GameId)
                 .Select(g => new SaveFileGroup(g))
                 .OrderByDescending(g => g.LastSystemSaveTime)
