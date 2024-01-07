@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Arcemi.Models.PathfinderWotr
 {
-    public class WotrGameUnitModel : Model, IGameUnitModel
+    public class WotrGameUnitModel : IGameUnitModel
     {
         public bool IsSupported => Ref.Descriptor is object;
         public UnitEntityModel Ref { get; }
@@ -21,6 +21,7 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameUnitProgressionModel Progression { get; }
         public IGameUnitStatsModel Stats { get; }
         public IGameUnitAppearanceModel Appearance { get; }
+        public IGameUnitBodyModel Body { get; }
         public IGameDataObject Overview { get; }
 
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
@@ -29,7 +30,6 @@ namespace Arcemi.Models.PathfinderWotr
         public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
 
         public WotrGameUnitModel(UnitEntityModel unit)
-            : base(unit.GetAccessor())
         {
             Ref = unit;
             if (unit.Descriptor is null) return;
@@ -41,6 +41,7 @@ namespace Arcemi.Models.PathfinderWotr
             Progression = new WotrGameUnitProgressionModel(unit);
             Stats = new WotrGameUnitStatsModel(unit);
             Appearance = new WotrGameUnitAppearanceModel(unit.Parts.Items.OfType<UnitDollDataPartItemModel>().FirstOrDefault());
+            Body = new WotrGameUnitBodyModel(unit);
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitFeatEntry(x), x => x is FeatureFactItemModel feat
                 && x.Context?.ParentContext?.SourceItemRef == null, new WotrGameModelCollectionFeatWriter());
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitAbilityEntry(x), x => x is AbilityFactItemModel feat,

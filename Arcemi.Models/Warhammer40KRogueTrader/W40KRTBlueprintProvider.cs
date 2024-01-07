@@ -1,18 +1,120 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
-    public class W40KRTBlueprintTypeProvider : IBlueprintTypeProvider
+    public class W40KRTBlueprintProvider : BlueprintProvider
     {
-        public BlueprintType Get(BlueprintTypeId id)
+        private Dictionary<string, W40KRTLocalization> _displayNameLookup;
+        private Dictionary<string, W40KRTLocalization> _descriptionLookup;
+        private Dictionary<string, W40KRTBlueprintAsset> _blueprintAssetLookup;
+        private Dictionary<string, W40KRTLocalizationEntry> _localizationFileEnGB;
+
+        public W40KRTBlueprintProvider() : base(LookupFullName, LookupId)
         {
-            return LookupId[id];
         }
 
-        public BlueprintType Get(string fullName)
+        protected override async Task OnBeforeSetupAsync(BlueprintProviderSetupArgs args)
         {
-            return LookupFullName.TryGetValue(fullName, out var type) ? type : new BlueprintType("<Unknown>", fullName);
+            var serializer = new JsonSerializer();
+            var localizationPath = Path.Combine(args.GameFolder, "WH40KRT_Data", "StreamingAssets", "Localization", "enGB.json");
+            if (File.Exists(localizationPath)) {
+                using (var stream = new FileStream(localizationPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var reader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(reader)) {
+                    _localizationFileEnGB = serializer.Deserialize<W40KRTLocalizationAsset>(jsonReader)?.Strings;
+                }
+            }
+            if (_localizationFileEnGB is null) _localizationFileEnGB = new Dictionary<string, W40KRTLocalizationEntry>();
+
+            var cacheInfo = await W40KRTBlueprintCachedData.LoadAsync(args.WorkingDirectory);
+
+            _displayNameLookup = cacheInfo.DisplayNames;
+            _descriptionLookup = cacheInfo.Descriptions;
+            _blueprintAssetLookup = cacheInfo.BlueprintAssets;
+
+            var archiveInfo = new FileInfo(Path.Combine(args.GameFolder, "WhRtModificationTemplate-release.rar"));
+            if (!archiveInfo.Exists) return;
+            if (cacheInfo.IsValidCache(archiveInfo.LastWriteTimeUtc)) {
+                return;
+            }
+
+            const string localizationPrefix = @"WhRtModificationTemplate-release\Strings\Mechanics\Blueprints\";
+            const string blueprintPrefix = @"WhRtModificationTemplate-release\Blueprints\";
+
+            using (var rar = SharpCompress.Archives.Rar.RarArchive.Open(archiveInfo, new SharpCompress.Readers.ReaderOptions()))  {
+                foreach (var entry in rar.Entries) {
+                    if (entry.IsDirectory) continue;
+                    var isLocalization = entry.Key.IStart(localizationPrefix);
+                    var isBlueprint = entry.Key.IStart(blueprintPrefix);
+
+                    if (!isLocalization && !isBlueprint) continue;
+
+                    using (var stream = entry.OpenEntryStream())
+                    using (var reader = new StreamReader(stream))
+                    using (var jsonReader = new JsonTextReader(reader)) {
+                        if (isLocalization) {
+                            var localizationEntry = serializer.Deserialize<W40KRTLocalization>(jsonReader);
+                            if (string.IsNullOrEmpty(localizationEntry.OwnerGuid)) continue;
+                            if (!(localizationEntry.Languages?.Count > 0)) continue;
+                            if (entry.Key.IEnd("DisplayName.json") || entry.Key.IEnd("DisplayName_.json")) {
+                                if (_displayNameLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
+                                }
+                                else {
+                                    _displayNameLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
+                                }
+                            }
+                            else if (entry.Key.IEnd("Description.json") || entry.Key.IEnd("Description_.json")) {
+                                if (_descriptionLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
+                                }
+                                else {
+                                    _descriptionLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
+                                }
+                            }
+                            else {
+                                var key = entry.Key;
+                                key.ToString();
+                            }
+                        }
+                        else if (isBlueprint) {
+                            var blueprintAsset = serializer.Deserialize<W40KRTBlueprintAsset>(jsonReader);
+                            if (string.IsNullOrEmpty(blueprintAsset?.AssetId)) continue;
+                            if (_blueprintAssetLookup.TryGetValue(blueprintAsset.AssetId, out var existing)) {
+                                existing.ToString();
+                            }
+                            else {
+                                _blueprintAssetLookup.Add(blueprintAsset.AssetId, blueprintAsset);
+                            }
+                        }
+                    }
+                }
+            }
+            cacheInfo.TimestampUtc = archiveInfo.LastWriteTimeUtc;
+            await cacheInfo.SaveAsync(args.WorkingDirectory);
+        }
+
+        protected override BlueprintName ResolveName(BlueprintMetadataEntry entry)
+        {
+            var localizationId = entry.Guid;
+            if (_blueprintAssetLookup.TryGetValue(entry.Guid, out var asset)) {
+                if (asset.Data?.DisplayName?.Shared?.StringKey?.HasValue() ?? false) {
+                    if (_localizationFileEnGB.TryGetValue(asset.Data.DisplayName.Shared.StringKey, out var localizationEntry))
+                        return new BlueprintName(((IBlueprintMetadataEntry)entry).Type, localizationEntry.Text, entry.Name);
+                }
+                if (asset.Data?.DisplayName?.Shared?.AssetGuid?.HasValue() ?? false) {
+                    localizationId = asset.Data.DisplayName.Shared.AssetGuid;
+                }
+            }
+            if (_displayNameLookup is object && _displayNameLookup.TryGetValue(localizationId, out var localization)) {
+                var language = localization.Languages.FirstOrDefault(l => l.Locale.IEq("enGB"));
+                if (language is object)
+                    return new BlueprintName(((IBlueprintMetadataEntry)entry).Type, language.Text, entry.Name);
+            }
+            return base.ResolveName(entry);
         }
 
         public static BlueprintType AbilitiesUnlockTable { get; } = new BlueprintType("", "Warhammer.SpaceCombat.Blueprints.Progression.BlueprintAbilitiesUnlockTable, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");

@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Arcemi.Models.PathfinderWotr
 {
-    public class WotrBlueprintTypeProvider : IBlueprintTypeProvider
+    public class WotrBlueprintProvider : BlueprintProvider
     {
-        public BlueprintType Get(BlueprintTypeId id)
+        public WotrBlueprintProvider() : base(LookupFullName, LookupId)
         {
-            return LookupId[id];
-        }
-
-        public BlueprintType Get(string fullName)
-        {
-            return LookupFullName.TryGetValue(fullName, out var type) ? type : new BlueprintType("<Unknown>", fullName);
         }
 
         public static BlueprintType Ability { get; } = new BlueprintType("", "Kingmaker.UnitLogic.Abilities.Blueprints.BlueprintAbility");

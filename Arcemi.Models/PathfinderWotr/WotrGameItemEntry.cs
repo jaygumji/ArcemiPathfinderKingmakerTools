@@ -11,9 +11,11 @@
         public ItemModel Ref { get; }
         public string Name => Ref.DisplayName(Res);
         public string Blueprint => Ref.Blueprint;
+        public string UniqueId => Ref.UniqueId;
         public string Type => Ref.DisplayType;
         public string Description => Ref.DisplayDescription;
         public int Index => Ref.InventorySlotIndex;
+        public bool IsLocked { get => Ref.IsNonRemovable; set => Ref.IsNonRemovable = value; }
 
         public bool IsChargable => Ref.IsChargable;
         public int Charges { get => Ref.Charges; set => Ref.Charges = value; }

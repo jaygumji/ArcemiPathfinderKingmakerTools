@@ -2,6 +2,7 @@
 using Arcemi.Models.PathfinderWotr;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Arcemi.Tests
@@ -9,11 +10,11 @@ namespace Arcemi.Tests
     public class ItemTemplateTests
     {
         [Fact]
-        public void AbrubtForce()
+        public async Task AbrubtForce()
         {
             var res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
-            res.LoadGameFolder(@"C:\Games\Pathfinder Wrath of the Righteous");
-            var feat = res.Blueprints.GetEntries(WotrBlueprintTypeProvider.ItemWeapon).Where(f => f.DisplayName == "Abrupt Force").First();
+            await res.LoadGameFolderAsync(null, @"C:\Games\Pathfinder Wrath of the Righteous");
+            var feat = res.Blueprints.GetEntries(WotrBlueprintProvider.ItemWeapon).Where(f => f.DisplayName == "Abrupt Force").First();
             
             var template = res.GetItemTemplate(feat.Id);
             Assert.NotNull(template);
@@ -37,11 +38,11 @@ namespace Arcemi.Tests
         }
 
         [Fact]
-        public void AncestralDwarwenShield()
+        public async Task AncestralDwarwenShield()
         {
             var res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
-            res.LoadGameFolder(@"C:\Games\Pathfinder Wrath of the Righteous");
-            var feat = res.Blueprints.GetEntries(WotrBlueprintTypeProvider.ItemShield).Where(f => f.DisplayName == "Ancestral Dwarwen Shield").First();
+            await res.LoadGameFolderAsync(null, @"C:\Games\Pathfinder Wrath of the Righteous");
+            var feat = res.Blueprints.GetEntries(WotrBlueprintProvider.ItemShield).Where(f => f.DisplayName == "Ancestral Dwarwen Shield").First();
 
             var template = (ShieldItemModel)res.GetItemTemplate(feat.Id);
             Assert.NotNull(template);
@@ -65,11 +66,11 @@ namespace Arcemi.Tests
         }
 
         [Fact]
-        public void SpikedShieldOfHolyThornShield()
+        public async Task SpikedShieldOfHolyThornShield()
         {
             var res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
-            res.LoadGameFolder(@"C:\Games\Pathfinder Wrath of the Righteous");
-            var feat = res.Blueprints.GetEntries(WotrBlueprintTypeProvider.ItemShield).Where(f => f.DisplayName == "Spiked Shield Of Holy Thorn Shield").First();
+            await res.LoadGameFolderAsync(null, @"C:\Games\Pathfinder Wrath of the Righteous");
+            var feat = res.Blueprints.GetEntries(WotrBlueprintProvider.ItemShield).Where(f => f.DisplayName == "Spiked Shield Of Holy Thorn Shield").First();
 
             var template = (ShieldItemModel)res.GetItemTemplate(feat.Id);
             Assert.NotNull(template);

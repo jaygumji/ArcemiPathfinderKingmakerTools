@@ -1,24 +1,12 @@
-﻿using Arcemi.Models.PathfinderWotr;
-using System;
+﻿using System.Collections.Generic;
 
 namespace Arcemi.Models
 {
-    public class EmptyBlueprintTypeProvider : IBlueprintTypeProvider
+    public class EmptyBlueprintTypeProvider : BlueprintProvider
     {
-        private readonly WotrBlueprintTypeProvider _fallback;
-
-        public EmptyBlueprintTypeProvider()
+        public EmptyBlueprintTypeProvider() : base(new Dictionary<string, BlueprintType>(), new Dictionary<BlueprintTypeId, BlueprintType>())
         {
-            _fallback = new WotrBlueprintTypeProvider();
-        }
-        public BlueprintType Get(BlueprintTypeId id)
-        {
-            return _fallback.Get(id);
-        }
-
-        public BlueprintType Get(string fullName)
-        {
-            return _fallback.Get(fullName);
+            
         }
     }
 }

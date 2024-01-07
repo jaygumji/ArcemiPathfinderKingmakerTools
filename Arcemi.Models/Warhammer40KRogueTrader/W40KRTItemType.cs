@@ -7,27 +7,27 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
     internal class W40KRTItemType
     {
         public static W40KRTItemType StarshipPlasmaDrives { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.Equipment.ItemEntityPlasmaDrives, Code",
-            W40KRTBlueprintTypeProvider.ItemPlasmaDrives);
+            W40KRTBlueprintProvider.ItemPlasmaDrives);
         public static W40KRTItemType StarshipVoidShieldGenerator { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.Equipment.ItemEntityVoidShieldGenerator, Code",
-            W40KRTBlueprintTypeProvider.ItemVoidShieldGenerator);
+            W40KRTBlueprintProvider.ItemVoidShieldGenerator);
         public static W40KRTItemType StarshipAugerArray { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.StarshipItemEntity`1[[Warhammer.SpaceCombat.Blueprints.BlueprintStarshipItem, Code]], Code",
-            W40KRTBlueprintTypeProvider.ItemAugerArray, W40KRTBlueprintTypeProvider.ItemArmorPlating, W40KRTBlueprintTypeProvider.ItemLifeSustainer);
+            W40KRTBlueprintProvider.ItemAugerArray, W40KRTBlueprintProvider.ItemArmorPlating, W40KRTBlueprintProvider.ItemLifeSustainer);
         public static W40KRTItemType StarshipWeapon { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.Weapon.ItemEntityStarshipWeapon, Code",
-            W40KRTBlueprintTypeProvider.StarshipWeapon);
+            W40KRTBlueprintProvider.StarshipWeapon);
         public static W40KRTItemType StarshipAmmo { get; } = new W40KRTItemType("Warhammer.SpaceCombat.StarshipLogic.Weapon.ItemEntityStarshipAmmo, Code",
-            W40KRTBlueprintTypeProvider.StarshipAmmo);
+            W40KRTBlueprintProvider.StarshipAmmo);
         public static W40KRTItemType Mechadendrite { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityMechadendrite, Code",
-            W40KRTBlueprintTypeProvider.ItemMechadendrite);
+            W40KRTBlueprintProvider.ItemMechadendrite);
         public static W40KRTItemType Weapon { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityWeapon, Code",
-            W40KRTBlueprintTypeProvider.ItemWeapon);
+            W40KRTBlueprintProvider.ItemWeapon);
         public static W40KRTItemType Armor { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityArmor, Code",
-            W40KRTBlueprintTypeProvider.ItemArmor);
+            W40KRTBlueprintProvider.ItemArmor);
         public static W40KRTItemType Usable { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityUsable, Code",
-            W40KRTBlueprintTypeProvider.ItemEquipmentUsable);
+            W40KRTBlueprintProvider.ItemEquipmentUsable);
         public static W40KRTItemType Simple { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntitySimple, Code",
-            W40KRTBlueprintTypeProvider.ItemEquipmentFeet, W40KRTBlueprintTypeProvider.ItemEquipmentGloves, W40KRTBlueprintTypeProvider.ItemEquipmentHead,
-            W40KRTBlueprintTypeProvider.ItemEquipmentNeck, W40KRTBlueprintTypeProvider.ItemEquipmentRing, W40KRTBlueprintTypeProvider.ItemEquipmentShoulders,
-            W40KRTBlueprintTypeProvider.ItemResourceMiner, W40KRTBlueprintTypeProvider.ItemNote, W40KRTBlueprintTypeProvider.ItemKey, W40KRTBlueprintTypeProvider.Item);
+            W40KRTBlueprintProvider.ItemEquipmentFeet, W40KRTBlueprintProvider.ItemEquipmentGloves, W40KRTBlueprintProvider.ItemEquipmentHead,
+            W40KRTBlueprintProvider.ItemEquipmentNeck, W40KRTBlueprintProvider.ItemEquipmentRing, W40KRTBlueprintProvider.ItemEquipmentShoulders,
+            W40KRTBlueprintProvider.ItemResourceMiner, W40KRTBlueprintProvider.ItemNote, W40KRTBlueprintProvider.ItemKey, W40KRTBlueprintProvider.Item);
 
         private static IReadOnlyDictionary<string, W40KRTItemType> TypeRefLookup { get; } = typeof(W40KRTItemType).GetProperties()
             .Where(p => (p.GetMethod?.IsStatic ?? false) && p.PropertyType == typeof(W40KRTItemType))

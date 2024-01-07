@@ -2,6 +2,7 @@
 using ElectronNET.API;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,7 +55,7 @@ namespace Arcemi.SaveGameEditor.Models
                 if (HybridSupport.IsElectronActive)
                     Electron.Dialog.ShowErrorBox("Configuration error", $"Failed to load the configuration file. Please go to settings page and setup your settings again. Error was '{FormatError(ex)}'");
             }
-            LoadConfigResources();
+            await LoadConfigResourcesAsync();
         }
 
         public IReadOnlyList<EditorConfigurationGameView> GetGamesView()
@@ -62,13 +63,15 @@ namespace Arcemi.SaveGameEditor.Models
             return Instance.Games.Select(g => new EditorConfigurationGameView(g, Save)).ToArray();
         }
 
-        private void LoadConfigResources()
+        private async Task LoadConfigResourcesAsync()
         {
+            var workingDirectory = Path.GetDirectoryName(ConfigPath);
             Instance.EnsureDefaults();
             foreach (var game in Instance.Games) {
                 var def = game.GetDefinition();
                 def.Resources.SetDevelopmentMode(Instance.Development?.IsEnabled ?? false);
-                def.Resources.LoadGameFolder(game.GameFolder);
+                var gameWorkingDirectory = Path.Combine(workingDirectory, def.Id);
+                await def.Resources.LoadGameFolderAsync(gameWorkingDirectory, game.GameFolder);
                 def.Resources.LoadFeatTemplates();
                 def.Resources.LoadAppDataWwwRoot(game.AppDataFolder);
             }
@@ -77,7 +80,7 @@ namespace Arcemi.SaveGameEditor.Models
         private async Task SaveConfigAsync()
         {
             await Instance.SaveAsync(ConfigPath);
-            LoadConfigResources();
+            await LoadConfigResourcesAsync();
         }
 
         public string SaveMessage { get; private set; }

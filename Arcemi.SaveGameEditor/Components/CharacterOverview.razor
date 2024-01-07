@@ -135,6 +135,9 @@
                 }
             </div>
         }
+        @if (Unit.Progression.Data is object) {
+            <GameData Data="@Unit.Progression.Data"></GameData>
+        }
     }
 
     @if (Unit.Progression.Classes.Count > 0) {
@@ -179,6 +182,7 @@
         </div>
     }
 }
+
 @if (Unit.Alignment.IsSupported) {
     <div class="row">
         <div class="col-md-12">

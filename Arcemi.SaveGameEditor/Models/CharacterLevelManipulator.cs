@@ -21,7 +21,7 @@ namespace Arcemi.SaveGameEditor.Models
                     .Select(f => {
                         if (!string.Equals(cls.CharacterClass, f.Source, StringComparison.Ordinal)) return null;
                         if (!resources.Blueprints.TryGet(f.Blueprint, out var bp)) return null;
-                        return bp.Type == WotrBlueprintTypeProvider.Progression
+                        return bp.Type == WotrBlueprintProvider.Progression
                             ? bp
                             : null;
                     })

@@ -20,5 +20,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IReadOnlyList<IGameItemSection> Sections { get; }
 
         public bool IsSupported => false; // Ref is object;
+
+        public IGameItemEntry FindEquipped(string uniqueId)
+        {
+            return null;
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Arcemi.Models.PathfinderWotr
     public class WotrGameInventoryModel : IGameInventoryModel, IGameItemSection
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
-        private readonly InventoryModel _model;
+        private readonly Dictionary<string, IGameItemEntry> _equippedLookup;
 
         public string Name { get; }
         public IReadOnlyList<IGameItemSection> Sections { get; }
@@ -48,16 +48,16 @@ namespace Arcemi.Models.PathfinderWotr
 
             private static ItemType GetItemType(BlueprintType type)
             {
-                if (ReferenceEquals(type, WotrBlueprintTypeProvider.ItemWeapon)) {
+                if (ReferenceEquals(type, WotrBlueprintProvider.ItemWeapon)) {
                     return ItemType.Weapon;
                 }
-                if (ReferenceEquals(type, WotrBlueprintTypeProvider.ItemShield)) {
+                if (ReferenceEquals(type, WotrBlueprintProvider.ItemShield)) {
                     return ItemType.Shield;
                 }
-                if (ReferenceEquals(type, WotrBlueprintTypeProvider.ItemArmor)) {
+                if (ReferenceEquals(type, WotrBlueprintProvider.ItemArmor)) {
                     return ItemType.Armor;
                 }
-                if (ReferenceEquals(type, WotrBlueprintTypeProvider.ItemEquipmentUsable)) {
+                if (ReferenceEquals(type, WotrBlueprintProvider.ItemEquipmentUsable)) {
                     return ItemType.Usable;
                 }
                 return ItemType.Simple;
@@ -67,12 +67,20 @@ namespace Arcemi.Models.PathfinderWotr
 
         public WotrGameInventoryModel(InventoryModel model, string name)
         {
-            _model = model;
             Name = name;
             Sections = new IGameItemSection[] { this };
             Items = new GameModelCollection<IGameItemEntry, ItemModel>(model.Items, x => new WotrGameItemEntry(x), IsValidItem, new WotrGameInventoryItemWriter(model));
+            _equippedLookup = model.Items.Where(i => i.InventorySlotIndex < 0 || i.WielderRef.HasValue() || i.HoldingSlot is object)
+                .ToDictionary(i => i.UniqueId, i => (IGameItemEntry)new WotrGameItemEntry(i), StringComparer.Ordinal);
         }
 
+        public IGameItemEntry FindEquipped(string uniqueId)
+        {
+            if (string.IsNullOrEmpty(uniqueId)) return null;
+            if (_equippedLookup.TryGetValue(uniqueId, out var item)) return item;
+            return null;
+        }
+        
         private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {
             "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
         };
@@ -93,25 +101,25 @@ namespace Arcemi.Models.PathfinderWotr
         }
 
         public IReadOnlyList<BlueprintType> AddableTypes { get; } = new[] {
-            WotrBlueprintTypeProvider.ItemArmor,
-            WotrBlueprintTypeProvider.ItemShield,
-            WotrBlueprintTypeProvider.ItemEquipmentBelt,
-            WotrBlueprintTypeProvider.ItemEquipmentFeet,
-            WotrBlueprintTypeProvider.ItemEquipmentGlasses,
-            WotrBlueprintTypeProvider.ItemEquipmentGloves,
-            WotrBlueprintTypeProvider.ItemEquipmentHead,
-            WotrBlueprintTypeProvider.Ingredient,
-            WotrBlueprintTypeProvider.ItemEquipmentNeck,
-            WotrBlueprintTypeProvider.ItemEquipmentRing,
-            WotrBlueprintTypeProvider.ItemEquipmentShirt,
-            WotrBlueprintTypeProvider.ItemEquipmentShoulders,
-            WotrBlueprintTypeProvider.ItemEquipmentUsable,
-            WotrBlueprintTypeProvider.ItemEquipmentWrist,
-            WotrBlueprintTypeProvider.ItemKey,
-            WotrBlueprintTypeProvider.ItemNote,
-            WotrBlueprintTypeProvider.ItemThiefTool,
-            WotrBlueprintTypeProvider.ItemWeapon,
-            WotrBlueprintTypeProvider.Item
+            WotrBlueprintProvider.ItemArmor,
+            WotrBlueprintProvider.ItemShield,
+            WotrBlueprintProvider.ItemEquipmentBelt,
+            WotrBlueprintProvider.ItemEquipmentFeet,
+            WotrBlueprintProvider.ItemEquipmentGlasses,
+            WotrBlueprintProvider.ItemEquipmentGloves,
+            WotrBlueprintProvider.ItemEquipmentHead,
+            WotrBlueprintProvider.Ingredient,
+            WotrBlueprintProvider.ItemEquipmentNeck,
+            WotrBlueprintProvider.ItemEquipmentRing,
+            WotrBlueprintProvider.ItemEquipmentShirt,
+            WotrBlueprintProvider.ItemEquipmentShoulders,
+            WotrBlueprintProvider.ItemEquipmentUsable,
+            WotrBlueprintProvider.ItemEquipmentWrist,
+            WotrBlueprintProvider.ItemKey,
+            WotrBlueprintProvider.ItemNote,
+            WotrBlueprintProvider.ItemThiefTool,
+            WotrBlueprintProvider.ItemWeapon,
+            WotrBlueprintProvider.Item
         };
     }
 }

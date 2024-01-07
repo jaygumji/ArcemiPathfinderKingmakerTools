@@ -45,8 +45,8 @@ namespace Arcemi.Models
         public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameDataObject> current)
         {
             var ids = new HashSet<string>(current.Select(x => ((W40KRTSoulMarkSourceModel)x.Ref).Blueprint), System.StringComparer.Ordinal);
-            var projects = Res.Blueprints.GetEntries(Warhammer40KRogueTrader.W40KRTBlueprintTypeProvider.ColonyProject).Where(p => p.Name.Original.ILike("soulmark"));
-            return Res.Blueprints.GetEntries(Warhammer40KRogueTrader.W40KRTBlueprintTypeProvider.Answer).Concat(projects)
+            var projects = Res.Blueprints.GetEntries(Warhammer40KRogueTrader.W40KRTBlueprintProvider.ColonyProject).Where(p => p.Name.Original.ILike("soulmark"));
+            return Res.Blueprints.GetEntries(Warhammer40KRogueTrader.W40KRTBlueprintProvider.Answer).Concat(projects)
                 .Where(x => !ids.Contains(x.Id))
                 .OrderBy(x => x.DisplayName)
                 .ToArray();

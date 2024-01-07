@@ -83,6 +83,8 @@ namespace Arcemi.Models
     public interface IGameInventoryModel : IGameModel
     {
         IReadOnlyList<IGameItemSection> Sections { get; }
+
+        IGameItemEntry FindEquipped(string uniqueId);
     }
     public interface IGameItemSection
     {
@@ -95,6 +97,7 @@ namespace Arcemi.Models
     {
         string Name { get; }
         string Blueprint { get; }
+        string UniqueId { get; }
         string Type { get; }
         string Description { get; }
         int Index { get; }
@@ -104,6 +107,7 @@ namespace Arcemi.Models
         int Count { get; set; }
         bool CanEdit { get; }
         string IconUrl { get; }
+        bool IsLocked { get; set; }
     }
 
     public interface IGameUnitModel : IGameModel
@@ -123,10 +127,40 @@ namespace Arcemi.Models
         IGameUnitProgressionModel Progression { get; }
         IGameUnitStatsModel Stats { get; }
         IGameUnitAppearanceModel Appearance { get; }
+        IGameUnitBodyModel Body { get; }
         IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
         IReadOnlyList<IGameDataObject> Sections { get; }
+    }
+
+    public interface IGameUnitBodyModel : IGameModel
+    {
+        IReadOnlyList<IGameUnitHandsEquippedEntry> HandsEquipmentSets { get; }
+        IReadOnlyList<IGameUnitEquippedEntry> QuickSlots { get; }
+
+        IGameUnitEquippedEntry Armor { get; }
+        IGameUnitEquippedEntry Shirt { get; }
+        IGameUnitEquippedEntry Belt { get; }
+        IGameUnitEquippedEntry Head { get; }
+        IGameUnitEquippedEntry Feet { get; }
+        IGameUnitEquippedEntry Gloves { get; }
+        IGameUnitEquippedEntry Neck { get; }
+        IGameUnitEquippedEntry Glasses { get; }
+        IGameUnitEquippedEntry Ring1 { get; }
+        IGameUnitEquippedEntry Ring2 { get; }
+        IGameUnitEquippedEntry Wrist { get; }
+        IGameUnitEquippedEntry Shoulders { get; }
+    }
+
+    public interface IGameUnitHandsEquippedEntry
+    {
+        IGameUnitEquippedEntry Primary { get; }
+        IGameUnitEquippedEntry Secondary { get; }
+    }
+    public interface IGameUnitEquippedEntry
+    {
+        string ItemRef { get; }
     }
 
     public interface IGameUnitFactEntry
@@ -233,6 +267,8 @@ namespace Arcemi.Models
         IGameModelCollection<IGameUnitSelectionProgressionEntry> Selections { get; }
         IReadOnlyList<IGameUnitUltimateProgressionEntry> Ultimates { get; }
         IReadOnlyList<IGameUnitClassProgressionEntry> Classes { get; }
+
+        IGameDataObject Data { get; }
 
         void RepairSelections();
     }

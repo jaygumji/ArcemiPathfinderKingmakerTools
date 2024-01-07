@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Arcemi.Models
 {
-    public class GameDataListOfKeyValueOfInt : IGameDataList
+    public class GameDataListOfKeyValueOfInt : IGameDataRowList
     {
         public GameDataListOfKeyValueOfInt(IGameResourcesProvider res, ListAccessor<KeyValuePairModel<int>> @ref, string itemName, params BlueprintType[] types)
         {
@@ -16,7 +16,7 @@ namespace Arcemi.Models
 
         public string ItemName { get; }
         public IGameModelCollection<IGameDataObject> Entries { get; }
-        public GameDataListMode Mode => GameDataListMode.Rows;
+        public GameDataSize NameSize => GameDataSize.Large;
     }
 
     public class GameDataListOfKeyValueOfIntCollectionWriter : GameModelCollectionWriter<IGameDataObject, KeyValuePairModel<int>>

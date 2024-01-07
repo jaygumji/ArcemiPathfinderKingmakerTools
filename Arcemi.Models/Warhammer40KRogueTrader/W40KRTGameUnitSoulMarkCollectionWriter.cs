@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
-    internal class W40KRTGameUnitSoulMarkCollectionWriter : GameModelCollectionWriter<IGameUnitFactEntry, FactItemModel>
+    internal class W40KRTGameUnitSoulMarkCollectionWriter : GameModelCollectionWriter<IGameDataObject, FactItemModel>
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
         private readonly string ownerUniqueId;
@@ -17,7 +17,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
         {
             args.Obj.Add("$type", "Kingmaker.UnitLogic.SoulMark, Code");
-            var factUniqueId = Guid.NewGuid().ToString("N");
+            //var factUniqueId = Guid.NewGuid().ToString("N");
             args.Obj.Add("m_Context", new JObject {
                 {"m_OwnerRef",  ownerUniqueId},
                 {"m_CasterRef", ownerUniqueId},
@@ -44,10 +44,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             args.Obj.Add("IsActive", true);
         }
 
-        public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameUnitFactEntry> current)
+        public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameDataObject> current)
         {
-            var currentIds = new HashSet<string>(current.Select(x => x.Blueprint), StringComparer.Ordinal);
-            return Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.SoulMark).Where(e => !currentIds.Contains(e.Id)).ToArray();
+            var currentIds = new HashSet<string>(current.Select(x => ((FactItemModel)x.Ref).Blueprint), StringComparer.Ordinal);
+            return Res.Blueprints.GetEntries(W40KRTBlueprintProvider.SoulMark).Where(e => !currentIds.Contains(e.Id)).ToArray();
         }
     }
 }

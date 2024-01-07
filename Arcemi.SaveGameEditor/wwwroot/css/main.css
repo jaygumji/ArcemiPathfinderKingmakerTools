@@ -571,6 +571,9 @@ ul.portraits li span {
 .character-equipment-slot .data-content {
   overflow: hidden;
 }
+.character-equipment-slot .data-content button {
+  width: 14px;
+}
 #blazor-error-ui {
   background: lightyellow;
   bottom: 0;

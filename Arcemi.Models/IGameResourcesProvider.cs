@@ -5,7 +5,7 @@ namespace Arcemi.Models
     public interface IGameResourcesProvider
     {
         GameAppData AppData { get; }
-        BlueprintMetadata Blueprints { get; }
+        BlueprintProvider Blueprints { get; }
 
         string GetPortraitId(string blueprint);
         string GetCharacterPotraitIdentifier(string blueprint);

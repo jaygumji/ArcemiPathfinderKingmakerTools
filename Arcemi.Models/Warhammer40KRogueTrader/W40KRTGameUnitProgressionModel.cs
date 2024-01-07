@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,10 +13,18 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Owner = owner;
             Model = model;
             Selections = new GameModelCollection<IGameUnitSelectionProgressionEntry, UnitProgressionSelectionOfPartModel>(model?.Selections, s => new W40KRTGameUnitSelectionProgressionEntry(owner, s), s => s.Level == 0, new W40KRTGameUnitSelectionProgressionEntryWriter(owner));
+            Data = GameDataModels.Object("All choices", new[] {
+                GameDataModels.RowList(model?.Selections, s => GameDataModels.Object(
+                    string.Concat(Res.Blueprints.GetNameOrBlueprint(s.Path), " > ", Res.Blueprints.GetNameOrBlueprint(s.Selection)), new IGameData[] {
+                    GameDataModels.Text("Feature", s, x => Res.Blueprints.GetNameOrBlueprint(x.Feature), size: GameDataSize.Medium),
+                    GameDataModels.Integer("Level", s, x => W40KRTArchetypes.ActualLevel(x.Path, x.Level), size: GameDataSize.Small),
+                }), writer: new W40KRTGameUnitProgressionCollectionWriter(), nameSize: GameDataSize.Medium)
+            }, isCollapsable: true);
         }
 
         public IGameUnitModel Owner { get; }
         public UnitProgressionPartItemModel Model { get; }
+        public IGameDataObject Data { get; }
 
         public int Experience { get => Model.Experience; set => Model.Experience = value; }
         public int CurrentLevel

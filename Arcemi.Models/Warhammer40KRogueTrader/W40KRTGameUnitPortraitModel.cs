@@ -42,7 +42,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     if (entry is object)
                         return Res.GetPortraitsUri(entry.Id);
                 }
-                if (Res.Blueprints.TryGet(unitBlueprint, out var unitBlueprintEntry) && unitBlueprintEntry?.Type == W40KRTBlueprintTypeProvider.Starship) {
+                if (Res.Blueprints.TryGet(unitBlueprint, out var unitBlueprintEntry) && unitBlueprintEntry?.Type == W40KRTBlueprintProvider.Starship) {
                     // Use a ship portrait to differentiate from other companions
                     return Res.GetPortraitsUri("ebadc55b015a41c689a60b60b1c4d5c7"); // Imperial Frigate Sword
                 }

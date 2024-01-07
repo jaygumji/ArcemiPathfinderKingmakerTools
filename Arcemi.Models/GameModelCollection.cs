@@ -29,6 +29,7 @@ namespace Arcemi.Models
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
     {
         public virtual bool IsAddEnabled => true;
+        public virtual bool IsRemoveEnabled => true;
         public abstract void BeforeAdd(BeforeAddCollectionItemArgs args);
         public virtual void AfterAdd(AfterAddCollectionItemArgs<TGameModel, TModel> args) { }
         public virtual void AfterRemove(AfterRemoveCollectionItemArgs<TGameModel, TModel> args) { }
@@ -102,7 +103,7 @@ namespace Arcemi.Models
         }
 
         public bool IsAddEnabled => _accessor is object && writer is object && writer.IsAddEnabled;
-        public bool IsRemoveEnabled => _accessor is object;
+        public bool IsRemoveEnabled => _accessor is object && (writer is null || writer.IsRemoveEnabled);
 
         public TGameModel AddByCode(string code)
         {

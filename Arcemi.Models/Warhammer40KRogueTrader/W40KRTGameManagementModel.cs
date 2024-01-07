@@ -13,16 +13,16 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Resources = GameDataModels.Object("Resources", new IGameData[] {
                 new W40KRTGameManagementPlaceIntDataEntry(csa.Object<RefModel>("MinerProductivity"), "Miner Productivity"),
                 GameDataModels.Object("Not from colonies", new [] {
-                    new GameDataListOfKeyValueOfInt(Res, csa.List<KeyValuePairModel<int>>("ResourcesNotFromColonies"), "Resource", W40KRTBlueprintTypeProvider.Resource),
+                    new GameDataListOfKeyValueOfInt(Res, csa.List<KeyValuePairModel<int>>("ResourcesNotFromColonies"), "Resource", W40KRTBlueprintProvider.Resource),
                 }),
                 GameDataModels.Object("Miners", new[] {
-                    GameDataModels.List("Miner", csa.List<RefModel>("Miners"), rm => {
+                    GameDataModels.RowList(csa.List<RefModel>("Miners"), rm => {
                         var sso = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Sso"));
                         var resource = Res.Blueprints.GetNameOrBlueprint(rm.GetAccessor().Value<string>("Resource"));
                         return GameDataModels.Object($"{resource} - {sso}", new IGameData[] {
                             GameDataModels.Integer("Count", rm, a => a.GetAccessor().Value<int>("InitialCount"))
                         });
-                    }, mode: GameDataListMode.Rows),
+                    }, itemName: "Miner"),
                 }, isCollapsable: true),
             });
 
@@ -36,13 +36,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                         new W40KRTGameManagementPlaceIntDataEntry(m.CA.Object<RefModel>("Security"), "Security"),
                         GameDataModels.Object("Resources", new IGameData[] {
                             GameDataModels.Object("Initial", new [] {
-                                new GameDataListOfKeyValueOfInt(Res, m.CA.List<KeyValuePairModel<int>>("InitialResources"), "Resource", W40KRTBlueprintTypeProvider.Resource),
+                                new GameDataListOfKeyValueOfInt(Res, m.CA.List<KeyValuePairModel<int>>("InitialResources"), "Resource", W40KRTBlueprintProvider.Resource),
                             }, isCollapsable: true),
                             GameDataModels.Object("Available", new [] {
-                                new GameDataListOfKeyValueOfInt(Res, m.CA.List<KeyValuePairModel<int>>("AvailableProducedResources"), "Resource", W40KRTBlueprintTypeProvider.Resource),
+                                new GameDataListOfKeyValueOfInt(Res, m.CA.List<KeyValuePairModel<int>>("AvailableProducedResources"), "Resource", W40KRTBlueprintProvider.Resource),
                             }, isCollapsable: true),
                             GameDataModels.Object("Used", new [] {
-                                new GameDataListOfKeyValueOfInt(Res, m.CA.List<KeyValuePairModel<int>>("UsedProducedResources"), "Resource", W40KRTBlueprintTypeProvider.Resource)
+                                new GameDataListOfKeyValueOfInt(Res, m.CA.List<KeyValuePairModel<int>>("UsedProducedResources"), "Resource", W40KRTBlueprintProvider.Resource)
                             }, isCollapsable: true),
                             //new GameDataListGrouping(new [] {
                             //    new GameDataListOfKeyValueOfInt(Res, m.CA.List<KeyValuePairModel<int>>("AvailableProducedResources"), "Initial", W40KRTBlueprintTypeProvider.Resource),

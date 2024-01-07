@@ -17,25 +17,25 @@ namespace Arcemi.Models
         public string DisplayName { get; }
         public string Original { get; }
 
-        public static BlueprintName Detect(IBlueprintTypeProvider typeProvider, string id, BlueprintType type, string name)
+        public static BlueprintName Detect(BlueprintProvider typeProvider, string id, BlueprintType type, string name)
         {
             if (type.Category == BlueprintTypeCategory.Item) {
                 return BlueprintItemName.Detect(id, type, name);
             }
-            if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.Unit))) {
+            if (ReferenceEquals(type, typeProvider.GetType(BlueprintTypeId.Unit))) {
                 return new BlueprintName(type, Transform(name, suffix: new[] { "Army", "Companion" }), name);
             }
-            if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.Feature))) {
+            if (ReferenceEquals(type, typeProvider.GetType(BlueprintTypeId.Feature))) {
                 return Simple(type, name, suffix: "Feature");
             }
-            if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.AbilityResource))
-                || ReferenceEquals(type, Warhammer40KRogueTrader.W40KRTBlueprintTypeProvider.Resource)) {
+            if (ReferenceEquals(type, typeProvider.GetType(BlueprintTypeId.AbilityResource))
+                || ReferenceEquals(type, Warhammer40KRogueTrader.W40KRTBlueprintProvider.Resource)) {
                 return Simple(type, name, suffix: "Resource");
             }
-            if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.UnitAsksList))) {
+            if (ReferenceEquals(type, typeProvider.GetType(BlueprintTypeId.UnitAsksList))) {
                 return Simple(type, name, suffix: "Barks");
             }
-            if (ReferenceEquals(type, typeProvider.Get(BlueprintTypeId.RaceVisualPreset))) {
+            if (ReferenceEquals(type, typeProvider.GetType(BlueprintTypeId.RaceVisualPreset))) {
                 return RParts(type, name, "Visual", "Preset");
             }
             return new BlueprintName(type, name.AsDisplayable(), name);

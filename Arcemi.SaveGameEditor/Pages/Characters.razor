@@ -108,10 +108,10 @@ else {
                     </Content>
                 </Tab>
             }
-            @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel){
+            @if (Unit.Body.IsSupported) {
                 <Tab Name="Equipment">
                     <Content>
-                        <CharacterEquipment Unit="Unit.Ref" />
+                        <CharacterEquipment Unit="Unit" />
                     </Content>
                 </Tab>
             }

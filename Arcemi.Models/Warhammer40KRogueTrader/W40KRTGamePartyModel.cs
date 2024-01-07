@@ -20,8 +20,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 }),
                 GameDataModels.Object("Reputations", A.List<KeyValuePairModel<int>>("FractionsReputation").Where(x => !x.Key.IEq("None")).Select(x => new W40KRTGamePartyFactionResourceEntry(x)).ToArray()),
                 GameDataModels.Object("DLC Rewards", new[] {
-                    GameDataModels.List(null, header.GetAccessor().List<RefModel>("m_DlcRewards"), x => GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(x.GetAccessor().Value<string>("guid")), new IGameData[] {
-                    }), writer: new W40KRTDlcRewardsCollectionWriter(player), mode: GameDataListMode.Rows)
+                    GameDataModels.RowList(header.GetAccessor().List<RefModel>("m_DlcRewards"), x => GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(x.GetAccessor().Value<string>("guid")), new IGameData[] {
+                    }), writer: new W40KRTDlcRewardsCollectionWriter(player))
                 }, isCollapsable: true),
             });
         }

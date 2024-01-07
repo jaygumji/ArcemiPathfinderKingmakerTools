@@ -39,7 +39,6 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         }
         public string ItemName => "Project";
         public IGameModelCollection<IGameDataObject> Entries { get; }
-        public GameDataListMode Mode => GameDataListMode.Full;
     }
 
     internal class W40KRTGameManagementColonyProjectCollectionWriter : GameModelCollectionWriter<IGameDataObject, RefModel>
@@ -59,7 +58,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameDataObject> current)
         {
             var currentIds = new HashSet<string>(current.Select(x => x.Ref.GetAccessor().Value<string>("Blueprint")), StringComparer.Ordinal);
-            return Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.ColonyProject).Where(e => !currentIds.Contains(e.Id)).ToArray();
+            return Res.Blueprints.GetEntries(W40KRTBlueprintProvider.ColonyProject).Where(e => !currentIds.Contains(e.Id)).ToArray();
         }
     }
 }

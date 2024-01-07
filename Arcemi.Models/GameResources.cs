@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Arcemi.Models
 {
@@ -12,27 +13,22 @@ namespace Arcemi.Models
         private bool _isDevelopmentModeEnabled;
 
         public GameAppData AppData { get; private set; }
-        public BlueprintMetadata Blueprints { get; private set; }
+        public BlueprintProvider Blueprints { get; private set; }
         public List<FeatureFactItemModel> FeatTemplates { get; private set; }
         public GameBlueprintsArchive BlueprintsArchive { get; private set; }
         public GameDefinition Game { get; }
 
-        public GameResources(GameDefinition game, IBlueprintTypeProvider blueprintTypeProvider)
+        public GameResources(GameDefinition game, BlueprintProvider blueprintProvider)
         {
-            Blueprints = new BlueprintMetadata(blueprintTypeProvider);
+            Blueprints = blueprintProvider;
             Game = game;
         }
 
-        public void LoadGameFolder(string gameFolder)
+        public async Task LoadGameFolderAsync(string workingDirectory, string gameFolder)
         {
-            Blueprints = BlueprintMetadata.Load(gameFolder, Blueprints.TypeProvider);
+            await Blueprints.SetupAsync(new BlueprintProviderSetupArgs(workingDirectory, gameFolder));
             if (BlueprintsArchive is object) BlueprintsArchive.Dispose();
             BlueprintsArchive = new GameBlueprintsArchive(gameFolder, this);
-        }
-
-        public void SetStaticBlueprints(params BlueprintMetadataEntry[] entries)
-        {
-            Blueprints = new BlueprintMetadata(entries, Blueprints.TypeProvider);
         }
 
         public void LoadFeatTemplates()
@@ -141,7 +137,7 @@ namespace Arcemi.Models
 
         public IEnumerable<IBlueprintMetadataEntry> GetAvailableArmyUnits()
         {
-            var blueprints = Blueprints.GetEntries(PathfinderWotr.WotrBlueprintTypeProvider.Unit);
+            var blueprints = Blueprints.GetEntries(PathfinderWotr.WotrBlueprintProvider.Unit);
             return blueprints.Where(b => b.Name.StartsWith("Army"));
         }
 
@@ -350,7 +346,7 @@ namespace Arcemi.Models
         {
             get {
                 if (_weaponEnchantments is object) return _weaponEnchantments;
-                return _weaponEnchantments = LoadEnchantments(PathfinderWotr.WotrBlueprintTypeProvider.WeaponEnchantment, Enchantments.Weapon.All);
+                return _weaponEnchantments = LoadEnchantments(PathfinderWotr.WotrBlueprintProvider.WeaponEnchantment, Enchantments.Weapon.All);
             }
         }
 
@@ -358,7 +354,7 @@ namespace Arcemi.Models
         {
             get {
                 if (_armorEnchantments is object) return _armorEnchantments;
-                return _armorEnchantments = LoadEnchantments(PathfinderWotr.WotrBlueprintTypeProvider.ArmorEnchantment, Enchantments.Armor.All);
+                return _armorEnchantments = LoadEnchantments(PathfinderWotr.WotrBlueprintProvider.ArmorEnchantment, Enchantments.Armor.All);
             }
         }
 

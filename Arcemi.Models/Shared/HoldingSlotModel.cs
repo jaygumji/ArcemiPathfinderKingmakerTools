@@ -5,7 +5,7 @@
  #endregion
 namespace Arcemi.Models
 {
-    public class HoldingSlotModel : RefModel
+    public class HoldingSlotModel : RefModel, IGameUnitEquippedEntry
     {
         private const string TypeHandSlot = "Kingmaker.Items.Slots.HandSlot, Assembly-CSharp";
         private const string TypeArmorSlot = "Kingmaker.Items.Slots.ArmorSlot, Assembly-CSharp";

@@ -48,9 +48,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         {
             var currentIds = new HashSet<string>(current.Select(x => x.Blueprint), StringComparer.Ordinal);
             return Res.Blueprints.GetEntries(BlueprintTypeId.Feature)
-                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.CareerPath))
-                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.AttributeAdvancement))
-                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.ShipPostExpertise))
+                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintProvider.CareerPath))
+                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintProvider.AttributeAdvancement))
+                .Concat(Res.Blueprints.GetEntries(W40KRTBlueprintProvider.ShipPostExpertise))
                 .Where(e => !currentIds.Contains(e.Id))
                 .ToArray();
         }

@@ -31,7 +31,7 @@ namespace Arcemi.Models
 
         public bool IsSpecialWeapon()
         {
-            if (!ReferenceEquals(Type, PathfinderWotr.WotrBlueprintTypeProvider.ItemWeapon)) {
+            if (!ReferenceEquals(Type, PathfinderWotr.WotrBlueprintProvider.ItemWeapon)) {
                 return false;
             }
             if (Enhancement > 0) return false;
@@ -46,7 +46,7 @@ namespace Arcemi.Models
 
         public bool IsNaturalWeapon()
         {
-            if (!ReferenceEquals(Type, PathfinderWotr.WotrBlueprintTypeProvider.ItemWeapon)) {
+            if (!ReferenceEquals(Type, PathfinderWotr.WotrBlueprintProvider.ItemWeapon)) {
                 return false;
             }
             if (Enhancement > 0) return false;
@@ -82,14 +82,14 @@ namespace Arcemi.Models
 
         public bool IsComponent()
         {
-            if (ReferenceEquals(Type, PathfinderWotr.WotrBlueprintTypeProvider.ItemWeapon)) {
+            if (ReferenceEquals(Type, PathfinderWotr.WotrBlueprintProvider.ItemWeapon)) {
                 return IsFinnean
                     || P1Eq("Weapon")
                     || PLEq("Weapon")
                     || PLEq("Shield")
                     || P3Eq("Shield");
             }
-            if (ReferenceEquals(Type, PathfinderWotr.WotrBlueprintTypeProvider.ItemArmor)) {
+            if (ReferenceEquals(Type, PathfinderWotr.WotrBlueprintProvider.ItemArmor)) {
                 return P1Eq("Shield")
                     || P1Eq("Buckler")
                     || PLEq("Armor")

@@ -20,17 +20,14 @@ namespace Arcemi.Models
         Large,
         Row
     }
-
-    public enum GameDataListMode
-    {
-        Full,
-        Rows
-    }
     public interface IGameDataList : IGameData
     {
         string ItemName { get; }
-        GameDataListMode Mode { get; }
         IGameModelCollection<IGameDataObject> Entries { get; }
+    }
+    public interface IGameDataRowList : IGameDataList
+    {
+        GameDataSize NameSize { get; }
     }
     public interface IGameDataObject : IGameData
     {
@@ -194,25 +191,44 @@ namespace Arcemi.Models
 
         private class GameDataList : IGameDataList
         {
-            public GameDataList(string itemName, IGameModelCollection<IGameDataObject> entries, GameDataListMode mode)
+            public GameDataList(string itemName, IGameModelCollection<IGameDataObject> entries)
             {
                 ItemName = itemName;
                 Entries = entries;
-                Mode = mode;
             }
             public string ItemName { get; }
             public IGameModelCollection<IGameDataObject> Entries { get; }
-            public GameDataListMode Mode { get; }
         }
-        public static IGameDataList List(string itemName, IGameModelCollection<IGameDataObject> entries, GameDataListMode mode = GameDataListMode.Full)
+        public static IGameDataList List(string itemName, IGameModelCollection<IGameDataObject> entries)
         {
-            return new GameDataList(itemName, entries, mode);
+            return new GameDataList(itemName, entries);
         }
-        public static IGameDataList List<T>(string itemName, ListAccessor<T> accessor, Func<T, IGameDataObject> factory, Func<T, bool> predicate = null, GameModelCollectionWriter<IGameDataObject, T> writer = null, GameDataListMode mode = GameDataListMode.Full)
+        public static IGameDataList List<T>(string itemName, ListAccessor<T> accessor, Func<T, IGameDataObject> factory, Func<T, bool> predicate = null, GameModelCollectionWriter<IGameDataObject, T> writer = null)
             where T : Model
         {
             var entries = new GameModelCollection<IGameDataObject, T>(accessor, factory, predicate, writer);
-            return new GameDataList(itemName, entries, mode);
+            return new GameDataList(itemName, entries);
+        }
+
+        private class GameDataRowList : GameDataList, IGameDataRowList
+        {
+            public GameDataRowList(string itemName, IGameModelCollection<IGameDataObject> entries, GameDataSize nameSize)
+                : base(itemName, entries)
+            {
+                NameSize = nameSize;
+            }
+
+            public GameDataSize NameSize { get; }
+        }
+        public static IGameDataRowList RowList(IGameModelCollection<IGameDataObject> entries, string itemName = null, GameDataSize nameSize = GameDataSize.Medium)
+        {
+            return new GameDataRowList(itemName, entries, nameSize);
+        }
+        public static IGameDataRowList RowList<T>(ListAccessor<T> accessor, Func<T, IGameDataObject> factory, Func<T, bool> predicate = null, GameModelCollectionWriter<IGameDataObject, T> writer = null, string itemName = null, GameDataSize nameSize = GameDataSize.Medium)
+            where T : Model
+        {
+            var entries = new GameModelCollection<IGameDataObject, T>(accessor, factory, predicate, writer);
+            return new GameDataRowList(itemName, entries, nameSize);
         }
 
         private class GameDataInteger<T> : IGameDataInteger

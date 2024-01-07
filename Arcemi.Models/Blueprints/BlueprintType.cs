@@ -21,60 +21,60 @@ namespace Arcemi.Models
         public BlueprintTypeCategory Category { get; }
 
         public static IReadOnlyList<BlueprintType> AllVendorItems = new[] {
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemArmor,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentBelt,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentFeet,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGlasses,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGloves,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentHead,
-            PathfinderWotr.WotrBlueprintTypeProvider.Ingredient,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentNeck,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentRing,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentShirt,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentShoulders,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentUsable,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentWrist,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemShield,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemThiefTool,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemWeapon,
-            PathfinderWotr.WotrBlueprintTypeProvider.Item
+            PathfinderWotr.WotrBlueprintProvider.ItemArmor,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentBelt,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentFeet,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentGlasses,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentGloves,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentHead,
+            PathfinderWotr.WotrBlueprintProvider.Ingredient,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentNeck,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentRing,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentShirt,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentShoulders,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentUsable,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentWrist,
+            PathfinderWotr.WotrBlueprintProvider.ItemShield,
+            PathfinderWotr.WotrBlueprintProvider.ItemThiefTool,
+            PathfinderWotr.WotrBlueprintProvider.ItemWeapon,
+            PathfinderWotr.WotrBlueprintProvider.Item
         };
 
         private static ISet<BlueprintType> ItemAccessories { get; } = new HashSet<BlueprintType> {
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentBelt,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentFeet,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGlasses,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentGloves,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentHead,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentNeck,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentRing,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentShirt,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentShoulders,
-            PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentWrist
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentBelt,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentFeet,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentGlasses,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentGloves,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentHead,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentNeck,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentRing,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentShirt,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentShoulders,
+            PathfinderWotr.WotrBlueprintProvider.ItemEquipmentWrist
         };
 
-        public bool IsItemWeapon => Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemWeapon);
+        public bool IsItemWeapon => Equals(PathfinderWotr.WotrBlueprintProvider.ItemWeapon);
         public bool IsItemArmorOrShield => IsItemArmor || IsItemShield;
-        public bool IsItemArmor => Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemArmor);
-        public bool IsItemShield => Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemShield);
+        public bool IsItemArmor => Equals(PathfinderWotr.WotrBlueprintProvider.ItemArmor);
+        public bool IsItemShield => Equals(PathfinderWotr.WotrBlueprintProvider.ItemShield);
         public bool IsItemAccessory => ItemAccessories.Contains(this);
-        public bool IsItemIngredient => Equals(PathfinderWotr.WotrBlueprintTypeProvider.Ingredient);
-        public bool IsItemUsable => Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentUsable);
-        public bool IsItemNotable => Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemNote);
+        public bool IsItemIngredient => Equals(PathfinderWotr.WotrBlueprintProvider.Ingredient);
+        public bool IsItemUsable => Equals(PathfinderWotr.WotrBlueprintProvider.ItemEquipmentUsable);
+        public bool IsItemNotable => Equals(PathfinderWotr.WotrBlueprintProvider.ItemNote);
 
         public static ItemType GetItemType(string typeFullName)
         {
-            var type = new PathfinderWotr.WotrBlueprintTypeProvider().Get(typeFullName);
-            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintTypeProvider.ItemWeapon)) {
+            var type = new PathfinderWotr.WotrBlueprintProvider().GetType(typeFullName);
+            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintProvider.ItemWeapon)) {
                 return ItemType.Weapon;
             }
-            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintTypeProvider.ItemShield)) {
+            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintProvider.ItemShield)) {
                 return ItemType.Shield;
             }
-            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintTypeProvider.ItemArmor)) {
+            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintProvider.ItemArmor)) {
                 return ItemType.Armor;
             }
-            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentUsable)) {
+            if (ReferenceEquals(type, PathfinderWotr.WotrBlueprintProvider.ItemEquipmentUsable)) {
                 return ItemType.Usable;
             }
             return ItemType.Simple;
@@ -83,15 +83,15 @@ namespace Arcemi.Models
         public static bool IsStackableAtVendor(string typeFullName)
         {
             if (string.IsNullOrEmpty(typeFullName)) return false;
-            return IsStackable(new PathfinderWotr.WotrBlueprintTypeProvider().Get(typeFullName));
+            return IsStackable(new PathfinderWotr.WotrBlueprintProvider().GetType(typeFullName));
         }
 
         public static bool IsStackable(BlueprintType type)
         {
-            return type.Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemEquipmentUsable)
-                || type.Equals(PathfinderWotr.WotrBlueprintTypeProvider.Ingredient)
-                || type.Equals(PathfinderWotr.WotrBlueprintTypeProvider.Item)
-                || type.Equals(PathfinderWotr.WotrBlueprintTypeProvider.ItemThiefTool);
+            return type.Equals(PathfinderWotr.WotrBlueprintProvider.ItemEquipmentUsable)
+                || type.Equals(PathfinderWotr.WotrBlueprintProvider.Ingredient)
+                || type.Equals(PathfinderWotr.WotrBlueprintProvider.Item)
+                || type.Equals(PathfinderWotr.WotrBlueprintProvider.ItemThiefTool);
         }
 
         public override int GetHashCode()

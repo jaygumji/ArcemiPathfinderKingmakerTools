@@ -26,6 +26,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameUnitProgressionModel Progression { get; }
         public IGameUnitStatsModel Stats { get; }
         public IGameUnitAppearanceModel Appearance { get; }
+        public IGameUnitBodyModel Body { get; }
         public IGameDataObject Overview { get; }
 
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
@@ -47,6 +48,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     Race = new W40KRTGameUnitRaceModel(progression);
                 }
                 else if (part is UnitBodyPartItemModel body) {
+                    Body = new W40KRTGameUnitBodyModel(this, body);
                 }
                 else if (part is UnitViewSettingsPartItemModel viewSettings) {
                     Appearance = new W40KRTGameUnitAppearanceModel(viewSettings);
@@ -78,13 +80,14 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             if (Progression is null) Progression = new W40KRTGameUnitProgressionModel(this, null);
             if (Stats is null) Stats = new W40KRTGameUnitStatsModel(null);
             if (Appearance is null) Appearance = new W40KRTGameUnitAppearanceModel(null);
+            if (Body is null) Body = new W40KRTGameUnitBodyModel(this, null);
 
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitFeatEntry(x), x => x is W40KRTFeatFactItemModel, new W40KRTGameModelFeatCollectionWriter(Ref.UniqueId));
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitAbilityEntry(x), x => x is W40KRTAbilityFactItemModel, new W40KRTGameModelAbilityCollectionWriter());
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitBuffEntry(x), x => x is W40KRTBuffFactItemModel, new W40KRTGameModelBuffCollectionWriter());
 
             if (Type == UnitEntityType.Starship) {
-                var starshipTypes = Res.Blueprints.GetEntries(W40KRTBlueprintTypeProvider.Starship)
+                var starshipTypes = Res.Blueprints.GetEntries(W40KRTBlueprintProvider.Starship)
                     .Where(x => x.Name.Original.IEnd("Player_Starship"));
 
                 Overview = GameDataModels.Object("Starship", new IGameData[] {
@@ -102,25 +105,25 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 if (heretical is object) biographyProperties.Add(GameDataModels.Integer("Heretical", heretical, i => i.Rank - 1, (i, v) => i.Rank = v + 1, 0, int.MaxValue));
 
                 if (iconoclast is object) biographyProperties.Add(GameDataModels.Object("Iconoclast", new[] {
-                    GameDataModels.List("Choice", iconoclast.Sources, x => GameDataModels.Object(x.DisplayName(Res), new[] {
+                    GameDataModels.RowList(iconoclast.Sources, x => GameDataModels.Object(x.DisplayName(Res), new[] {
                         GameDataModels.Integer("Rank", x, sm => sm.PathRank, (sm, v) => sm.PathRank = v)
-                    }, x), x => x.PathRank > 0, new W40KRTSoulMarkSourceCollectionWriter(), GameDataListMode.Rows)
+                    }, x), x => x.PathRank > 0, new W40KRTSoulMarkSourceCollectionWriter(), itemName: "Choice")
                 }, isCollapsable: true));
                 if (dogmatic is object) biographyProperties.Add(GameDataModels.Object("Dogmatic", new[] {
-                    GameDataModels.List("Choice", dogmatic.Sources, x => GameDataModels.Object(x.DisplayName(Res), new[] {
+                    GameDataModels.RowList(dogmatic.Sources, x => GameDataModels.Object(x.DisplayName(Res), new[] {
                         GameDataModels.Integer("Rank", x, sm => sm.PathRank, (sm, v) => sm.PathRank = v)
-                    }, x), x => x.PathRank > 0, new W40KRTSoulMarkSourceCollectionWriter(), GameDataListMode.Rows)
+                    }, x), x => x.PathRank > 0, new W40KRTSoulMarkSourceCollectionWriter(), itemName: "Choice")
                 }, isCollapsable: true));
                 if (heretical is object) biographyProperties.Add(GameDataModels.Object("Heretical", new[] {
-                    GameDataModels.List("Choice", heretical.Sources, x => GameDataModels.Object(x.DisplayName(Res), new[] {
+                    GameDataModels.RowList(heretical.Sources, x => GameDataModels.Object(x.DisplayName(Res), new[] {
                         GameDataModels.Integer("Rank", x, sm => sm.PathRank, (sm, v) => sm.PathRank = v)
-                    }, x), x => x.PathRank > 0, new W40KRTSoulMarkSourceCollectionWriter(), GameDataListMode.Rows)
+                    }, x), x => x.PathRank > 0, new W40KRTSoulMarkSourceCollectionWriter(), itemName: "Choice")
                 }, isCollapsable: true));
 
                 biographyProperties.Add(GameDataModels.Object("Soul Mark", new[] {
-                    GameDataModels.List("Soul Mark", Ref.Facts.Items, x => GameDataModels.Object(x.DisplayName(Res), new[] {
+                    GameDataModels.RowList(Ref.Facts.Items, x => GameDataModels.Object(x.DisplayName(Res), new[] {
                         GameDataModels.Integer("Rank", x, sm => sm.GetAccessor().Value<int>("Rank"))
-                    }, x), x => x is W40KRTSoulMarkFactItemModel, mode: GameDataListMode.Rows) // new W40KRTGameUnitSoulMarkCollectionWriter(model.UniqueId)
+                    }, x), x => x is W40KRTSoulMarkFactItemModel, new W40KRTGameUnitSoulMarkCollectionWriter(unit.UniqueId), itemName: "Soul Mark")
                 }, isCollapsable: true));
 
                 Sections = new IGameDataObject[] {

@@ -69,20 +69,10 @@ else if (Data is IGameDataList listData) {
                 </div>
             </div>
         }
-        @if (listData.Mode == GameDataListMode.Full) {
-            <AccordionContainer>
-                @foreach (var listEntry in listData.Entries) {
-                    <Accordion HeaderText="@listEntry.Name">
-                        <div class="row">
-                            <GameData Data="@listEntry" Parent="@listData" ShowHeader="false"></GameData>
-                        </div>
-                    </Accordion>
-                }
-            </AccordionContainer>
-        }
-        else if (listData.Mode == GameDataListMode.Rows) {
+        @if (listData is IGameDataRowList rowListData) {
             @if (listData.Entries.Count > 0) {
-                var sizeLeft = 4;
+                var sizeLeft = 12 - SizeValueOf(rowListData.NameSize);
+                if (listData.Entries.IsRemoveEnabled) sizeLeft -= 2;
                 var first = listData.Entries.First();
                 var props = new List<int>();
 
@@ -101,7 +91,9 @@ else if (Data is IGameDataList listData) {
                                 @if (sizeLeft == 0) break;
                             }
                         }
-                        <div class="col-md-2"></div>
+                        @if (listData.Entries.IsRemoveEnabled) {
+                            <div class="col-md-2"></div>
+                        }
                     </div>
                     @foreach (var listEntry in listData.Entries) {
                         <div class="row">
@@ -110,15 +102,28 @@ else if (Data is IGameDataList listData) {
                                 var prop = listEntry.Properties[index];
                                 <GameData Data="@prop" Parent="@listData" ShowHeader="false"></GameData>
                             }
-                            <div class="col-md-2">
-                                <button class="btn btn-sm btn-danger" @onclick="() => listData.Entries.Remove(listEntry)">
-                                    <span class="oi oi-trash"></span>
-                                </button>
-                            </div>
+                            @if (listData.Entries.IsRemoveEnabled) {
+                                <div class="col-md-2">
+                                    <button class="btn btn-sm btn-danger" @onclick="() => listData.Entries.Remove(listEntry)">
+                                        <span class="oi oi-trash"></span>
+                                    </button>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
             }
+        }
+        else {
+            <AccordionContainer>
+                @foreach (var listEntry in listData.Entries) {
+                    <Accordion HeaderText="@listEntry.Name">
+                        <div class="row">
+                            <GameData Data="@listEntry" Parent="@listData" ShowHeader="false"></GameData>
+                        </div>
+                    </Accordion>
+                }
+            </AccordionContainer>
         }
     </div>
 }
@@ -209,9 +214,11 @@ else if (Data is IGameDataObject objData) {
         }
     }
 
-    private int SizeValueOf(IGameDataValue dataValue)
+    private int SizeValueOf(IGameDataValue dataValue) => SizeValueOf(dataValue.Size);
+
+    private int SizeValueOf(GameDataSize size)
     {
-        switch (dataValue.Size) {
+        switch (size) {
             case GameDataSize.Small: return 2;
             case GameDataSize.Medium: return 4;
             case GameDataSize.Large: return 6;

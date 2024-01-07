@@ -24,6 +24,7 @@ namespace Arcemi.Models.PathfinderWotr
         public IReadOnlyList<IGameUnitUltimateProgressionEntry> Ultimates { get; }
         public IReadOnlyList<IGameUnitClassProgressionEntry> Classes { get; }
         public IGameModelCollection<IGameUnitSelectionProgressionEntry> Selections { get; } = GameModelCollection<IGameUnitSelectionProgressionEntry>.Empty;
+        public IGameDataObject Data { get; }
 
         public bool IsSupported => true;
 

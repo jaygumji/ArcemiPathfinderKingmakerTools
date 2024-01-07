@@ -3,30 +3,35 @@
 <div class="character-equipment-slot">
     <div class="row">
         <div class="col-md-2 item-icon">
-            <img src="@(Item is object ? ItemEntry.IconUrl : ItemType.GetIconUrl())" alt="@(Item is object ? Item.DisplayName(Resources) : ItemType.DisplayName)" />
+            <img src="@(ItemEntry is object ? ItemEntry.IconUrl : ItemType.GetIconUrl())" alt="@(ItemEntry is object ? ItemEntry.Name : ItemType.DisplayName)" />
         </div>
         <div class="col-md-10">
             <div class="data-header">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <label class="form-label">@Name</label>
                     </div>
-                    <div class="col-md-4">
-                        @if (Item is object) {
-                            <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(Item)">
-                                <span class="oi oi-paperclip"></span>
-                            </button>
-                            @if (ItemEntry.CanEdit) {
-                                <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => Callback?.Invoke(this, new CharacterEquipmentSlotItemExecuteArgs(Item, isEdit: true))">
-                                    <span class="oi oi-pencil"></span>
+                    <div class="col-md-6">
+                        @if (ItemEntry is object) {
+                            <div class="btn-toolbar text-nowrap" role="toolbar" aria-label="Equipment tools">
+                                <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(ItemEntry)">
+                                    <span class="oi oi-paperclip"></span>
                                 </button>
-                            }
+                                <button class="btn btn-sm btn-secondary" title="@(ItemEntry.IsLocked ? "Unlock" : "Lock")" @onclick="() => ItemEntry.IsLocked = !ItemEntry.IsLocked">
+                                    <span class="oi @(ItemEntry.IsLocked ? "oi-lock-locked" : "oi-lock-unlocked")"></span>
+                                </button>
+                                @if (ItemEntry.CanEdit) {
+                                    <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => Callback?.Invoke(this, new CharacterEquipmentSlotItemExecuteArgs(ItemEntry, isEdit: true))">
+                                        <span class="oi oi-pencil"></span>
+                                    </button>
+                                }
+                            </div>
                         }
                     </div>
                 </div>
             </div>
             <div class="data-content">
-                @ItemName
+                @((ItemEntry?.Name) ?? (Slot.ItemRef) ?? "-")
             </div>
         </div>
     </div>
@@ -37,39 +42,36 @@
     public string Name { get; set; }
 
     [Parameter]
-    public HoldingSlotModel HoldingSlot { get; set; }
+    public IGameUnitEquippedEntry Slot { get; set; }
 
-    [Parameter]
-    public UnitEntityModel Unit { get; set; }
+    [CascadingParameter]
+    protected IGameInventoryModel Inventory { get; set; }
 
     [Parameter]
     public BlueprintTypeId ItemTypeId { get; set; }
 
-    private BlueprintType _ItemType;
-    public BlueprintType ItemType => _ItemType ?? (_ItemType = Resources.Blueprints.TypeProvider.Get(ItemTypeId));
-
-    private Arcemi.Models.PathfinderWotr.WotrGameItemEntry _ItemEntry;
-    public IGameItemEntry ItemEntry => _ItemEntry ?? (_ItemEntry = new Arcemi.Models.PathfinderWotr.WotrGameItemEntry(Item));
+    private BlueprintType ItemType;
+    private IGameItemEntry ItemEntry;
 
     [Parameter]
     public Func<CharacterEquipmentSlot, CharacterEquipmentSlotItemExecuteArgs, Task> Callback { get; set; }
 
-    private ItemModel Item
+    protected override void OnInitialized()
     {
-        get {
-            if (HoldingSlot is null) return null;
-            if (HoldingSlot.Item is object) return HoldingSlot.Item;
-            if (HoldingSlot.ItemRef.HasValue()) {
-                if (Unit is null) return null;
-                return Unit.Descriptor.Inventory.Items.FirstOrDefault(i => i.UniqueId.Eq(HoldingSlot.ItemRef));
-            }
-            return null;
+        ItemType = Resources.Blueprints.GetType(ItemTypeId);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Slot.ItemRef.HasValue()) {
+            ItemEntry = Inventory.FindEquipped(Slot.ItemRef);
+        }
+        else {
+            ItemEntry = null;
         }
     }
 
-    private string ItemName => (Item?.DisplayName(Resources)) ?? "-";
-
-    private void CopyBlueprintIdentifier(ItemModel i)
+    private void CopyBlueprintIdentifier(IGameItemEntry i)
     {
         ElectronNET.API.Electron.Clipboard.WriteText(i.Blueprint);
     }
