@@ -12,13 +12,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         {
             Owner = owner;
             Model = model;
-            Selections = new GameModelCollection<IGameUnitSelectionProgressionEntry, UnitProgressionSelectionOfPartModel>(model?.Selections, s => new W40KRTGameUnitSelectionProgressionEntry(owner, s), s => s.Level == 0, new W40KRTGameUnitSelectionProgressionEntryWriter(owner));
+            Selections = new GameModelCollection<IGameUnitSelectionProgressionEntry, UnitProgressionSelectionOfPartModel>(model?.Selections, s => new W40KRTGameUnitSelectionProgressionEntry(owner, s), writer: new W40KRTGameUnitSelectionProgressionEntryWriter(owner));
             Data = GameDataModels.Object("All choices", new[] {
-                GameDataModels.RowList(model?.Selections, s => GameDataModels.Object(
-                    string.Concat(Res.Blueprints.GetNameOrBlueprint(s.Path), " > ", Res.Blueprints.GetNameOrBlueprint(s.Selection)), new IGameData[] {
-                    GameDataModels.Text("Feature", s, x => Res.Blueprints.GetNameOrBlueprint(x.Feature), size: GameDataSize.Medium),
-                    GameDataModels.Integer("Level", s, x => W40KRTArchetypes.ActualLevel(x.Path, x.Level), size: GameDataSize.Small),
-                }), writer: new W40KRTGameUnitProgressionCollectionWriter(), nameSize: GameDataSize.Medium)
+                GameDataModels.RowList(Selections.Project(x => (IGameDataObject)x), nameSize: GameDataSize.Medium)
             }, isCollapsable: true);
         }
 
@@ -44,14 +40,14 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         {
             var value = Model.CharacterLevel - 1;
             Model.CharacterLevel = value;
-            var oldSelections = Model.Selections.Where(x => x.Level > 0 && W40KRTArchetypes.ActualLevel(x.Path, x.Level) > value).ToArray();
+            var oldSelections = Selections.Where(x => x.Level > value).Cast<W40KRTGameUnitSelectionProgressionEntry>().ToArray();
             var featIds = new HashSet<string>(oldSelections.Select(x => x.Feature)
                 .Concat(W40KRTArchetypes.GetBlueprintsHigherThan(value)), StringComparer.Ordinal);
             var feats = Owner.Feats.Where(f => featIds.Contains(f.Blueprint)).ToArray();
 
             foreach (var selection in oldSelections) {
-                Model.Selections.Remove(selection);
-                Logger.Current.Information($"Removed selection {Res.Blueprints.GetNameOrBlueprint(selection.Selection)}, Feature {selection.Feature}, Level {selection.Level}, Rank {selection.Rank}");
+                Selections.Remove(selection);
+                Logger.Current.Information($"Removed selection {selection.Name}, Feature {Res.Blueprints.GetNameOrBlueprint(selection.Feature)}, Level {selection.Ref.Level}, Rank {selection.Ref.Rank}");
             }
             foreach (var feat in feats) {
                 var match = (

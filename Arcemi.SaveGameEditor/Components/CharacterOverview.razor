@@ -95,11 +95,9 @@
         </div>
 
         @if (Unit.Progression.IsSelectionsRepairable) {
-            <div class="row">
-                <div class="col-md-12 alert alert-info">
-                    Missing initial progression selections on character, do you wish to attempt a repair?
-                </div>
-            </div>
+            <AlertInfo>
+                Missing initial progression selections on character, do you wish to attempt a repair?
+            </AlertInfo>
             <div class="row">
                 <div class="col-md-3">
                     <button class="btn btn-info w-100" @onclick="() => Unit.Progression.RepairSelections()" title="Repair initial progression selections">
@@ -110,14 +108,18 @@
             </div>
         }
         @if (Unit.Progression.Selections.Count > 0) {
-            <div class="row">
-                <div class="col-md-12 alert alert-info">
+            <AlertInfo>
+                <p>
                     Changing the career path (Archetype) is best used either by doing it just after a respec, or at the same time change the level of the character to level 1.
                     If you change it on a character above level 1 without changing the level you will need to do manual changes or the game UI can be locked.
-                </div>
-            </div>
+                </p>
+                <p>
+                    Note that when changing career path (Archetype) on companions, some selections might be locked during level up and you need to select something else.
+                    You need to go to Facts > Features and change this manually afterwards or accept that some selections can't be changed.
+                </p>
+            </AlertInfo>
             <div class="row">
-                @foreach (var sel in Unit.Progression.Selections) {
+                @foreach (var sel in Unit.Progression.Selections.Where(s => s.IsCreation)) {
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body overflow-hidden text-nowrap">

@@ -5,16 +5,23 @@
     <p class="alert alert-info">Character has no appearance data</p>
 }
 else {
-<p class="alert alert-info">
-    Easiest way to change appearance is to use appearance codes
-</p>
-<AccordionContainer>
-    @foreach (var doll in Appearance.Dolls) {
-        <Accordion HeaderText="@doll.Name" StartAsExpanded="@(doll == Appearance.Dolls.First())">
-            <CharacterDollData DollData="doll" />
-        </Accordion>
-    }
-</AccordionContainer>
+    <AlertInfo>
+        <p>
+            We're limited to what the game allows, which is what you are allowed to change during character creation.
+            Base outfit is selected by the game depending on the character class/occupation.
+        </p>
+        <p>
+            The easiest way to change the appearance of a character is to create a character in game, either via new game or via a mercenary.
+            Then open the save in the editor and copy the code here, and then import the code on the character you want the appearance on
+        </p>
+    </AlertInfo>
+    <AccordionContainer>
+        @foreach (var doll in Appearance.Dolls) {
+            <Accordion HeaderText="@doll.Name" StartAsExpanded="@(doll == Appearance.Dolls.First())">
+                <CharacterDollData DollData="doll" />
+            </Accordion>
+        }
+    </AccordionContainer>
 }
 
 @code {

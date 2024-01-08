@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
-    internal class W40KRTGameUnitSelectionProgressionEntry : IGameUnitSelectionProgressionEntry
+    internal class W40KRTGameUnitSelectionProgressionEntry : IGameUnitSelectionProgressionEntry, IGameDataObject
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
         public W40KRTGameUnitSelectionProgressionEntry(IGameUnitModel owner, UnitProgressionSelectionOfPartModel selection)
@@ -27,9 +27,21 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 IsReadOnly = true;
             }
             ((List<BlueprintOption>)Options).Sort((l, r) => StringComparer.CurrentCultureIgnoreCase.Compare(l.Name, r.Name));
+            _Properties = new IGameData[] {
+                GameDataModels.Text("Feature", Ref, x => Res.Blueprints.GetNameOrBlueprint(x.Feature), size: GameDataSize.Medium),
+                GameDataModels.Integer("Level", Ref, x => W40KRTArchetypes.ActualLevel(x.Path, x.Level), size: GameDataSize.Small)
+            };
         }
 
+        string IGameDataObject.Name => string.Concat(Res.Blueprints.GetNameOrBlueprint(Ref.Path), " > ", Res.Blueprints.GetNameOrBlueprint(Ref.Selection));
+        private readonly IReadOnlyList<IGameData> _Properties;
+        IReadOnlyList<IGameData> IGameDataObject.Properties => _Properties;
+        bool IGameDataObject.IsCollapsable => false;
+        Model IGameDataObject.Ref => Ref;
+
         public string Name { get; }
+        public int Level => W40KRTArchetypes.ActualLevel(Ref.Path, Ref.Level);
+        public bool IsCreation => Ref.Level == 0;
 
         public string Feature
         {

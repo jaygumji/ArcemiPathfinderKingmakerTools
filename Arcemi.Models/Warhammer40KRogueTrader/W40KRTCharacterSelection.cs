@@ -6,10 +6,11 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     internal class W40KRTCharacterSelectionOption : BlueprintOption
     {
-        public W40KRTCharacterSelectionOption(string id, string name, string subSelectionId = null)
+        public W40KRTCharacterSelectionOption(string id, string name, string subSelectionId = null, IReadOnlyList<string> feats = null)
             : base(id, name)
         {
             SubSelectionId = subSelectionId;
+            Feats = feats ?? Array.Empty<string>();
         }
 
         public void Select(IGameUnitSelectionProgressionEntry selectionEntry)
@@ -29,6 +30,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 var feat = owner.Feats.FirstOrDefault(f => f.Blueprint.Eq(Id)) ?? owner.Feats.AddByBlueprint(Id);
                 feat.Rank = count;
             }
+            foreach (var newExtraFeat in Feats) {
+                owner.Feats.AddByBlueprint(newExtraFeat);
+            }
 
             if (oldFeature.HasValue()) {
                 var oldCount = owner.Progression.Selections.Count(x => x.Feature.Eq(oldFeature));
@@ -40,15 +44,32 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                         feat.Rank = oldCount;
                 }
 
-                if (W40KRTCharacterSelection.TryGet(selection.Selection, out var oldCharSel)) {
-                    var option = oldCharSel.Options.FirstOrDefault(o => o.Id.Eq(oldFeature));
-                    if (option is object && option.SubSelectionId.HasValue()) {
-                        var subSelection = owner.Progression.Selections.FirstOrDefault(s => ((W40KRTGameUnitSelectionProgressionEntry)s).Ref.Selection.Eq(option.SubSelectionId));
-                        if (subSelection is object) {
-                            owner.Progression.Selections.Remove(subSelection);
+                void RemoveOldOption(string selectionId, string featureId)
+                {
+                    if (W40KRTCharacterSelection.TryGet(selectionId, out var charSel)) {
+                        var option = charSel.Options.FirstOrDefault(o => o.Id.Eq(featureId));
+                        if (option is object) {
+                            if (option.SubSelectionId.HasValue()) {
+                                var subSelection = owner.Progression.Selections.FirstOrDefault(s => ((W40KRTGameUnitSelectionProgressionEntry)s).Ref.Selection.Eq(option.SubSelectionId));
+                                if (subSelection is object) {
+                                    RemoveOldOption(option.SubSelectionId, subSelection.Feature);
+                                    owner.Progression.Selections.Remove(subSelection);
+                                    var subSelectionFeat = owner.Feats.FirstOrDefault(f => f.Blueprint.Eq(subSelection.Feature));
+                                    if (subSelectionFeat is object) {
+                                        owner.Feats.Remove(subSelectionFeat);
+                                    }
+                                }
+                            }
+                            foreach (var extraFeatId in option.Feats) {
+                                var extraFeat = owner.Feats.FirstOrDefault(f => f.Blueprint.Eq(extraFeatId));
+                                if (extraFeat is object) {
+                                    owner.Feats.Remove(extraFeat);
+                                }
+                            }
                         }
                     }
                 }
+                RemoveOldOption(selection.Selection, oldFeature);
             }
             if (SubSelectionId.HasValue()) {
                 var subSelection = owner.Progression.Selections.FirstOrDefault(s => ((W40KRTGameUnitSelectionProgressionEntry)s).Ref.Selection.Eq(SubSelectionId));
@@ -62,6 +83,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         }
 
         public string SubSelectionId { get; }
+        public IReadOnlyList<string> Feats { get; }
         public static IReadOnlyList<W40KRTCharacterSelectionOption> AllAttributes { get; } = new[] {
             new W40KRTCharacterSelectionOption("3ea34afcda634bcebb7bf42882374418", "Weapon Skill"),
             new W40KRTCharacterSelectionOption("ffb8b3b1805e49ad8284a135193a4d1e", "Ballistic Skill"),
@@ -90,26 +112,42 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IReadOnlyList<W40KRTCharacterSelectionOption> Options { get; }
 
         public static W40KRTCharacterSelection Homeworld { get; } = new W40KRTCharacterSelection("Homeworld", 0, "10fefb03369d430e88b65aabaf68deac", new[] {
-            new W40KRTCharacterSelectionOption("6efb99601c094cbd94d4e6e29dab0970", "Void born"),
+            new W40KRTCharacterSelectionOption("6efb99601c094cbd94d4e6e29dab0970", "Void born", feats: new[] {
+                "aaf4cbeaccf1465b80744848c3b21563", // Fortune
+            }),
             new W40KRTCharacterSelectionOption("e21cd160c88649c39b6c693078c384ef", "Unknown"),
-            new W40KRTCharacterSelectionOption("f41ee79802b04d448daec83dd5e8163f", "Leira", "c45cef90b495464591b2fab45f5dc527"),
+            new W40KRTCharacterSelectionOption("f41ee79802b04d448daec83dd5e8163f", "Leira", "c45cef90b495464591b2fab45f5dc527", new[] {
+                "1bd931b93e9d4031bbc25b2e3257b4c6", // Humanity's Finest
+            }),
             new W40KRTCharacterSelectionOption("d7953c4cbf47463090ee3025ef390063", "Commoragh"),
             //new W40KRTCharacterSelectionOption("def5bfa5b1a947f6a1764029f06b58f1", "Forge World", "38a36879cbe44b9d982a9014cf9e29ed"), // Invalid???
-            new W40KRTCharacterSelectionOption("6ba65fc6da1e40cf929d922f5b021a52", "Forge World", "38a36879cbe44b9d982a9014cf9e29ed"),
+            new W40KRTCharacterSelectionOption("6ba65fc6da1e40cf929d922f5b021a52", "Forge World", "38a36879cbe44b9d982a9014cf9e29ed", feats: new[] {
+                "f021aa8eaee44268a674a9a9b748395c", // Forged Purpose
+            }),
             new W40KRTCharacterSelectionOption("a6e871aa095f4a1fa813fab77658ab78", "Craft World"),
-            new W40KRTCharacterSelectionOption("5ab7897d0830402ba9809eca3df21d58", "Death World"),
+            new W40KRTCharacterSelectionOption("5ab7897d0830402ba9809eca3df21d58", "Death World", feats: new[] {
+                "56513668e80d49c1ac337b170b863d45", // Survival Instinct
+            }),
             new W40KRTCharacterSelectionOption("2ef8b22a98c049a5b4f44864c1d1b642", "Fenris"),
-            new W40KRTCharacterSelectionOption("b504a419af314de1ab85c86bc8b54907", "Fortress World"),
-            new W40KRTCharacterSelectionOption("442ffe5d7db542b39f1f6f55e254c621", "Hive World"),
-            new W40KRTCharacterSelectionOption("af0650bf35124dd2ae16c87f7d376bdc", "Imperial World Feudal", "c45cef90b495464591b2fab45f5dc527"),
-            new W40KRTCharacterSelectionOption("927671f69b384423af7c5faa1fa1dbd5", "Imperial World", "c45cef90b495464591b2fab45f5dc527")
+            new W40KRTCharacterSelectionOption("b504a419af314de1ab85c86bc8b54907", "Fortress World", feats: new[] {
+                "bfca260991b94d64adf2a09b1d490254", // Never Stop Shooting
+            }),
+            new W40KRTCharacterSelectionOption("442ffe5d7db542b39f1f6f55e254c621", "Hive World", feats: new[] {
+                "33ece001a1ec47c19dca4ddc8435c249", // Strength in Numbers
+            }),
+            new W40KRTCharacterSelectionOption("af0650bf35124dd2ae16c87f7d376bdc", "Imperial World Feudal", "c45cef90b495464591b2fab45f5dc527", new[] {
+                "1bd931b93e9d4031bbc25b2e3257b4c6", // Humanity's Finest
+            }),
+            new W40KRTCharacterSelectionOption("927671f69b384423af7c5faa1fa1dbd5", "Imperial World", "c45cef90b495464591b2fab45f5dc527", new[] {
+                "1bd931b93e9d4031bbc25b2e3257b4c6", // Humanity's Finest
+            })
         });
 
         public static W40KRTCharacterSelection ForgeWorld { get; } = new W40KRTCharacterSelection("Forge World", 0, "38a36879cbe44b9d982a9014cf9e29ed", new[] {
-                new W40KRTCharacterSelectionOption("96fd88d5d1fe4ba1a35746cde88aaf3c", "Analytics System"), // ForgeWorld_ForgedForPurpose_AnalyticsSystem_Feature
-                new W40KRTCharacterSelectionOption("eda2be0dda7841ce9cce6186ef6e0ce1", "Locomotion System"), // ForgeWorld_ForgedForPurpose_LocomotionSystem_Feature
-                new W40KRTCharacterSelectionOption("08d6f8a4ebe143fe995582bb5c02072b", "Subskin Armour"), // ForgeWorld_ForgedForPurpose_SubskinArmour_Feature
-            });
+            new W40KRTCharacterSelectionOption("96fd88d5d1fe4ba1a35746cde88aaf3c", "Analytics System"), // ForgeWorld_ForgedForPurpose_AnalyticsSystem_Feature
+            new W40KRTCharacterSelectionOption("eda2be0dda7841ce9cce6186ef6e0ce1", "Locomotion System"), // ForgeWorld_ForgedForPurpose_LocomotionSystem_Feature
+            new W40KRTCharacterSelectionOption("08d6f8a4ebe143fe995582bb5c02072b", "Subskin Armour"), // ForgeWorld_ForgedForPurpose_SubskinArmour_Feature
+        });
 
         public static W40KRTCharacterSelection ImperialWorld { get; } = new W40KRTCharacterSelection("Imperial World", 0, "c45cef90b495464591b2fab45f5dc527", new[] {
             new W40KRTCharacterSelectionOption("c4d908b662184bc9b6d110ef5abba8ba", "Humanity's Finest - Strength"),
@@ -122,24 +160,74 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         });
 
         public static W40KRTCharacterSelection Occupation { get; } = new W40KRTCharacterSelection("Occupation", 0, "ff001e095e7240ac99b40ceb2bdadf0a", new[] {
-            new W40KRTCharacterSelectionOption("1518d1434ed646039215da3fdda6b096", "Sanctioned Psyker", "912495ad4ffc4c4da72819d2602f7976"),
-            new W40KRTCharacterSelectionOption("395a77ff6fd344f5b8b4a0cc0def06dc", "Unsanctioned Psyker"),
-            new W40KRTCharacterSelectionOption("a69ab12837ae4bfea6bb56f834892d7f", "Space Marine"),
-            new W40KRTCharacterSelectionOption("4b908491051a4f36b9703b95e048a5a3", "Astra Militarum"),
-            new W40KRTCharacterSelectionOption("00b183680643424abe015263aac81c5b", "Commissar"),
-            new W40KRTCharacterSelectionOption("8fab55c9130a4ae0a745f4fa1674c5df", "Criminal"),
-            new W40KRTCharacterSelectionOption("d840a5dc947546e0b4ac939287191fd8", "Ministorum Crusader"),
-            new W40KRTCharacterSelectionOption("962c310fd1664ae996c759e4d11a2d88", "Navy Officer"),
-            new W40KRTCharacterSelectionOption("06180233245249eea90d222bb1c13f00", "Nobility"),
+            new W40KRTCharacterSelectionOption("1518d1434ed646039215da3fdda6b096", "Sanctioned Psyker", "912495ad4ffc4c4da72819d2602f7976", feats: new [] {
+                "511f7b772a894c16a3150236abb8cf0f", // Psy rating 0
+                "8ec7af173e174f269460f11528828bb0", // Sanctioned Psyker Feature
+            }),
+            new W40KRTCharacterSelectionOption("395a77ff6fd344f5b8b4a0cc0def06dc", "Unsanctioned Psyker", feats: new [] {
+                "511f7b772a894c16a3150236abb8cf0f", // Psy rating 0
+                "6b374c5f7d2a48aaa705865971c021ec", // Advice and Guidance
+                "57296ed944cf48ca81f0088953b80a36", // Power Conduit
+                "6f138a487f0140ee94c171547f982b68", // Thriving in Chaos
+                "c074bd8a210743f48cbb536e3c7c677f", // Telepathy
+                "b78dfb1ac4984a8298369004019e95d7", // Telepathy > Psychic Scream
+                "196d258a786c42e68eb4a468efb0089e", // Divination
+                "e98b254ea4db498c81f8e925adf959b5", // Divination > Forewarning
+            }),
+            new W40KRTCharacterSelectionOption("a69ab12837ae4bfea6bb56f834892d7f", "Space Marine", feats: new[] {
+                "637bbaf5fb144d739aa3638dab575719", // Innate ability
+                "950565a69d144391897cdc0024747755", // Adeptus Astartes Equipment
+                "affa5fdded7e404b910b990f5d344a8c", // Adeptus Astartes Equipment
+                "e4ca8c3dfa934776a624dfd5e7726374", // Space Marine Immunity
+            }),
+            new W40KRTCharacterSelectionOption("4b908491051a4f36b9703b95e048a5a3", "Astra Militarum Commander", feats: new[] {
+                "e6a279ca5979435fbb0d39d9d60d7f8a", // Regimental Tactics
+            }),
+            new W40KRTCharacterSelectionOption("00b183680643424abe015263aac81c5b", "Commissar", feats: new[] {
+                "cdbe5dd63fd84f3fb20f37e7ad043f6e", // At All Costs!
+            }),
+            new W40KRTCharacterSelectionOption("8fab55c9130a4ae0a745f4fa1674c5df", "Crime Lord", feats: new[] {
+                "881def61ed1e41d183e4d2788059c43a", // Sure-Fire Plan
+            }),
+            new W40KRTCharacterSelectionOption("d840a5dc947546e0b4ac939287191fd8", "Ministorum Priest", feats: new[] {
+                "33638b28fa5e49748f4a7a5eed5ec035", // War Hymn
+            }),
+            new W40KRTCharacterSelectionOption("962c310fd1664ae996c759e4d11a2d88", "Navy Officer", feats: new[] {
+                "2f973dbd24184ef5bf5240d2512ccf70", // Brace for Impact!
+            }),
+            new W40KRTCharacterSelectionOption("06180233245249eea90d222bb1c13f00", "Noble", feats: new[] {
+                "b826d0a5600e44f7b6272750584bfca0", // You. Serve. Me
+            }),
             new W40KRTCharacterSelectionOption("abe45adeb7d7415ca96df8fc6cd1acd2", "Kabalite Dracon"),
-            new W40KRTCharacterSelectionOption("33497e0597e64570bb5cf78b19a95d96", "Ranger"),
-            new W40KRTCharacterSelectionOption("8e0cfa654ec24dbbba9e80c27433cc8e", "Navigator"),
+            new W40KRTCharacterSelectionOption("33497e0597e64570bb5cf78b19a95d96", "Ranger", feats: new[] {
+                "48139b5d8510426fa2d07a55f99236f5", // In My Sights
+            }),
+            new W40KRTCharacterSelectionOption("8e0cfa654ec24dbbba9e80c27433cc8e", "Navigator", feats: new[] {
+                "e8164ac219f44e69b95de4853569da3b", // Lidless Stare
+            }),
             new W40KRTCharacterSelectionOption("31d25d8b646c454a8fbc17bc8f775c2c", "Tech Priest"),
-            new W40KRTCharacterSelectionOption("b53037d92c984cf3921df309241e48ca", "Abelard (Navy Officer)"),
-            new W40KRTCharacterSelectionOption("b6962fcc54054af98961dd9a6c0f9e18", "Argenta (Adepta Sororitas)"),
-            new W40KRTCharacterSelectionOption("777d9f9c570443b59120e78f2d9dd515", "Pasqual (Tech-Priest)"),
-            new W40KRTCharacterSelectionOption("176a50ee98944e939d3959841e3eb269", "Heinrix (Sanctioned Psyker)"),
-            new W40KRTCharacterSelectionOption("aa932c209cdd43c9bb749d5380fc126e", "Jae (Cold Trader)"),
+            new W40KRTCharacterSelectionOption("b53037d92c984cf3921df309241e48ca", "Abelard (Navy Officer)", feats: new[] {
+                "2f973dbd24184ef5bf5240d2512ccf70", // Brace for Impact!
+            }),
+            new W40KRTCharacterSelectionOption("b6962fcc54054af98961dd9a6c0f9e18", "Argenta (Adepta Sororitas)", feats: new[] {
+                "579f6fc6781d49c991e695497b446cf2", // Furious Recital
+            }),
+            new W40KRTCharacterSelectionOption("777d9f9c570443b59120e78f2d9dd515", "Pasqual (Tech-Priest)", feats: new[] {
+                "8ebee7c987814cea828d283e424d126a", // Machine Spirit Banishment
+                "a01295a67a9a46579e46c3073d6a9aa9", // Machine Spirit Communion
+                "41c2a5b622f6407db34536e301695496", // Reject the Flesh 1
+            }),
+            new W40KRTCharacterSelectionOption("176a50ee98944e939d3959841e3eb269", "Heinrix (Sanctioned Psyker)", feats: new[] {
+                "7d7c81b2c0d641adb6c0e0df60c2ed11", // Biomancy
+                "3156e8c03317444fb5a3097d408273d1", // Biomancy > Iron Arm
+            }),
+            new W40KRTCharacterSelectionOption("aa932c209cdd43c9bb749d5380fc126e", "Jae (Cold Trader)", feats : new[] {
+                "8689a226a7bf44f7ad3dd26b9704c1b6", // Cold Trader's Acumen
+                "752f9336807a42028c464584585a17e4", // Gunslinger
+                "365ad1a4ef1b4a47be74509c33b2be3b", // Aeldari Weapon Proficiency
+                "b5fe044e47604f47bf99ebd14440b579", // Drukhari Weapon Proficiency
+                "1b26e486d9974b9ca26d055413fb3e01", // Dual-Weapon Combat
+            }),
 
             //new W40KRTCharacterSelectionOption("53970cc124ea433f93baa41028a8781a", "Comissar (Duplicate?)"),
             //new W40KRTCharacterSelectionOption("b23606b3443b42e490951c03203e0a10", "Criminal (Duplicate?)"),
@@ -149,12 +237,27 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         });
 
         public static W40KRTCharacterSelection SanctionedPsyker { get; } = new W40KRTCharacterSelection("Sanctioned Psyker", 0, "912495ad4ffc4c4da72819d2602f7976", new[] {
-            new W40KRTCharacterSelectionOption("89473c8809654dcfa003d1c1e6399c70", "Biomancer"),
-            new W40KRTCharacterSelectionOption("c06c977585be4dea87cce167188ab68c", "Divinator"),
-            new W40KRTCharacterSelectionOption("18647a9ed2ea4d98b950cfb8cae7c91a", "Pyromancer"),
+            new W40KRTCharacterSelectionOption("89473c8809654dcfa003d1c1e6399c70", "Biomancer", feats: new[] {
+                "5fa599e5cffc4bab93d6b07f68e0e6ba", // Biomancy
+                "3156e8c03317444fb5a3097d408273d1", // Biomancy > Iron Arm
+            }),
+            new W40KRTCharacterSelectionOption("c06c977585be4dea87cce167188ab68c", "Divinator", feats: new[] {
+                "196d258a786c42e68eb4a468efb0089e", // Divination
+                "e98b254ea4db498c81f8e925adf959b5", // Divination > Forewarning
+            }),
+            new W40KRTCharacterSelectionOption("18647a9ed2ea4d98b950cfb8cae7c91a", "Pyromancer", feats: new[] {
+                "b4d60f6a91b94d02840a58fd9df863cd", // Pyromancy
+                "f5720a225be24bed8d1ed62006cd18aa", // Pyromancy > Ignite
+            }),
             //new W40KRTCharacterSelectionOption("4c06ad653cbd47839a004008dcd7453d", "Pyromancy"), //???
-            new W40KRTCharacterSelectionOption("8ecd0d7d642e4e73a40e02ad781bfafa", "Sanctic"),
-            new W40KRTCharacterSelectionOption("3180fee0775146bc905322a318e93600", "Telepath"),
+            new W40KRTCharacterSelectionOption("8ecd0d7d642e4e73a40e02ad781bfafa", "Sanctic", feats: new [] {
+                "a6a38016b90148878593d977d96b8264", // Sanctic Powers
+                "3a7f9607c84d4f2caa97e59b2b5e2afe", // Sanctic > Word of the Emperor
+            }),
+            new W40KRTCharacterSelectionOption("3180fee0775146bc905322a318e93600", "Telepath", feats: new[] {
+                "c074bd8a210743f48cbb536e3c7c677f", // Telepathy
+                "b78dfb1ac4984a8298369004019e95d7", // Telepathy > Psychic Scream
+            }),
             //new W40KRTCharacterSelectionOption("3bc17e7685f343a39b6a800f7f95a623", "Telepathy"), //???
         });
 

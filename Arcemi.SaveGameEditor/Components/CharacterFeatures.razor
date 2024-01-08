@@ -57,7 +57,7 @@
     @foreach (var feature in Feats) {
         <div class="row">
             <div class="col-md-6 overflow-hidden">
-                <label class="form-label">@feature.DisplayName</label>
+                <label class="form-label" title="@feature.Tooltip">@feature.DisplayName</label>
             </div>
             <div class="col-md-1">
                 <label class="form-label">@(feature.IsRanked ? feature.Rank.ToString() : "-")</label>

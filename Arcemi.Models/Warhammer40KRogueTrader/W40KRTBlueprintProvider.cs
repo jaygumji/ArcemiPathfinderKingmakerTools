@@ -20,6 +20,14 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         protected override async Task OnBeforeSetupAsync(BlueprintProviderSetupArgs args)
         {
+            var cacheInfo = await W40KRTBlueprintCachedData.LoadAsync(args.WorkingDirectory);
+
+            _displayNameLookup = cacheInfo.DisplayNames;
+            _descriptionLookup = cacheInfo.Descriptions;
+            _blueprintAssetLookup = cacheInfo.BlueprintAssets;
+
+            if (string.IsNullOrEmpty(args.GameFolder)) return;
+
             var serializer = new JsonSerializer();
             var localizationPath = Path.Combine(args.GameFolder, "WH40KRT_Data", "StreamingAssets", "Localization", "enGB.json");
             if (File.Exists(localizationPath)) {
@@ -30,12 +38,6 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 }
             }
             if (_localizationFileEnGB is null) _localizationFileEnGB = new Dictionary<string, W40KRTLocalizationEntry>();
-
-            var cacheInfo = await W40KRTBlueprintCachedData.LoadAsync(args.WorkingDirectory);
-
-            _displayNameLookup = cacheInfo.DisplayNames;
-            _descriptionLookup = cacheInfo.Descriptions;
-            _blueprintAssetLookup = cacheInfo.BlueprintAssets;
 
             var archiveInfo = new FileInfo(Path.Combine(args.GameFolder, "WhRtModificationTemplate-release.rar"));
             if (!archiveInfo.Exists) return;

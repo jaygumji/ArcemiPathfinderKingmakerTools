@@ -25,12 +25,14 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         private const string FileName = "cache.blueprints.json";
         internal static async Task<W40KRTBlueprintCachedData> LoadAsync(string workingDirectory)
         {
-            var path = Path.Combine(workingDirectory, FileName);
-            if (File.Exists(path)) {
-                using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (var streamReader = new StreamReader(fileStream)) {
-                    var json = await streamReader.ReadToEndAsync();
-                    return JsonConvert.DeserializeObject<W40KRTBlueprintCachedData>(json);
+            if (workingDirectory.HasValue()) {
+                var path = Path.Combine(workingDirectory, FileName);
+                if (File.Exists(path)) {
+                    using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var streamReader = new StreamReader(fileStream)) {
+                        var json = await streamReader.ReadToEndAsync();
+                        return JsonConvert.DeserializeObject<W40KRTBlueprintCachedData>(json);
+                    }
                 }
             }
             return new W40KRTBlueprintCachedData();
@@ -38,6 +40,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public async Task SaveAsync(string workingDirectory)
         {
+            if (!workingDirectory.HasValue()) return;
             if (!Directory.Exists(workingDirectory)) {
                 Directory.CreateDirectory(workingDirectory);
             }

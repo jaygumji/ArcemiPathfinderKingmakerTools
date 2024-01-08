@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Arcemi.Models
 {
@@ -26,6 +24,83 @@ namespace Arcemi.Models
         bool IsAddEnabled { get; }
         bool IsRemoveEnabled { get; }
     }
+    public class GameModelCollectionProjection<TIn, TOut> : IGameModelCollection<TOut>
+    {
+        private readonly IGameModelCollection<TIn> inner;
+        private readonly Func<TIn, TOut> project;
+
+        public GameModelCollectionProjection(IGameModelCollection<TIn> inner, Func<TIn, TOut> project)
+        {
+            this.inner = inner;
+            this.project = project;
+        }
+
+        public TOut this[int index] => project(inner[index]);
+        public bool IsAddEnabled => false;
+        public bool IsRemoveEnabled => false;
+        public IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries => inner.AvailableEntries;
+        public int Count => inner.Count;
+
+        public TOut AddByBlueprint(string blueprint, object data = null)
+        {
+            var tin = inner.AddByBlueprint(blueprint, data);
+            return project(tin);
+        }
+
+        public TOut AddByCode(string code)
+        {
+            var tin = inner.AddByCode(code);
+            return project(tin);
+        }
+
+        public void Clear()
+        {
+            inner.Clear();
+        }
+
+        public TOut Duplicate(TOut model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerator<TOut> GetEnumerator()
+        {
+            foreach (var entry in inner) {
+                yield return project(entry);
+            }
+        }
+
+        public int IndexOf(TOut model)
+        {
+            return -1;
+        }
+
+        public TOut InsertByBlueprint(int index, string blueprint, object data = null)
+        {
+            var tin = inner.InsertByBlueprint(index, blueprint, data);
+            return project(tin);
+        }
+
+        public bool Remove(TOut model)
+        {
+            return false;
+        }
+
+        bool IGameModelCollection.Remove(object model)
+        {
+            return false;
+        }
+
+        object IGameModelCollection.AddByBlueprint(string blueprint, object data)
+        {
+            return AddByBlueprint(blueprint, data);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
     {
         public virtual bool IsAddEnabled => true;
@@ -38,6 +113,14 @@ namespace Arcemi.Models
         {
             return Array.Empty<IBlueprintMetadataEntry>();
         }
+    }
+    public static class GameModelCollection
+    {
+        public static IGameModelCollection<TOut> Project<TIn, TOut>(this IGameModelCollection<TIn> collection, Func<TIn, TOut> project)
+        {
+            return new GameModelCollectionProjection<TIn, TOut>(collection, project);
+        }
+
     }
     public static class GameModelCollection<TGameModel>
     {

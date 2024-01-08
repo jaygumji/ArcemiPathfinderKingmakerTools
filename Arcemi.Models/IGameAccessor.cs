@@ -214,6 +214,7 @@ namespace Arcemi.Models
     public interface IGameUnitFeatEntry
     {
         string DisplayName { get; }
+        string Tooltip { get; }
         string Blueprint { get; }
         string Category { get; }
         bool IsRanked { get; }
@@ -277,6 +278,8 @@ namespace Arcemi.Models
     {
         string Name { get; }
         string Feature { get; set; }
+        int Level { get; }
+        bool IsCreation { get; }
         IReadOnlyList<BlueprintOption> Options { get; }
         bool IsReadOnly { get; }
     }

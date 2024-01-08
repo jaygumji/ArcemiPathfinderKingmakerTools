@@ -7,10 +7,14 @@
         {
             Model = (W40KRTFeatFactItemModel)model;
             DisplayName = Res.Blueprints.GetNameOrBlueprint(model.Blueprint);
+            if (Res.Blueprints.TryGet(model.Blueprint, out var blueprint)) {
+                Tooltip = string.Concat(blueprint.Name.Original, ", ", blueprint.Id, ", ", blueprint.Type.FullName);
+            }
         }
         public W40KRTFeatFactItemModel Model { get; }
 
         public string DisplayName { get; }
+        public string Tooltip { get; }
         public string Blueprint => Model.Blueprint;
         public string Category => null;
         public bool IsRanked => Model.IsRanked;
