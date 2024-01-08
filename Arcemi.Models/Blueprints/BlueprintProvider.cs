@@ -23,6 +23,8 @@ namespace Arcemi.Models
             this.typeFullNameLookup = typeFullNameLookup;
             this.typeIdLookup = typeIdLookup;
             _entries = Array.Empty<BlueprintMetadataEntry>();
+            _entryLookup = new Dictionary<string, BlueprintMetadataEntry>();
+            _entryByType = new Dictionary<BlueprintType, List<BlueprintMetadataEntry>>();
         }
         public BlueprintType GetType(BlueprintTypeId id)
         {

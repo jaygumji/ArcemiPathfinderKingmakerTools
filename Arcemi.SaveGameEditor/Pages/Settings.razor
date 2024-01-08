@@ -4,9 +4,10 @@
 
 <fieldset class="form-controller" disabled="@State.IsBusy">
 
-    <div>
-        <p class="alert alert-info">Changing the settings will take effect immediately.</p>
-    </div>
+    <AlertInfo>
+        Changing the settings will take effect immediately. However it might take some time for the cache to build.
+        You should start seeing names instead of identifiers within a minute from changing the game folder.
+    </AlertInfo>
     <hr />
     @if (Config.Instance.Development.IsEnabled) {
         <div>
