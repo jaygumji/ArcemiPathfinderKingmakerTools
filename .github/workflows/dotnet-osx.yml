@@ -27,3 +27,8 @@ jobs:
     - name: Electronize Build
       working-directory: ./Arcemi.SaveGameEditor
       run: electronize build /target osx /PublishReadyToRun false
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Arcemi-SaveGameEditor-OSX
+        path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor-*.dmg
