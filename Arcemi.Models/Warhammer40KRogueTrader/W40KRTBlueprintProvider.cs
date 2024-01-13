@@ -31,10 +31,15 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             var serializer = new JsonSerializer();
             var localizationPath = Path.Combine(args.GameFolder, "WH40KRT_Data", "StreamingAssets", "Localization", "enGB.json");
             if (File.Exists(localizationPath)) {
-                using (var stream = new FileStream(localizationPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (var reader = new StreamReader(stream))
-                using (var jsonReader = new JsonTextReader(reader)) {
-                    _localizationFileEnGB = serializer.Deserialize<W40KRTLocalizationAsset>(jsonReader)?.Strings;
+                try {
+                    using (var stream = new FileStream(localizationPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var reader = new StreamReader(stream))
+                    using (var jsonReader = new JsonTextReader(reader)) {
+                        _localizationFileEnGB = serializer.Deserialize<W40KRTLocalizationAsset>(jsonReader)?.Strings;
+                    }
+                }
+                catch (Exception ex) {
+                    Logger.Current.Warning($"Unable to load localization asset file, continuing without '{localizationPath}'", ex);
                 }
             }
             if (_localizationFileEnGB is null) _localizationFileEnGB = new Dictionary<string, W40KRTLocalizationEntry>();
@@ -48,54 +53,60 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             const string localizationPrefix = @"WhRtModificationTemplate-release\Strings\Mechanics\Blueprints\";
             const string blueprintPrefix = @"WhRtModificationTemplate-release\Blueprints\";
 
-            using (var rar = SharpCompress.Archives.Rar.RarArchive.Open(archiveInfo, new SharpCompress.Readers.ReaderOptions()))  {
-                foreach (var entry in rar.Entries) {
-                    if (entry.IsDirectory) continue;
-                    var isLocalization = entry.Key.IStart(localizationPrefix);
-                    var isBlueprint = entry.Key.IStart(blueprintPrefix);
+            try {
+                using (var rar = SharpCompress.Archives.Rar.RarArchive.Open(archiveInfo, new SharpCompress.Readers.ReaderOptions())) {
+                    foreach (var entry in rar.Entries) {
+                        if (entry.IsDirectory) continue;
+                        var isLocalization = entry.Key.IStart(localizationPrefix);
+                        var isBlueprint = entry.Key.IStart(blueprintPrefix);
 
-                    if (!isLocalization && !isBlueprint) continue;
+                        if (!isLocalization && !isBlueprint) continue;
 
-                    using (var stream = entry.OpenEntryStream())
-                    using (var reader = new StreamReader(stream))
-                    using (var jsonReader = new JsonTextReader(reader)) {
-                        if (isLocalization) {
-                            var localizationEntry = serializer.Deserialize<W40KRTLocalization>(jsonReader);
-                            if (string.IsNullOrEmpty(localizationEntry.OwnerGuid)) continue;
-                            if (!(localizationEntry.Languages?.Count > 0)) continue;
-                            if (entry.Key.IEnd("DisplayName.json") || entry.Key.IEnd("DisplayName_.json")) {
-                                if (_displayNameLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
+                        using (var stream = entry.OpenEntryStream())
+                        using (var reader = new StreamReader(stream))
+                        using (var jsonReader = new JsonTextReader(reader)) {
+                            if (isLocalization) {
+                                var localizationEntry = serializer.Deserialize<W40KRTLocalization>(jsonReader);
+                                if (string.IsNullOrEmpty(localizationEntry.OwnerGuid)) continue;
+                                if (!(localizationEntry.Languages?.Count > 0)) continue;
+                                if (entry.Key.IEnd("DisplayName.json") || entry.Key.IEnd("DisplayName_.json")) {
+                                    if (_displayNameLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
+                                    }
+                                    else {
+                                        _displayNameLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
+                                    }
+                                }
+                                else if (entry.Key.IEnd("Description.json") || entry.Key.IEnd("Description_.json")) {
+                                    if (_descriptionLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
+                                    }
+                                    else {
+                                        _descriptionLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
+                                    }
                                 }
                                 else {
-                                    _displayNameLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
+                                    var key = entry.Key;
+                                    key.ToString();
                                 }
                             }
-                            else if (entry.Key.IEnd("Description.json") || entry.Key.IEnd("Description_.json")) {
-                                if (_descriptionLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
+                            else if (isBlueprint) {
+                                var blueprintAsset = serializer.Deserialize<W40KRTBlueprintAsset>(jsonReader);
+                                if (string.IsNullOrEmpty(blueprintAsset?.AssetId)) continue;
+                                if (_blueprintAssetLookup.TryGetValue(blueprintAsset.AssetId, out var existing)) {
+                                    existing.ToString();
                                 }
                                 else {
-                                    _descriptionLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
+                                    _blueprintAssetLookup.Add(blueprintAsset.AssetId, blueprintAsset);
                                 }
-                            }
-                            else {
-                                var key = entry.Key;
-                                key.ToString();
-                            }
-                        }
-                        else if (isBlueprint) {
-                            var blueprintAsset = serializer.Deserialize<W40KRTBlueprintAsset>(jsonReader);
-                            if (string.IsNullOrEmpty(blueprintAsset?.AssetId)) continue;
-                            if (_blueprintAssetLookup.TryGetValue(blueprintAsset.AssetId, out var existing)) {
-                                existing.ToString();
-                            }
-                            else {
-                                _blueprintAssetLookup.Add(blueprintAsset.AssetId, blueprintAsset);
                             }
                         }
                     }
                 }
+                cacheInfo.TimestampUtc = archiveInfo.LastWriteTimeUtc;
             }
-            cacheInfo.TimestampUtc = archiveInfo.LastWriteTimeUtc;
+            catch (Exception ex) {
+                Logger.Current.Error("Unable to load localization cache", ex);
+                return;
+            }
             await cacheInfo.SaveAsync(args.WorkingDirectory);
         }
 

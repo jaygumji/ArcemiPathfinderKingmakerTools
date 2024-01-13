@@ -25,15 +25,20 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         private const string FileName = "cache.blueprints.json";
         internal static async Task<W40KRTBlueprintCachedData> LoadAsync(string workingDirectory)
         {
-            if (workingDirectory.HasValue()) {
-                var path = Path.Combine(workingDirectory, FileName);
-                if (File.Exists(path)) {
-                    using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    using (var streamReader = new StreamReader(fileStream)) {
-                        var json = await streamReader.ReadToEndAsync();
-                        return JsonConvert.DeserializeObject<W40KRTBlueprintCachedData>(json);
+            try {
+                if (workingDirectory.HasValue()) {
+                    var path = Path.Combine(workingDirectory, FileName);
+                    if (File.Exists(path)) {
+                        using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (var streamReader = new StreamReader(fileStream)) {
+                            var json = await streamReader.ReadToEndAsync();
+                            return JsonConvert.DeserializeObject<W40KRTBlueprintCachedData>(json);
+                        }
                     }
                 }
+            }
+            catch (Exception ex) {
+                Logger.Current.Warning("Detected corrupt cache, reseted cache", ex);
             }
             return new W40KRTBlueprintCachedData();
         }
@@ -41,30 +46,35 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public async Task SaveAsync(string workingDirectory)
         {
             if (!workingDirectory.HasValue()) return;
-            if (!Directory.Exists(workingDirectory)) {
-                Directory.CreateDirectory(workingDirectory);
-            }
-            var path = Path.Combine(workingDirectory, FileName);
-            var backupPath = Path.Combine(workingDirectory, FileName + ".bck");
-            if (File.Exists(path)) {
-                if (File.Exists(backupPath)) {
-                    File.Delete(backupPath);
-                }
-                File.Move(path, backupPath);
-            }
             try {
-                using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
-                using (var streamWriter = new StreamWriter(fileStream)) {
-                    var json = JsonConvert.SerializeObject(this);
-                    await streamWriter.WriteAsync(json);
+                if (!Directory.Exists(workingDirectory)) {
+                    Directory.CreateDirectory(workingDirectory);
+                }
+                var path = Path.Combine(workingDirectory, FileName);
+                var backupPath = Path.Combine(workingDirectory, FileName + ".bck");
+                if (File.Exists(path)) {
+                    if (File.Exists(backupPath)) {
+                        File.Delete(backupPath);
+                    }
+                    File.Move(path, backupPath);
+                }
+                try {
+                    using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
+                    using (var streamWriter = new StreamWriter(fileStream)) {
+                        var json = JsonConvert.SerializeObject(this);
+                        await streamWriter.WriteAsync(json);
+                    }
+                }
+                catch (Exception ex) {
+                    Logger.Current.Error("Could not save cache info file", ex);
+                    if (File.Exists(backupPath)) {
+                        File.Move(backupPath, path);
+                    }
+                    throw;
                 }
             }
             catch (Exception ex) {
-                Logger.Current.Error("Could not save cache info file", ex);
-                if (File.Exists(backupPath)) {
-                    File.Move(backupPath, path);
-                }
-                throw;
+                Logger.Current.Warning("Unable to write cache, using memory cache only", ex);
             }
         }
     }
