@@ -6,13 +6,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     internal class W40KRTGameUnitStatsModel : IGameUnitStatsModel
     {
-        private readonly List<KeyValuePairObjectModel<StatsContainerConverterModel>> _general = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
-        private readonly List<KeyValuePairObjectModel<StatsContainerConverterModel>> _ship = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
-        private readonly List<KeyValuePairObjectModel<StatsContainerConverterModel>> _attributes = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
-        private readonly List<KeyValuePairObjectModel<StatsContainerConverterModel>> _skills = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
-        private readonly List<KeyValuePairObjectModel<StatsContainerConverterModel>> _saves = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
-        private readonly List<KeyValuePairObjectModel<StatsContainerConverterModel>> _combat = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
-        private readonly List<KeyValuePairObjectModel<StatsContainerConverterModel>> _other = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
+        private List<KeyValuePairObjectModel<StatsContainerConverterModel>> _general;
+        private List<KeyValuePairObjectModel<StatsContainerConverterModel>> _ship;
+        private List<KeyValuePairObjectModel<StatsContainerConverterModel>> _attributes;
+        private List<KeyValuePairObjectModel<StatsContainerConverterModel>> _skills;
+        private List<KeyValuePairObjectModel<StatsContainerConverterModel>> _saves;
+        private List<KeyValuePairObjectModel<StatsContainerConverterModel>> _combat;
+        private List<KeyValuePairObjectModel<StatsContainerConverterModel>> _other;
         public W40KRTGameUnitStatsModel(StatsContainerPartItemModel stats)
         {
             Stats = stats;
@@ -25,6 +25,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         private void SetupGroupings()
         {
+            _general = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
+            _ship = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
+            _attributes = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
+            _skills = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
+            _saves = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
+            _combat = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
+            _other = new List<KeyValuePairObjectModel<StatsContainerConverterModel>>();
             foreach (var stat in Stats.Container.ContainerConverter) {
                 GroupStat(stat);
             }
