@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     internal class W40KRTCharacterSelectionOption : BlueprintOption
     {
-        public W40KRTCharacterSelectionOption(string id, string name, string subSelectionId = null, IReadOnlyList<string> feats = null)
+        private readonly Action<W40KRTCharacterSelectionUpgradeArgs> upgrade;
+        private readonly Action<W40KRTCharacterSelectionDowngradeArgs> downgrade;
+
+        public W40KRTCharacterSelectionOption(string id, string name, string subSelectionId = null, IReadOnlyList<string> feats = null, Action<W40KRTCharacterSelectionUpgradeArgs> upgrade = null, Action<W40KRTCharacterSelectionDowngradeArgs> downgrade = null)
             : base(id, name)
         {
             SubSelectionId = subSelectionId;
             Feats = feats ?? Array.Empty<string>();
+            this.upgrade = upgrade;
+            this.downgrade = downgrade;
         }
 
         public void Select(IGameUnitSelectionProgressionEntry selectionEntry)
@@ -66,6 +72,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                                     owner.Feats.Remove(extraFeat);
                                 }
                             }
+
+                            option.downgrade?.Invoke(new W40KRTCharacterSelectionDowngradeArgs(option, owner));
                         }
                     }
                 }
@@ -80,6 +88,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     }
                 }
             }
+            upgrade?.Invoke(new W40KRTCharacterSelectionUpgradeArgs(this, owner));
         }
 
         public string SubSelectionId { get; }
@@ -96,6 +105,31 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTCharacterSelectionOption("e17f0bc7e5584678a3c6dfbfb7608f78", "Fellowship"),
         };
     }
+
+    internal class W40KRTCharacterSelectionDowngradeArgs
+    {
+        public W40KRTCharacterSelectionDowngradeArgs(W40KRTCharacterSelectionOption option, IGameUnitModel owner)
+        {
+            Option = option;
+            Owner = owner;
+        }
+
+        public W40KRTCharacterSelectionOption Option { get; }
+        public IGameUnitModel Owner { get; }
+    }
+
+    internal class W40KRTCharacterSelectionUpgradeArgs
+    {
+        public W40KRTCharacterSelectionUpgradeArgs(W40KRTCharacterSelectionOption option, IGameUnitModel owner)
+        {
+            Option = option;
+            Owner = owner;
+        }
+
+        public W40KRTCharacterSelectionOption Option { get; }
+        public IGameUnitModel Owner { get; }
+    }
+
     internal class W40KRTCharacterSelection
     {
         public W40KRTCharacterSelection(string name, int level, string selectionId, IReadOnlyList<W40KRTCharacterSelectionOption> options)
@@ -163,7 +197,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTCharacterSelectionOption("1518d1434ed646039215da3fdda6b096", "Sanctioned Psyker", "912495ad4ffc4c4da72819d2602f7976", feats: new [] {
                 "511f7b772a894c16a3150236abb8cf0f", // Psy rating 0
                 "8ec7af173e174f269460f11528828bb0", // Sanctioned Psyker Feature
-            }),
+            }, upgrade: a => ((W40KRTGameUnitStatsModel)a.Owner.Stats).AddPsyRating(), downgrade: a => ((W40KRTGameUnitStatsModel)a.Owner.Stats).RemovePsyRating()),
             new W40KRTCharacterSelectionOption("395a77ff6fd344f5b8b4a0cc0def06dc", "Unsanctioned Psyker", feats: new [] {
                 "511f7b772a894c16a3150236abb8cf0f", // Psy rating 0
                 "6b374c5f7d2a48aaa705865971c021ec", // Advice and Guidance
@@ -173,7 +207,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 "b78dfb1ac4984a8298369004019e95d7", // Telepathy > Psychic Scream
                 "196d258a786c42e68eb4a468efb0089e", // Divination
                 "e98b254ea4db498c81f8e925adf959b5", // Divination > Forewarning
-            }),
+            }, upgrade: a => ((W40KRTGameUnitStatsModel)a.Owner.Stats).AddPsyRating(), downgrade: a => ((W40KRTGameUnitStatsModel)a.Owner.Stats).RemovePsyRating()),
             new W40KRTCharacterSelectionOption("a69ab12837ae4bfea6bb56f834892d7f", "Space Marine", feats: new[] {
                 "637bbaf5fb144d739aa3638dab575719", // Innate ability
                 "950565a69d144391897cdc0024747755", // Adeptus Astartes Equipment

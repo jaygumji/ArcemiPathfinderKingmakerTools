@@ -20,7 +20,12 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 Groupings = Array.Empty<GameStatsGrouping>();
                 return;
             }
-            foreach (var stat in stats.Container.ContainerConverter) {
+            SetupGroupings();
+        }
+
+        private void SetupGroupings()
+        {
+            foreach (var stat in Stats.Container.ContainerConverter) {
                 GroupStat(stat);
             }
             Groupings = new[] {
@@ -37,11 +42,12 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         private static GameStatsGrouping Create(string name, IEnumerable<KeyValuePairObjectModel<StatsContainerConverterModel>> atts)
             => new GameStatsGrouping(name, "", atts.Select(x => new W40KRTGameUnitStatsEntry(x)).ToArray());
 
+        private const string PsyRatingKey = "PsyRating";
         private void GroupStat(KeyValuePairObjectModel<StatsContainerConverterModel> stat)
         {
             if (stat.Key.Eq("HitPoints")) _general.Add(stat);
             else if (stat.Key.Eq("Resolve")) _general.Add(stat);
-            else if (stat.Key.Eq("PsyRating")) _general.Add(stat);
+            else if (stat.Key.Eq(PsyRatingKey)) _general.Add(stat);
             else if (stat.Key.Eq("Inertia")) _ship.Add(stat);
             else if (stat.Key.Eq("Morale")) _ship.Add(stat);
             else if (stat.Key.Eq("Crew")) _ship.Add(stat);
@@ -59,7 +65,29 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         }
 
         public StatsContainerPartItemModel Stats { get; }
-        public IReadOnlyList<GameStatsGrouping> Groupings { get; }
+        public IReadOnlyList<GameStatsGrouping> Groupings { get; private set; }
+
+        public void AddPsyRating()
+        {
+            if (Stats?.Container?.ContainerConverter is null) return;
+            var psyRating = Stats.Container.ContainerConverter.FirstOrDefault(cc => cc.Key.Eq(PsyRatingKey));
+            if (psyRating is object) return;
+
+            psyRating = Stats.Container.ContainerConverter.Add((refs, obj) => {
+                obj.Add("Key", PsyRatingKey);
+                obj.Add("Value", refs.Create());
+            });
+            SetupGroupings();
+        }
+
+        public void RemovePsyRating()
+        {
+            if (Stats?.Container?.ContainerConverter is null) return;
+            var psyRating = Stats.Container.ContainerConverter.FirstOrDefault(cc => cc.Key.Eq(PsyRatingKey));
+            if (psyRating is null) return;
+            Stats.Container.ContainerConverter.Remove(psyRating);
+            SetupGroupings();
+        }
 
         public bool IsSupported => Stats is object;
     }

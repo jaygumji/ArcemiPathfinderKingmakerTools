@@ -3,19 +3,10 @@
 </fieldset>
 
 @code {
-    private bool _IsEnabled;
-
     [Parameter]
-    public bool IsEnabled
-    {
-        get => _IsEnabled;
-        set {
-            _IsEnabled = value;
-        }
-    }
+    public bool IsEnabled { get; set; }
 
-    [Parameter]
-    public bool IsDisabled { get => !IsEnabled; set => IsEnabled = !value; }
+    private bool IsDisabled => !IsEnabled;
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }

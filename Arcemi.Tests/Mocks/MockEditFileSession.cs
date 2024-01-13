@@ -34,6 +34,7 @@ namespace Arcemi.Tests.Mocks
 
         public void Open(string path, string originalPath = null)
         {
+            Opened?.Invoke(this, new EditFileSessionOpenedArgs(null, null));
             throw new NotImplementedException();
         }
 

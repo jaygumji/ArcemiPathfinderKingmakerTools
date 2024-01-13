@@ -8,7 +8,7 @@ namespace Arcemi.Models
         {
         }
 
-        public IReadOnlyList<KeyValuePairObjectModel<StatsContainerConverterModel>> ContainerConverter
+        public ListAccessor<KeyValuePairObjectModel<StatsContainerConverterModel>> ContainerConverter
             => A.List(factory: a => new KeyValuePairObjectModel<StatsContainerConverterModel>(a, valueAccessor => new StatsContainerConverterModel(valueAccessor)));
     }
 

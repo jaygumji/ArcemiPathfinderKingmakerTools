@@ -84,6 +84,9 @@ namespace Arcemi.Models
             if (type.Eq(UnitCompanionPartItemModel.TypeRef)) {
                 return new UnitCompanionPartItemModel(accessor);
             }
+            if (type.Eq(CombatGroupPartItemModel.TypeRef)) {
+                return new CombatGroupPartItemModel(accessor);
+            }
             return new PartItemModel(accessor);
         }
     }
