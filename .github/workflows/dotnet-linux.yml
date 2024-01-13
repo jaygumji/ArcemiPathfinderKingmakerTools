@@ -14,7 +14,7 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -26,9 +26,9 @@ jobs:
       run: dotnet tool install ElectronNET.CLI -g
     - name: Electronize Build
       working-directory: ./Arcemi.SaveGameEditor
-      run: electronize build /target osx /PublishReadyToRun false
+      run: electronize build /target linux /PublishReadyToRun false
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: Arcemi-SaveGameEditor-OSX
-        path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor-*.dmg
+        name: Arcemi-SaveGameEditor-Linux
+        path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor-*.AppImage
