@@ -60,5 +60,16 @@ namespace Arcemi.Models.PathfinderWotr
                 return UnitEntityType.Companion;
             }
         }
+
+        public void ReplacePartyMemberWith(IGameUnitModel unit)
+        {
+            unit.Companion.State = CompanionPartState.InParty;
+            Companion.State = CompanionPartState.Remote;
+        }
+
+        public void AddToRetinue()
+        {
+            Companion.State = CompanionPartState.Remote;
+        }
     }
 }

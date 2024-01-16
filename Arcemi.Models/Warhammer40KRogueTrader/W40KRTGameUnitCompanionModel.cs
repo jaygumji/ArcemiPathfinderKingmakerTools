@@ -15,31 +15,22 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameUnitModel Owner { get; }
         public UnitCompanionPartItemModel Model { get; }
         public IReadOnlyList<GameEnumValue> AllStates { get; }
-        public string State
-        {
-            get => Model.State;
-            set {
-                Model.State = value;
-                if (!value.Eq("ExCompanion")) {
-                    var combatGroup = Owner.Ref.Parts.Container.OfType<CombatGroupPartItemModel>().FirstOrDefault();
-                    const string controllableId = "<directly-controllable-unit>";
-                    if (combatGroup is object && !combatGroup.ControlId.Eq(controllableId)) {
-                        combatGroup.ControlId = controllableId;
-                    }
-                }
-            }
-        }
+        public string State { get => Model.State; set => Model.State = value; }
         public bool IsSupported => Model is object;
-        public bool IsReadOnly
+        public bool IsReadOnly => true;
+        public bool IsDialogEnabled
         {
             get {
                 switch (Owner.Type) {
                     case UnitEntityType.Player:
                     case UnitEntityType.Starship:
-                        return true;
+                        return false;
                 }
-                return false;
+                return true;
             }
         }
+
+        public bool IsInParty => State.Eq(CompanionPartState.InParty);
+        public bool IsExCompanion => State.Eq(CompanionPartState.ExCompanion);
     }
 }

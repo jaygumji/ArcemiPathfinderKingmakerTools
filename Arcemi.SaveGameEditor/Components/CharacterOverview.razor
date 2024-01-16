@@ -36,11 +36,23 @@
     @if (Unit.Companion.IsSupported) {
         <div class="col-md-4 form-group">
             <label class="form-label">State</label>
-            <select class="form-control" disabled="@Unit.Companion.IsReadOnly" @bind="Unit.Companion.State">
-                @foreach (var state in Unit.Companion.AllStates) {
-                    <option value="@state.Value">@state.Name</option>
+            <div class="input-group">
+                <select class="form-control" disabled="@Unit.Companion.IsReadOnly" @bind="Unit.Companion.State">
+                    @foreach (var state in Unit.Companion.AllStates) {
+                        <option value="@state.Value">@state.Name</option>
+                    }
+                </select>
+                @if (Unit.Companion.IsDialogEnabled && !Unit.Companion.IsInParty) {
+                    <button class="btn btn-info input-group-append" @onclick="OpenEditCompanionStateAsync">
+                        @if (Unit.Companion.IsExCompanion){
+                            <span class="oi oi-plus"></span>
+                        }
+                        else {
+                            <span class="oi oi-pencil"></span>
+                        }
+                    </button>
                 }
-            </select>
+            </div>
         </div>
     }
 </div>
@@ -184,6 +196,26 @@
         </div>
     }
 }
+
+<Modal @ref="modalEditCompanionState">
+    <Title>Replace the selected party member</Title>
+    <Body>
+        <ul class="portraits">
+            @foreach (var unit in Model.Characters.Where(c => c.Type.IsDisplayedInCharactersPage() && c.Companion.IsInParty && (c.Type == UnitEntityType.Companion || c.Type == UnitEntityType.Mercenary))) {
+                <li @onclick="() => SelectedReplaceCompanion = unit" class="@(SelectedReplaceCompanion == unit ? "toggled" : "")" title="@unit.Name">
+                    <img src="file://@unit.Portrait.Path" alt="Portrait" />
+                    <span>@(unit.CustomName ?? unit.Name)</span>
+                </li>
+            }
+        </ul>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@ConfirmCompanionStateIsDisabled" @onclick="ConfirmCompanionStateAsync">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditCompanionState.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
 
 @if (Unit.Alignment.IsSupported) {
     <div class="row">
@@ -451,6 +483,23 @@
                 AlignmentMask.Set(Alignment.Any);
             }
         }
+    }
+
+    private Modal modalEditCompanionState;
+    private IGameUnitModel SelectedReplaceCompanion;
+    private bool ConfirmCompanionStateIsDisabled => SelectedReplaceCompanion is null;
+    private async Task OpenEditCompanionStateAsync()
+    {
+        if (Unit.Companion.IsExCompanion) {
+            Unit.AddToRetinue();
+            return;
+        }
+        SelectedReplaceCompanion = null;
+        await modalEditCompanionState.OpenAsync();
+    }
+    private async Task ConfirmCompanionStateAsync(){
+        SelectedReplaceCompanion.ReplacePartyMemberWith(Unit);
+        await modalEditCompanionState.CloseAsync();
     }
 
     private void UpdateAlignmentMask(AlignmentMaskView sender)

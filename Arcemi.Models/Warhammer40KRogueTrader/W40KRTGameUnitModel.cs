@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Arcemi.Models.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -147,6 +148,32 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 if (A.TypeValue().Eq("Kingmaker.EntitySystem.Entities.AreaEffectEntity, Code")) return UnitEntityType.Other;
                 if (A.TypeValue().Eq("Kingmaker.Mechanics.Entities.LightweightUnitEntity, Code")) return UnitEntityType.Other;
                 return UnitEntityType.Other;
+            }
+        }
+
+        public void ReplacePartyMemberWith(IGameUnitModel unit)
+        {
+            unit.Companion.State = CompanionPartState.InParty;
+            Companion.State = CompanionPartState.Remote;
+
+            var sourcePos = A.Object<Vector3Model>("m_Position");
+            var targetPos = unit.Ref.GetAccessor().Object<Vector3Model>("m_Position");
+
+            targetPos.X = sourcePos.X;
+            targetPos.Y = sourcePos.Y;
+            targetPos.Z = sourcePos.Z;
+
+            A.Value(false, "m_IsInGame");
+            unit.Ref.GetAccessor().Value(true, "m_IsInGame");
+        }
+
+        public void AddToRetinue()
+        {
+            Companion.State = CompanionPartState.Remote;
+            var combatGroup = Ref.Parts.Container.OfType<CombatGroupPartItemModel>().FirstOrDefault();
+            const string controllableId = "<directly-controllable-unit>";
+            if (combatGroup is object && !combatGroup.ControlId.Eq(controllableId)) {
+                combatGroup.ControlId = controllableId;
             }
         }
     }

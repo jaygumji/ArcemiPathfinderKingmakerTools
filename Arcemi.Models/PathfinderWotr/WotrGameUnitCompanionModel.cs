@@ -31,6 +31,9 @@ namespace Arcemi.Models.PathfinderWotr
                 return false;
             }
         }
+        public bool IsDialogEnabled => false;
+        public bool IsInParty => State.Eq(CompanionPartState.InParty);
+        public bool IsExCompanion => State.Eq(CompanionPartState.ExCompanion);
 
         public bool IsSupported => Part is object;
     }

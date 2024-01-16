@@ -132,6 +132,9 @@ namespace Arcemi.Models
         IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
         IReadOnlyList<IGameDataObject> Sections { get; }
+
+        void ReplacePartyMemberWith(IGameUnitModel unit);
+        void AddToRetinue();
     }
 
     public interface IGameUnitBodyModel : IGameModel
@@ -319,6 +322,9 @@ namespace Arcemi.Models
         IReadOnlyList<GameEnumValue> AllStates { get; }
         string State { get; set; }
         bool IsReadOnly { get; }
+        bool IsDialogEnabled { get; }
+        bool IsInParty { get; }
+        bool IsExCompanion { get; }
     }
 
     public interface IGameUnitAlignmentModel : IGameModel
