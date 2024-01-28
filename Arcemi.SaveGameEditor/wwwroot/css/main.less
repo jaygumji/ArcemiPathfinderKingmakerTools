@@ -312,50 +312,59 @@ ul.nav-tabs {
 
         .accordion-header {
             margin: 0;
+            outline: none;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            padding: 10px;
+            border: 1px solid rgba(0,0,0,0.125);
+            display: flex;
+            align-content: center;
+            align-items: center;
+            padding-left: 20px;
+            padding-right: 20px;
+            background-color: #88ccff44;
+            cursor: pointer;
 
-            .accordion-button {
-                outline: none;
-                border-top-left-radius: 10px;
-                border-top-right-radius: 10px;
-                padding: 5px;
-                border: 1px solid rgba(0,0,0,0.125);
-                display:flex;
-                align-content: center;
-                align-items: center;
-                padding-left: 20px;
-                padding-right: 20px;
+            .accordion-toolbar {
+                margin-right: 5px;
 
-                > span {
-                    flex:1;
+                button {
+                    margin-left: 5px;
+                    margin-right: 5px;
                 }
+            }
 
-                &:after {
-                    content: '\e037';
-                    position: relative;
-                    top: 1px;
-                    display: inline-block;
-                    speak: none;
-                    font-family: Icons;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: 1;
-                    -webkit-font-smoothing: antialiased;
-                    -moz-osx-font-smoothing: grayscale;
-                }
+            > h4 {
+                flex: 1;
+                margin: 0;
+            }
 
-                &.collapsed:after {
-                    content: '\e034';
-                    position: relative;
-                    top: 1px;
-                    display: inline-block;
-                    speak: none;
-                    font-family: Icons;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: 1;
-                    -webkit-font-smoothing: antialiased;
-                    -moz-osx-font-smoothing: grayscale;
-                }
+            &:after {
+                content: '\e037';
+                position: relative;
+                top: 1px;
+                display: inline-block;
+                speak: none;
+                font-family: Icons;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            &.collapsed:after {
+                content: '\e034';
+                position: relative;
+                top: 1px;
+                display: inline-block;
+                speak: none;
+                font-family: Icons;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 1;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
         }
     }

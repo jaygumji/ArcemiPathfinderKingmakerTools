@@ -8,6 +8,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
     internal class W40KRTGameManagementPlaceModelEntryWriter : GameModelCollectionWriter<IGameDataObject, W40KRTColonyModel>
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
+
+        public override bool IsRemoveEnabled => true;
+
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
         {
             JObject CreateValueSection()

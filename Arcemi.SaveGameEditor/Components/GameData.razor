@@ -117,7 +117,7 @@ else if (Data is IGameDataList listData) {
         else {
             <AccordionContainer>
                 @foreach (var listEntry in listData.Entries) {
-                    <Accordion HeaderText="@listEntry.Name">
+                    <Accordion HeaderText="@listEntry.Name" IsRemoveEnabled="listData.Entries.IsRemoveEnabled" OnRemove="() => OnListDataRemoveClicked(listData, listEntry)">
                         <div class="row">
                             <GameData Data="@listEntry" Parent="@listData" ShowHeader="false"></GameData>
                         </div>
@@ -243,5 +243,15 @@ else if (Data is IGameDataObject objData) {
     {
         CurrentList.AddByBlueprint(AddListEntryBlueprint);
         await modalAddListEntry.CloseAsync();
+    }
+
+    private void OnListDataRemoveClicked(IGameDataList list, IGameDataObject item)
+    {
+        if (list.Entries.Remove(item)){
+            StateHasChanged();
+        }
+        else {
+            Logger.Current.Information("Failed to remove " + item?.Name);
+        }
     }
 }

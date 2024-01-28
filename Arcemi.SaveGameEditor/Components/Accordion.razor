@@ -1,20 +1,30 @@
 ﻿<div class="accordion-item">
-    <h4 class="accordion-header">
-        <button class="accordion-button @(IsExpanded ? "" : "collapsed") w-100" type="button" @onclick:stopPropagation="true" @onclick="() => ToggleExpansion()">
-            <span>@HeaderText</span>
-        </button>
-    </h4>
+    <div class="accordion-header @(IsExpanded ? "" : "collapsed") w-100" @onclick:stopPropagation="true" @onclick="() => ToggleExpansion()">
+        <h4>@HeaderText</h4>
+        <div class="accordion-toolbar">
+            @if (IsRemoveEnabled && OnRemove is object) {
+                <button class="btn btn-sm btn-danger" @onclick:stopPropagation="true" @onclick="() => OnRemoveClicked()">
+                    <span class="oi oi-trash"></span>
+                </button>
+            }
+        </div>
+    </div>
     <div class="accordion-collapse collapse @(IsExpanded ? "show" : "")">
         <div class="accordion-body">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body">
-                            @ChildContent
+            @if (Layout == AccordionLayout.Single) {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                @ChildContent
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+            else {
+                @ChildContent
+            }
         </div>
     </div>
 </div>
@@ -27,7 +37,16 @@
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
+    public bool IsRemoveEnabled { get; set; }
+
+    [Parameter]
+    public Action OnRemove { get; set; }
+
+    [Parameter]
     public bool StartAsExpanded { get; set; }
+
+    [Parameter]
+    public AccordionLayout Layout { get; set; } = AccordionLayout.Single;
 
     public bool IsExpanded { get; set; }
 
@@ -39,5 +58,10 @@
     protected override void OnInitialized()
     {
         IsExpanded = StartAsExpanded;
+    }
+
+    private void OnRemoveClicked()
+    {
+        OnRemove?.Invoke();
     }
 }

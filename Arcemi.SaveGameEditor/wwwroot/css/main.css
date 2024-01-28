@@ -255,23 +255,31 @@ ul.nav-tabs li.nav-item button {
 }
 .accordion .accordion-item .accordion-header {
   margin: 0;
-}
-.accordion .accordion-item .accordion-header .accordion-button {
   outline: none;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  padding: 5px;
+  padding: 10px;
   border: 1px solid rgba(0, 0, 0, 0.125);
   display: flex;
   align-content: center;
   align-items: center;
   padding-left: 20px;
   padding-right: 20px;
+  background-color: #88ccff44;
+  cursor: pointer;
 }
-.accordion .accordion-item .accordion-header .accordion-button > span {
+.accordion .accordion-item .accordion-header .accordion-toolbar {
+  margin-right: 5px;
+}
+.accordion .accordion-item .accordion-header .accordion-toolbar button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.accordion .accordion-item .accordion-header > h4 {
   flex: 1;
+  margin: 0;
 }
-.accordion .accordion-item .accordion-header .accordion-button:after {
+.accordion .accordion-item .accordion-header:after {
   content: '\e037';
   position: relative;
   top: 1px;
@@ -284,7 +292,7 @@ ul.nav-tabs li.nav-item button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.accordion .accordion-item .accordion-header .accordion-button.collapsed:after {
+.accordion .accordion-item .accordion-header.collapsed:after {
   content: '\e034';
   position: relative;
   top: 1px;
