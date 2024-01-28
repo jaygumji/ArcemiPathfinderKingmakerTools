@@ -1,7 +1,7 @@
 ﻿@page "/About"
 
 <h1>Arcemi Save Game Editor</h1>
-<p>Current version: 1.0.1</p>
+<p>Current version: 1.0.2</p>
 <ul>
     @foreach (var game in SupportedGames.All) {
         <li>@game.Name</li>
@@ -15,15 +15,13 @@
 </p>
 <p>Open the save game file by clicking Open in the save game card or by clicking Open file dialog and select your save game file.</p>
 <p>Switch page and edit until satisified and then save the game file.</p>
-<h2>Adding items</h2>
-<p>Adding items to the inventory does not include armors, shields or weapons due to difficulty mapping those items.</p>
-<p>Adding an item to a vendor table works around this. Armors, shields and weapons are not restricted there, so you can go to
-    State > Vendors and add armor, shields and weapons to the vendor table.</p>
-<h2>Limitations</h2>
+<h2>Feats</h2>
 <p>
-    When a feat is added onto a character, the game simply doesn't add a flag on the character that says it not has the feat.
-    Rather it adds much more complicated data. The same goes for adding items such as weapons, armors and shields.<br />
-    There is however a way to export and import feat codes. Clicking the code button on a feat will export a code to
-    the clipboard which you can then import on another character. Codes will be posted on the wiki
+    Feats are the source of all passives and active abilities of a character. As long as the game directory are configured,
+    you'll be able to feats directly via the add feat button.
+</p>
+<p>
+    At first adding the feat directly was hard, and I made an export/import function to export and import features. It's still working
+    and I intend to keep this feature. You can find feat codes posted on the wiki
     <ExternalLink Target="ExternalLinks.WikiFeatCodes"/>
 </p>
