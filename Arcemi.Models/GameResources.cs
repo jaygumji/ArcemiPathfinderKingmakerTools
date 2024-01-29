@@ -28,7 +28,7 @@ namespace Arcemi.Models
 
         public async Task LoadGameFolderAsync(string workingDirectory, string gameFolder)
         {
-            await Blueprints.SetupAsync(new BlueprintProviderSetupArgs(workingDirectory, gameFolder));
+            await Blueprints.SetupAsync(new BlueprintProviderSetupArgs(Game, workingDirectory, gameFolder));
             if (BlueprintsArchive is object) BlueprintsArchive.Dispose();
             BlueprintsArchive = new GameBlueprintsArchive(gameFolder, this);
         }

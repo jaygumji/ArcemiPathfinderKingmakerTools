@@ -116,6 +116,10 @@ namespace Arcemi.Models
                 ((IBlueprintMetadataEntrySetup)entry).Type = GetType(entry.TypeFullName);
                 ((IBlueprintMetadataEntrySetup)entry).Name = ResolveName(entry);
 
+                if (lookup.ContainsKey(entry.Guid)) {
+                    Logger.Current.Warning($"Entry {entry.Guid} '{entry.DisplayName}' already exists");
+                    continue;
+                }
                 lookup.Add(entry.Guid, entry);
 
                 if (clsType == null || !string.Equals(clsType, entry.TypeFullName)) {
@@ -141,10 +145,11 @@ namespace Arcemi.Models
             BlueprintMetadataContainer cheatdata;
             if (!File.Exists(cheatdataPath)) {
                 // Small backup
-                cheatdataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs", "Blueprints.json");
+                cheatdataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs", $"Blueprints_{args.Game.Id}.json");
                 Logger.Current.Information($"{GetType().Name} using blueprint backup at '{cheatdataPath}'");
             }
             if (!File.Exists(cheatdataPath)) {
+                Logger.Current.Information($"{GetType().Name} could not load blueprints");
                 return;
             }
             var serializer = new JsonSerializer();
@@ -169,12 +174,14 @@ namespace Arcemi.Models
 
     public class BlueprintProviderSetupArgs
     {
-        public BlueprintProviderSetupArgs(string workingDirectory, string gameFolder)
+        public BlueprintProviderSetupArgs(GameDefinition game, string workingDirectory, string gameFolder)
         {
+            Game = game;
             WorkingDirectory = workingDirectory;
             GameFolder = gameFolder;
         }
 
+        public GameDefinition Game { get; }
         public string WorkingDirectory { get; }
         public string GameFolder { get; }
     }

@@ -6,7 +6,7 @@
 }
 else {
     <TabControl StartIndex="0">
-        @if (Session.Game.Definition == GameDefinition.Pathfinder_WrathOfTheRighteous) {
+        @if (Session.Game.Definition == GameDefinition.Pathfinder_WrathOfTheRighteous || Session.Game.Definition == GameDefinition.Pathfinder_Kingmaker) {
             <Tab Name="Vendors">
                 <Content>
                     <StateVendorsView />

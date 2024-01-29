@@ -1,0 +1,320 @@
+{
+	"Entries": [
+		/***********************************************
+		* Custom Asks / Voices
+		***********************************************/
+		{
+			"Name": "PC_None_Barks",
+			"Guid": "e7b22776ba8e2b84eaaff98e439639a7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Aggressive_Barks",
+			"Guid": "658bb6f61cfeb664ebd6eed7cb2ce15e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Brave_Barks",
+			"Guid": "4fd6c458b8cab284d82f8db530bac7a3",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Carefree_Barks",
+			"Guid": "a0e98c96fb8ffaa4083d3199fc985ed1",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Confident_Barks",
+			"Guid": "5d30b41cae209e047b679614b5520d6c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Cunning_Barks",
+			"Guid": "79c56f4a1e81c8f43b572edfae28ae0e",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Madman_Barks",
+			"Guid": "d088b40b81a12d345af51eeb4ba913dc",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Pious_Barks",
+			"Guid": "41de17d88c60c734eae579812a3616bb",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Pragmatic_Barks",
+			"Guid": "15d12365cd8a84e4a8efa095eb292b83",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Female_Reserved_Barks",
+			"Guid": "2b63671451c82094f828817ce94d33e5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Aggressive_Barks",
+			"Guid": "875e273f9fb12e74c82d2ac7d901eae7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Brave_Barks",
+			"Guid": "875760f22cf9073499d7e4705b4c36f7",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Confident_Barks",
+			"Guid": "090b8bee9e498df40918136ec69d33c5",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Grumpy_Barks",
+			"Guid": "f05606ad44c4870498701ee4d425449b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Madman_Barks",
+			"Guid": "d3f75c07e14448a4f9b9010f2004e480",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Optimist_Barks",
+			"Guid": "0ac4c0a68735fd242b7e0f1cf0a5104d",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Pious_Barks",
+			"Guid": "62d6c36669e7d414380e20b33d41130f",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Pragmatic_Barks",
+			"Guid": "7f0a743a90858e74eacb95823b058cce",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Reserved_Barks",
+			"Guid": "2dbc60282a52a184f869c67ff488dc9b",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		{
+			"Name": "PC_Male_Wise_Barks",
+			"Guid": "7be4759097b894448b6a898eaed7a09c",
+			"TypeFullName": "Kingmaker.Visual.Sound.BlueprintUnitAsksList"
+		},
+		/***********************************************
+		* Visual Presets
+		***********************************************/
+		{
+			"Name": "Cavalier_HalfElf_Pregen_VisualPreset",
+			"Guid": "5f3731f20e3b4f4e9a01df7a5046fa30",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Aasimar_Standard_VisualPreset",
+			"Guid": "640e57f7890fa044ea78914930ddac5b",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Aasimar_Standard_VisualPreset_fat",
+			"Guid": "d529cb3def52a584f93a4aff5e20316a",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Aasimar_Standard_VisualPreset_thin",
+			"Guid": "00fa5240ec151e8419cb60c34fb96e0e",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dhampir_Standard_VisualPreset",
+			"Guid": "7d62fdf38e8509d489bad61edc3bb378",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dhampir_Standard_VisualPreset_fat",
+			"Guid": "3c6cc7bb7064419b8ffb38dd4b967259",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dhampir_Standard_VisualPreset_thin",
+			"Guid": "aeb4b53456324320ba73016227a2cb84",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dwarf_VisualPreset",
+			"Guid": "97887dd22770a8f4382fea706108ae1d",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dwarf_VisualPreset_fat",
+			"Guid": "62d55ab200433cf48969742069082900",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Dwarf_VisualPreset_thin",
+			"Guid": "955e56e2035c3f44ca02d653b54d6c4c",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Elf_VisualPreset",
+			"Guid": "33c5153d85a687d40ab3a56f8c391f0c",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Elf_VisualPreset_fat",
+			"Guid": "69f805875eebbe44a98de85ca73dec2d",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Elf_VisualPreset_thin",
+			"Guid": "5949351417a1c644c8909d79dcfa3c07",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Gnome_VisualPreset",
+			"Guid": "22ce97d0a0ed72a42be8f91c81dff3fc",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Gnome_VisualPreset_fat",
+			"Guid": "2d2aa9649a8a7bc43a545d42921db850",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Gnome_VisualPreset_thin",
+			"Guid": "219af30a164c8704d897b40a484be6ac",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfElf_VisualPreset",
+			"Guid": "73182addc48e5b944a0a87d4fbd8f35b",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfElf_VisualPreset_fat",
+			"Guid": "249e1b67814574e4b9d4b9a3f846e765",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfElf_VisualPreset_thin",
+			"Guid": "ee326fab8804493499ce07c5cd8759e2",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Halfling_VisualPreset",
+			"Guid": "639cebe8cbc098345af429d62fd79578",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Halfling_VisualPreset_fat",
+			"Guid": "4031e194544440c47a50ed30073bcf09",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Halfling_VisualPreset_thin",
+			"Guid": "f6db3ede6c67b84438e2b5609fcaf693",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Slim_VisualPreset",
+			"Guid": "fadca6de52f495842bbe5a42bef14fe9",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Standard_VisualPreset",
+			"Guid": "aa0929877b81dfc4a9a8a43902701a15",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Standard_VisualPreset_fat",
+			"Guid": "ba5b547d3641a5b4f8ccdefc35009222",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "HalfOrc_Standard_VisualPreset_thin",
+			"Guid": "09433f75c36594d4e88e2cc122c6bbce",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Fat_VisualPreset",
+			"Guid": "ac19b4cbd6d24094fa0db19f26973103",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Standard_VisualPreset",
+			"Guid": "58181bf151eb0c0408f82546541dcc03",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Standard_VisualPreset_fat",
+			"Guid": "10d74847c1492bf428b462f948e69d4f",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Standard_VisualPreset_thin",
+			"Guid": "e03b9c63971878743b8f53bdf14673ee",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Human_Tall_VisualPreset",
+			"Guid": "3a691e2c33c914f4c8ea2be45515ba38",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Kitsune_Standard_VisualPreset",
+			"Guid": "f7c20e42f9e6dc140b71e4157db24e4d",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Kitsune_Standard_VisualPreset_fat",
+			"Guid": "8b88651f2c3f4a82aeb66f339e57c489",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Kitsune_Standard_VisualPreset_thin",
+			"Guid": "eed106c1251548aeb6eb51049686d032",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Oread_Standard_VisualPreset",
+			"Guid": "3fbaf485e78c5dd46b255a71e013f34e",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Oread_Standard_VisualPreset_fat",
+			"Guid": "9209746f14e247a9a6cc10e124a4bde4",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Oread_Standard_VisualPreset_thin",
+			"Guid": "89f78351ab914aa8a9ee330ef9dce760",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Tiefling_Standard_VisualPreset",
+			"Guid": "4bbf7e0e8d2f0e84e8236bea2df185ff",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Tiefling_Standard_VisualPreset_fat",
+			"Guid": "8b485a757f883734585da9b8b816d1d6",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "Tiefling_Standard_VisualPreset_thin",
+			"Guid": "4d9124908caec8145b733ecbd2896b23",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "SuccubusIncubus_VisualPreset",
+			"Guid": "173d5edc284d408783d5b2a5e37eaea7",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		},
+		{
+			"Name": "SuccubusIncubus_VisualPreset2",
+			"Guid": "230ccb3561d149aab93ea74154a14d0c",
+			"TypeFullName": "Kingmaker.Blueprints.CharGen.BlueprintRaceVisualPreset"
+		}
+	]
+}

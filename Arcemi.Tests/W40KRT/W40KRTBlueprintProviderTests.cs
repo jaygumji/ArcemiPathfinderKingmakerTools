@@ -10,7 +10,8 @@ namespace Arcemi.Tests.W40KRT
         public async Task Test()
         {
             var target = new W40KRTBlueprintProvider();
-            await target.SetupAsync(new Models.BlueprintProviderSetupArgs(@"C:\Temp\W40KRT\WorkingDirectory", @"C:\Games\Steam\steamapps\common\Warhammer 40,000 Rogue Trader"));
+            await target.SetupAsync(new Models.BlueprintProviderSetupArgs(Models.GameDefinition.Warhammer40K_RogueTrader,
+                @"C:\Temp\W40KRT\WorkingDirectory", @"C:\Games\Steam\steamapps\common\Warhammer 40,000 Rogue Trader"));
             var entry = target.Get("8382395e2da7471e925222eaaa4f2bf1");
             entry.ToString();
         }

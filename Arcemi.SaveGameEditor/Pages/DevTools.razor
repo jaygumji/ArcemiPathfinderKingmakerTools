@@ -23,14 +23,18 @@
             </button>
         </div>
     }
-    @foreach (var game in Config.Instance.Games.Where(g => g.ValidateGameFolder())) {
-        <div class="col-md-2">
-            <button class="btn btn-info" @onclick="() => GenerateBlueprintBackup(game)">
-                <span class="oi oi-play-circle"></span>
-                @game.DefinitionId blueprint backup
-            </button>
-        </div>
-    }
+    <div class="col-md-4">
+        <button class="btn btn-info" @onclick="() => GeneratePathfinderWotrBlueprintBackup()">
+            <span class="oi oi-play-circle"></span>
+            Pathfinder Wotr blueprint backup
+        </button>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-info" @onclick="() => GeneratePathfinderKingmakerBlueprintAsync()">
+            <span class="oi oi-play-circle"></span>
+            Pathfinder Kingmaker blueprint backup
+        </button>
+    </div>
 </div>
 <div class="row">
     <div class="col-md-12">
@@ -90,8 +94,53 @@
         }
     }
 
-    public void GenerateBlueprintBackup(EditorGameConfiguration game)
+    private async Task GeneratePathfinderKingmakerBlueprintAsync()
     {
+        var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+        var options = new ElectronNET.API.Entities.OpenDialogOptions {
+            Title = "Select the blueprint file",
+            Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openFile }
+        };
+        var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+        var file = files?.FirstOrDefault();
+        if (!string.IsNullOrEmpty(file)) {
+            using (var zip = SharpCompress.Archives.Zip.ZipArchive.Open(file, new SharpCompress.Readers.ReaderOptions())) {
+                var entry = zip.Entries.FirstOrDefault(e => e.Key.IEq("Blueprints.txt"));
+                if (entry is null) {
+                    Output = "Couldn't find entry Blueprints.txt";
+                    return;
+                }
+                var cheatdata = new System.Text.StringBuilder().Append("{\"Entries\":[");
+                var errs = new System.Text.StringBuilder();
+                using (var stream = entry.OpenEntryStream())
+                using (var reader = new System.IO.StreamReader(stream)) {
+                    await reader.ReadLineAsync();
+
+                    int lineNo = 1;
+                    var isFirst = true;
+                    while (!reader.EndOfStream) {
+                        lineNo++;
+                        var line = reader.ReadLine();
+                        var parts = line.Split('\t');
+                        if (parts.Length != 3) {
+                            errs.AppendLine("Could not read line " + lineNo);
+                        }
+                        else {
+                            if (isFirst) isFirst = false;
+                            else cheatdata.Append(",");
+                            cheatdata.Append($"{{\"Name\":\"{parts[0]}\",\"Guid\":\"{parts[1]}\",\"TypeFullName\":\"{parts[2]}\"}}");
+                        }
+                    }
+                    cheatdata.Append("]}");
+                    Output = errs.Length > 0 ? errs.AppendLine().ToString() + cheatdata.ToString() : cheatdata.ToString();
+                }
+            }
+        }
+    }
+
+    private void GeneratePathfinderWotrBlueprintBackup()
+    {
+        var game = Config.Instance.GetGame(GameDefinition.Pathfinder_WrathOfTheRighteous);
         var cheatDataFile = System.IO.Path.Combine(game.GameFolder, "Bundles", "cheatdata.json");
         if (!System.IO.File.Exists(cheatDataFile)) {
             Output = "Could not find cheatdata.json @ " + cheatDataFile;
