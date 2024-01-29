@@ -250,11 +250,11 @@ else {
     protected override void OnInitialized()
     {
         var unmappedArmyUnits = Resources.GetAvailableArmyUnits()
-            .Where(x => !Mappings.ArmyUnits.ContainsKey(x.Id))
+            .Where(x => !Resources.Mappings.ArmyUnits.ContainsKey(x.Id))
             .Select(x => new ArmyUnitDataMapping { Id = x.Id, Name = x.DisplayName, Size = ArmyUnitSize.Unknown })
             .ToArray();
 
-        AllArmyUnitTypes = Mappings.ArmyUnits.Values.Concat(unmappedArmyUnits).OrderBy(x => x.Name);
+        AllArmyUnitTypes = Resources.Mappings.ArmyUnits.Values.Concat(unmappedArmyUnits).OrderBy(x => x.Name);
     }
 
     public void SelectArmy(PlayerArmyModel unit)

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Arcemi.Models
+﻿namespace Arcemi.Models
 {
     public class FeaturesModel : RefModel
     {
@@ -8,7 +6,7 @@ namespace Arcemi.Models
         {
         }
 
-        public IReadOnlyList<FactModel> Facts => A.List("m_Facts", a => new FactModel(a));
+        public ListAccessor<FactItemModel> Facts => A.List("m_Facts", FactItemModel.Factory);
 
     }
 }

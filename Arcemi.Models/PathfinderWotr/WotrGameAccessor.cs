@@ -7,7 +7,7 @@ namespace Arcemi.Models.PathfinderWotr
     {
         public static bool Detect(IGameEditFile file)
         {
-            return file.Party.UnitEntities.Any(x => x.Descriptor is object);
+            return file.Player.Corruption is object && file.Party.UnitEntities.Any(x => x.Descriptor is object);
         }
 
         public GameDefinition Definition { get; } = GameDefinition.Pathfinder_WrathOfTheRighteous;

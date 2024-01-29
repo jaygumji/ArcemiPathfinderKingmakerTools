@@ -129,9 +129,9 @@ namespace Arcemi.SaveGameEditor.Models
             _units.Remove(armyUnit);
         }
 
-        private static ArmyUnitDataMapping GetMapping(IGameResourcesProvider res, PlayerArmyModel army, PlayerArmySquadModel squad)
+        private ArmyUnitDataMapping GetMapping(IGameResourcesProvider res, PlayerArmyModel army, PlayerArmySquadModel squad)
         {
-            if (Mappings.ArmyUnits.TryGetValue(squad.Unit, out var m)) {
+            if (_res.Mappings.ArmyUnits.TryGetValue(squad.Unit, out var m)) {
                 if (m.Size == ArmyUnitSize.Unknown) {
                     var detectedSize = FindSizeFromPosition(army, squad);
                     return new ArmyUnitDataMapping { Id = m.Id, Name = m.Name, Size = detectedSize };

@@ -23,6 +23,14 @@
             </button>
         </div>
     }
+    @foreach (var game in Config.Instance.Games.Where(g => g.ValidateGameFolder())) {
+        <div class="col-md-2">
+            <button class="btn btn-info" @onclick="() => GenerateBlueprintBackup(game)">
+                <span class="oi oi-play-circle"></span>
+                @game.DefinitionId blueprint backup
+            </button>
+        </div>
+    }
 </div>
 <div class="row">
     <div class="col-md-12">
@@ -37,7 +45,7 @@
     {
         var newArmyUnits = Resources.GetAvailableArmyUnits()
             .OrderBy(x => x.DisplayName)
-            .Where(x => !Mappings.ArmyUnits.ContainsKey(x.Id));
+            .Where(x => !Resources.Mappings.ArmyUnits.ContainsKey(x.Id));
 
         var b = new System.Text.StringBuilder();
         foreach (var au in newArmyUnits) {
@@ -78,6 +86,50 @@
                 b.AppendLine($"\t{{{typeName.Name}.FullName, {typeName.Name}}},");
             }
             b.AppendLine("}");
+            Output = b.ToString();
+        }
+    }
+
+    public void GenerateBlueprintBackup(EditorGameConfiguration game)
+    {
+        var cheatDataFile = System.IO.Path.Combine(game.GameFolder, "Bundles", "cheatdata.json");
+        if (!System.IO.File.Exists(cheatDataFile)) {
+            Output = "Could not find cheatdata.json @ " + cheatDataFile;
+        }
+        var serializer = new Newtonsoft.Json.JsonSerializer();
+        using (var stream = new System.IO.FileStream(cheatDataFile, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+        using (var reader = new System.IO.StreamReader(stream))
+        using (var jsonReader = new Newtonsoft.Json.JsonTextReader(reader)) {
+            var cheatdata = serializer.Deserialize<BlueprintMetadataContainer>(jsonReader);
+            var res = (BlueprintProvider)game.GetDefinition().Resources.Blueprints;
+            var types = new HashSet<string>(res.Types
+                .Where(t => t.Category == BlueprintTypeCategory.Item
+                    || t.FullName.IEnd(".BlueprintAbility")
+                    || t.FullName.IEnd(".BlueprintBuff")
+                    || t.FullName.IEnd(".BlueprintFeature")
+                    || t.FullName.IEnd(".BlueprintRace")
+                    || t.FullName.IEnd(".BlueprintUnitAsksList")
+                    || t.FullName.IEnd(".BlueprintPortrait")
+                    || t.FullName.IEnd(".BlueprintLeaderSkill")
+                    || t.FullName.IEnd(".BlueprintUnlockableFlag")
+                    || t.FullName.IEnd(".BlueprintRaceVisualPreset")
+                    || t.FullName.IEnd(".BlueprintUnit")
+                    || t.FullName.IEnd(".BlueprintAbilityResource")
+                )
+                .Select(t => t.FullName), StringComparer.Ordinal);
+
+            for (var i = cheatdata.Entries.Count-1; i >= 0; i--) {
+                var entry = cheatdata.Entries[i];
+                if (!types.Contains(entry.TypeFullName)) cheatdata.Entries.RemoveAt(i);
+            }
+            var b = new System.Text.StringBuilder().Append("{\"Entries\":[");
+            var isFirst = true;
+            foreach (var entry in cheatdata.Entries) {
+                if (isFirst) { isFirst = false; }
+                else { b.Append(","); }
+                b.Append($"{{\"Name\":\"{entry.Name}\",\"Guid\":\"{entry.Guid}\",\"TypeFullName\":\"{entry.TypeFullName}\"}}");
+            }
+            b.Append("]}");
             Output = b.ToString();
         }
     }

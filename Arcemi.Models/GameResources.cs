@@ -17,11 +17,13 @@ namespace Arcemi.Models
         public List<FeatureFactItemModel> FeatTemplates { get; private set; }
         public GameBlueprintsArchive BlueprintsArchive { get; private set; }
         public GameDefinition Game { get; }
+        public Mappings Mappings { get; }
 
         public GameResources(GameDefinition game, BlueprintProvider blueprintProvider)
         {
             Blueprints = blueprintProvider;
             Game = game;
+            Mappings = new Mappings(game);
         }
 
         public async Task LoadGameFolderAsync(string workingDirectory, string gameFolder)

@@ -50,7 +50,7 @@ namespace Arcemi.Models
             var references = new References();
             VisitTree(null, Json, references);
             var accessor = new ModelDataAccessor(Json, references);
-            var root = (factory ?? Mappings.GetFactory<T>()).Invoke(accessor);
+            var root = (factory ?? ModelFactory.Get<T>()).Invoke(accessor);
             _root = root;
             return root;
         }

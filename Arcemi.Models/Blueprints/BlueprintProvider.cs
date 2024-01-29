@@ -13,10 +13,12 @@ namespace Arcemi.Models
         private IReadOnlyList<BlueprintMetadataEntry> _entries;
         private Dictionary<string, BlueprintMetadataEntry> _entryLookup;
         private Dictionary<BlueprintType, List<BlueprintMetadataEntry>> _entryByType;
+
         private readonly IReadOnlyDictionary<string, BlueprintType> typeFullNameLookup;
         private readonly IReadOnlyDictionary<BlueprintTypeId, BlueprintType> typeIdLookup;
 
         public IReadOnlyList<IBlueprintMetadataEntry> Entries => _entries;
+        public IEnumerable<BlueprintType> Types => typeFullNameLookup.Values;
 
         protected BlueprintProvider(IReadOnlyDictionary<string, BlueprintType> typeFullNameLookup, IReadOnlyDictionary<BlueprintTypeId, BlueprintType> typeIdLookup)
         {
@@ -132,12 +134,15 @@ namespace Arcemi.Models
         {
             await OnBeforeSetupAsync(args);
 
-            if (string.IsNullOrEmpty(args.GameFolder)) return;
-            var cheatdataPath = Path.Combine(args.GameFolder, "Bundles", "cheatdata.json");
+            var cheatdataPath = args.GameFolder.HasValue()
+                ? Path.Combine(args.GameFolder, "Bundles", "cheatdata.json")
+                : null;
+
             BlueprintMetadataContainer cheatdata;
             if (!File.Exists(cheatdataPath)) {
                 // Small backup
                 cheatdataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "_Defs", "Blueprints.json");
+                Logger.Current.Information($"{GetType().Name} using blueprint backup at '{cheatdataPath}'");
             }
             if (!File.Exists(cheatdataPath)) {
                 return;

@@ -309,7 +309,7 @@
   "characters": [
     { "id": "4391e8b9afbb0cf43aeba700c089f56d", "name": "Player" },
     { "id": "baaff53a675a84f4983f1e2113b24552", "name": "Custom" },
-    { "id": "54be53f0b35bf3c4592a97ae335fe765", "name": "Seelah", "portrait": "0ebca33b0e5eb514aa75d9989a565f2f" },
+    { "id": "54be53f0b35bf3c4592a97ae335fe765", "name": "Seelah", "portrait": "0ebca33b0e5eb514aa75d9989a565f2f", "gameId": "PATHWOTR" },
     { "id": "397b090721c41044ea3220445300e1b8", "name": "Camellia", "portrait": "d227d31233aa2494fba89cb715afbb87" },
     { "id": "cb29621d99b902e4da6f5d232352fbda", "name": "Lann", "portrait": "b9fea9f24838d43469948aa54088d600" },
     { "id": "ae766624c03058440a036de90a7f2009", "name": "Wenduag", "portrait": "c883d02a0d8a4b54f903d351c8fd6af7" },
@@ -360,7 +360,7 @@
     { "id": "f6c23e93512e1b54dba11560446a9e02", "name": "Tristian", "portrait": "82e448d871cb4014891a2ccf705e910a" },
     { "id": "5455cd3cd375d7a459ca47ea9ff2de78", "name": "Tartuccio", "portrait": "749cb99d8969269438ccd7f89d2e7a66" },
     { "id": "aab03d0ab5262da498b32daa6a99b507", "name": "Harrim", "portrait": "a87b6eb02054bb5439d3de2ba34f950b" },
-    //{ "id": "54be53f0b35bf3c4592a97ae335fe765", "name": "Valerie", "portrait": "cfb97eb4f37ff4a468cd64857a6922c2" },
+    { "id": "54be53f0b35bf3c4592a97ae335fe765", "name": "Valerie", "portrait": "cfb97eb4f37ff4a468cd64857a6922c2", "gameId": "PATHKING" },
     { "id": "f9161aa0b3f519c47acbce01f53ee217", "name": "Octavia", "portrait": "3d7f4e873564c1746813ed4c465bc87d" },
     { "id": "b090918d7e9010a45b96465de7a104c3", "name": "Regongar", "portrait": "4a2c9558226bb8345ac402ab6099df61" },
     { "id": "f1c0b181a534f4940ae17f243a5968ec", "name": "Kanerah", "portrait": "57ef0d374234afc409158c021bed48b2" },

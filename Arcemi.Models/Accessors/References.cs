@@ -172,7 +172,7 @@ namespace Arcemi.Models
             if (accessor == null) {
                 return default;
             }
-            obj = (factory ?? Mappings.GetFactory<T>()).Invoke(accessor);
+            obj = (factory ?? ModelFactory.Get<T>()).Invoke(accessor);
             _objects.AddGlobal(item, obj);
             return obj;
         }
@@ -199,7 +199,7 @@ namespace Arcemi.Models
                     return default;
                 }
             }
-            obj = (factory ?? Mappings.GetFactory<T>()).Invoke(property);
+            obj = (factory ?? ModelFactory.Get<T>()).Invoke(property);
             _objects.Add(parent, name, obj);
             return obj;
         }
@@ -262,7 +262,7 @@ namespace Arcemi.Models
                 throw new ArgumentException($"Parameter {name} does not reference a valid array.");
             }
 
-            var listAccessor = new ListD2Accessor<T>(arr, _refs, factory ?? Mappings.GetFactory<T>());
+            var listAccessor = new ListD2Accessor<T>(arr, _refs, factory ?? ModelFactory.Get<T>());
             _objects.Add(parent, name, listAccessor);
             return listAccessor;
         }
@@ -287,7 +287,7 @@ namespace Arcemi.Models
                 throw new ArgumentException($"Parameter {name} does not reference a valid array.");
             }
 
-            var listAccessor = new ListAccessor<T>(arr, _refs, factory ?? Mappings.GetFactory<T>());
+            var listAccessor = new ListAccessor<T>(arr, _refs, factory ?? ModelFactory.Get<T>());
             _objects.Add(parent, name, listAccessor);
             return listAccessor;
         }
@@ -363,7 +363,7 @@ namespace Arcemi.Models
                 property.Value = dictObj;
             }
 
-            dict = new DictionaryAccessor<T>(dictObj, _refs, factory ?? Mappings.GetFactory<T>());
+            dict = new DictionaryAccessor<T>(dictObj, _refs, factory ?? ModelFactory.Get<T>());
             _objects.Add(parent, name, dict);
             return dict;
         }

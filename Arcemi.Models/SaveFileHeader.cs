@@ -13,8 +13,8 @@ namespace Arcemi.Models
         }
 
         public IReadOnlyList<SaveFileHeader> Headers { get; }
-        public string PlayerCharacterName => Headers.First().Header.PlayerCharacterName;
-        public DateTime LastSystemSaveTime => Headers.First().Header.SystemSaveTime;
+        public string PlayerCharacterName => Headers[0].Header.PlayerCharacterName.OrIfEmpty(Headers[0].Header.GameName);
+        public DateTime LastSystemSaveTime => Headers[0].Header.SystemSaveTime;
         public bool IsExpanded { get; set; }
         public void ToggleExpansion()
         {

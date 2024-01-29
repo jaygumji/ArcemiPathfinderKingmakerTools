@@ -11,7 +11,7 @@ else {
         @foreach (var unit in Model.Characters.Where(c => c.Type.IsDisplayedInCharactersPage())) {
         <li @onclick="() => SelectCharacter(unit)" class="@(Unit == unit ? "toggled" : "")" title="@unit.Name">
             <img src="file://@unit.Portrait.Path" alt="Portrait" />
-            <span>@(unit.CustomName ?? unit.Name)</span>
+            <span>@unit.CustomName.OrIfEmpty(unit.Name)</span>
         </li>
         }
     </ul>

@@ -156,7 +156,7 @@ namespace Arcemi.Models
         public TGameModel this[int index] => _inner[index];
         public int Count => _inner.Count;
 
-        public IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries => writer.GetAvailableEntries(_inner);
+        public IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries => writer?.GetAvailableEntries(_inner) ?? Array.Empty<IBlueprintMetadataEntry>();
 
         public IEnumerator<TGameModel> GetEnumerator() => _inner.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

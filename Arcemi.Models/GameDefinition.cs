@@ -14,14 +14,15 @@
         public static GameDefinition Pathfinder_Kingmaker { get; } = new GameDefinition("PATHKING", "Pathfinder Kingmaker",
             @"LocalLow\Owlcat Games\Pathfinder Kingmaker",
             "Pathfinder Kingmaker",
-            new EmptyBlueprintTypeProvider());
+            new Kingmaker.KingmakerBlueprintProvider(), isReadingGameFolder: false);
 
-        private GameDefinition(string id, string name, string windowsRelativeAppDataPath, string windowsGameFolderName, BlueprintProvider blueprintTypeProvider)
+        private GameDefinition(string id, string name, string windowsRelativeAppDataPath, string windowsGameFolderName, BlueprintProvider blueprintTypeProvider, bool isReadingGameFolder = true)
         {
             Id = id;
             Name = name;
             WindowsRelativeAppDataPath = windowsRelativeAppDataPath;
             WindowsGameFolderName = windowsGameFolderName;
+            IsReadingGameFolder = isReadingGameFolder;
             Resources = new GameResources(this, blueprintTypeProvider);
         }
 
@@ -29,6 +30,7 @@
         public string Name { get; }
         public string WindowsRelativeAppDataPath { get; }
         public string WindowsGameFolderName { get; }
+        public bool IsReadingGameFolder { get; }
         public GameResources Resources { get; }
     }
 }

@@ -5,7 +5,7 @@
     @foreach (var game in Games) {
         <Tab Name="@game.Definition.Name">
             <Content>
-                @if (!game.Config.ValidateGameFolder()) {
+                @if (game.Definition.IsReadingGameFolder && !game.Config.ValidateGameFolder()) {
                     <p class="alert alert-warning">
                         Game folder is not configured in settings, enhanced UI has been disabled.
                         Set the game folder in the settings to enable the enhanced UI for a better experience.
@@ -62,7 +62,7 @@
         Games = GamesForSavedGamesView.Create(Config);
         if (Games.Count == 0) return;
         if (GameMustBe is object) {
-            Games = Games.Where(g => g.Definition == GameMustBe).ToArray(); 
+            Games = Games.Where(g => g.Definition == GameMustBe).ToArray();
         }
         else if (Config.Instance.LastGameDefinitionId.HasValue()) {
             TabIndex = 0;

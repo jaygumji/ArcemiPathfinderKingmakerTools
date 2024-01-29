@@ -33,22 +33,24 @@
                                 <p>The path to the application data folder. There should be 2 folders inside ("Saved Games" and "Portraits").</p>
                             </div>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <label class="form-label">Game Folder</label>
-                                <div class="input-group">
-                                    <div class="btn @(game.IsValidGameFolder ? "btn-success": "btn-default")">
-                                        <span class="oi @(game.IsValidGameFolder ? "oi-thumb-up" : "oi-thumb-down")"></span>
+                        @if (game.Definition.IsReadingGameFolder) {
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Game Folder</label>
+                                    <div class="input-group">
+                                        <div class="btn @(game.IsValidGameFolder ? "btn-success": "btn-default")">
+                                            <span class="oi @(game.IsValidGameFolder ? "oi-thumb-up" : "oi-thumb-down")"></span>
+                                        </div>
+                                        <input class="form-control" type="text" @bind="game.GameFolder" />
+                                        <button class="btn btn-info" @onclick="() => SelectGameFolder(game)">...</button>
                                     </div>
-                                    <input class="form-control" type="text" @bind="game.GameFolder" />
-                                    <button class="btn btn-info" @onclick="() => SelectGameFolder(game)">...</button>
+                                    <p>
+                                        The path to the game folder where the game is installed.
+                                        It enables the editor to lookup names for identifiers. example C:\Program Files\Steam\steamapps\@game.Definition.Name
+                                    </p>
                                 </div>
-                                <p>
-                                    The path to the game folder where the game is installed.
-                                    It enables the editor to lookup names for identifiers. example C:\Program Files\Steam\steamapps\Warhammer 40,000 Rogue Trader
-                                </p>
                             </div>
-                        </div>
+                        }
                     </Content>
                 </Tab>
             }

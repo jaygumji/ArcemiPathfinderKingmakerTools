@@ -16,6 +16,7 @@ namespace Arcemi.Models
         }
 
         public string GameId { get => A.Value<string>(); set => A.Value(value); }
+        public string GameName { get => A.Value<string>(); set => A.Value(value); } // Kingmaker only
         public string Type { get => A.Value<string>(); set => A.Value(value); }
         public bool IsManual => string.Equals(Type, SaveFileType.Manual, StringComparison.Ordinal);
         public string PlayerCharacterName { get => A.Value<string>(); set => A.Value(value); }

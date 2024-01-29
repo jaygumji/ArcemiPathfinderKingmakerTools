@@ -6,6 +6,7 @@ namespace Arcemi.Models
     {
         GameAppData AppData { get; }
         BlueprintProvider Blueprints { get; }
+        Mappings Mappings { get; }
 
         string GetPortraitId(string blueprint);
         string GetCharacterPotraitIdentifier(string blueprint);

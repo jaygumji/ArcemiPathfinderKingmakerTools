@@ -53,7 +53,7 @@ namespace Arcemi.Models
             var json = System.Text.Encoding.UTF8.GetString(bytes);
             var obj = JObject.Parse(json);
             var accessor = new ModelDataAccessor(obj, new References());
-            return (factory ?? Mappings.GetFactory<T>()).Invoke(accessor);
+            return (factory ?? ModelFactory.Get<T>()).Invoke(accessor);
         }
 
         public void ImportCode(string script)

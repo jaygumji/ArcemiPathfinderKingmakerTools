@@ -10,5 +10,6 @@ namespace Arcemi.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Portrait { get; set; }
+        public string GameId { get; set; }
     }
 }
