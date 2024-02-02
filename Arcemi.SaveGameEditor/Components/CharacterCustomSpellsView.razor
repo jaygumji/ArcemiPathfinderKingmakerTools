@@ -173,29 +173,31 @@ else {
                     </HelpText>
                 </MetamagicControl>
             </div>
-            <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Persistent" HelpPosition="TooltipPosition.BottomRight">
-                    <HelpText>
-                        Enemies must succeed their saving throws twice to resist the spell.
-                    </HelpText>
-                </MetamagicControl>
-            </div>
-            <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Selective" HelpPosition="TooltipPosition.BottomRight">
-                    <HelpText>
-                        On area spells, select targets that should be excluded from the effect.
-                    </HelpText>
-                </MetamagicControl>
-            </div>
-            <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Bolstered" HelpPosition="TooltipPosition.BottomRight">
-                    <HelpText>
-                        Spell now deals 2 more damage per die rolled to all targets.
-                        Enemies in a 5 feet radius of spell targets take 2 damage per die rolled of the original spell.
-                        Spell no longer does precision damage.
-                    </HelpText>
-                </MetamagicControl>
-            </div>
+                @if (Spellbook is Arcemi.Models.PathfinderWotr.WotrGameUnitSpellBookEntry) {
+                    <div class="col-md-2">
+                        <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Persistent" HelpPosition="TooltipPosition.BottomRight">
+                            <HelpText>
+                                Enemies must succeed their saving throws twice to resist the spell.
+                            </HelpText>
+                        </MetamagicControl>
+                    </div>
+                    <div class="col-md-2">
+                        <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Selective" HelpPosition="TooltipPosition.BottomRight">
+                            <HelpText>
+                                On area spells, select targets that should be excluded from the effect.
+                            </HelpText>
+                        </MetamagicControl>
+                    </div>
+                    <div class="col-md-2">
+                        <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Bolstered" HelpPosition="TooltipPosition.BottomRight">
+                            <HelpText>
+                                Spell now deals 2 more damage per die rolled to all targets.
+                                Enemies in a 5 feet radius of spell targets take 2 damage per die rolled of the original spell.
+                                Spell no longer does precision damage.
+                            </HelpText>
+                        </MetamagicControl>
+                    </div>
+                }
         </div>
         }
     </Body>
@@ -206,7 +208,7 @@ else {
 
 @code {
     [Parameter]
-    public CharacterSpellbookModel Spellbook { get; set; }
+    public IGameUnitSpellBookEntry Spellbook { get; set; }
 
     private ListD2Accessor<CustomSpellModel> CustomSpells => Spellbook.CustomSpells;
 

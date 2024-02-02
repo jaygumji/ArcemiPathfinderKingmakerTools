@@ -1,7 +1,7 @@
 ﻿@inject CharacterViewModel Model
 @inject IGameResourcesProvider Resources
 
-@if (!Character.HasTricksterSpellbook()) {
+@if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel && !Character.HasTricksterSpellbook()) {
     <div class="row">
         <div class="col-md-12">
             <button class="btn btn-info" @onclick="() => Character.CreateTricksterSpellbook()">
@@ -15,53 +15,56 @@
     </div>
 }
 
-@if (!HasSpellBooks) {
+@if (!Unit.SpellCaster.SpellBooks.Any()) {
     <p class="alert alert-info">Character has no spellbooks.</p>
 }
 else {
-    <div class="row g-3">
-        <div class="col-md-12">
-            <h3>
-                Bonus Spells
-                <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
-                    This works with both regular spell slots and spontaneous slots.<br/>
-                    However it does not work for mythic spellbooks.
-                </Help>
-            </h3>
+    if (Unit.SpellCaster.BonusSpells.IsSupported) {
+        <div class="row g-3">
+            <div class="col-md-12">
+                <h3>
+                    Bonus Spells
+                    <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                        This works with both regular spell slots and spontaneous slots.<br />
+                        However it does not work for mythic spellbooks.
+                    </Help>
+                </h3>
+            </div>
         </div>
-    </div>
-    @if (UnitExtraSpellsPerDayPart == null) {
-        <button class="btn btn-info" @onclick="() => UnlockUnitExtraSpellsPerDay()">
-            <span class="oi oi-lock-locked"></span>
-            Unlock
-        </button>
-    }
-    else {
-        <SpellIndexAccessorView Accessors="UnitExtraSpellsPerDayPart.BonusSpellsAccessors" />
+        @if (!Unit.SpellCaster.BonusSpells.IsUnlocked) {
+            <button class="btn btn-info" @onclick="() => Unit.SpellCaster.BonusSpells.Unlock()">
+                <span class="oi oi-lock-locked"></span>
+                Unlock
+            </button>
+        }
+        else {
+            <SpellIndexAccessorView Accessors="Unit.SpellCaster.BonusSpells.Accessors" />
+        }
     }
 
-    @foreach (var spellbook in Character.Spellbooks.Select(sb => sb.Value)) {
+    @foreach (var spellbook in Unit.SpellCaster.SpellBooks) {
         <div class="row">
             <div class="col-md-12">
-                <h3>@spellbook.DisplayName(Resources)</h3>
+                <h3>@spellbook.Name</h3>
             </div>
         </div>
         <div class="row">
             <div class="col-md-2">
                 <label class="form-label">Level</label>
-                <input type="number" class="form-control" @bind="spellbook.BaseLevelInternal" />
+                <input type="number" class="form-control" @bind="spellbook.Level" />
             </div>
-            <div class="col-md-2">
-                <label class="form-label">Mythic</label>
-                <Help Size="ElementSize.Small">
-                    This is only used for combined spellbooks
-                </Help>
-                <input type="number" class="form-control" @bind="spellbook.MythicLevelInternal" />
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Type</label>
-                <input type="text" class="form-control" readonly="readonly" value="@spellbook.Type.AsDisplayable()" />
-            </div>
+            @if (spellbook.IsModifierSupported) {
+                <div class="col-md-2">
+                    <label class="form-label">@spellbook.Modifier</label>
+                    <input type="number" class="form-control" @bind="spellbook.Modifier" />
+                </div>
+            }
+            @if (spellbook.Type.HasValue()) {
+                <div class="col-md-4">
+                    <label class="form-label">Type</label>
+                    <input type="text" class="form-control" readonly="readonly" value="@spellbook.Type.AsDisplayable()" />
+                </div>
+            }
             <div class="col-md-4">
                 <div><label class="form-label">&nbsp;</label></div>
                 @if (HasMemorizedSpells(spellbook)) {
@@ -95,16 +98,11 @@ else {
         }
 
         <AccordionContainer>
-            @if (IsBonusSpellSlotsAvailable) {
-                <Accordion HeaderText="Bonus Slots">
-                    <SpellIndexAccessorView Accessors="spellbook.BonusSpellSlotsAccessors" />
-                </Accordion>
-            }
-            @if (spellbook.SpontaneousSlots?.Count > 0) {
+            @if (spellbook.SpontaneousSlots is not null) {
                 <Accordion HeaderText="Spontaneous Slots">
                     <p class="alert alert-info">This is the available number of slots until you rest.
                         You can set this to above your maximum slots, but it will reset after a rest.</p>
-                    <SpellIndexAccessorView Accessors="spellbook.SpontaneousSlotsAccessors" />
+                    <SpellIndexAccessorView Accessors="spellbook.SpontaneousSlots" />
                 </Accordion>
             }
             <Accordion HeaderText="Known spells">
@@ -136,44 +134,35 @@ else {
 
 @code {
     [Parameter]
-    public UnitEntityModel Unit { get; set; }
-    private CharacterModel Character => Unit?.Descriptor;
-
-    private UnitExtraSpellsPerDayPartItemModel UnitExtraSpellsPerDayPart => Unit.Parts.Items
-        .OfType<UnitExtraSpellsPerDayPartItemModel>()
-        .FirstOrDefault();
+    public IGameUnitModel Unit { get; set; }
+    private CharacterModel Character => Unit?.Ref.Descriptor;
 
     private bool HasSpellBooks => Character.Spellbooks?.Count > 0;
 
     // Doesn't seem to do anything
     private bool IsBonusSpellSlotsAvailable => false; // spellbook.BonusSpellSlots?.Count > 0
 
-    private void UnlockUnitExtraSpellsPerDay()
-    {
-        UnitExtraSpellsPerDayPartItemModel.AddTo(Unit.Parts);
-    }
-
-    private string GetSpecialListsInfo(CharacterSpellbookModel spellbook)
+    private string GetSpecialListsInfo(IGameUnitSpellBookEntry spellbook)
     {
         return string.Join("<br />", spellbook.SpecialLists.Select(x => Resources.Blueprints.GetNameOrBlueprint(x)));
     }
 
-    private void RemoveOppositionSchool(CharacterSpellbookModel spellbook, string oppositionSchool)
+    private void RemoveOppositionSchool(IGameUnitSpellBookEntry spellbook, string oppositionSchool)
     {
         spellbook.OppositionSchools.Remove(oppositionSchool);
     }
 
-    private bool HasMemorizedSpells(CharacterSpellbookModel spellbook)
+    private bool HasMemorizedSpells(IGameUnitSpellBookEntry spellbook)
     {
         return spellbook?.MemorizedSpells?.Any(x => x.Any(s => s.Spell != null)) ?? false;
     }
 
-    private bool IsAllMemorizedSpellsAvailable(CharacterSpellbookModel spellbook)
+    private bool IsAllMemorizedSpellsAvailable(IGameUnitSpellBookEntry spellbook)
     {
         return spellbook?.MemorizedSpells?.All(x => x.All(s => s.Spell == null || s.Available)) ?? true;
     }
 
-    private void RestoreMemorizedSpells(CharacterSpellbookModel spellbook)
+    private void RestoreMemorizedSpells(IGameUnitSpellBookEntry spellbook)
     {
         foreach (var spell in spellbook.MemorizedSpells.SelectMany(x => x).Where(s => s.Spell != null && !s.Available)) {
             spell.Available = true;

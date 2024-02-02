@@ -132,9 +132,7 @@
         .Where(f => SearchTerm.IsEmpty() || f.DisplayName.ILike(SearchTerm))
         .OrderBy(f => f.DisplayName);
 
-    private IEnumerable<SelectableFeat> AvailableFeatsBase => Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel
-        ? PredefinedFeats.Combine(Resources.Blueprints.GetEntries(BlueprintTypeId.Feature).Where(IsValidFeat))
-        : Unit.Feats.AvailableEntries.Where(IsValidFeat).Select(e => new SelectableFeat(e)).OrderBy(f => f.DisplayName);
+    private IEnumerable<SelectableFeat> AvailableFeatsBase => Unit.Feats.AvailableEntries.Where(IsValidFeat).Select(e => new SelectableFeat(e)).OrderBy(f => f.DisplayName);
 
     private string SearchTerm;
     private string ImportCode;
@@ -155,23 +153,7 @@
 
     private async Task AddFeatAsync()
     {
-        if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
-            if (PredefinedFeats.TryGet(AddFeatBlueprint, out var spec)) {
-                spec.AddTo(Unit.Ref.Facts.Items);
-            }
-            else if (!IsDuplicateBlueprintId(AddFeatBlueprint)) {
-                var feat = (FeatureFactItemModel)Unit.Ref.Facts.Items.Add(FeatureFactItemModel.Prepare);
-                feat.Blueprint = AddFeatBlueprint;
-                var template = Resources.GetFeatTemplate(AddFeatBlueprint);
-                if (template is object) {
-                    feat.Import(template);
-                }
-            }
-        }
-        else {
-            Unit.Feats.AddByBlueprint(AddFeatBlueprint);
-        }
-
+        Unit.Feats.AddByBlueprint(AddFeatBlueprint);
         await modalAddFeat.CloseAsync();
     }
 

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -130,6 +129,7 @@ namespace Arcemi.Models
         IGameUnitStatsModel Stats { get; }
         IGameUnitAppearanceModel Appearance { get; }
         IGameUnitBodyModel Body { get; }
+        IGameUnitSpellCasterModel SpellCaster { get; }
         IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
@@ -137,6 +137,54 @@ namespace Arcemi.Models
 
         void ReplacePartyMemberWith(IGameUnitModel unit);
         void AddToRetinue();
+    }
+
+    public interface IGameUnitSpellCasterModel : IGameModel
+    {
+        IGameUnitSpellCasterBonusSpellModel BonusSpells { get; }
+        IGameModelCollection<IGameUnitSpellBookEntry> SpellBooks { get; }
+    }
+
+    public interface IGameUnitSpellCasterBonusSpellModel : IGameModel
+    {
+        bool IsUnlocked { get; }
+        IEnumerable<SpellIndexAccessor> Accessors { get; }
+        void Unlock();
+    }
+
+    public interface IGameUnitSpellBookEntry
+    {
+        string Name { get; }
+        string Type { get; }
+        int Level { get; set; }
+        bool IsModifierSupported { get; }
+        string ModifierName { get; }
+        int Modifier { get; set; }
+
+        ISlotCollection<IGameSpellEntry> KnownSpells { get; }
+        ISlotCollection<IGameSpellEntry> SpecialSpells { get; }
+        ListD2Accessor<CustomSpellModel> CustomSpells { get; }
+        ListD2Accessor<MemorizedSpellModel> MemorizedSpells { get; }
+        ListValueAccessor<string> SpecialLists { get; }
+        ListValueAccessor<string> OppositionSchools { get; }
+        IEnumerable<SpellIndexAccessor> SpontaneousSlots { get; }
+
+        void EnableCustomSpells();
+    }
+
+    public interface IGameSpellEntry
+    {
+        string Name { get; }
+        string Blueprint { get; }
+    }
+
+    public interface ISlotCollection<T>
+    {
+        IReadOnlyList<IGameSpellEntry> this[int index] { get; }
+        int Count { get; }
+        bool CanModify { get; }
+        T Add(int index, string blueprint);
+        bool Remove(T item);
     }
 
     public interface IGameUnitBodyModel : IGameModel

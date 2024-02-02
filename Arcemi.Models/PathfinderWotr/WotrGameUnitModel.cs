@@ -23,6 +23,7 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameUnitAppearanceModel Appearance { get; }
         public IGameUnitBodyModel Body { get; }
         public IGameDataObject Overview { get; }
+        public IGameUnitSpellCasterModel SpellCaster { get; }
 
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         public IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
@@ -42,6 +43,7 @@ namespace Arcemi.Models.PathfinderWotr
             Stats = new WotrGameUnitStatsModel(unit);
             Appearance = new WotrGameUnitAppearanceModel(unit.Parts.Items.OfType<UnitDollDataPartItemModel>().FirstOrDefault());
             Body = new WotrGameUnitBodyModel(unit);
+            SpellCaster = new WotrGameUnitSpellCasterModel(unit);
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitFeatEntry(x), x => x is FeatureFactItemModel feat
                 && x.Context?.ParentContext?.SourceItemRef == null, new WotrGameModelCollectionFeatWriter());
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitAbilityEntry(x), x => x is AbilityFactItemModel feat,

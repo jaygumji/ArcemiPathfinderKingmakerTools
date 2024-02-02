@@ -29,6 +29,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameUnitAppearanceModel Appearance { get; }
         public IGameUnitBodyModel Body { get; }
         public IGameDataObject Overview { get; }
+        public IGameUnitSpellCasterModel SpellCaster { get; }
 
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         public IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
@@ -83,6 +84,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             if (Appearance is null) Appearance = new W40KRTGameUnitAppearanceModel(null);
             if (Body is null) Body = new W40KRTGameUnitBodyModel(this, null);
 
+            SpellCaster = new W40KRTGameUnitSpellCasterModel(this, Ref);
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitFeatEntry(x), x => x is W40KRTFeatFactItemModel, new W40KRTGameModelFeatCollectionWriter(Ref.UniqueId));
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitAbilityEntry(x), x => x is W40KRTAbilityFactItemModel, new W40KRTGameModelAbilityCollectionWriter());
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitBuffEntry(x), x => x is W40KRTBuffFactItemModel, new W40KRTGameModelBuffCollectionWriter());

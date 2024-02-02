@@ -23,6 +23,7 @@ namespace Arcemi.Models.Kingmaker
         public IGameUnitAppearanceModel Appearance { get; }
         public IGameUnitBodyModel Body { get; }
         public IGameDataObject Overview { get; }
+        public IGameUnitSpellCasterModel SpellCaster { get; }
 
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         public IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
@@ -42,9 +43,10 @@ namespace Arcemi.Models.Kingmaker
             Stats = new KingmakerGameUnitStatsModel(unit);
             Appearance = new KingmakerGameUnitAppearanceModel(unit.Descriptor.GetAccessor().Object<DollDataModel>("Doll"));
             Body = new KingmakerGameUnitBodyModel(unit);
+            SpellCaster = new KingmakerGameUnitSpellCasterModel(unit);
 
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Descriptor.Progression.Features.Facts, x => new KingmakerGameUnitFeatEntry(x), x => x is FeatureFactItemModel feat,
-                new KingmakerGameModelCollectionFeatWriter());
+                new KingmakerGameModelCollectionFeatWriter(unit));
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(
                 Ref.Descriptor.GetAccessor().Object<RefModel>("Abilities").GetAccessor().List("m_Facts", FactItemModel.Factory), x => new KingmakerGameUnitAbilityEntry(x), x => x is AbilityFactItemModel feat,
                 new KingmakerGameModelCollectionAbilityWriter());

@@ -80,7 +80,7 @@
 
 @code {
     [Parameter]
-    public ListD2Accessor<LearnedSpellModel> LearnedSpells { get; set; }
+    public ISlotCollection<IGameSpellEntry> LearnedSpells { get; set; }
 
     private bool OrderByName = true;
 
@@ -112,17 +112,14 @@
 
     private async Task AddSpellAsync()
     {
-        var spell = LearnedSpells.Add(AddSpellLevel);
-        spell.Blueprint = AddSpellBlueprint;
-        spell.CopiedFromScroll = false;
-        spell.UniqueId = Guid.NewGuid().ToString();
+        LearnedSpells.Add(AddSpellLevel, AddSpellBlueprint);
 
         AddSpellBlueprint = null;
         AddSpellLevel = 0;
         await modalAddSpell.CloseAsync();
     }
 
-    private void RemoveSpell(LearnedSpellModel spell)
+    private void RemoveSpell(IGameSpellEntry spell)
     {
         LearnedSpells.Remove(spell);
     }
