@@ -200,7 +200,7 @@ namespace Arcemi.Models
             return gameModel;
         }
 
-        object IGameModelCollection.AddByBlueprint(string blueprint, object data = null) => AddByBlueprint(blueprint, data);
+        object IGameModelCollection.AddByBlueprint(string blueprint, object data) => AddByBlueprint(blueprint, data);
         public TGameModel AddByBlueprint(string blueprint, object data = null)
         {
             var model = _accessor.Add((r, o) => writer?.BeforeAdd(new BeforeAddCollectionItemArgs(r, o, blueprint, data)));

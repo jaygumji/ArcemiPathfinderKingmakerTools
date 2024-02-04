@@ -1,0 +1,221 @@
+﻿@inject IGameResourcesProvider Resources
+
+@if (MemorizedSpells?.Count > 0) {
+    <div class="row">
+        <div class="col-md-4">
+            <button class="btn btn-secondary" disabled="@IsAllAvailable()" @onclick="() => RestoreAll()">
+                Restore Spells
+            </button>
+        </div>
+    </div>
+
+    for (var i = 0; i < MemorizedSpells.Count; i++){
+        var thisLevel = i;
+        var arr = MemorizedSpells[thisLevel].GroupBy(x => x.Name, StringComparer.Ordinal).Select(g => new {Spell = g.First(), Spells = g.ToArray()}).ToArray();
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Level @thisLevel</h4>
+            </div>
+            <div class="col-md-2">
+                <h4>Count</h4>
+            </div>
+            @if (MemorizedSpells.CanAddNew || MemorizedSpells.CanAddReference) {
+                <div class="col-md-1">
+                    <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddSpellAsync(thisLevel)">
+                        <span class="oi oi-plus"></span>
+                    </button>
+                </div>
+            }
+        </div>
+        if (arr.Length == 0) {
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="alert alert-info">
+                        No spells
+                    </p>
+                </div>
+            </div>
+        }
+        else {
+            foreach (var entry in arr) {
+                <div class="row">
+                    <div class="col-md-6">
+                        @entry.Spell.Name
+                    </div>
+                    <div class="col-md-2">
+                        @entry.Spells.Length
+                    </div>
+                    @if (MemorizedSpells.CanRemove) {
+                        <div class="col-md-1">
+                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(entry.Spells)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    }
+}
+
+<Modal @ref="modalAddSpell">
+    <Title>Add spell for level @AddSpellLevel</Title>
+    <Body>
+        <div class="row form-group">
+            <div class="col-md-2">
+                <label class="form-label">Count</label>
+                <input type="number" class="form-control" @bind="AddSpellCount" />
+            </div>
+        </div>
+        <TabControl StartIndex="0">
+            @if (MemorizedSpells.CanAddNew) {
+                <Tab Name="Search">
+                    <Content>
+                        <Search TItem="IBlueprintMetadataEntry" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
+                            <ResultItemTemplate>
+                                @item.Name.DisplayName
+                            </ResultItemTemplate>
+                        </Search>
+                    </Content>
+                </Tab>
+                <Tab Name="All">
+                    <Content>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Spell</label>
+                                <select class="form-control" @bind="AddSpellBlueprint">
+                                    <option value="">Select spell...</option>
+                                    @foreach (var blueprint in AvailableSpells) {
+                                        <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </Content>
+                </Tab>
+            }
+            @if (MemorizedSpells.CanAddReference) {
+                <Tab Name="Known spell">
+                    <Content>
+                        <Search TItem="KnownSpellEntry" Items="AvailableKnownSpells()" ItemSearchable="b => b.Spell.Name" Context="item" OnSelect="a => AddSpellKnownEntry = a.Item.Spell">
+                            <ResultItemTemplate>
+                                @item.Spell.Name
+                            </ResultItemTemplate>
+                        </Search>
+                    </Content>
+                </Tab>
+            }
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddSpellIsInvalid" @onclick="AddSpellAsync">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddSpell.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+@code {
+    [Parameter]
+    public IGameUnitSpellBookEntry Spellbook { get; set; }
+    private IGameSpellSlotCollection<IGameMemorizedSpellEntry> MemorizedSpells => Spellbook?.MemorizedSpells;
+
+    private bool OrderByName = true;
+
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpellsBase => Resources.Blueprints.GetEntries(BlueprintTypeId.Ability)
+        .Where(IsValidSpell);
+
+    private record KnownSpellEntry(IGameSpellEntry Spell, string Type);
+    private IEnumerable<KnownSpellEntry> AvailableKnownSpells()
+    {
+        foreach (var entry in Spellbook.KnownSpells[AddSpellLevel]) {
+            yield return new KnownSpellEntry(entry, "");
+        }
+        foreach (var entry in Spellbook.CustomSpells[AddSpellLevel]) {
+            yield return new KnownSpellEntry(entry, entry.Metamagic.ToString());
+        }
+    }
+
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpells => OrderByName ? AvailableSpellsBase.OrderBy(x => x.Name.DisplayName) : AvailableSpellsBase;
+
+    private bool IsValidSpell(IBlueprintMetadataEntry x)
+    {
+        return !Spells.IsSpecial(x);
+    }
+
+    private Modal modalAddSpell;
+    private string AddSpellBlueprint;
+    private int AddSpellLevel;
+    private int AddSpellCount = 1;
+    private IGameSpellEntry AddSpellKnownEntry;
+    private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint) && AddSpellKnownEntry is null;
+
+    private void SelectAddSpellBlueprint(IBlueprintMetadataEntry blueprint)
+    {
+        AddSpellBlueprint = blueprint.Id;
+    }
+
+    private async Task OpenAddSpellAsync(int level)
+    {
+        AddSpellLevel = level;
+        await modalAddSpell.OpenAsync();
+    }
+
+    private async Task AddSpellAsync()
+    {
+        for (var i = 0; i < AddSpellCount; i++) {
+            if (AddSpellKnownEntry is not null)
+                MemorizedSpells.AddReference(AddSpellLevel, AddSpellKnownEntry);
+            else
+                MemorizedSpells.AddNew(AddSpellLevel, AddSpellBlueprint);
+        }
+
+        AddSpellBlueprint = null;
+        AddSpellLevel = 0;
+        AddSpellKnownEntry = null;
+        AddSpellCount = 1;
+        await modalAddSpell.CloseAsync();
+    }
+
+    private void RemoveSpell(IEnumerable<IGameMemorizedSpellEntry> spells)
+    {
+        foreach (var spell in spells)
+            MemorizedSpells.Remove(spell);
+    }
+
+    // private bool HasMemorizedSpells(IGameUnitSpellBookEntry spellbook)
+    // {
+    //     if (spellbook?.MemorizedSpells is null) return false;
+
+    //     for (var i = 0; i < spellbook.MemorizedSpells.Count; i++) {
+    //         if (spellbook.MemorizedSpells[i].Count > 0) ;
+    //         foreach (var entry in spellbook.MemorizedSpells[i]) {
+    //             if (entry.Blueprint.HasValue()) return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    private bool IsAllAvailable()
+    {
+        if (MemorizedSpells is null) return true;
+
+        for (var i = 0; i < MemorizedSpells.Count; i++) {
+            foreach (var entry in MemorizedSpells[i]) {
+                if (!entry.IsAvailable) return false;
+            }
+        }
+        return true;
+    }
+
+    private void RestoreAll()
+    {
+        if (MemorizedSpells is null) return;
+
+        for (var i = 0; i < MemorizedSpells.Count; i++) {
+            foreach (var entry in MemorizedSpells[i]) {
+                if (!entry.IsAvailable) entry.IsAvailable = true;
+            }
+        }
+    }
+}

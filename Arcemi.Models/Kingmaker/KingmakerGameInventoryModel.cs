@@ -18,10 +18,12 @@ namespace Arcemi.Models.Kingmaker
             private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_Kingmaker.Resources;
 
             private InventoryModel Ref { get; }
+            public TimeSpan GameTime { get; }
 
-            public KingmakerGameInventoryItemWriter(InventoryModel inventory)
+            public KingmakerGameInventoryItemWriter(InventoryModel inventory, TimeSpan gameTime)
             {
                 Ref = inventory;
+                GameTime = gameTime;
             }
             public override void BeforeAdd(BeforeAddCollectionItemArgs args)
             {
@@ -43,6 +45,7 @@ namespace Arcemi.Models.Kingmaker
                     }
                     Ref.SetInventorySlotIndexToLast(args.Model);
                     args.Model.Blueprint = args.Blueprint;
+                    args.Model.Time = GameTime;
                 }
             }
 
@@ -65,11 +68,11 @@ namespace Arcemi.Models.Kingmaker
         }
         public IGameModelCollection<IGameItemEntry> Items { get; }
 
-        public KingmakerGameInventoryModel(InventoryModel model, string name)
+        public KingmakerGameInventoryModel(InventoryModel model, TimeSpan gameTime, string name)
         {
             Name = name;
             Sections = new IGameItemSection[] { this };
-            Items = new GameModelCollection<IGameItemEntry, ItemModel>(model.Items, x => new KingmakerGameItemEntry(x), IsValidItem, new KingmakerGameInventoryItemWriter(model));
+            Items = new GameModelCollection<IGameItemEntry, ItemModel>(model.Items, x => new KingmakerGameItemEntry(x), IsValidItem, new KingmakerGameInventoryItemWriter(model, gameTime));
             _equippedLookup = model.Items.Where(i => i.InventorySlotIndex < 0 || i.WielderRef.HasValue() || i.HoldingSlot is object)
                 .Select(i => new KingmakerGameItemEntry(i))
                 .ToDictionary(i => i.UniqueId, i => (IGameItemEntry)i, StringComparer.Ordinal);

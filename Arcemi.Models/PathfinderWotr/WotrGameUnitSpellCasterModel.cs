@@ -30,6 +30,8 @@ namespace Arcemi.Models.PathfinderWotr
             Ref = @ref;
             KnownSpells = new WotrLearnedSpellModelSlotCollection(@ref.Value.KnownSpells);
             SpecialSpells = new WotrLearnedSpellModelSlotCollection(@ref.Value.SpecialSpells);
+            CustomSpells = new WotrCustomSpellModelSlotCollection(@ref.Value.CustomSpells);
+            MemorizedSpells = new WotrMemorizedSpellModelSlotCollection(@ref.Value.MemorizedSpells);
         }
 
         public KeyValuePairObjectModel<CharacterSpellbookModel> Ref { get; }
@@ -40,10 +42,10 @@ namespace Arcemi.Models.PathfinderWotr
         public string ModifierName => "Mythic";
         public int Modifier { get => Ref.Value.MythicLevelInternal; set => Ref.Value.MythicLevelInternal = value; }
 
-        public ISlotCollection<IGameSpellEntry> KnownSpells { get; }
-        public ISlotCollection<IGameSpellEntry> SpecialSpells { get; }
-        public ListD2Accessor<CustomSpellModel> CustomSpells => Ref.Value.CustomSpells;
-        public ListD2Accessor<MemorizedSpellModel> MemorizedSpells => Ref.Value.MemorizedSpells;
+        public IGameSpellSlotCollection<IGameSpellEntry> KnownSpells { get; }
+        public IGameSpellSlotCollection<IGameSpellEntry> SpecialSpells { get; }
+        public IGameSpellSlotCollection<IGameCustomSpellEntry> CustomSpells { get; }
+        public IGameSpellSlotCollection<IGameMemorizedSpellEntry> MemorizedSpells { get; }
         public ListValueAccessor<string> SpecialLists => Ref.Value.SpecialLists;
         public ListValueAccessor<string> OppositionSchools => Ref.Value.OppositionSchools;
         public IEnumerable<SpellIndexAccessor> SpontaneousSlots => Ref.Value.SpontaneousSlots?.Count > 0 ? Ref.Value.SpontaneousSlotsAccessors : null;
@@ -54,7 +56,7 @@ namespace Arcemi.Models.PathfinderWotr
         }
     }
 
-    internal class WotrLearnedSpellModelSlotCollection : ISlotCollection<IGameSpellEntry>
+    internal class WotrLearnedSpellModelSlotCollection : IGameSpellSlotCollection<IGameSpellEntry>
     {
         private readonly List<WotrGameLearnedSpellEntry>[] _accessors;
 
@@ -65,10 +67,12 @@ namespace Arcemi.Models.PathfinderWotr
         }
         public int Count => Ref?.Count ?? 0;
         public IReadOnlyList<IGameSpellEntry> this[int index] => _accessors[index];
-        public bool CanModify => Count > 0;
+        public bool CanAddNew => Count > 0;
+        public bool CanAddReference => false;
+        public bool CanRemove => Count > 0;
         public ListD2Accessor<LearnedSpellModel> Ref { get; }
 
-        public IGameSpellEntry Add(int index, string blueprint)
+        public IGameSpellEntry AddNew(int index, string blueprint)
         {
             var spell = Ref.Add(index);
             spell.Blueprint = blueprint;
@@ -79,6 +83,8 @@ namespace Arcemi.Models.PathfinderWotr
             _accessors[index].Add(entry);
             return entry;
         }
+
+        public IGameSpellEntry AddReference(int index, IGameSpellEntry entry) => throw new NotImplementedException();
 
         public bool Remove(IGameSpellEntry item)
         {
@@ -100,6 +106,132 @@ namespace Arcemi.Models.PathfinderWotr
         public string Blueprint => Ref.Blueprint;
 
         public LearnedSpellModel Ref { get; }
+    }
+
+    internal class WotrMemorizedSpellModelSlotCollection : IGameSpellSlotCollection<IGameMemorizedSpellEntry>
+    {
+        private readonly List<WotrGameMemorizedSpellEntry>[] _accessors;
+
+        public WotrMemorizedSpellModelSlotCollection(ListD2Accessor<MemorizedSpellModel> @ref)
+        {
+            Ref = @ref;
+            _accessors = @ref?.Select(x => x.Select(m => new WotrGameMemorizedSpellEntry(m)).ToList()).ToArray() ?? Array.Empty<List<WotrGameMemorizedSpellEntry>>();
+        }
+        public int Count => Ref?.Count ?? 0;
+        public IReadOnlyList<IGameMemorizedSpellEntry> this[int index] => _accessors[index];
+        public bool CanAddNew => false;
+        public bool CanAddReference => false;
+        public bool CanRemove => false;
+        public ListD2Accessor<MemorizedSpellModel> Ref { get; }
+
+        public IGameMemorizedSpellEntry AddNew(int index, string blueprint)
+        {
+            throw new NotImplementedException();
+            //var spell = Ref.Add(index);
+
+            //var entry = new WotrGameMemorizedSpellEntry(spell);
+            //_accessors[index].Add(entry);
+            //return entry;
+        }
+
+        public IGameMemorizedSpellEntry AddReference(int index, IGameSpellEntry entry) => throw new NotImplementedException();
+
+        public bool Remove(IGameMemorizedSpellEntry item)
+        {
+            var entry = (WotrGameMemorizedSpellEntry)item;
+            foreach (var index in _accessors) {
+                if (index.Remove(entry)) break;
+            }
+            return Ref.Remove(entry.Ref);
+        }
+    }
+    internal class WotrGameMemorizedSpellEntry : IGameMemorizedSpellEntry
+    {
+        private IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
+        public WotrGameMemorizedSpellEntry(MemorizedSpellModel @ref)
+        {
+            Ref = @ref;
+        }
+        public string Name
+        {
+            get {
+                if (Ref.Spell is null) return "<Unknown>";
+                var name = Res.Blueprints.GetNameOrBlueprint(Ref.Spell.Blueprint);
+                if (Ref.Spell.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.Spell.MetamagicData.MetamagicMask, ')');
+                return name;
+            }
+        }
+
+        public string Blueprint => Ref.Spell?.Blueprint;
+        public bool IsAvailable { get => Ref.Available; set => Ref.Available = value; }
+
+        public MemorizedSpellModel Ref { get; }
+    }
+
+    internal class WotrCustomSpellModelSlotCollection : IGameSpellSlotCollection<IGameCustomSpellEntry>
+    {
+        private readonly List<WotrGameCustomSpellEntry>[] _accessors;
+
+        public WotrCustomSpellModelSlotCollection(ListD2Accessor<CustomSpellModel> @ref)
+        {
+            Ref = @ref;
+            _accessors = @ref?.Select(x => x.Select(m => new WotrGameCustomSpellEntry(m)).ToList()).ToArray() ?? Array.Empty<List<WotrGameCustomSpellEntry>>();
+        }
+        public int Count => Ref?.Count ?? 0;
+        public IReadOnlyList<IGameCustomSpellEntry> this[int index] => _accessors[index];
+        public bool CanAddNew => Count > 0;
+        public bool CanAddReference => false;
+        public bool CanRemove => Count > 0;
+        public ListD2Accessor<CustomSpellModel> Ref { get; }
+
+        public IGameCustomSpellEntry AddNew(int index, string blueprint)
+        {
+            var spell = Ref.Add(index);
+            spell.Blueprint = blueprint;
+            spell.UniqueId = Guid.NewGuid().ToString();
+            spell.DecorationBorderNumber = 0;
+            spell.DecorationColorNumber = 0;
+            spell.MetamagicData.SpellLevelCost = 0;
+            spell.MetamagicData.MetamagicMask = "";
+
+            var entry = new WotrGameCustomSpellEntry(spell);
+            _accessors[index].Add(entry);
+            return entry;
+        }
+        public IGameCustomSpellEntry AddReference(int index, IGameSpellEntry reference) => AddNew(index, reference.Blueprint);
+
+        public bool Remove(IGameCustomSpellEntry item)
+        {
+            var entry = (WotrGameCustomSpellEntry)item;
+            foreach (var index in _accessors) {
+                if (index.Remove(entry)) break;
+            }
+            return Ref.Remove(entry.Ref);
+        }
+    }
+    internal class WotrGameCustomSpellEntry : IGameCustomSpellEntry
+    {
+        private IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
+        public WotrGameCustomSpellEntry(CustomSpellModel @ref)
+        {
+            Ref = @ref;
+        }
+        public string Name
+        {
+            get {
+                var name = Res.Blueprints.GetNameOrBlueprint(Ref.Blueprint);
+                if (Ref.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.MetamagicData.MetamagicMask, ')');
+                return name;
+            }
+        }
+        public string Blueprint => Ref.Blueprint;
+        public int DecorationColor { get => Ref.DecorationColorNumber; set => Ref.DecorationColorNumber = value; }
+        public int DecorationBorder { get => Ref.DecorationBorderNumber; set => Ref.DecorationBorderNumber = value; }
+        public int SpellLevelCost { get => Ref.MetamagicData.SpellLevelCost; set => Ref.MetamagicData.SpellLevelCost = value; }
+        public int HeightenLevel { get => Ref.MetamagicData.HeightenLevel; set => Ref.MetamagicData.HeightenLevel = value; }
+        public MetamagicCollection Metamagic => Ref.MetamagicData?.Metamagic;
+
+        public CustomSpellModel Ref { get; }
     }
 
     internal class WotrGameUnitSpellCasterBonusSpellModel : IGameUnitSpellCasterBonusSpellModel

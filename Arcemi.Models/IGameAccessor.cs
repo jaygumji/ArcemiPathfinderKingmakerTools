@@ -161,10 +161,10 @@ namespace Arcemi.Models
         string ModifierName { get; }
         int Modifier { get; set; }
 
-        ISlotCollection<IGameSpellEntry> KnownSpells { get; }
-        ISlotCollection<IGameSpellEntry> SpecialSpells { get; }
-        ListD2Accessor<CustomSpellModel> CustomSpells { get; }
-        ListD2Accessor<MemorizedSpellModel> MemorizedSpells { get; }
+        IGameSpellSlotCollection<IGameSpellEntry> KnownSpells { get; }
+        IGameSpellSlotCollection<IGameSpellEntry> SpecialSpells { get; }
+        IGameSpellSlotCollection<IGameCustomSpellEntry> CustomSpells { get; }
+        IGameSpellSlotCollection<IGameMemorizedSpellEntry> MemorizedSpells { get; }
         ListValueAccessor<string> SpecialLists { get; }
         ListValueAccessor<string> OppositionSchools { get; }
         IEnumerable<SpellIndexAccessor> SpontaneousSlots { get; }
@@ -178,12 +178,29 @@ namespace Arcemi.Models
         string Blueprint { get; }
     }
 
-    public interface ISlotCollection<T>
+    public interface IGameCustomSpellEntry : IGameSpellEntry
     {
-        IReadOnlyList<IGameSpellEntry> this[int index] { get; }
+        int DecorationColor { get; set; }
+        int DecorationBorder { get; set; }
+        int SpellLevelCost { get; set; }
+        int HeightenLevel { get; set; }
+        MetamagicCollection Metamagic { get; }
+    }
+    
+    public interface IGameMemorizedSpellEntry : IGameSpellEntry
+    {
+        bool IsAvailable { get; set; }
+    }
+
+    public interface IGameSpellSlotCollection<T> where T : IGameSpellEntry
+    {
+        IReadOnlyList<T> this[int index] { get; }
         int Count { get; }
-        bool CanModify { get; }
-        T Add(int index, string blueprint);
+        bool CanAddNew { get; }
+        bool CanAddReference { get; }
+        bool CanRemove { get; }
+        T AddNew(int index, string blueprint);
+        T AddReference(int index, IGameSpellEntry reference);
         bool Remove(T item);
     }
 

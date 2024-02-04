@@ -38,6 +38,12 @@ namespace Arcemi.Models
             Bolstered = Metamagic.Bolstered(active, Update);
         }
 
+        public override string ToString()
+        {
+            var newValue = string.Join(", ", this.Where(x => x.IsActive).Select(x => x.UID));
+            return newValue.OrIfEmpty("CompletelyNormal");
+        }
+
         public IEnumerator<Metamagic> GetEnumerator()
         {
             yield return Empower;

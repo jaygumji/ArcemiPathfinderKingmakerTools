@@ -6,11 +6,12 @@ namespace Arcemi.Models.Kingmaker
 {
     internal class KingmakerGameUnitModel : IGameUnitModel
     {
+        private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_Kingmaker.Resources;
         public bool IsSupported => Ref.Descriptor is object;
         public UnitEntityModel Ref { get; }
         public string UniqueId => Ref.UniqueId;
         public string Name => CustomName.OrIfEmpty(DefaultName);
-        public string DefaultName => GameDefinition.Pathfinder_Kingmaker.Resources.GetCharacterName(Ref.Descriptor.Blueprint);
+        public string DefaultName => Res.GetCharacterName(Ref.Descriptor.Blueprint);
         public string CustomName { get => Ref.Descriptor?.CustomName; set => Ref.Descriptor.CustomName = value; }
 
         public IGameUnitPortraitModel Portrait { get; }
@@ -53,6 +54,14 @@ namespace Arcemi.Models.Kingmaker
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(
                 Ref.Descriptor.GetAccessor().Object<RefModel>("Buffs").GetAccessor().List("m_Facts", FactItemModel.Factory), x => new KingmakerGameUnitBuffEntry(x), x => x is BuffFactItemModel feat,
                 new KingmakerGameModelCollectionBuffWriter());
+
+            Sections = new[] {
+                GameDataModels.Object("Resources", new IGameData[] {
+                    GameDataModels.RowList(unit.Descriptor.Resources.PersistantResources, x => GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(x.Blueprint), new IGameData[] {
+                        GameDataModels.Integer("Amount", x, item => item.Amount, (item, val) => item.Amount = val, minValue: 0)
+                    }))
+                })
+            };
         }
 
         public UnitEntityType Type

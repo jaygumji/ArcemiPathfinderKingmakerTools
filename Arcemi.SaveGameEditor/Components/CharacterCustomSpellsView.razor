@@ -41,15 +41,17 @@ else {
             foreach (var spell in arr) {
                 <div class="row">
                     <div class="col-md-6">
-                        @Resources.Blueprints.GetNameOrBlueprint(spell.Blueprint)
+                        @spell.Name
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-sm btn-secondary" @onclick="() => EditSpellAsync(spell)">
                             <span class="oi oi-pencil"></span>
                         </button>
-                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(spell)">
-                            <span class="oi oi-trash"></span>
-                        </button>
+                        @if (CustomSpells.CanRemove) {
+                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(spell)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        }
                     </div>
                 </div>
             }
@@ -62,30 +64,44 @@ else {
     <Title>Add spell for level @AddSpellLevel</Title>
     <Body>
         <TabControl StartIndex="0">
-            <Tab Name="Search">
-                <Content>
-                    <Search TItem="IBlueprintMetadataEntry" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
-                        <ResultItemTemplate>
-                            @item.Name.DisplayName
-                        </ResultItemTemplate>
-                    </Search>
-                </Content>
-            </Tab>
-            <Tab Name="All">
-                <Content>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="form-label">Spell</label>
-                            <select class="form-control" @bind="AddSpellBlueprint">
-                                <option value="">Select spell...</option>
-                                @foreach (var blueprint in AvailableSpells) {
-                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
-                                }
-                            </select>
+            @if (CustomSpells.CanAddNew) {
+                <Tab Name="Search">
+                    <Content>
+                        <Search TItem="IBlueprintMetadataEntry" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
+                            <ResultItemTemplate>
+                                @item.Name.DisplayName
+                            </ResultItemTemplate>
+                        </Search>
+                    </Content>
+                </Tab>
+                <Tab Name="All">
+                    <Content>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Spell</label>
+                                <select class="form-control" @bind="AddSpellBlueprint">
+                                    <option value="">Select spell...</option>
+                                    @foreach (var blueprint in AvailableSpells) {
+                                        <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                </Content>
-            </Tab>
+                    </Content>
+                </Tab>
+            }
+            @if (CustomSpells.CanAddReference) {
+                <Tab Name="Known spell">
+                    <Content>
+                        <Search TItem="KnownSpellEntry" Items="AvailableKnownSpells()" ItemSearchable="b => b.Spell.Name" Context="item" OnSelect="a => AddSpellKnownEntry = a.Item.Spell">
+                            <ResultItemTemplate>
+                                @item.Spell.Name
+                                @item.Type
+                            </ResultItemTemplate>
+                        </Search>
+                    </Content>
+                </Tab>
+            }
         </TabControl>
     </Body>
     <Footer>
@@ -116,7 +132,7 @@ else {
                         Unsure what this does, leaving it at zero seems safe in all scenarios.
                     </Help>
                 </label>
-                <input type="number" class="form-control" @bind="Spell.MetamagicData.SpellLevelCost" />
+                <input type="number" class="form-control" @bind="Spell.SpellLevelCost" />
             </div>
             <div class="col-md-3">
                 <label class="form-label">
@@ -126,40 +142,40 @@ else {
                         E. g. a spell like Burning Arc (Level 2) with a heighten level of 5 will be a level 7 spell.
                     </Help>
                 </label>
-                <input type="number" class="form-control" @bind="Spell.MetamagicData.HeightenLevel" />
+                <input type="number" class="form-control" @bind="Spell.HeightenLevel" />
             </div>
         </div>
         <div class="row">
             <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Empower" HelpPosition="TooltipPosition.BottomRight">
+                <MetamagicControl Metamagic="Spell.Metamagic.Empower" HelpPosition="TooltipPosition.BottomRight">
                     <HelpText>
                         Spell damage is increased by 50% (Saving throws not affected).
                     </HelpText>
                 </MetamagicControl>
             </div>
             <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Maximize" HelpPosition="TooltipPosition.BottomRight">
+                <MetamagicControl Metamagic="Spell.Metamagic.Maximize" HelpPosition="TooltipPosition.BottomRight">
                     <HelpText>
                         Numerical values maximized.
                     </HelpText>
                 </MetamagicControl>
             </div>
             <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Quicken" HelpPosition="TooltipPosition.BottomRight">
+                <MetamagicControl Metamagic="Spell.Metamagic.Quicken" HelpPosition="TooltipPosition.BottomRight">
                     <HelpText>
                         Cast spell as a swift action.
                     </HelpText>
                 </MetamagicControl>
             </div>
             <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Extend">
+                <MetamagicControl Metamagic="Spell.Metamagic.Extend">
                     <HelpText>
                         Duration increased by 100%.
                     </HelpText>
                 </MetamagicControl>
             </div>
             <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Heighten">
+                <MetamagicControl Metamagic="Spell.Metamagic.Heighten">
                     <HelpText>
                         Cast spells as if they were a higher level (up to a maximum of 9th level).
                         The level you put the spell in determines the effect.
@@ -167,7 +183,7 @@ else {
                 </MetamagicControl>
             </div>
             <div class="col-md-2">
-                <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Reach">
+                <MetamagicControl Metamagic="Spell.Metamagic.Reach">
                     <HelpText>
                         Increase the range of the spell by one range category.
                     </HelpText>
@@ -175,21 +191,21 @@ else {
             </div>
                 @if (Spellbook is Arcemi.Models.PathfinderWotr.WotrGameUnitSpellBookEntry) {
                     <div class="col-md-2">
-                        <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Persistent" HelpPosition="TooltipPosition.BottomRight">
+                        <MetamagicControl Metamagic="Spell.Metamagic.Persistent" HelpPosition="TooltipPosition.BottomRight">
                             <HelpText>
                                 Enemies must succeed their saving throws twice to resist the spell.
                             </HelpText>
                         </MetamagicControl>
                     </div>
                     <div class="col-md-2">
-                        <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Selective" HelpPosition="TooltipPosition.BottomRight">
+                        <MetamagicControl Metamagic="Spell.Metamagic.Selective" HelpPosition="TooltipPosition.BottomRight">
                             <HelpText>
                                 On area spells, select targets that should be excluded from the effect.
                             </HelpText>
                         </MetamagicControl>
                     </div>
                     <div class="col-md-2">
-                        <MetamagicControl Metamagic="Spell.MetamagicData.Metamagic.Bolstered" HelpPosition="TooltipPosition.BottomRight">
+                        <MetamagicControl Metamagic="Spell.Metamagic.Bolstered" HelpPosition="TooltipPosition.BottomRight">
                             <HelpText>
                                 Spell now deals 2 more damage per die rolled to all targets.
                                 Enemies in a 5 feet radius of spell targets take 2 damage per die rolled of the original spell.
@@ -210,7 +226,7 @@ else {
     [Parameter]
     public IGameUnitSpellBookEntry Spellbook { get; set; }
 
-    private ListD2Accessor<CustomSpellModel> CustomSpells => Spellbook.CustomSpells;
+    private IGameSpellSlotCollection<IGameCustomSpellEntry> CustomSpells => Spellbook.CustomSpells;
 
     private bool OrderByName = true;
 
@@ -224,15 +240,24 @@ else {
         return !Spells.IsSpecial(x);
     }
 
-    private CustomSpellModel Spell;
-    private bool IsHeightenActive => Spell?.MetamagicData?.Metamagic?.Heighten?.IsActive ?? false;
-    private int DecorationColor { get => Spell.DecorationColorNumber + 1; set => Spell.DecorationColorNumber = value - 1; }
-    private int DecorationBorder { get => Spell.DecorationBorderNumber + 1; set => Spell.DecorationBorderNumber = value - 1; }
+    private record KnownSpellEntry(IGameSpellEntry Spell, string Type);
+    private IEnumerable<KnownSpellEntry> AvailableKnownSpells()
+    {
+        foreach (var entry in Spellbook.KnownSpells[AddSpellLevel]) {
+            yield return new KnownSpellEntry(entry, "");
+        }
+    }
+
+    private IGameCustomSpellEntry Spell;
+    private bool IsHeightenActive => Spell?.Metamagic?.Heighten?.IsActive ?? false;
+    private int DecorationColor { get => Spell.DecorationColor + 1; set => Spell.DecorationColor = value - 1; }
+    private int DecorationBorder { get => Spell.DecorationBorder + 1; set => Spell.DecorationBorder = value - 1; }
     private Modal modalEditSpell;
     private Modal modalAddSpell;
     private string AddSpellBlueprint;
     private int AddSpellLevel;
-    private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint);
+    private IGameSpellEntry AddSpellKnownEntry;
+    private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint) && AddSpellKnownEntry is null;
 
     private void SelectAddSpellBlueprint(IBlueprintMetadataEntry blueprint)
     {
@@ -252,28 +277,27 @@ else {
 
     private async Task AddSpellAsync()
     {
-        var spell = CustomSpells.Add(AddSpellLevel, (refs, obj) => { obj.Add("MetamagicData", refs.Create()); });
-        spell.Blueprint = AddSpellBlueprint;
-        spell.UniqueId = Guid.NewGuid().ToString();
-        spell.DecorationBorderNumber = 0;
-        spell.DecorationColorNumber = 0;
-        spell.MetamagicData.SpellLevelCost = 0;
-        spell.MetamagicData.MetamagicMask = "";
+        IGameCustomSpellEntry spell;
+        if (AddSpellKnownEntry is not null)
+            spell = CustomSpells.AddReference(AddSpellLevel, AddSpellKnownEntry);
+        else
+            spell = CustomSpells.AddNew(AddSpellLevel, AddSpellBlueprint);
 
         AddSpellBlueprint = null;
         AddSpellLevel = 0;
+        AddSpellKnownEntry = null;
         await modalAddSpell.CloseAsync();
 
         await EditSpellAsync(spell);
     }
 
-    private async Task EditSpellAsync(CustomSpellModel spell)
+    private async Task EditSpellAsync(IGameCustomSpellEntry spell)
     {
         Spell = spell;
         await modalEditSpell.OpenAsync();
     }
 
-    private void RemoveSpell(CustomSpellModel spell)
+    private void RemoveSpell(IGameCustomSpellEntry spell)
     {
         CustomSpells.Remove(spell);
     }

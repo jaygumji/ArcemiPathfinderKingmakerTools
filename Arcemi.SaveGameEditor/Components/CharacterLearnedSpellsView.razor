@@ -80,7 +80,7 @@
 
 @code {
     [Parameter]
-    public ISlotCollection<IGameSpellEntry> LearnedSpells { get; set; }
+    public IGameSpellSlotCollection<IGameSpellEntry> LearnedSpells { get; set; }
 
     private bool OrderByName = true;
 
@@ -112,7 +112,7 @@
 
     private async Task AddSpellAsync()
     {
-        LearnedSpells.Add(AddSpellLevel, AddSpellBlueprint);
+        LearnedSpells.AddNew(AddSpellLevel, AddSpellBlueprint);
 
         AddSpellBlueprint = null;
         AddSpellLevel = 0;

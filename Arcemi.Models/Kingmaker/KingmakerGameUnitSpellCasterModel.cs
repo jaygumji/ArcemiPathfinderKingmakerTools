@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,6 +31,8 @@ namespace Arcemi.Models.Kingmaker
             Ref = @ref;
             KnownSpells = new KingmakerLearnedSpellModelSlotCollection(@ref.Value.KnownSpells, this, unit);
             SpecialSpells = new KingmakerLearnedSpellModelSlotCollection(@ref.Value.SpecialSpells, this, unit);
+            CustomSpells = new KingmakerCustomSpellModelSlotCollection(@ref.Value.CustomSpells, this, unit);
+            MemorizedSpells = new KingmakerMemorizedSpellModelSlotCollection(@ref.Value.MemorizedSpells, this, unit);
         }
 
         public KeyValuePairObjectModel<CharacterSpellbookModel> Ref { get; }
@@ -41,10 +44,10 @@ namespace Arcemi.Models.Kingmaker
         public string ModifierName => "<N/A>";
         public int Modifier { get; set; }
 
-        public ISlotCollection<IGameSpellEntry> KnownSpells { get; }
-        public ISlotCollection<IGameSpellEntry> SpecialSpells { get; }
-        public ListD2Accessor<CustomSpellModel> CustomSpells => Ref.Value.CustomSpells;
-        public ListD2Accessor<MemorizedSpellModel> MemorizedSpells => Ref.Value.MemorizedSpells;
+        public IGameSpellSlotCollection<IGameSpellEntry> KnownSpells { get; }
+        public IGameSpellSlotCollection<IGameSpellEntry> SpecialSpells { get; }
+        public IGameSpellSlotCollection<IGameCustomSpellEntry> CustomSpells { get; }
+        public IGameSpellSlotCollection<IGameMemorizedSpellEntry> MemorizedSpells { get; }
         public ListValueAccessor<string> SpecialLists => Ref.Value.SpecialLists;
         public ListValueAccessor<string> OppositionSchools => Ref.Value.OppositionSchools;
         public IEnumerable<SpellIndexAccessor> SpontaneousSlots => Ref.Value.SpontaneousSlots?.Count > 0 ? Ref.Value.SpontaneousSlotsAccessors : null;
@@ -55,7 +58,7 @@ namespace Arcemi.Models.Kingmaker
         }
     }
 
-    internal class KingmakerLearnedSpellModelSlotCollection : ISlotCollection<IGameSpellEntry>
+    internal class KingmakerLearnedSpellModelSlotCollection : IGameSpellSlotCollection<IGameSpellEntry>
     {
         private readonly List<KingmakerGameLearnedSpellEntry>[] _accessors;
         private readonly KingmakerGameUnitSpellBookEntry _spellbook;
@@ -70,10 +73,12 @@ namespace Arcemi.Models.Kingmaker
         }
         public int Count => Ref?.Count ?? 0;
         public IReadOnlyList<IGameSpellEntry> this[int index] => _accessors[index];
-        public bool CanModify => Count > 0;
+        public bool CanAddNew => Count > 0;
+        public bool CanAddReference => false;
+        public bool CanRemove => Count > 0;
         public ListD2Accessor<LearnedSpellModel> Ref { get; }
 
-        public IGameSpellEntry Add(int index, string blueprint)
+        public IGameSpellEntry AddNew(int index, string blueprint)
         {
             var spell = Ref.Add(index, (r, o) => {
                 o.Add("Blueprint", blueprint);
@@ -90,6 +95,7 @@ namespace Arcemi.Models.Kingmaker
             _accessors[index].Add(entry);
             return entry;
         }
+        public IGameSpellEntry AddReference(int index, IGameSpellEntry reference) => throw new NotImplementedException();
 
         public bool Remove(IGameSpellEntry item)
         {
@@ -111,6 +117,220 @@ namespace Arcemi.Models.Kingmaker
         public string Blueprint => Ref.Blueprint;
 
         public LearnedSpellModel Ref { get; }
+    }
+
+    internal class KingmakerMemorizedSpellModelSlotCollection : IGameSpellSlotCollection<IGameMemorizedSpellEntry>
+    {
+        private readonly List<KingmakerGameMemorizedSpellEntry>[] _accessors;
+        private readonly KingmakerGameUnitSpellBookEntry _spellbook;
+        private readonly UnitEntityModel _unit;
+
+        public KingmakerMemorizedSpellModelSlotCollection(ListD2Accessor<MemorizedSpellModel> @ref, KingmakerGameUnitSpellBookEntry spellbook, UnitEntityModel unit)
+        {
+            Ref = @ref;
+            _spellbook = spellbook;
+            _unit = unit;
+            _accessors = @ref?.Select(x => x.Select(m => new KingmakerGameMemorizedSpellEntry(m)).ToList()).ToArray() ?? Array.Empty<List<KingmakerGameMemorizedSpellEntry>>();
+        }
+        public int Count => Ref?.Count ?? 0;
+        public IReadOnlyList<IGameMemorizedSpellEntry> this[int index] => _accessors[index];
+        public bool CanAddNew => false;
+        public bool CanAddReference => Count > 0;
+        public bool CanRemove => Count > 0;
+        public ListD2Accessor<MemorizedSpellModel> Ref { get; }
+
+        public IGameMemorizedSpellEntry AddNew(int index, string blueprint)
+        {
+            var memIndexes = Ref[index].OrderBy(x => x.Index).ToArray();
+            int memIndex = memIndexes.Length;
+            for (var i = 0; i < memIndexes.Length; i++) {
+                if (memIndexes[i].Index != index) {
+                    memIndex = i;
+                    break;
+                }
+            }
+            var spell = Ref.Add(index, (r, o) => {
+                o.Add("SpellLevel", index);
+                o.Add("Type", "Common");
+                o.Add("Index", memIndex);
+
+                var spellRef = r.Create();
+                spellRef.Add("Blueprint", blueprint);
+                spellRef.Add("Caster", r.CreateReference(o, _unit.Descriptor.Id));
+                spellRef.Add("m_ConvertedFrom", null);
+                spellRef.Add("DecorationColorNumber", -1);
+                spellRef.Add("DecorationBorderNumber", -1);
+                spellRef.Add("m_SpellbookBlueprint", _spellbook.Blueprint);
+                spellRef.Add("IsSpellCopy", false);
+                spellRef.Add("Fact", null);
+                spellRef.Add("MetamagicData", null);
+                o.Add("Spell", spellRef);
+
+                o.Add("Available", true);
+
+                var linkedSlots = new JArray();
+                linkedSlots.Add(r.CreateReference(linkedSlots, o));
+                o.Add("LinkedSlots", linkedSlots);
+                o.Add("IsOpposition", false);
+            });
+            var entry = new KingmakerGameMemorizedSpellEntry(spell);
+            _accessors[index].Add(entry);
+            return entry;
+        }
+
+        public IGameMemorizedSpellEntry AddReference(int index, IGameSpellEntry reference)
+        {
+            var memIndexes = Ref[index].OrderBy(x => x.Index).ToArray();
+            int memIndex = memIndexes.Length;
+            for (var i = 0; i < memIndexes.Length; i++) {
+                if (memIndexes[i].Index != index) {
+                    memIndex = i;
+                    break;
+                }
+            }
+            var spell = Ref.Add(index, (r, o) => {
+                o.Add("SpellLevel", index);
+                o.Add("Type", "Common");
+                o.Add("Index", memIndex);
+
+                var spellRef = r.Create();
+                spellRef.Add("Blueprint", reference.Blueprint);
+                spellRef.Add("Caster", r.CreateReference(o, _unit.Descriptor.Id));
+                spellRef.Add("m_ConvertedFrom", null);
+                spellRef.Add("DecorationColorNumber", -1);
+                spellRef.Add("DecorationBorderNumber", -1);
+                spellRef.Add("m_SpellbookBlueprint", _spellbook.Blueprint);
+                spellRef.Add("IsSpellCopy", false);
+                spellRef.Add("Fact", null);
+                if (reference is KingmakerGameCustomSpellEntry custom) {
+                    spellRef.Add("MetamagicData", new JObject {
+                        {"MetamagicMask", custom.Ref.MetamagicData?.MetamagicMask},
+                        {"SpellLevelCost", custom.Ref.MetamagicData?.SpellLevelCost ?? 0},
+                        {"HeightenLevel", custom.Ref.MetamagicData?.HeightenLevel ?? 0}
+                    });
+                }
+                else {
+                    spellRef.Add("MetamagicData", null);
+                }
+                o.Add("Spell", spellRef);
+
+                o.Add("Available", true);
+
+                var linkedSlots = new JArray();
+                linkedSlots.Add(r.CreateReference(linkedSlots, o));
+                o.Add("LinkedSlots", linkedSlots);
+                o.Add("IsOpposition", false);
+            });
+            var entry = new KingmakerGameMemorizedSpellEntry(spell);
+            _accessors[index].Add(entry);
+            return entry;
+        }
+
+        public bool Remove(IGameMemorizedSpellEntry item)
+        {
+            var entry = (KingmakerGameMemorizedSpellEntry)item;
+            foreach (var index in _accessors) {
+                if (index.Remove(entry)) break;
+            }
+            return Ref.Remove(entry.Ref);
+        }
+    }
+    internal class KingmakerGameMemorizedSpellEntry : IGameMemorizedSpellEntry
+    {
+        private IGameResourcesProvider Res = GameDefinition.Pathfinder_Kingmaker.Resources;
+        public KingmakerGameMemorizedSpellEntry(MemorizedSpellModel @ref)
+        {
+            Ref = @ref;
+        }
+        public string Name
+        {
+            get {
+                if (Ref.Spell is null) return "<Unknown>";
+                var name = Res.Blueprints.GetNameOrBlueprint(Ref.Spell.Blueprint);
+                if (Ref.Spell.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.Spell.MetamagicData.MetamagicMask, ')');
+                return name;
+            }
+        }
+        public string Blueprint => Ref.Spell?.Blueprint;
+        public bool IsAvailable { get => Ref.Available; set => Ref.Available = value; }
+
+        public MemorizedSpellModel Ref { get; }
+    }
+
+    internal class KingmakerCustomSpellModelSlotCollection : IGameSpellSlotCollection<IGameCustomSpellEntry>
+    {
+        private readonly List<KingmakerGameCustomSpellEntry>[] _accessors;
+        private readonly KingmakerGameUnitSpellBookEntry _spellbook;
+        private readonly UnitEntityModel _unit;
+
+        public KingmakerCustomSpellModelSlotCollection(ListD2Accessor<CustomSpellModel> @ref, KingmakerGameUnitSpellBookEntry spellbook, UnitEntityModel unit)
+        {
+            Ref = @ref;
+            _spellbook = spellbook;
+            _unit = unit;
+            _accessors = @ref?.Select(x => x.Select(m => new KingmakerGameCustomSpellEntry(m)).ToList()).ToArray() ?? Array.Empty<List<KingmakerGameCustomSpellEntry>>();
+        }
+        public int Count => Ref?.Count ?? 0;
+        public IReadOnlyList<IGameCustomSpellEntry> this[int index] => _accessors[index];
+        public bool CanAddNew => false;
+        public bool CanAddReference => Count > 0;
+        public bool CanRemove => Count > 0;
+        public ListD2Accessor<CustomSpellModel> Ref { get; }
+
+        public IGameCustomSpellEntry AddNew(int index, string blueprint)
+        {
+            var spell = Ref.Add(index, (r, o) => {
+                o.Add("Blueprint", blueprint);
+                o.Add("Caster", r.CreateReference(o, _unit.Descriptor.Id));
+                o.Add("m_ConvertedFrom", null);
+                o.Add("DecorationColorNumber", -1);
+                o.Add("DecorationBorderNumber", -1);
+                o.Add("m_SpellbookBlueprint", _spellbook.Blueprint);
+                o.Add("IsSpellCopy", false);
+                o.Add("Fact", null);
+                o.Add("MetamagicData", new JObject {
+                    {"MetamagicMask", ""},
+                    {"SpellLevelCost", 0},
+                    {"HeightenLevel", 0}
+                });
+            });
+            var entry = new KingmakerGameCustomSpellEntry(spell);
+            _accessors[index].Add(entry);
+            return entry;
+        }
+        public IGameCustomSpellEntry AddReference(int index, IGameSpellEntry reference) => AddNew(index, reference.Blueprint);
+
+        public bool Remove(IGameCustomSpellEntry item)
+        {
+            var entry = (KingmakerGameCustomSpellEntry)item;
+            foreach (var index in _accessors) {
+                if (index.Remove(entry)) break;
+            }
+            return Ref.Remove(entry.Ref);
+        }
+    }
+    internal class KingmakerGameCustomSpellEntry : IGameCustomSpellEntry
+    {
+        private IGameResourcesProvider Res = GameDefinition.Pathfinder_Kingmaker.Resources;
+        public KingmakerGameCustomSpellEntry(CustomSpellModel @ref)
+        {
+            Ref = @ref;
+        }
+        public string Name
+        {
+            get {
+                var name = Res.Blueprints.GetNameOrBlueprint(Ref.Blueprint);
+                if (Ref.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.MetamagicData.MetamagicMask, ')');
+                return name;
+            }
+        }
+        public string Blueprint => Ref.Blueprint;
+        public int DecorationColor { get => Ref.DecorationColorNumber; set => Ref.DecorationColorNumber = value; }
+        public int DecorationBorder { get => Ref.DecorationBorderNumber; set => Ref.DecorationBorderNumber = value; }
+        public int SpellLevelCost { get => Ref.MetamagicData.SpellLevelCost; set => Ref.MetamagicData.SpellLevelCost = value; }
+        public int HeightenLevel { get => Ref.MetamagicData.HeightenLevel; set => Ref.MetamagicData.HeightenLevel = value; }
+        public MetamagicCollection Metamagic => Ref.MetamagicData?.Metamagic;
+        public CustomSpellModel Ref { get; }
     }
 
     internal class KingmakerGameUnitSpellCasterBonusSpellModel : IGameUnitSpellCasterBonusSpellModel

@@ -16,10 +16,10 @@ namespace Arcemi.Models.Kingmaker
         {
             File = file;
             Party = new KingmakerGamePartyModel(file.Player);
-            SharedStash = new KingmakerGameInventoryModel(file.Player.SharedStash, "Shared Stash");
+            SharedStash = new KingmakerGameInventoryModel(file.Player.SharedStash, file.Player.GameTime, "Shared Stash");
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new KingmakerGameUnitModel(a), a => a.Descriptor is object);
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
-            SharedInventory = new KingmakerGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory, "Party");
+            SharedInventory = new KingmakerGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory, file.Player.GameTime, "Party");
             Management = new KingmakerGameManagementModel(file.Player);
             State = new KingmakerGameStateModel(file.Player);
         }
@@ -66,7 +66,7 @@ namespace Arcemi.Models.Kingmaker
         {
             MainCharacterId = unit.UniqueId;
             MainCharacter = unit;
-            SharedInventory = new KingmakerGameInventoryModel(unit.Ref.Descriptor.Inventory, "Party");
+            SharedInventory = new KingmakerGameInventoryModel(unit.Ref.Descriptor.Inventory, File.Player.GameTime, "Party");
         }
     }
 }
