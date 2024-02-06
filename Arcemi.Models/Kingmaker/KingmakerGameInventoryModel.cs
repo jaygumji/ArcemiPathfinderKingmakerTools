@@ -41,6 +41,25 @@ namespace Arcemi.Models.Kingmaker
                         case ItemType.Armor:
                             args.Obj.Add("$type", ArmorItemModel.TypeRef);
                             args.Obj.Add("Charges", 0);
+                            args.Obj.Add("ArmorComponent", new JObject {
+                                {"m_ModifierDescriptor", "Shield"},
+                                {"m_Modifiers", new JArray() },
+                                {"Count", 1 },
+                                {"m_InventorySlotIndex", -1 },
+                                {"m_FactsAppliedToWielder", new JArray() },
+                                {"m_IdentifyRolls", new JArray() },
+                                {"Time", TimeSpan.Zero },
+                                {"IsIdentified", true }
+                            });
+                            args.Obj.Add("WeaponComponent", new JObject {
+                                {"Count", 1 },
+                                {"m_InventorySlotIndex", -1 },
+                                {"m_FactsAppliedToWielder", new JArray() },
+                                {"m_IdentifyRolls", new JArray() },
+                                {"Time", TimeSpan.Zero },
+                                {"IsIdentified", true },
+                                {"IsShield", true }
+                            });
                             break;
                         case ItemType.Shield:
                             args.Obj.Add("$type", ShieldItemModel.TypeRef);
@@ -147,7 +166,7 @@ namespace Arcemi.Models.Kingmaker
 
         public IReadOnlyList<BlueprintType> AddableTypes { get; } = new[] {
             KingmakerBlueprintProvider.ItemArmor,
-            KingmakerBlueprintProvider.ItemShield,
+            //KingmakerBlueprintProvider.ItemShield,
             KingmakerBlueprintProvider.ItemEquipmentBelt,
             KingmakerBlueprintProvider.ItemEquipmentFeet,
             KingmakerBlueprintProvider.ItemEquipmentGlasses,

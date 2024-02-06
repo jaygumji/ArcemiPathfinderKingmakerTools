@@ -272,6 +272,7 @@ namespace Arcemi.Models.Kingmaker
         public KingmakerGameMemorizedSpellEntry(MemorizedSpellModel @ref)
         {
             Ref = @ref;
+            Reference = Ref.Spell is null ? null : new KingmakerGameSpellReferenceEntry(Ref.Spell);
         }
         public string Name
         {
@@ -284,13 +285,7 @@ namespace Arcemi.Models.Kingmaker
         }
         public string Blueprint => Ref.Spell?.Blueprint;
         public bool IsAvailable { get => Ref.Available; set => Ref.Available = value; }
-        public IGameSpellEntry Reference
-        {
-            get {
-                if (Ref.Spell is null) return null;
-                return new KingmakerGameSpellReferenceEntry(Ref.Spell);
-            }
-        }
+        public IGameSpellEntry Reference { get; }
 
         public MemorizedSpellModel Ref { get; }
     }

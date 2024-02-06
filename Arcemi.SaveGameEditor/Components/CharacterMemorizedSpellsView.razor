@@ -11,7 +11,7 @@
 
     for (var i = 0; i < MemorizedSpells.Count; i++){
         var thisLevel = i;
-        var arr = MemorizedSpells[thisLevel].GroupBy(x => x.Name, StringComparer.Ordinal).Select(g => new MemorizedSpellAccessor(g, MemorizedSpells, i)).ToArray();
+        var arr = MemorizedSpells[thisLevel].Where(x => x.Reference is not null).GroupBy(x => x.Name, StringComparer.Ordinal).Select(g => new MemorizedSpellAccessor(g, MemorizedSpells, i)).ToArray();
         <div class="row">
             <div class="col-md-6">
                 <h4>Level @thisLevel</h4>
@@ -198,7 +198,7 @@
 
         for (var i = 0; i < MemorizedSpells.Count; i++) {
             foreach (var entry in MemorizedSpells[i]) {
-                if (!entry.IsAvailable) return false;
+                if (entry.Reference is object && !entry.IsAvailable) return false;
             }
         }
         return true;
@@ -210,7 +210,7 @@
 
         for (var i = 0; i < MemorizedSpells.Count; i++) {
             foreach (var entry in MemorizedSpells[i]) {
-                if (!entry.IsAvailable) entry.IsAvailable = true;
+                if (entry.Reference is object && !entry.IsAvailable) entry.IsAvailable = true;
             }
         }
     }

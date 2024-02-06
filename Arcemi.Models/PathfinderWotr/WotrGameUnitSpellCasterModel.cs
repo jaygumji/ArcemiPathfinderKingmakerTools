@@ -151,6 +151,7 @@ namespace Arcemi.Models.PathfinderWotr
         public WotrGameMemorizedSpellEntry(MemorizedSpellModel @ref)
         {
             Ref = @ref;
+            Reference = Ref.Spell is null ? null : new WotrGameSpellReferenceEntry(Ref.Spell);
         }
         public string Name
         {
@@ -167,13 +168,7 @@ namespace Arcemi.Models.PathfinderWotr
 
         public MemorizedSpellModel Ref { get; }
 
-        public IGameSpellEntry Reference
-        {
-            get {
-                if (Ref.Spell is null) return null;
-                return new WotrGameSpellReferenceEntry(Ref.Spell);
-            }
-        }
+        public IGameSpellEntry Reference { get; }
     }
 
     internal class WotrGameSpellReferenceEntry : IGameCustomSpellEntry
