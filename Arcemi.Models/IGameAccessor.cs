@@ -50,7 +50,28 @@ namespace Arcemi.Models
 
     public interface IGameStateModel : IGameModel
     {
-        
+        IGameStateQuestBook QuestBook { get; }
+    }
+
+    public interface IGameStateQuestBook
+    {
+        IReadOnlyList<IGameStateQuestEntry> Entries { get; }
+    }
+
+    public interface IGameStateQuestEntry
+    {
+        string Name { get; }
+        string State { get; set; }
+        bool IsCompleted { get; }
+        IReadOnlyList<DataOption> StateOptions { get; }
+        IReadOnlyList<IGameStateQuestObjectiveEntry> Objectives { get; }
+    }
+
+    public interface IGameStateQuestObjectiveEntry
+    {
+        string Name { get; }
+        string State { get; set; }
+        IReadOnlyList<DataOption> StateOptions { get; }
     }
 
     public class NotSetGameAccessor : IGameAccessor
@@ -190,6 +211,7 @@ namespace Arcemi.Models
     public interface IGameMemorizedSpellEntry : IGameSpellEntry
     {
         bool IsAvailable { get; set; }
+        IGameSpellEntry Reference { get; }
     }
 
     public interface IGameSpellSlotCollection<T> where T : IGameSpellEntry

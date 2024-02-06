@@ -72,6 +72,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameModelCollection<IGameManagementMemberModelEntry> Members { get; } = GameModelCollection<IGameManagementMemberModelEntry>.Empty;
         public IReadOnlyList<IGameManagementArmyModelEntry> Armies { get; } = GameModelCollection<IGameManagementArmyModelEntry>.Empty;
         public IReadOnlyList<IGameManagementTaskModelEntry> Tasks { get; } = GameModelCollection<IGameManagementTaskModelEntry>.Empty;
+        public IGameDataObject Overview { get; }
         public IGameDataObject Resources { get; }
         public IGameDataObject Places { get; }
 

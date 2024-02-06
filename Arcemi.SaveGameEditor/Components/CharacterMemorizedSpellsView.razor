@@ -11,7 +11,7 @@
 
     for (var i = 0; i < MemorizedSpells.Count; i++){
         var thisLevel = i;
-        var arr = MemorizedSpells[thisLevel].GroupBy(x => x.Name, StringComparer.Ordinal).Select(g => new {Spell = g.First(), Spells = g.ToArray()}).ToArray();
+        var arr = MemorizedSpells[thisLevel].GroupBy(x => x.Name, StringComparer.Ordinal).Select(g => new MemorizedSpellAccessor(g, MemorizedSpells, i)).ToArray();
         <div class="row">
             <div class="col-md-6">
                 <h4>Level @thisLevel</h4>
@@ -40,14 +40,14 @@
             foreach (var entry in arr) {
                 <div class="row">
                     <div class="col-md-6">
-                        @entry.Spell.Name
+                        @entry.Name
                     </div>
                     <div class="col-md-2">
-                        @entry.Spells.Length
+                        <input type="number" class="form-control" @bind="entry.Count" min="1" max="1000" readonly="@IsCountReadOnly" />
                     </div>
                     @if (MemorizedSpells.CanRemove) {
                         <div class="col-md-1">
-                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(entry.Spells)">
+                            <button class="btn btn-sm btn-danger" @onclick="() => entry.Remove()">
                                 <span class="oi oi-trash"></span>
                             </button>
                         </div>
@@ -150,6 +150,8 @@
     private IGameSpellEntry AddSpellKnownEntry;
     private bool AddSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint) && AddSpellKnownEntry is null;
 
+    private bool IsCountReadOnly => !MemorizedSpells.CanRemove || !MemorizedSpells.CanAddReference;
+
     private void SelectAddSpellBlueprint(IBlueprintMetadataEntry blueprint)
     {
         AddSpellBlueprint = blueprint.Id;
@@ -175,12 +177,6 @@
         AddSpellKnownEntry = null;
         AddSpellCount = 1;
         await modalAddSpell.CloseAsync();
-    }
-
-    private void RemoveSpell(IEnumerable<IGameMemorizedSpellEntry> spells)
-    {
-        foreach (var spell in spells)
-            MemorizedSpells.Remove(spell);
     }
 
     // private bool HasMemorizedSpells(IGameUnitSpellBookEntry spellbook)
@@ -216,6 +212,51 @@
             foreach (var entry in MemorizedSpells[i]) {
                 if (!entry.IsAvailable) entry.IsAvailable = true;
             }
+        }
+    }
+
+    private class MemorizedSpellAccessor
+    {
+        private readonly List<IGameMemorizedSpellEntry> _spells;
+        private readonly IGameSpellSlotCollection<IGameMemorizedSpellEntry> _slots;
+        private readonly int _index;
+
+        public string Name { get; }
+
+        public MemorizedSpellAccessor(IEnumerable<IGameMemorizedSpellEntry> spells, IGameSpellSlotCollection<IGameMemorizedSpellEntry> slots, int index)
+        {
+            _spells = spells.ToList();
+            _slots = slots;
+            _index = index;
+            Name = _spells[0].Name;
+        }
+
+        public int Count
+        {
+            get => _spells.Count;
+            set {
+                if (value < 1) value = 1;
+                if (value > 1000) value = 1000;
+                if (_spells.Count < value) {
+                    for (var i = _spells.Count; i < value; i++) {
+                        var spell = _slots.AddReference(_index, _spells[0]);
+                        _spells.Add(spell);
+                    }
+                }
+                else if (_spells.Count > value) {
+                    for (var i = _spells.Count - 1; i >= value; i--) {
+                        _slots.Remove(_spells[i]);
+                        _spells.RemoveAt(i);
+                    }
+                }
+
+            }
+        }
+
+        public void Remove()
+        {
+            foreach (var spell in _spells)
+                _slots.Remove(spell);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Arcemi.Models.Kingmaker
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new KingmakerGameUnitModel(a), a => a.Descriptor is object);
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
             SharedInventory = new KingmakerGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory, file.Player.GameTime, "Party");
-            Management = new KingmakerGameManagementModel(file.Player);
+            Management = new KingmakerGameManagementModel(file.Player, Characters);
             State = new KingmakerGameStateModel(file.Player);
         }
 

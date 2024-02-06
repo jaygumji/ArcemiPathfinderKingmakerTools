@@ -1,33 +1,4 @@
-﻿<div class="row g-3">
-    <div class="col-md-6">
-        <label class="form-label">Blueprint</label>
-        <input class="form-control" type="text" readonly="readonly" value="@Member.Blueprint" />
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Identifier</label>
-        <input class="form-control" type="text" readonly="readonly" value="@Member.UniqueId" />
-    </div>
-</div>
-<div class="row g-3">
-    <div class="col-md-3">
-        <label class="form-label">Experience</label>
-        <input class="form-control" type="number" @bind="@Member.Experience" />
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">
-            Level
-            <Help Size="ElementSize.Small">
-                Lower the level does not remove any feats.
-                So you can gain all feats by level up the general multiple times.
-            </Help>
-        </label>
-        <input class="form-control" type="number" min="1" @bind="@Member.Level" />
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Current Mana</label>
-        <input class="form-control" type="number" @bind="@Member.CurrentMana" />
-    </div>
-</div>
+﻿<GameData Data="Member.Overview"></GameData>
 
 @code {
     [Parameter]

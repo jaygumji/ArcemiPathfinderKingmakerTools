@@ -30,12 +30,12 @@ else {
         @if (Session.Player.QuestBook is not null) {
             <Tab Name="Quests Started">
                 <Content>
-                    <QuestView EnableSpoilerAlert="true" Quests="Session.Player.QuestBook.Facts.Items.OfType<QuestFactItemModel>().Where(q => !q.IsCompleted)" />
+                    <QuestView EnableSpoilerAlert="true" Quests="Session.Game.State.QuestBook.Entries.Where(q => !q.IsCompleted)" />
                 </Content>
             </Tab>
             <Tab Name="Quests Completed">
                 <Content>
-                    <QuestView EnableSpoilerAlert="false" Quests="Session.Player.QuestBook.Facts.Items.OfType<QuestFactItemModel>().Where(q => q.IsCompleted)" />
+                    <QuestView EnableSpoilerAlert="false" Quests="Session.Game.State.QuestBook.Entries.Where(q => q.IsCompleted)" />
                 </Content>
             </Tab>
         }

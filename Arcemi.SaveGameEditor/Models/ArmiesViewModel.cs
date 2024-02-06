@@ -1,4 +1,5 @@
 ﻿using Arcemi.Models;
+using Arcemi.Models.PathfinderWotr;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,7 +23,7 @@ namespace Arcemi.SaveGameEditor.Models
         public string FindLeaderPortrait(PlayerArmyModel unit)
         {
             if (string.IsNullOrEmpty(unit.Data.LeaderGuid)) return _resources.AppData.Portraits.GetUnknownUri();
-            var leader = _session.Game.Management.Members.FirstOrDefault(l => l.UniqueId.Eq(unit.Data.LeaderGuid));
+            var leader = _session.Game.Management.Members.FirstOrDefault(l => ((WotrGameManagementMemberModelEntry)l).UniqueId.Eq(unit.Data.LeaderGuid));
             if (leader == null) return _resources.AppData.Portraits.GetUnknownUri();
             return leader.PortraitPath;
         }

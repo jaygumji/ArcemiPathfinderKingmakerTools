@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System;
+using Newtonsoft.Json.Linq;
 
 namespace Arcemi.Models.Kingmaker
 {
@@ -32,7 +33,48 @@ namespace Arcemi.Models.Kingmaker
                         var type = Res.Blueprints.Get(args.Blueprint).Type;
                         itemType = GetItemType(type);
                     }
-                    ItemModel.Prepare(Ref, args.References, args.Obj, itemType);
+                    switch (itemType) {
+                        case ItemType.Weapon:
+                            args.Obj.Add("$type", WeaponItemModel.TypeRef);
+                            args.Obj.Add("Charges", 0);
+                            break;
+                        case ItemType.Armor:
+                            args.Obj.Add("$type", ArmorItemModel.TypeRef);
+                            args.Obj.Add("Charges", 0);
+                            break;
+                        case ItemType.Shield:
+                            args.Obj.Add("$type", ShieldItemModel.TypeRef);
+                            args.Obj.Add("Charges", 0);
+                            break;
+                        case ItemType.Usable:
+                            args.Obj.Add("$type", UsableItemModel.TypeRef);
+                            args.Obj.Add("Charges", 1);
+                            break;
+                        default:
+                            args.Obj.Add("$type", SimpleItemModel.TypeRef);
+                            args.Obj.Add("Charges", 0);
+                            break;
+                    }
+                    args.Obj.Add("m_Blueprint", args.Blueprint);
+                    args.Obj.Add("Count", 1);
+                    args.Obj.Add("Time", TimeSpan.Zero);
+
+                    //switch (itemType) {
+                    //    case ItemType.Weapon:
+                    //    case ItemType.Simple:
+                    //        var enchantments = args.References.Create();
+                    //        enchantments.Add("m_Facts", new JArray());
+                    //        enchantments.Add("Owner", args.References.CreateReference(enchantments, args.Obj));
+                    //        enchantments.Add("ActiveByDefault", true);
+                    //        args.Obj.Add("m_Enchantments", enchantments);
+                    //        break;
+                    //}
+
+                    args.Obj.Add("m_FactsAppliedToWielder", new JArray());
+                    args.Obj.Add("m_IdentifyRolls", new JArray());
+                    args.Obj.Add("Collection", args.References.CreateReference(args.Obj, Ref.Id));
+
+                    args.Obj.Add("IsIdentified", true);
                 }
             }
 

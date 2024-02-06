@@ -13,6 +13,6 @@ namespace Arcemi.Models
         {
         }
 
-        public IReadOnlyList<PlayerKingdomStatsAttributeModel> Attributes => A.List("m_Stats", a => new PlayerKingdomStatsAttributeModel(a));
+        public ListAccessor<PlayerKingdomStatsAttributeModel> Attributes => A.List<PlayerKingdomStatsAttributeModel>("m_Stats");
     }
 }

@@ -1,6 +1,4 @@
-﻿@inject IGameResourcesProvider Resources
-
-<p class="alert alert-warning">
+﻿<p class="alert alert-warning">
     @if (EnableSpoilerAlert) {
     <strong>SPOILER ALERT!</strong><br />
     }
@@ -10,7 +8,7 @@
 
 <AccordionContainer>
     @foreach(var quest in Quests) {
-        <Accordion HeaderText="@quest.DisplayName(Resources)">
+        <Accordion HeaderText="@quest.Name">
         <div class="row">
             <div class="col-md-3">
                 <label class="form-label">State</label>
@@ -34,10 +32,10 @@
                     <label class="form-label">State</label>
                 </div>
             </div>
-            @foreach (var objective in quest.PersistentObjectives) {
+            @foreach (var objective in quest.Objectives) {
             <div class="row">
                 <div class="col-md-6">
-                    <label class="form-label">@Resources.Blueprints.GetNameOrBlueprint(objective.Blueprint)</label>
+                    <label class="form-label">@objective.Name</label>
                 </div>
                 <div class="col-md-3">
                     <select class="form-control" @bind="objective.State">
@@ -59,5 +57,5 @@
     public bool EnableSpoilerAlert { get; set; }
 
     [Parameter]
-    public IEnumerable<QuestFactItemModel> Quests { get; set; }
+    public IEnumerable<IGameStateQuestEntry> Quests { get; set; }
 }

@@ -84,7 +84,7 @@ namespace Arcemi.Models
 
         public string GetLeaderPortraitUri(string blueprint)
         {
-            if (TryGetLeader(blueprint, out var leader)) {
+            if (blueprint.HasValue() && TryGetLeader(blueprint, out var leader)) {
                 return GetPortraitsUri(leader.Portrait);
             }
             return GetPortraitsUri(blueprint);

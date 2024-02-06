@@ -155,7 +155,7 @@ namespace Arcemi.Models.PathfinderWotr
         public string Name
         {
             get {
-                if (Ref.Spell is null) return "<Unknown>";
+                if (Ref.Spell is null) return "<No Spell Reference>";
                 var name = Res.Blueprints.GetNameOrBlueprint(Ref.Spell.Blueprint);
                 if (Ref.Spell.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.Spell.MetamagicData.MetamagicMask, ')');
                 return name;
@@ -166,6 +166,39 @@ namespace Arcemi.Models.PathfinderWotr
         public bool IsAvailable { get => Ref.Available; set => Ref.Available = value; }
 
         public MemorizedSpellModel Ref { get; }
+
+        public IGameSpellEntry Reference
+        {
+            get {
+                if (Ref.Spell is null) return null;
+                return new WotrGameSpellReferenceEntry(Ref.Spell);
+            }
+        }
+    }
+
+    internal class WotrGameSpellReferenceEntry : IGameCustomSpellEntry
+    {
+        private IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
+        public WotrGameSpellReferenceEntry(MemorizedSpellReferenceModel @ref)
+        {
+            Ref = @ref;
+        }
+        public string Name
+        {
+            get {
+                var name = Res.Blueprints.GetNameOrBlueprint(Ref.Blueprint);
+                if (Ref.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.MetamagicData.MetamagicMask, ')');
+                return name;
+            }
+        }
+        public string Blueprint => Ref.Blueprint;
+        public int DecorationColor { get => Ref.DecorationColorNumber; set => Ref.DecorationColorNumber = value; }
+        public int DecorationBorder { get => Ref.DecorationBorderNumber; set => Ref.DecorationBorderNumber = value; }
+        public int SpellLevelCost { get => Ref.MetamagicData.SpellLevelCost; set => Ref.MetamagicData.SpellLevelCost = value; }
+        public int HeightenLevel { get => Ref.MetamagicData.HeightenLevel; set => Ref.MetamagicData.HeightenLevel = value; }
+        public MetamagicCollection Metamagic => Ref.MetamagicData?.Metamagic;
+
+        public MemorizedSpellReferenceModel Ref { get; }
     }
 
     internal class WotrCustomSpellModelSlotCollection : IGameSpellSlotCollection<IGameCustomSpellEntry>

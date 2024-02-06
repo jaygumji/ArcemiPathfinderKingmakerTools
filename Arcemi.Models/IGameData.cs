@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace Arcemi.Models
 {
@@ -167,6 +168,14 @@ namespace Arcemi.Models
         {
             return new GameDataOptions<T>(label, instance, getter, setter, size, DataOption.Get(options, getter(instance), out _));
         }
+        public static IGameDataOptions Options<T>(string label, IReadOnlyList<DataOption> options, T instance, Func<T, string> getter, Action<T, string> setter = null, GameDataSize size = GameDataSize.Large)
+        {
+            return new GameDataOptions<T>(label, instance, getter, setter, size, options);
+        }
+        public static IGameDataOptions Options<T>(string label, IEnumerable<string> options, T instance, Func<T, string> getter, Action<T, string> setter = null, GameDataSize size = GameDataSize.Large)
+        {
+            return new GameDataOptions<T>(label, instance, getter, setter, size, options.Select(o => new DataOption(o)).ToArray());
+        }
 
         private class GameDataObject : IGameDataObject
         {
@@ -232,6 +241,7 @@ namespace Arcemi.Models
         }
 
         private class GameDataInteger<T> : IGameDataInteger
+            where T : class
         {
             private readonly Func<T, int> getter;
             private readonly Action<T, int> setter;
@@ -242,14 +252,14 @@ namespace Arcemi.Models
                 Instance = instance;
                 this.getter = getter;
                 this.setter = setter;
-                IsReadOnly = this.setter is null;
+                IsReadOnly = instance is null || this.setter is null;
                 MinValue = minValue;
                 MaxValue = maxValue;
                 Modifiers = modifiers;
                 Size = size;
             }
 
-            public int Value { get => getter(Instance); set => setter?.Invoke(Instance, value); }
+            public int Value { get => Instance is null ? default : getter(Instance); set => setter?.Invoke(Instance, value); }
 
             public string Label { get; }
             public T Instance { get; }
@@ -260,6 +270,7 @@ namespace Arcemi.Models
             public GameDataSize Size { get; }
         }
         public static IGameDataInteger Integer<T>(string label, T instance, Func<T, int> getter, Action<T, int> setter = null, int minValue = 1, int maxValue = int.MaxValue, int modifiers = 0, GameDataSize size = GameDataSize.Medium)
+            where T : class
         {
             return new GameDataInteger<T>(label, instance, getter, setter, minValue, maxValue, modifiers, size);
         }

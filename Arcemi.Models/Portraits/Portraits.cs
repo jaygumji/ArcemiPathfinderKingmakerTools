@@ -25,6 +25,7 @@ namespace Arcemi.Models
 
         public string GetPortraitsUri(string key)
         {
+            if (string.IsNullOrEmpty(key)) return GetUnknownUri();
             return _resources.AllPortraits.TryGetValue(key, out var portrait) ? portrait.Uri : GetUnknownUri();
         }
 

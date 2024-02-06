@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Arcemi.Models.Accessors;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -193,32 +194,62 @@ namespace Arcemi.Models.Kingmaker
                 o.Add("Type", "Common");
                 o.Add("Index", memIndex);
 
-                var spellRef = r.Create();
-                spellRef.Add("Blueprint", reference.Blueprint);
-                spellRef.Add("Caster", r.CreateReference(o, _unit.Descriptor.Id));
-                spellRef.Add("m_ConvertedFrom", null);
-                spellRef.Add("DecorationColorNumber", -1);
-                spellRef.Add("DecorationBorderNumber", -1);
-                spellRef.Add("m_SpellbookBlueprint", _spellbook.Blueprint);
-                spellRef.Add("IsSpellCopy", false);
-                spellRef.Add("Fact", null);
-                if (reference is KingmakerGameCustomSpellEntry custom) {
-                    spellRef.Add("MetamagicData", new JObject {
-                        {"MetamagicMask", custom.Ref.MetamagicData?.MetamagicMask},
-                        {"SpellLevelCost", custom.Ref.MetamagicData?.SpellLevelCost ?? 0},
-                        {"HeightenLevel", custom.Ref.MetamagicData?.HeightenLevel ?? 0}
-                    });
+                if (reference is KingmakerGameMemorizedSpellEntry memEntry && memEntry.Ref.Spell is null) {
+                    // No spell reference, spontaneous slots?
+                    o.Add("Spell", null);
+                    o.Add("Available", false);
                 }
                 else {
-                    spellRef.Add("MetamagicData", null);
+                    var spellRef = r.Create();
+                    spellRef.Add("Blueprint", reference.Blueprint);
+                    spellRef.Add("Caster", r.CreateReference(o, _unit.Descriptor.Id));
+                    spellRef.Add("m_ConvertedFrom", null);
+                    spellRef.Add("DecorationColorNumber", -1);
+                    spellRef.Add("DecorationBorderNumber", -1);
+                    spellRef.Add("m_SpellbookBlueprint", _spellbook.Blueprint);
+                    spellRef.Add("IsSpellCopy", false);
+                    spellRef.Add("Fact", null);
+                    if (reference is KingmakerGameCustomSpellEntry custom) {
+                        spellRef.Add("MetamagicData", new JObject {
+                            {"MetamagicMask", custom.Ref.MetamagicData?.MetamagicMask},
+                            {"SpellLevelCost", custom.Ref.MetamagicData?.SpellLevelCost ?? 0},
+                            {"HeightenLevel", custom.Ref.MetamagicData?.HeightenLevel ?? 0}
+                        });
+                    }
+                    else if (reference is KingmakerGameMemorizedSpellEntry memSpell) {
+                        if (memSpell.Ref.Spell?.MetamagicData is null) {
+                            spellRef.Add("MetamagicData", null);
+                        }
+                        else {
+                            spellRef.Add("MetamagicData", new JObject {
+                                {"MetamagicMask", memSpell.Ref.Spell.MetamagicData.MetamagicMask},
+                                {"SpellLevelCost", memSpell.Ref.Spell.MetamagicData.SpellLevelCost},
+                                {"HeightenLevel", memSpell.Ref.Spell.MetamagicData.HeightenLevel}
+                            });
+                        }
+                    }
+                    else if (reference is KingmakerGameSpellReferenceEntry refSpell) {
+                        if (refSpell.Ref.MetamagicData is object) {
+                            spellRef.Add("MetamagicData", new JObject {
+                                {"MetamagicMask", refSpell.Ref.MetamagicData.MetamagicMask},
+                                {"SpellLevelCost", refSpell.Ref.MetamagicData.SpellLevelCost},
+                                {"HeightenLevel", refSpell.Ref.MetamagicData.HeightenLevel}
+                            });
+                        }
+                        else {
+                            spellRef.Add("MetamagicData", null);
+                        }
+                    }
+                    else {
+                        spellRef.Add("MetamagicData", null);
+                    }
+                    o.Add("Spell", spellRef);
+                    o.Add("Available", true);
+                    var linkedSlots = new JArray();
+                    linkedSlots.Add(r.CreateReference(linkedSlots, o));
+                    o.Add("LinkedSlots", linkedSlots);
                 }
-                o.Add("Spell", spellRef);
 
-                o.Add("Available", true);
-
-                var linkedSlots = new JArray();
-                linkedSlots.Add(r.CreateReference(linkedSlots, o));
-                o.Add("LinkedSlots", linkedSlots);
                 o.Add("IsOpposition", false);
             });
             var entry = new KingmakerGameMemorizedSpellEntry(spell);
@@ -245,7 +276,7 @@ namespace Arcemi.Models.Kingmaker
         public string Name
         {
             get {
-                if (Ref.Spell is null) return "<Unknown>";
+                if (Ref.Spell is null) return "<No Spell Reference>";
                 var name = Res.Blueprints.GetNameOrBlueprint(Ref.Spell.Blueprint);
                 if (Ref.Spell.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.Spell.MetamagicData.MetamagicMask, ')');
                 return name;
@@ -253,8 +284,39 @@ namespace Arcemi.Models.Kingmaker
         }
         public string Blueprint => Ref.Spell?.Blueprint;
         public bool IsAvailable { get => Ref.Available; set => Ref.Available = value; }
+        public IGameSpellEntry Reference
+        {
+            get {
+                if (Ref.Spell is null) return null;
+                return new KingmakerGameSpellReferenceEntry(Ref.Spell);
+            }
+        }
 
         public MemorizedSpellModel Ref { get; }
+    }
+
+    internal class KingmakerGameSpellReferenceEntry : IGameCustomSpellEntry
+    {
+        private IGameResourcesProvider Res = GameDefinition.Pathfinder_Kingmaker.Resources;
+        public KingmakerGameSpellReferenceEntry(MemorizedSpellReferenceModel @ref)
+        {
+            Ref = @ref;
+        }
+        public string Name
+        {
+            get {
+                var name = Res.Blueprints.GetNameOrBlueprint(Ref.Blueprint);
+                if (Ref.MetamagicData?.MetamagicMask.HasValue() ?? false) return string.Concat(name, " (", Ref.MetamagicData.MetamagicMask, ')');
+                return name;
+            }
+        }
+        public string Blueprint => Ref.Blueprint;
+        public int DecorationColor { get => Ref.DecorationColorNumber; set => Ref.DecorationColorNumber = value; }
+        public int DecorationBorder { get => Ref.DecorationBorderNumber; set => Ref.DecorationBorderNumber = value; }
+        public int SpellLevelCost { get => Ref.MetamagicData.SpellLevelCost; set => Ref.MetamagicData.SpellLevelCost = value; }
+        public int HeightenLevel { get => Ref.MetamagicData.HeightenLevel; set => Ref.MetamagicData.HeightenLevel = value; }
+        public MetamagicCollection Metamagic => Ref.MetamagicData?.Metamagic;
+        public MemorizedSpellReferenceModel Ref { get; }
     }
 
     internal class KingmakerCustomSpellModelSlotCollection : IGameSpellSlotCollection<IGameCustomSpellEntry>
@@ -329,7 +391,7 @@ namespace Arcemi.Models.Kingmaker
         public int DecorationBorder { get => Ref.DecorationBorderNumber; set => Ref.DecorationBorderNumber = value; }
         public int SpellLevelCost { get => Ref.MetamagicData.SpellLevelCost; set => Ref.MetamagicData.SpellLevelCost = value; }
         public int HeightenLevel { get => Ref.MetamagicData.HeightenLevel; set => Ref.MetamagicData.HeightenLevel = value; }
-        public MetamagicCollection Metamagic => Ref.MetamagicData?.Metamagic;
+        public MetamagicCollection Metamagic => Ref.MetamagicData.Metamagic;
         public CustomSpellModel Ref { get; }
     }
 

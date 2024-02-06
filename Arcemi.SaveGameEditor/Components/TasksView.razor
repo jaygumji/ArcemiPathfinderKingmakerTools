@@ -1,7 +1,7 @@
 ﻿@using System.IO
-@inject TasksViewModel Model
+@inject IEditFileSession Session
 
-@if (!Model.HasTasks) {
+@if (!(Session.Game.Management.Tasks.Count > 0)) {
     <p class="alert alert-info">No tasks found.</p>
 }
 else {
@@ -19,13 +19,13 @@ else {
                 <label class="form-label">Description</label>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Stat</label>
+                <label class="form-label">Type</label>
             </div>
             <div class="col-md-2">
                 <label class="form-label">Started On</label>
             </div>
         </div>
-        @foreach (var task in Model.Tasks) {
+        @foreach (var task in Session.Game.Management.Tasks) {
         <div class="row g-3">
             <div class="col-md-4 overflow-hidden">
                 @task.Name
@@ -34,7 +34,7 @@ else {
                 <span title="@task.Description">@task.Description.CutAt(100)</span>
             </div>
             <div class="col-md-2">
-                @task.AssignedLeader?.Type
+                @task.Type.AsDisplayable()
             </div>
             <div class="col-md-2">
                 <input class="form-control" type="number" @bind="task.StartedOn" />
