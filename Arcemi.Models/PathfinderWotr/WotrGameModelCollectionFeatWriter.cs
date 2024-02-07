@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Resources;
 
 namespace Arcemi.Models.PathfinderWotr
 {
@@ -11,15 +10,16 @@ namespace Arcemi.Models.PathfinderWotr
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
         {
             FeatureFactItemModel.Prepare(args.References, args.Obj);
-            if (WotrPredefinedFeats.Lookup.TryGetValue(args.Blueprint, out var spec)) {
+            args.Obj.Add("Blueprint", args.Blueprint);
+            if (WotrPredefinedFeats.Instance.TryGet(args.Blueprint, out var spec)) {
                 spec.ApplyOn(args.Obj);
             }
         }
 
         public override void AfterAdd(AfterAddCollectionItemArgs<IGameUnitFeatEntry, FactItemModel> args)
         {
-            if (WotrPredefinedFeats.Lookup.TryGetValue(args.Blueprint, out _)) return;
-
+            if (WotrPredefinedFeats.Instance.Is(args.Blueprint)) return;
+            
             var template = Res.GetFeatTemplate(args.Blueprint);
             if (template is object) {
                 args.Model.Import(template);
@@ -33,142 +33,137 @@ namespace Arcemi.Models.PathfinderWotr
                 return FeatSpec.CreateIdentifier(wfeat.Blueprint, wfeat.Model.Param?.SpellSchool, wfeat.Model.Param?.WeaponCategory);
             }), StringComparer.Ordinal);
 
-            foreach (var feat in WotrPredefinedFeats.All) hashset.Add(feat.Blueprint);
-
-            return Res.Blueprints.GetEntries(BlueprintTypeId.Feature).Where(x => !hashset.Contains(x.Id))
-                .Concat(WotrPredefinedFeats.All.Where(x => !hashset.Contains(x.Id)))
-                .ToArray();
+            var entries = WotrPredefinedFeats.Instance.Combine(Res.Blueprints.GetEntries(BlueprintTypeId.Feature));
+            return entries.Where(x =>  !hashset.Contains(x.Id)).ToArray();
         }
     }
-    public static class WotrPredefinedFeats
+    public class WotrPredefinedFeats : FeatSpecCollection
     {
-        public static IReadOnlyDictionary<string, FeatSpec> Lookup { get; }
-        public static IReadOnlyList<FeatSpec> All { get; }
+        public static WotrPredefinedFeats Instance { get; } = new WotrPredefinedFeats();
+        private WotrPredefinedFeats() { }
 
-        private static IEnumerable<FeatSpec> Define()
-        {
-            return Enumerable.Empty<FeatSpec>();
-        }
-        private static FeatSpec New(string name, string blueprint, string paraName, string paraValue)
-            => FeatSpec.New(name, blueprint, PathfinderWotr.WotrBlueprintProvider.Feature, paraName, paraValue);
-        private static IEnumerable<FeatSpec> Weapon(this IEnumerable<FeatSpec> feats, string name)
-        {
-            var displayName = name.AsDisplayable();
-            const string paramKey = "WeaponCategory";
-            FeatSpec Focus() => New("Weapon Focus " + displayName, "1e1f627d26ad36f43bbd26cc2bf8ac7e", paramKey, name);
-            FeatSpec FocusGreater() => New("Weapon Focus Greater " + displayName, "09c9e82965fb4334b984a1e9df3bd088", paramKey, name);
-            FeatSpec FocusMythic() => New("Weapon Focus Mythic " + displayName, "74eb201774bccb9428ba5ac8440bf990", paramKey, name);
-            FeatSpec Specialization() => New("Weapon Specialization " + displayName, "31470b17e8446ae4ea0dacd6c5817d86", paramKey, name);
-            FeatSpec SpecializationGreater() => New("Weapon Specialization Greater " + displayName, "7cf5edc65e785a24f9cf93af987d66b3", paramKey, name);
-            FeatSpec SpecializationMythic() => New("Weapon Specialization Mythic " + displayName, "d84ac5b1931bc504a98bfefaa419e34f", paramKey, name);
-            FeatSpec MasteryParametrized() => New("Weapon Mastery Parametrized " + displayName, "38ae5ac04463a8947b7c06a6c72dd6bb", paramKey, name);
-            FeatSpec ImprovedCritical() => New("Improved Critical " + displayName, "f4201c85a991369408740c6888362e20", paramKey, name);
-            FeatSpec TricksterImprovedImprovedCritical() => New("Trickster Improved Improved Critical " + displayName, "56f94badbba018b4b8277ce6e2e79e72", paramKey, name);
-            FeatSpec TricksterImprovedImprovedImprovedCritical() => New("Trickster Improved Improved Improved Critical " + displayName, "006a966007802a0478c9e21007207aac", paramKey, name);
-            FeatSpec TricksterImprovedImprovedImprovedImprovedCritical() => New("Trickster Improved Improved Improved Improved Critical " + displayName, "319c882ab3cc51544ad2f3f43633d5b1", paramKey, name);
-            FeatSpec ImprovedCriticalMythic() => New("Improved Critical Mythic " + displayName, "8bc0190a4ec04bd489eec290aeaa6d07", paramKey, name);
+        private FeatSpec FocusMythic(string name) => WeaponNew("Weapon Focus Mythic", "74eb201774bccb9428ba5ac8440bf990", name);
+        private FeatSpec SpecializationMythic(string name) => WeaponNew("Weapon Specialization Mythic", "d84ac5b1931bc504a98bfefaa419e34f", name);
+        private FeatSpec TricksterImprovedImprovedCritical(string name) => WeaponNew("Trickster Improved Improved Critical", "56f94badbba018b4b8277ce6e2e79e72", name);
+        private FeatSpec TricksterImprovedImprovedImprovedCritical(string name) => WeaponNew("Trickster Improved Improved Improved Critical", "006a966007802a0478c9e21007207aac", name);
+        private FeatSpec TricksterImprovedImprovedImprovedImprovedCritical(string name) => WeaponNew("Trickster Improved Improved Improved Improved Critical", "319c882ab3cc51544ad2f3f43633d5b1", name);
+        private FeatSpec ImprovedCriticalMythic(string name) => WeaponNew("Improved Critical Mythic", "8bc0190a4ec04bd489eec290aeaa6d07", name);
 
+        protected override IEnumerable<FeatSpec> Melee(IEnumerable<FeatSpec> feats, string name)
+        {
             return feats.Concat(new[] {
-                Focus(), FocusGreater(), FocusMythic(),
-                Specialization(), SpecializationGreater(), SpecializationMythic(), MasteryParametrized(),
-                ImprovedCritical(), ImprovedCriticalMythic(),
-                TricksterImprovedImprovedCritical(), TricksterImprovedImprovedImprovedCritical(), TricksterImprovedImprovedImprovedImprovedCritical()
+                Focus(name), FocusGreater(name), FocusMythic(name),
+                Specialization(name), SpecializationGreater(name), SpecializationMythic(name), MasteryParametrized(name),
+                ImprovedCritical(name), ImprovedCriticalMythic(name),
+                TricksterImprovedImprovedCritical(name), TricksterImprovedImprovedImprovedCritical(name), TricksterImprovedImprovedImprovedImprovedCritical(name),
+                SlashingGrace(name), FencingGrace(name)
             });
         }
 
-        private static IEnumerable<FeatSpec> SpellSchool(this IEnumerable<FeatSpec> feats, string name)
+        protected override IEnumerable<FeatSpec> Ranged(IEnumerable<FeatSpec> feats, string name)
         {
-            var displayName = name.AsDisplayable();
-            const string paramKey = "SpellSchool";
-            FeatSpec ExpandedArsenalSchool() => New("Expanded Arsenal School " + displayName, "f137089c48364014aa3ec3b92ccaf2e2", paramKey, name);
-            FeatSpec SchoolMasteryMythic() => New("School Mastery Mythic " + displayName, "ac830015569352b458efcdfae00a948c", paramKey, name);
-            FeatSpec FocusMythic() => New("Spell Focus Mythic " + displayName, "41fa2470ab50ff441b4cfbb2fc725109", paramKey, name);
-
             return feats.Concat(new[] {
-                ExpandedArsenalSchool(),
-                SchoolMasteryMythic(),
-                FocusMythic()
+                Focus(name), FocusGreater(name), FocusMythic(name),
+                Specialization(name), SpecializationGreater(name), SpecializationMythic(name), MasteryParametrized(name),
+                ImprovedCritical(name), ImprovedCriticalMythic(name),
+                TricksterImprovedImprovedCritical(name), TricksterImprovedImprovedImprovedCritical(name), TricksterImprovedImprovedImprovedImprovedCritical(name),
+                PointBlankMaster(name)
             });
         }
 
-        static WotrPredefinedFeats()
+        private FeatSpec ExpandedArsenalSchool(string name) => SpellNew("Expanded Arsenal School", "f137089c48364014aa3ec3b92ccaf2e2", name);
+        private FeatSpec SchoolMasteryMythic(string name) => SpellNew("School Mastery Mythic", "ac830015569352b458efcdfae00a948c", name);
+        private FeatSpec SpellFocusMythic(string name) => SpellNew("Spell Focus Mythic", "41fa2470ab50ff441b4cfbb2fc725109", name);
+
+        protected override IEnumerable<FeatSpec> SpellSchool(IEnumerable<FeatSpec> feats, string name)
         {
-            All = Define()
-                .Weapon("Bardiche")
-                .Weapon("BastardSword")
-                .Weapon("Battleaxe")
-                .Weapon("Bite")
-                .Weapon("Claw")
-                .Weapon("Club")
-                .Weapon("Dagger")
-                .Weapon("DoubleAxe")
-                .Weapon("DoubleSword")
-                .Weapon("DuelingSword")
-                .Weapon("Urgrosh")
-                .Weapon("DwarvenWaraxe")
-                .Weapon("EarthBreaker")
-                .Weapon("ElvenCurveBlade")
-                .Weapon("Estoc")
-                .Weapon("Falcata")
-                .Weapon("Falchion")
-                .Weapon("Fauchard")
-                .Weapon("Flail")
-                .Weapon("Glaive")
-                .Weapon("Gore")
-                .Weapon("Greataxe")
-                .Weapon("Greatclub")
-                .Weapon("Greatsword")
-                .Weapon("Handaxe")
-                .Weapon("HeavyFlail")
-                .Weapon("HeavyMace")
-                .Weapon("HeavyPick")
-                .Weapon("Hoof")
-                .Weapon("HookedHammer")
-                .Weapon("IncorporealTouch")
-                .Weapon("Kama")
-                .Weapon("Kukri")
-                .Weapon("LightHammer")
-                .Weapon("LightMace")
-                .Weapon("LightPick")
-                .Weapon("LightShield")
-                .Weapon("Longspear")
-                .Weapon("Longsword")
-                .Weapon("Nunchaku")
-                .Weapon("PunchingDagger")
-                .Weapon("Quarterstaff")
-                .Weapon("Rapier")
-                .Weapon("Sai")
-                .Weapon("Scimitar")
-                .Weapon("Scythe")
-                .Weapon("Shortspear")
-                .Weapon("Shortsword")
-                .Weapon("Sickle")
-                .Weapon("Slam")
-                .Weapon("Spear")
-                .Weapon("Spike")
-                .Weapon("Starknife")
-                .Weapon("Sting")
-                .Weapon("Tail")
-                .Weapon("Talon")
-                .Weapon("Tentacle")
-                .Weapon("Tongi")
-                .Weapon("Trident")
-                .Weapon("Warhammer")
-                .Weapon("Unarmed")
-                .Weapon("Wing")
+            return feats.Concat(new[] {
+                ExpandedArsenalSchool(name),
+                SchoolMasteryMythic(name),
+                SpellFocusMythic(name),
+                SpellFocus(name),
+                SpellFocusGreater(name),
+            });
+        }
+
+        protected override void OnDefine(FeatSpecDefineArgs args)
+        {
+            args
+                .Melee("Bardiche")
+                .Melee("BastardSword")
+                .Melee("Battleaxe")
+                .Melee("Bite")
+                .Melee("Claw")
+                .Melee("Club")
+                .Melee("Dagger")
+                .Melee("DoubleAxe")
+                .Melee("DoubleSword")
+                .Melee("DuelingSword")
+                .Melee("Urgrosh")
+                .Melee("DwarvenWaraxe")
+                .Melee("EarthBreaker")
+                .Melee("ElvenCurveBlade")
+                .Melee("Estoc")
+                .Melee("Falcata")
+                .Melee("Falchion")
+                .Melee("Fauchard")
+                .Melee("Flail")
+                .Melee("Glaive")
+                .Melee("Gore")
+                .Melee("Greataxe")
+                .Melee("Greatclub")
+                .Melee("Greatsword")
+                .Melee("Handaxe")
+                .Melee("HeavyFlail")
+                .Melee("HeavyMace")
+                .Melee("HeavyPick")
+                .Melee("Hoof")
+                .Melee("HookedHammer")
+                .Melee("IncorporealTouch")
+                .Melee("Kama")
+                .Melee("Kukri")
+                .Melee("LightHammer")
+                .Melee("LightMace")
+                .Melee("LightPick")
+                .Melee("LightShield")
+                .Melee("Longspear")
+                .Melee("Longsword")
+                .Melee("Nunchaku")
+                .Melee("PunchingDagger")
+                .Melee("Quarterstaff")
+                .Melee("Rapier")
+                .Melee("Sai")
+                .Melee("Scimitar")
+                .Melee("Scythe")
+                .Melee("Shortspear")
+                .Melee("Shortsword")
+                .Melee("Sickle")
+                .Melee("Slam")
+                .Melee("Spear")
+                .Melee("Spike")
+                .Melee("Starknife")
+                .Melee("Sting")
+                .Melee("Tail")
+                .Melee("Talon")
+                .Melee("Tentacle")
+                .Melee("Tongi")
+                .Melee("Trident")
+                .Melee("Warhammer")
+                .Melee("Unarmed")
+                .Melee("Wing")
 
                 // Ranged
-                .Weapon("Bomb")
-                .Weapon("Dart")
-                .Weapon("HeavyCrossbow")
-                .Weapon("Javelin")
-                .Weapon("LightCrossbow")
-                .Weapon("Longbow")
-                .Weapon("Ray")
-                .Weapon("Shortbow")
-                .Weapon("SlingStaff")
-                .Weapon("ThrowingAxe")
-                .Weapon("Touch")
+                .Ranged("Bomb")
+                .Ranged("Dart")
+                .Ranged("HeavyCrossbow")
+                .Ranged("Javelin")
+                .Ranged("LightCrossbow")
+                .Ranged("Longbow")
+                .Ranged("Ray")
+                .Ranged("Shortbow")
+                .Ranged("SlingStaff")
+                .Ranged("ThrowingAxe")
+                .Ranged("Touch")
 
                 // Spell Schools
                 .SpellSchool("Abjuration")
@@ -178,11 +173,7 @@ namespace Arcemi.Models.PathfinderWotr
                 .SpellSchool("Evocation")
                 .SpellSchool("Illusion")
                 .SpellSchool("Necromancy")
-                .SpellSchool("Transmutation")
-
-                .ToArray();
-
-            Lookup = All.ToDictionary(x => x.Id);
+                .SpellSchool("Transmutation");
         }
     }
 
