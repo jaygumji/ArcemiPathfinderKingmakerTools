@@ -126,13 +126,19 @@ namespace Arcemi.Models
         public void ApplyOn(JObject obj)
         {
             obj["Blueprint"] = Blueprint;
-            obj.Add("m_Context", new JObject {
-                { "AssociatedBlueprint", Blueprint }
-            });
-            if (Parameters.Count > 0) {
-                var param = new JObject();
-                obj.Add("Param", param);
+            var context = (JObject)obj.Property("m_Context")?.Value;
+            if (context is null) {
+                context = new JObject();
+                obj.Add("m_Context", context);
+            }
+            context["AssociatedBlueprint"] = Blueprint;
 
+            if (Parameters.Count > 0) {
+                var param = (JObject)obj.Property("Param")?.Value;
+                if (param is null) {
+                    param = new JObject();
+                    obj.Add("Param", param);
+                }
                 foreach (var p in Parameters) {
                     param.Add(p.Key, p.Value);
                 }
