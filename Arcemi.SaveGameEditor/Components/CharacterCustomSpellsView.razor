@@ -243,8 +243,15 @@ else {
     private record KnownSpellEntry(IGameSpellEntry Spell, string Type);
     private IEnumerable<KnownSpellEntry> AvailableKnownSpells()
     {
-        foreach (var entry in Spellbook.KnownSpells[AddSpellLevel]) {
-            yield return new KnownSpellEntry(entry, "");
+        for (var i = 0; i < Spellbook.KnownSpells.Count; i++) {
+            foreach (var entry in Spellbook.KnownSpells[i]) {
+                yield return new KnownSpellEntry(entry, "");
+            }
+        }
+        for (var i = 0; i < Spellbook.SpecialSpells.Count; i++) {
+            foreach (var entry in Spellbook.SpecialSpells[i]) {
+                yield return new KnownSpellEntry(entry, "");
+            }
         }
     }
 

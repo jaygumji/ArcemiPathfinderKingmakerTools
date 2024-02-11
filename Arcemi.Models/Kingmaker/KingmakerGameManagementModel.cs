@@ -17,7 +17,8 @@ namespace Arcemi.Models.Kingmaker
                 GameDataModels.Integer("Start day", player.Kingdom, k => k.StartDay, (k,v) => k.StartDay = v, minValue: 0),
                 GameDataModels.Integer("Current day", player.Kingdom, k => k.CurrentDay, (k,v) => k.CurrentDay = v, minValue: 0),
                 GameDataModels.Integer("BP", player.Kingdom, k => k.BP, (k,v) => k.BP = v, minValue: 0),
-                GameDataModels.Integer("BP per turn", player.Kingdom, k => k.BPPerTurn, (k, v) => k.BPPerTurn = v, maxValue: 0),
+                GameDataModels.Integer("BP per turn", player.Kingdom, k => k.BPPerTurn, (k, v) => k.BPPerTurn = v, minValue: 0),
+                GameDataModels.Integer("Crisis Points", player.Kingdom, k => k.GetAccessor().Value<int>("ConsumableEventBonus"), (k, v) => k.GetAccessor().Value(v, "ConsumableEventBonus"), minValue: 0),
                 GameDataModels.Object("Attributes", new IGameData[] {
                     GameDataModels.RowList(player.Kingdom.Stats.Attributes, a => GameDataModels.Object(a.Type, new IGameData[] {
                         GameDataModels.Integer("Rank", a, x => x.Rank, (x, v) => x.Rank = v, minValue: 0, size: GameDataSize.Small),
