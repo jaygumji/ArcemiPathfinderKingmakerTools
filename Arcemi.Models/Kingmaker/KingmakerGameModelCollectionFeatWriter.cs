@@ -60,10 +60,10 @@ namespace Arcemi.Models.Kingmaker
         {
             if (KingmakerPredefinedFeats.Instance.Is(args.Blueprint)) return;
 
-            var template = Res.GetFeatTemplate(args.Blueprint);
-            if (template is object) {
-                args.Model.Import(template);
-            }
+            //var template = Res.GetFeatTemplate(args.Blueprint);
+            //if (template is object) {
+            //    args.Model.Import(template);
+            //}
         }
 
         public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameUnitFeatEntry> current)

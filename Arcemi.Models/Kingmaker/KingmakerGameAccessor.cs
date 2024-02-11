@@ -15,10 +15,10 @@ namespace Arcemi.Models.Kingmaker
         public KingmakerGameAccessor(IGameEditFile file)
         {
             File = file;
-            Party = new KingmakerGamePartyModel(file.Player);
-            SharedStash = new KingmakerGameInventoryModel(file.Player.SharedStash, file.Player.GameTime, "Shared Stash");
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new KingmakerGameUnitModel(a), a => a.Descriptor is object);
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
+            Party = new KingmakerGamePartyModel(file.Player, Characters);
+            SharedStash = new KingmakerGameInventoryModel(file.Player.SharedStash, file.Player.GameTime, "Shared Stash");
             SharedInventory = new KingmakerGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory, file.Player.GameTime, "Party");
             Management = new KingmakerGameManagementModel(file.Player, Characters);
             State = new KingmakerGameStateModel(file.Player);

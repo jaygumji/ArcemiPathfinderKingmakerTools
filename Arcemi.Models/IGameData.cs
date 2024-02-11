@@ -14,6 +14,32 @@ namespace Arcemi.Models
         bool IsReadOnly { get; }
         GameDataSize Size { get; }
     }
+    public interface IGameDataAction : IGameData
+    {
+        string Label { get; }
+        bool IsEnabled { get; }
+        GameDataActionType Type { get; }
+        GameDataSize Size { get; }
+        void Invoke();
+    }
+    public interface IGameDataMessage : IGameData
+    {
+        string Text { get; }
+        GameDataSize Size { get; }
+        GameDataMessageType Type { get; }
+    }
+    public enum GameDataMessageType
+    {
+        Info,
+        Warning,
+        Error
+    }
+    public enum GameDataActionType
+    {
+        Normal,
+        Add,
+        Destroy
+    }
     public enum GameDataSize
     {
         Small,
@@ -63,6 +89,13 @@ namespace Arcemi.Models
         int MinValue { get; }
         int MaxValue { get; }
         int Modifiers { get; }
+    }
+    public interface IGameDataDouble : IGameDataValue
+    {
+        double Value { get; set; }
+        double MinValue { get; }
+        double MaxValue { get; }
+        double Modifiers { get; }
     }
     public static class GameDataModels
     {
@@ -273,6 +306,99 @@ namespace Arcemi.Models
             where T : class
         {
             return new GameDataInteger<T>(label, instance, getter, setter, minValue, maxValue, modifiers, size);
+        }
+
+        private class GameDataDouble<T> : IGameDataDouble
+            where T : class
+        {
+            private readonly Func<T, double> getter;
+            private readonly Action<T, double> setter;
+
+            public GameDataDouble(string label, T instance, Func<T, double> getter, Action<T, double> setter, double minValue, double maxValue, double modifiers, GameDataSize size)
+            {
+                Label = label;
+                Instance = instance;
+                this.getter = getter;
+                this.setter = setter;
+                IsReadOnly = instance is null || this.setter is null;
+                MinValue = minValue;
+                MaxValue = maxValue;
+                Modifiers = modifiers;
+                Size = size;
+            }
+
+            public double Value { get => Instance is null ? default : getter(Instance); set => setter?.Invoke(Instance, value); }
+
+            public string Label { get; }
+            public T Instance { get; }
+            public bool IsReadOnly { get; }
+            public double MinValue { get; }
+            public double MaxValue { get; }
+            public double Modifiers { get; }
+            public GameDataSize Size { get; }
+        }
+        public static IGameDataDouble Double<T>(string label, T instance, Func<T, double> getter, Action<T, double> setter = null, double minValue = 1, double maxValue = double.MaxValue, double modifiers = 0, GameDataSize size = GameDataSize.Medium)
+            where T : class
+        {
+            return new GameDataDouble<T>(label, instance, getter, setter, minValue, maxValue, modifiers, size);
+        }
+
+        private class GameDataAction : IGameDataAction
+        {
+            private readonly Action action;
+            private readonly Func<bool> _isEnabled;
+
+            public GameDataAction(string label, Action action, Func<bool> isEnabled, GameDataActionType type, GameDataSize size)
+            {
+                Label = label;
+                this.action = action;
+                _isEnabled = isEnabled;
+                Type = type;
+                Size = size;
+            }
+
+            public string Label { get; }
+            public bool IsEnabled => _isEnabled();
+            public GameDataActionType Type { get; }
+            public GameDataSize Size { get; }
+            public void Invoke()
+            {
+                action?.Invoke();
+            }
+        }
+        public static IGameDataAction Action(string label, Action action, bool isEnabled = true, GameDataActionType type = GameDataActionType.Normal, GameDataSize size = GameDataSize.Medium)
+        {
+            return new GameDataAction(label, action, () => isEnabled, type, size);
+        }
+        public static IGameDataAction Action(string label, Action action, Func<bool> isEnabled, GameDataActionType type = GameDataActionType.Normal, GameDataSize size = GameDataSize.Medium)
+        {
+            return new GameDataAction(label, action, isEnabled, type, size);
+        }
+        public static IGameDataAction Action(Action action, bool isEnabled = true, GameDataActionType type = GameDataActionType.Normal, GameDataSize size = GameDataSize.Small)
+        {
+            return new GameDataAction(null, action, () => isEnabled, type, size);
+        }
+        public static IGameDataAction Action(Action action, Func<bool> isEnabled, GameDataActionType type = GameDataActionType.Normal, GameDataSize size = GameDataSize.Small)
+        {
+            return new GameDataAction(null, action, isEnabled, type, size);
+        }
+
+        private class GameDataMessage : IGameDataMessage
+        {
+            public GameDataMessage(string text, GameDataMessageType type, GameDataSize size)
+            {
+                Text = text;
+                Type = type;
+                Size = size;
+            }
+
+            public string Text { get; }
+            public GameDataMessageType Type { get; }
+            public GameDataSize Size { get; }
+        }
+        public static IGameDataMessage Message(string text, GameDataMessageType type = GameDataMessageType.Info, GameDataSize size = GameDataSize.Row)
+        {
+            return new GameDataMessage(text, type, size);
         }
     }
 }

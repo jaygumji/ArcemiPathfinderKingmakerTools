@@ -12,6 +12,27 @@
         </div>
     </div>
 }
+else if (Data is IGameDataAction action){
+    <div class="@SizeClass">
+        <div class="form-group">
+            <button class="btn @ActionClass(action)" type="button" disabled="@(!action.IsEnabled)" @onclick="() => action.Invoke()">
+                @if (action.Type != GameDataActionType.Normal){
+                    <i class="oi @ActionIconClass(action)"></i>
+                }
+                @action.Label
+            </button>
+        </div>
+    </div>
+}
+else if (Data is IGameDataMessage message){
+    <div class="@SizeClass">
+        <div class="form-group">
+            <div class="alert @MessageClass(message)">
+                @message.Text
+            </div>
+        </div>
+    </div>
+}
 else if (Data is IGameDataText textData) {
     <div class="@SizeClass">
         <div class="form-group">
@@ -29,6 +50,16 @@ else if (Data is IGameDataInteger intData) {
                 <label class="form-label">@intData.Label @(intData.Modifiers > 0 ? "+" + intData.Modifiers : "")</label>
             }
             <input class="form-control" type="number" @bind="intData.Value" min="@intData.MinValue" max="@intData.MaxValue" disabled="@intData.IsReadOnly" />
+        </div>
+    </div>
+}
+else if (Data is IGameDataDouble doubleData) {
+    <div class="@SizeClass">
+        <div class="form-group">
+            @if (ShowHeader) {
+                <label class="form-label">@doubleData.Label @(doubleData.Modifiers > 0 ? "+" + doubleData.Modifiers.ToString("###.##") : "")</label>
+            }
+            <input class="form-control" type="number" @bind="doubleData.Value" min="@doubleData.MinValue" max="@doubleData.MaxValue" disabled="@doubleData.IsReadOnly" />
         </div>
     </div>
 }
@@ -224,6 +255,29 @@ else if (Data is IGameDataObject objData) {
             case GameDataSize.Large: return 6;
         }
         return 12;
+    }
+
+    private string ActionClass(IGameDataAction action){
+        switch (action.Type){
+            case GameDataActionType.Destroy: return "btn-danger";
+        }
+        return "btn-info";
+    }
+
+    private string ActionIconClass(IGameDataAction action){
+        switch (action.Type){
+            case GameDataActionType.Destroy: return "oi-trashcan";
+            case GameDataActionType.Add: return "oi-plus";
+        }
+        return "";
+    }
+
+    private string MessageClass(IGameDataMessage msg){
+        switch (msg.Type){
+            case GameDataMessageType.Error: return "alert-danger";
+            case GameDataMessageType.Warning: return "alert-warning";
+        }
+        return "alert-info";
     }
 
     private Modal modalAddListEntry;

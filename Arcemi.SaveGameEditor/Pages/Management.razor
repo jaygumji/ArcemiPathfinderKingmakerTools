@@ -16,6 +16,13 @@ else {
                 </Content>
             </Tab>
         }
+        @if (Session.Game.Management.Resources is not null) {
+            <Tab Name="@Session.Game.Management.Resources.Name">
+                <Content>
+                    <GameData Data="@Session.Game.Management.Resources" ShowHeader="false"></GameData>
+                </Content>
+            </Tab>
+        }
         @if (Session.Game.Management.Members?.Count > 0) {
             <Tab Name="@Session.Game.Management.MemberTypeName.Plural">
                 <Content>
@@ -34,13 +41,6 @@ else {
             <Tab Name="Tasks">
                 <Content>
                     <TasksView />
-                </Content>
-            </Tab>
-        }
-        @if (Session.Game.Management.Resources is not null) {
-            <Tab Name="@Session.Game.Management.Resources.Name">
-                <Content>
-                    <GameData Data="@Session.Game.Management.Resources" ShowHeader="false"></GameData>
                 </Content>
             </Tab>
         }

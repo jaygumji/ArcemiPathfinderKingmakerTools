@@ -1,13 +1,38 @@
-﻿namespace Arcemi.Models.Kingmaker
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Arcemi.Models.Kingmaker
 {
     public class KingmakerGamePartyModel : IGamePartyModel
     {
-        public KingmakerGamePartyModel(PlayerModel player)
+        public KingmakerGamePartyModel(PlayerModel player, IGameModelCollection<IGameUnitModel> characters)
         {
             Player = player;
+            var wearinessDebuffBlueprints = new HashSet<string>(StringComparer.Ordinal) {
+                "e6f2fc5d73d88064583cb828801212f4", // Fatigued
+                "46d1b9cc3d0fd36469a471b047d773a2", // Exhausted
+            };
             Data = GameDataModels.Object(new IGameData[] {
                 new KingmakerMoneyResourceEntry(player),
-                new KingmakerRespecsResourceEntry(player)
+                new KingmakerRespecsResourceEntry(player),
+                GameDataModels.Action("Reset Weariness", () => {
+                    foreach (KingmakerGameUnitModel character in characters) {
+                        if (character.Weariness is object) {
+                            character.Weariness.WearinessStacks = 0;
+                            if (character.Weariness.ExtraWearinessHours > 0)
+                                character.Weariness.ExtraWearinessHours = 0;
+                            character.Weariness.LastStackTime = player.GameTime;
+                            character.Weariness.LastBuffApplyTime = player.GameTime;
+                        }
+
+                        // Remove the debuffs
+                        var debuffs = character.Buffs.Where(b => wearinessDebuffBlueprints.Contains(b.Blueprint)).ToArray();
+                        foreach (var debuff in debuffs) {
+                            character.Buffs.Remove(debuff);
+                        }
+                    }
+                }, isEnabled: () => characters.Cast<KingmakerGameUnitModel>().Any(c => c.Weariness?.WearinessStacks > 0))
             });
         }
 

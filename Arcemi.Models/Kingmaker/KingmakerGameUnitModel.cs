@@ -31,6 +31,8 @@ namespace Arcemi.Models.Kingmaker
         public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
         public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
 
+        public UnitWearinessPartItemModel Weariness { get; }
+
         public KingmakerGameUnitModel(UnitEntityModel unit)
         {
             Ref = unit;
@@ -42,7 +44,7 @@ namespace Arcemi.Models.Kingmaker
             Race = new KingmakerGameUnitRaceModel(unit);
             Progression = new KingmakerGameUnitProgressionModel(unit);
             Stats = new KingmakerGameUnitStatsModel(unit);
-            Appearance = new KingmakerGameUnitAppearanceModel(unit.Descriptor.GetAccessor().Object<DollDataModel>("Doll"));
+            Appearance = new KingmakerGameUnitAppearanceModel(unit);
             Body = new KingmakerGameUnitBodyModel(unit);
             SpellCaster = new KingmakerGameUnitSpellCasterModel(unit);
 
@@ -55,11 +57,20 @@ namespace Arcemi.Models.Kingmaker
                 Ref.Descriptor.GetAccessor().Object<RefModel>("Buffs").GetAccessor().List("m_Facts", FactItemModel.Factory), x => new KingmakerGameUnitBuffEntry(x), x => x is BuffFactItemModel feat,
                 new KingmakerGameModelCollectionBuffWriter());
 
+            var parts = Ref.Descriptor.GetAccessor().Object<KingmakerPartsContainerModel>("m_Parts");
+            Weariness = (UnitWearinessPartItemModel)parts.Items.FirstOrDefault(x => x.Value is UnitWearinessPartItemModel)?.Value;
             Sections = new[] {
-                GameDataModels.Object("Resources", new IGameData[] {
+                GameDataModels.Object("Misc", new IGameData[] {
                     GameDataModels.RowList(unit.Descriptor.Resources.PersistantResources, x => GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(x.Blueprint), new IGameData[] {
                         GameDataModels.Integer("Amount", x, item => item.Amount, (item, val) => item.Amount = val, minValue: 0)
-                    }))
+                    })),
+                    GameDataModels.Object("Weariness", new IGameData[] {
+                        GameDataModels.Message("To easily remove weariness from your party, Use the button on the party overview. Set extra hours to a negative value to make the character last longer until needing rest"),
+                        GameDataModels.Integer("Stacks", Weariness, w => w.WearinessStacks, (w,v) => w.WearinessStacks = v, minValue: int.MinValue),
+                        GameDataModels.Double("Extra hours", Weariness, w => w.ExtraWearinessHours, (w, v) => w.ExtraWearinessHours = v, minValue: 0),
+                        GameDataModels.Time("Tick", new TimeParts(() => Weariness?.LastStackTime ?? TimeSpan.Zero, v => { if (Weariness is object) Weariness.LastStackTime = v; })),
+                        GameDataModels.Time("Debuff applied", new TimeParts(() => Weariness?.LastBuffApplyTime ?? TimeSpan.Zero, v => { if (Weariness is object) Weariness.LastBuffApplyTime = v; }))
+                    })
                 })
             };
         }
@@ -86,4 +97,14 @@ namespace Arcemi.Models.Kingmaker
             Companion.State = CompanionPartState.Remote;
         }
     }
+
+    public class KingmakerPartsContainerModel : RefModel
+    {
+        public KingmakerPartsContainerModel(ModelDataAccessor accessor) : base(accessor)
+        {
+        }
+
+        public ListAccessor<KeyValuePairObjectModel<PartItemModel>> Items => A.List("m_Parts", a => new KeyValuePairObjectModel<PartItemModel>(a, PartItemModel.Factory), createIfNull: true);
+    }
+
 }
