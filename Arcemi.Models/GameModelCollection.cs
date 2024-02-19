@@ -103,6 +103,14 @@ namespace Arcemi.Models
     }
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
     {
+        public static GameModelCollectionWriter<TGameModel, TModel> ReadOnly { get; } = new ReadOnlyImpl();
+        private class ReadOnlyImpl : GameModelCollectionWriter<TGameModel, TModel>
+        {
+            public override void BeforeAdd(BeforeAddCollectionItemArgs args) { }
+            public override bool IsAddEnabled => false;
+            public override bool IsRemoveEnabled => false;
+        }
+
         public virtual bool IsAddEnabled => true;
         public virtual bool IsRemoveEnabled => true;
         public abstract void BeforeAdd(BeforeAddCollectionItemArgs args);

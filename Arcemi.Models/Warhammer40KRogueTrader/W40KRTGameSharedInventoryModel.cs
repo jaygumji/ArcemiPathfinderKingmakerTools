@@ -31,8 +31,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             return true;
         }
 
-        public IGameItemEntry FindEquipped(string uniqueId)
+        public IGameItemEntry FindEquipped(object itemRef)
         {
+            if (!(itemRef is string uniqueId)) return null;
             if (string.IsNullOrEmpty(uniqueId)) return null;
             if (_equippedLookup.TryGetValue(uniqueId, out var item)) return item;
             return null;

@@ -672,28 +672,47 @@ ul.portraits {
     }
 }
 
-.character-equipment-slot{
+.character-equipment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+}
+
+.character-equipment-slot {
     margin-bottom: 10px;
-    height: 90px;
+    min-height: 90px;
+    height: 100%;
     margin: 5px;
     border: solid 1px #cecece;
     border-radius: 5px 5px;
     padding: 10px;
+    box-shadow: 1px 1px #8cf;
 
-    .item-icon{
+    .item-icon {
         text-align: center;
         vertical-align: middle;
     }
 
     .data-header {
-        margin-bottom:5px;
+        margin-bottom: 5px;
     }
 
-    .data-content{
+    .data-content {
         overflow: hidden;
 
         button {
             width: 14px;
+        }
+    }
+
+    .data-footer {
+        vertical-align: middle;
+        margin-top: 10px;
+
+        label {
+            vertical-align: middle;
+            margin-bottom: 0;
+            margin-top: 5px;
         }
     }
 }

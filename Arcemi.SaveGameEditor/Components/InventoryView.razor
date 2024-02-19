@@ -13,12 +13,7 @@ else {
             <input id="search" type="text" class="form-control" placeholder="Search..." @bind="SearchTerm" @bind:event="oninput" />
         </div>
         @if (Inventory.Items.IsAddEnabled) {
-            if (Resources.Blueprints.GetEntries(BlueprintTypeId.Item).Count > 0) {
-                <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
-            }
-            else if (Inventory is Arcemi.Models.PathfinderWotr.WotrGameInventoryModel) {
-                <InventoryAddItemFallback Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
-            }
+            <InventoryAddItem Inventory="Inventory" OnItemAdded="item => StateHasChanged()" />
         }
     </div>
 

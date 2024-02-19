@@ -4,99 +4,33 @@
 <CascadingValue Value="Unit">
     <CascadingValue Value="Inventory">
         @if (Unit.Body.IsSupported) {
-            <div class="row">
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Head" Slot="Unit.Body.Head" ItemTypeId="BlueprintTypeId.ItemEquipmentHead" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Neck" Slot="Unit.Body.Neck" ItemTypeId="BlueprintTypeId.ItemEquipmentNeck" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
+            <div class="character-equipment-grid">
+                <CharacterEquipmentSlot Name="Head" Slot="Unit.Body.Head" ItemTypeId="BlueprintTypeId.ItemEquipmentHead" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Neck" Slot="Unit.Body.Neck" ItemTypeId="BlueprintTypeId.ItemEquipmentNeck" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Glasses" Slot="Unit.Body.Glasses" ItemTypeId="BlueprintTypeId.ItemEquipmentGlasses" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Armor" Slot="Unit.Body.Armor" ItemTypeId="BlueprintTypeId.ItemArmor" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Shoulders" Slot="Unit.Body.Shoulders" ItemTypeId="BlueprintTypeId.ItemEquipmentShoulders" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Shirt" Slot="Unit.Body.Shirt" ItemTypeId="BlueprintTypeId.ItemEquipmentShirt" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Ring #1" Slot="Unit.Body.Ring1" ItemTypeId="BlueprintTypeId.ItemEquipmentRing" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Belt" Slot="Unit.Body.Belt" ItemTypeId="BlueprintTypeId.ItemEquipmentBelt" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Ring #2" Slot="Unit.Body.Ring2" ItemTypeId="BlueprintTypeId.ItemEquipmentRing" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Gloves" Slot="Unit.Body.Gloves" ItemTypeId="BlueprintTypeId.ItemEquipmentGloves" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Wrist" Slot="Unit.Body.Wrist" ItemTypeId="BlueprintTypeId.ItemEquipmentWrist" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                <CharacterEquipmentSlot Name="Feet" Slot="Unit.Body.Feet" ItemTypeId="BlueprintTypeId.ItemEquipmentFeet" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Glasses" Slot="Unit.Body.Glasses" ItemTypeId="BlueprintTypeId.ItemEquipmentGlasses" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Armor" Slot="Unit.Body.Armor" ItemTypeId="BlueprintTypeId.ItemArmor" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Shoulders" Slot="Unit.Body.Shoulders" ItemTypeId="BlueprintTypeId.ItemEquipmentShoulders" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Shirt" Slot="Unit.Body.Shirt" ItemTypeId="BlueprintTypeId.ItemEquipmentShirt" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Ring #1" Slot="Unit.Body.Ring1" ItemTypeId="BlueprintTypeId.ItemEquipmentRing" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Belt" Slot="Unit.Body.Belt" ItemTypeId="BlueprintTypeId.ItemEquipmentBelt" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Ring #2" Slot="Unit.Body.Ring2" ItemTypeId="BlueprintTypeId.ItemEquipmentRing" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Gloves" Slot="Unit.Body.Gloves" ItemTypeId="BlueprintTypeId.ItemEquipmentGloves" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Wrist" Slot="Unit.Body.Wrist" ItemTypeId="BlueprintTypeId.ItemEquipmentWrist" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-                <div class="col-md-6">
-                    <CharacterEquipmentSlot Name="Feet" Slot="Unit.Body.Feet" ItemTypeId="BlueprintTypeId.ItemEquipmentFeet" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                </div>
-            </div>
-            <div class="row">
-                <h3 class="col-md-12">Weapon Sets</h3>
-            </div>
-            @for (var iSet = 0; iSet < Unit.Body.HandsEquipmentSets.Count; iSet++) {
-                <div class="row">
-                    <div class="col-md-6">
-                        <CharacterEquipmentSlot Name="@("Set #" + (iSet+1) + " Primary")" Slot="Unit.Body.HandsEquipmentSets[iSet].Primary" ItemTypeId="BlueprintTypeId.ItemWeapon" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                    </div>
-                    <div class="col-md-6">
-                        <CharacterEquipmentSlot Name="@("Set #" + (iSet+1) + " Secondary")" Slot="Unit.Body.HandsEquipmentSets[iSet].Secondary" ItemTypeId="BlueprintTypeId.ItemShield" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                    </div>
-                </div>
-            }
-            <div class="row">
-                <h3 class="col-md-12">Quick slots</h3>
+            <h3>Weapon Sets</h3>
+            <div class="character-equipment-grid">
+                @for (var iSet = 0; iSet < Unit.Body.HandsEquipmentSets.Count; iSet++) {
+                    <CharacterEquipmentSlot Name="@("Set #" + (iSet+1) + " Primary")" Slot="Unit.Body.HandsEquipmentSets[iSet].Primary" ItemTypeId="BlueprintTypeId.ItemWeapon" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                    <CharacterEquipmentSlot Name="@("Set #" + (iSet+1) + " Secondary")" Slot="Unit.Body.HandsEquipmentSets[iSet].Secondary" ItemTypeId="BlueprintTypeId.ItemShield" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
+                }
             </div>
             @if (Unit.Body.QuickSlots.Count > 0) {
-                <div class="row">
-                    <div class="col-md-6">
-                        <CharacterEquipmentSlot Name="Quickslot #1" Slot="Unit.Body.QuickSlots[0]" ItemTypeId="BlueprintTypeId.ItemEquipmentUsable" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                    </div>
-                    @if (Unit.Body.QuickSlots.Count > 1) {
-                        <div class="col-md-6">
-                            <CharacterEquipmentSlot Name="Quickslot #2" Slot="Unit.Body.QuickSlots[1]" ItemTypeId="BlueprintTypeId.ItemEquipmentUsable" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                        </div>
+                <h3>Quick slots</h3>
+                <div class="character-equipment-grid">
+                    @for (var islot = 0; islot < Unit.Body.QuickSlots.Count; islot++) {
+                        <CharacterEquipmentSlot Name="@("Quickslot #" + (islot+1))" Slot="Unit.Body.QuickSlots[islot]" ItemTypeId="BlueprintTypeId.ItemEquipmentUsable" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
                     }
-                </div>
-            }
-            @if (Unit.Body.QuickSlots.Count > 2) {
-                <div class="row">
-                    <div class="col-md-6">
-                        <CharacterEquipmentSlot Name="Quickslot #3" Slot="Unit.Body.QuickSlots[2]" ItemTypeId="BlueprintTypeId.ItemEquipmentUsable" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                    </div>
-                    @if (Unit.Body.QuickSlots.Count > 3) {
-                        <div class="col-md-6">
-                            <CharacterEquipmentSlot Name="Quickslot #4" Slot="Unit.Body.QuickSlots[3]" ItemTypeId="BlueprintTypeId.ItemEquipmentUsable" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                        </div>
-                    }
-                </div>
-            }
-            @if (Unit.Body.QuickSlots.Count > 4) {
-                <div class="row">
-                    <div class="col-md-6">
-                        <CharacterEquipmentSlot Name="Quickslot #5" Slot="Unit.Body.QuickSlots[4]" ItemTypeId="BlueprintTypeId.ItemEquipmentUsable" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
-                    </div>
                 </div>
             }
         }

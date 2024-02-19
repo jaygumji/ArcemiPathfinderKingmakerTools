@@ -38,7 +38,7 @@ namespace Arcemi.Models.Kingmaker
         public IGameUnitEquippedEntry Ring2 { get; }
         public IGameUnitEquippedEntry Wrist { get; }
         public IGameUnitEquippedEntry Shoulders { get; }
-        public bool IsSupported => false; // Ref is object;
+        public bool IsSupported => Ref?.Descriptor?.Body is object;
         public UnitEntityModel Ref { get; }
     }
 }

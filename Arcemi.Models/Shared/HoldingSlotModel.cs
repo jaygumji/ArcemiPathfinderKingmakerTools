@@ -21,5 +21,7 @@ namespace Arcemi.Models
         public ItemModel Item => A.Object<ItemModel>("m_Item");
         public string ItemRef => A.Value<string>("m_ItemRef");
         public CharacterModel Owner => A.Object<CharacterModel>();
+
+        object IGameUnitEquippedEntry.ItemRef => ItemRef ?? (object)Item;
     }
 }

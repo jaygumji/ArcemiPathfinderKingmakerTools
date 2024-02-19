@@ -21,6 +21,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public Alignment Direction => AlignmentExtensions.Detect(X, Y);
 
         public string LockedAlignmentMask { get => Model?.LockedAlignmentMask; set => Model.LockedAlignmentMask = value; }
+        public bool IsAlignmentMaskSupported => true;
 
         public IGameModelCollection<IGameUnitAlignmentHistoryEntryModel> History { get; }
 

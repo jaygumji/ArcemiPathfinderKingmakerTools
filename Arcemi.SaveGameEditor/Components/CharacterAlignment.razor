@@ -1,0 +1,293 @@
+﻿@inject IEditFileSession Session
+
+@if (Unit.Alignment.IsSupported) {
+    <div class="row">
+        <div class="col-md-12">
+            <h3>
+                Alignment
+                <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                    You will not be considered the alignment you have set unless you are allowed to have the alignment.
+                </Help>
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="form-label">@Unit.Alignment.DisplayName</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="form-label">Alignment X-Axis</label>
+                    <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentX" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="form-label">Alignment Y-Axis</label>
+                    <input class="form-control" type="number" min="-100" max="100" @bind="EditAlignmentY" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-secondary" disabled="@(!Unit.Alignment.History.Any())" @onclick="() => EditAlignmentHistoryAsync()">
+                        <span class="oi oi-pencil"></span>
+                        Edit history
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9 alignment">
+            <img class="alignment-map" src="/images/alignment-map.png" alt="Alignment" />
+            <img class="alignment-dot" src="/images/alignment-dot.png" style="left: @(AlignmentX)px; top: @(AlignmentY)px" />
+        </div>
+    </div>
+    @if (Unit.Alignment.IsAlignmentMaskSupported) {
+        @if (!IsAlignmentAllowed) {
+            <p class="alert alert-danger">
+                Your alignment is not allowed. Change your alignment or change the alignment mask to allow it.
+                You will not see your new alignment in game until you update this.
+            </p>
+        }
+        <div class="row">
+            <div class="col-md-12">
+                <h3>
+                    Alignment mask
+                    <Help Position="TooltipPosition.BottomRight" Size="ElementSize.Medium">
+                        This is the alignments you are allowed to have.
+                    </Help>
+                </h3>
+            </div>
+        </div>
+        <div class="character-alignment-grid">
+            <div class="row">
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-LawfulGood" class="form-label-centered">Lawful Good</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-LawfulGood" @bind-IsChecked="AlignmentMask.IsLawfulGoodAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-NeutralGood" class="form-label-centered">Neutral Good</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-NeutralGood" @bind-IsChecked="AlignmentMask.IsNeutralGoodAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-ChaoticGood" class="form-label-centered">Chaotic Good</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-ChaoticGood" @bind-IsChecked="AlignmentMask.IsChaoticGoodAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-Good" class="form-label-centered">Good</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-Good" @bind-IsChecked="AlignmentMask.IsGoodAllowed" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-LawfulNeutral" class="form-label-centered">Lawful Neutral</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-LawfulNeutral" @bind-IsChecked="AlignmentMask.IsLawfulNeutralAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-TrueNeutral" class="form-label-centered">True Neutral</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-TrueNeutral" @bind-IsChecked="AlignmentMask.IsTrueNeutralAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-ChaoticNeutral" class="form-label-centered">Chaotic Neutral</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-ChaoticNeutral" @bind-IsChecked="AlignmentMask.IsChaoticNeutralAllowed" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-LawfulEvil" class="form-label-centered">Lawful Evil</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-LawfulEvil" @bind-IsChecked="AlignmentMask.IsLawfulEvilAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-NeutralEvil" class="form-label-centered">Neutral Evil</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-NeutralEvil" @bind-IsChecked="AlignmentMask.IsNeutralEvilAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-ChaoticEvil" class="form-label-centered">Chaotic Evil</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-ChaoticEvil" @bind-IsChecked="AlignmentMask.IsChaoticEvilAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-Evil" class="form-label-centered">Evil</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-Evil" @bind-IsChecked="AlignmentMask.IsEvilAllowed" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-Lawful" class="form-label-centered">Lawful</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-Lawful" @bind-IsChecked="AlignmentMask.IsLawfulAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-Chaotic" class="form-label-centered">Chaotic</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-Chaotic" @bind-IsChecked="AlignmentMask.IsChaoticAllowed" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div>
+                        <label for="alignment-Any" class="form-label-centered">Any</label>
+                    </div>
+                    <div class="text-center">
+                        <Switch Id="alignment-Any" @bind-IsChecked="AlignmentMask.IsAnyAllowed" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<Modal @ref="modalEditAlignmentHistory">
+    <Title>Edit alignment history</Title>
+    <Body>
+        @if (Unit.Alignment.History.Count > 0) {
+            <div class="form-list">
+                <div class="row">
+                    <div class="col-md-3">
+                        Direction
+                    </div>
+                    <div class="col-md-3">
+                        Provider
+                    </div>
+                    <div class="col-md-3">
+                        Position
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntries()">
+                            <span class="oi oi-trash"></span>
+                            All
+                        </button>
+                    </div>
+                </div>
+                @foreach (var alignment in Unit.Alignment.History) {
+                    <div class="row">
+                        <div class="col-md-3">
+                            @alignment.Direction.AsDisplayable()
+                        </div>
+                        <div class="col-md-3">
+                            @alignment.Provider
+                        </div>
+                        <div class="col-md-3">
+                            @alignment.X, @(alignment.Y * -1)
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveAlignmentEntry(alignment)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditAlignmentHistory.CloseAsync()">Done</button>
+    </Footer>
+</Modal>
+
+@code {
+    [Parameter]
+    public IGameUnitModel Unit { get; set; }
+
+    private const int OffsetX = 20;
+    private const int OffsetY = 6;
+    private int AlignmentX => Unit.Alignment.X + 100 + OffsetX;
+    private int AlignmentY => Unit.Alignment.Y * -1 + 100 + OffsetY;
+    private int EditAlignmentX { get => Unit.Alignment.X; set => Unit.Alignment.X = value; }
+    private int EditAlignmentY { get => Unit.Alignment.Y * -1; set => Unit.Alignment.Y = value * -1; }
+
+    private AlignmentMaskView AlignmentMask;
+    private bool IsAlignmentAllowed => AlignmentMask.IsAlignmentAllowed(Unit.Alignment.Direction);
+
+    protected override void OnInitialized()
+    {
+        AlignmentMask = new AlignmentMaskView(UpdateAlignmentMask);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Unit.Alignment.IsSupported) {
+            if (Session.CanEdit) {
+                AlignmentMask.Set(Unit.Alignment.LockedAlignmentMask);
+            }
+            else {
+                AlignmentMask.Set(Alignment.Any);
+            }
+        }
+    }
+
+    private void UpdateAlignmentMask(AlignmentMaskView sender)
+    {
+        if (Unit.Alignment.IsSupported) {
+            Unit.Alignment.LockedAlignmentMask = sender.ToString();
+        }
+    }
+
+    private Modal modalEditAlignmentHistory;
+    private async Task EditAlignmentHistoryAsync()
+    {
+        await modalEditAlignmentHistory.OpenAsync();
+    }
+
+    private void RemoveAlignmentEntry(IGameUnitAlignmentHistoryEntryModel entry)
+    {
+        Unit.Alignment.History.Remove(entry);
+    }
+
+    private void RemoveAlignmentEntries()
+    {
+        Unit.Alignment.History.Clear();
+    }
+
+}

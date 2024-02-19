@@ -6,6 +6,7 @@ namespace Arcemi.Models.Kingmaker
 {
     internal class KingmakerGameManagementModel : IGameManagementModel
     {
+        private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_Kingmaker.Resources;
         public KingmakerGameManagementModel(PlayerModel player, IReadOnlyList<IGameUnitModel> units)
         {
             Ref = player;
@@ -32,6 +33,20 @@ namespace Arcemi.Models.Kingmaker
 
             Tasks = new GameModelCollection<IGameManagementTaskModelEntry, RefModel>(player.Kingdom.GetAccessor().List<RefModel>("ActiveTasks"),
                 a => new KingmakerGameManagementTaskModelEntry(a), r => r.GetAccessor().Object<RefModel>("AssignedLeader") is object);
+
+            Places = GameDataModels.Object("Settlements", new IGameData[] {
+                GameDataModels.List("Settlement", player.Kingdom.GetAccessor().List<RefModel>("Regions"), r => {
+                    var ra = r.GetAccessor();
+                    var settlement = ra.Object<RefModel>("Settlement");
+                    return GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(ra.Value<string>("Blueprint")), new IGameData[] {
+                        GameDataModels.Text("Name", settlement, s => s.GetAccessor().Value<string>("Name"), (s,v) => s.GetAccessor().Value(v, "Name")),
+                        GameDataModels.Options("Level", new []{ "Village", "Town", "City" }, settlement, s => s.GetAccessor().Value<string>("Level"), (s,v) => s.GetAccessor().Value(v, "Level"))
+                    }, settlement);
+                }, r => {
+                    var ra = r.GetAccessor();
+                    return ra.Value<bool>("IsClaimed") && ra.Object<RefModel>("Settlement") is object;
+                }, GameModelCollectionWriter<IGameDataObject, RefModel>.ReadOnly)
+            });
         }
 
         public string DisplayName => "Kingdom";

@@ -105,8 +105,7 @@ namespace Arcemi.Models
     public interface IGameInventoryModel : IGameModel
     {
         IReadOnlyList<IGameItemSection> Sections { get; }
-
-        IGameItemEntry FindEquipped(string uniqueId);
+        IGameItemEntry FindEquipped(object itemRef);
     }
     public interface IGameItemSection
     {
@@ -252,7 +251,7 @@ namespace Arcemi.Models
     }
     public interface IGameUnitEquippedEntry
     {
-        string ItemRef { get; }
+        object ItemRef { get; }
     }
 
     public interface IGameUnitFactEntry
@@ -423,6 +422,7 @@ namespace Arcemi.Models
         int Y { get; set; }
         Alignment Direction { get; }
         string LockedAlignmentMask { get; set; }
+        bool IsAlignmentMaskSupported { get; }
         IGameModelCollection<IGameUnitAlignmentHistoryEntryModel> History { get; }
     }
 

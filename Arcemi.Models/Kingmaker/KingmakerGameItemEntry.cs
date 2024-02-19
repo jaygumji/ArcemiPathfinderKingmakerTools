@@ -6,7 +6,7 @@
         public KingmakerGameItemEntry(ItemModel item)
         {
             Ref = item;
-            UniqueId = System.Guid.NewGuid().ToString("N");
+            UniqueId = item.Id;
         }
 
         public ItemModel Ref { get; }

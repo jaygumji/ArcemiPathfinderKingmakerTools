@@ -39,19 +39,17 @@ namespace Arcemi.Models.Kingmaker
 
         public void BeforeSave()
         {
-            //foreach (KingmakerGameUnitModel character in Characters) {
-            //    if (character.Ref.Descriptor?.Alignment?.History != null) {
-            //        var vector = character.Ref.Descriptor.Alignment.Vector;
-            //        var history = character.Ref.Descriptor.Alignment.History.LastOrDefault();
-            //        if (!string.Equals(vector.Value, history?.Position, StringComparison.Ordinal)) {
-            //            history = character.Ref.Descriptor.Alignment.History.Add();
-            //            history.Vector.X = vector.X;
-            //            history.Vector.Y = vector.Y;
-            //            history.Direction = vector.DirectionText;
-            //            history.Provider = null;
-            //        }
-            //    }
-            //}
+            foreach (var character in Characters) {
+                if (character.Alignment.IsSupported && character.Alignment.History is object) {
+                    var history = (KingmakerGameUnitAlignmentHistoryEntryModel)character.Alignment.History.LastOrDefault();
+                    if (history is object && history.X == character.Alignment.X && history.Y == character.Alignment.Y) { continue; }
+
+                    var kingmakerAlignment = (KingmakerGameUnitAlignmentModel)character.Alignment;
+
+                    history = (KingmakerGameUnitAlignmentHistoryEntryModel) character.Alignment.History.AddByBlueprint(null);
+                    history.Set(kingmakerAlignment.Vector.X, kingmakerAlignment.Vector.Y);
+                }
+            }
         }
 
         public IGameUnitModel GetOwnerOf(IGameUnitModel unit)

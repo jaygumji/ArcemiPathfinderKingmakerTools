@@ -31,8 +31,20 @@
                 </div>
             </div>
             <div class="data-content">
-                @((ItemEntry?.Name) ?? (Slot.ItemRef) ?? "-")
+                @((ItemEntry?.Name) ?? (Slot?.ItemRef) ?? "-")
             </div>
+            @if (ItemEntry?.IsChargable ?? false) {
+                <div class="data-footer">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Charges</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-control" type="number" @bind="ItemEntry.Charges" />
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -63,7 +75,7 @@
 
     protected override void OnParametersSet()
     {
-        if (Slot.ItemRef.HasValue()) {
+        if (Slot?.ItemRef is not null) {
             ItemEntry = Inventory.FindEquipped(Slot.ItemRef);
         }
         else {

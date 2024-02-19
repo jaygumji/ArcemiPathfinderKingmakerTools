@@ -136,14 +136,15 @@ namespace Arcemi.Models.Kingmaker
             Items = new GameModelCollection<IGameItemEntry, ItemModel>(model.Items, x => new KingmakerGameItemEntry(x), IsValidItem, new KingmakerGameInventoryItemWriter(model, gameTime));
             _equippedLookup = model.Items.Where(i => i.InventorySlotIndex < 0 || i.WielderRef.HasValue() || i.HoldingSlot is object)
                 .Select(i => new KingmakerGameItemEntry(i))
-                .ToDictionary(i => i.UniqueId, i => (IGameItemEntry)i, StringComparer.Ordinal);
+                .ToDictionary(i => i.Ref.Id, i => (IGameItemEntry)i, StringComparer.Ordinal);
         }
 
-        public IGameItemEntry FindEquipped(string uniqueId)
+        public IGameItemEntry FindEquipped(object itemRef)
         {
-            if (string.IsNullOrEmpty(uniqueId)) return null;
-            if (_equippedLookup.TryGetValue(uniqueId, out var item)) return item;
-            return null;
+            if (itemRef is null) return null;
+            var itemModel = (ItemModel)itemRef;
+            if (_equippedLookup.TryGetValue(itemModel.Id, out var item)) return item;
+            return new KingmakerGameItemEntry(itemModel);
         }
 
         private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {

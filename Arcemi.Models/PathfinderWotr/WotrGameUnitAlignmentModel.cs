@@ -8,6 +8,7 @@
         public int Y { get => Unit.Descriptor.Alignment.Vector.Y; set => Unit.Descriptor.Alignment.Vector.Y = value; }
         public Alignment Direction => Unit.Descriptor.Alignment.Vector.Direction;
         public string LockedAlignmentMask { get => Unit.Descriptor.Alignment.LockedAlignmentMask; set => Unit.Descriptor.Alignment.LockedAlignmentMask = value; }
+        public bool IsAlignmentMaskSupported => true;
         public IGameModelCollection<IGameUnitAlignmentHistoryEntryModel> History { get; }
 
         public WotrGameUnitAlignmentModel(UnitEntityModel unit)

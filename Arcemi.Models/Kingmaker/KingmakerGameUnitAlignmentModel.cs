@@ -1,22 +1,43 @@
-﻿namespace Arcemi.Models.Kingmaker
+﻿using System;
+
+namespace Arcemi.Models.Kingmaker
 {
+    public static class KingmakerAlignmentScale
+    {
+        public static int ToView(double? value)
+        {
+            if (value == null) return 0;
+            return (int)Math.Round(value.Value * 100.0);
+        }
+
+        public static double ToModel(int value)
+        {
+            return value / 100.0;
+        }
+    }
     internal class KingmakerGameUnitAlignmentModel : IGameUnitAlignmentModel
     {
-        public bool IsSupported => false; // (Unit?.Descriptor?.Alignment?.Vector) is object;
-        public string DisplayName => Unit.Descriptor.Alignment.Vector.DisplayName;
-        public int X { get => Unit.Descriptor.Alignment.Vector.X; set => Unit.Descriptor.Alignment.Vector.X = value; }
-        public int Y { get => Unit.Descriptor.Alignment.Vector.Y; set => Unit.Descriptor.Alignment.Vector.Y = value; }
-        public Alignment Direction => Unit.Descriptor.Alignment.Vector.Direction;
-        public string LockedAlignmentMask { get => Unit.Descriptor.Alignment.LockedAlignmentMask; set => Unit.Descriptor.Alignment.LockedAlignmentMask = value; }
+        public VectorModel Vector => A.Object<VectorModel>();
+        public bool IsSupported => Ref is object;
+        public string DisplayName => Direction.ToString().AsDisplayable();
+
+        public int X { get => KingmakerAlignmentScale.ToView(Vector?.X); set { if (Vector is object) { Vector.X = KingmakerAlignmentScale.ToModel(value); } } }
+        public int Y { get => KingmakerAlignmentScale.ToView(Vector?.Y); set { if (Vector is object) { Vector.Y = KingmakerAlignmentScale.ToModel(value); } } }
+        public Alignment Direction => Vector is object ? AlignmentExtensions.Detect(X, Y) : Alignment.None;
+        public bool IsAlignmentMaskSupported => false;
+        public string LockedAlignmentMask { get; set; }
         public IGameModelCollection<IGameUnitAlignmentHistoryEntryModel> History { get; }
 
         public KingmakerGameUnitAlignmentModel(UnitEntityModel unit)
         {
             Unit = unit;
-            //History = new GameModelCollection<IGameUnitAlignmentHistoryEntryModel, AlignmentHistoryModel>(unit.Descriptor?.Alignment?.History, a => new KingmakerGameUnitAlignmentHistoryEntryModel(a));
-            History = GameModelCollection<IGameUnitAlignmentHistoryEntryModel>.Empty;
+            Ref = unit?.Descriptor?.GetAccessor().Object<RefModel>("Alignment");
+            A = Ref?.GetAccessor();
+            History = new GameModelCollection<IGameUnitAlignmentHistoryEntryModel, RefModel>(A?.List<RefModel>("m_History"), a => new KingmakerGameUnitAlignmentHistoryEntryModel(a), writer: new KingmakerGameUnitAlignmentHistoryCollectionWriter());
         }
 
         public UnitEntityModel Unit { get; }
+        public RefModel Ref { get; }
+        public ModelDataAccessor A { get; }
     }
 }

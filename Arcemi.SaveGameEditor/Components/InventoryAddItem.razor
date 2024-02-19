@@ -8,31 +8,59 @@
         <Title>Add a new item</Title>
         <Body>
             <TabControl StartIndex="0">
-                <Tab Name="Search">
-                    <Content>
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <select class="form-control" @bind="AddBlueprintItemType">
-                                    <option value="">All Types</option>
-                                    @foreach (var type in Inventory.AddableTypes) {
-                                        <option value="@type.FullName">@type.DisplayName</option>
-                                    }
-                                </select>
+                @if (Resources.Blueprints.GetEntries(BlueprintTypeId.Item).Count > 0) {
+                    <Tab Name="Search">
+                        <Content>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <select class="form-control" @bind="AddBlueprintItemType">
+                                        <option value="">All Types</option>
+                                        @foreach (var type in Inventory.AddableTypes) {
+                                            <option value="@type.FullName">@type.DisplayName</option>
+                                        }
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <Search TItem="IBlueprintMetadataEntry" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddBlueprintItemBlueprint = a.Item.Id">
-                            <ResultItemTemplate>
-                                @item.Name.DisplayName
-                            </ResultItemTemplate>
-                        </Search>
-                    </Content>
-                </Tab>
-                <Tab Name="By category">
+                            <Search TItem="IBlueprintMetadataEntry" Items="SearchableItems" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddBlueprintItemBlueprint = a.Item.Id">
+                                <ResultItemTemplate>
+                                    @item.Name.DisplayName
+                                </ResultItemTemplate>
+                            </Search>
+                        </Content>
+                    </Tab>
+                    <Tab Name="By category">
+                        <Content>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="add-blueprint-item-type" class="form-label">Item type</label>
+                                    <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
+                                        <option value="">Select item type...</option>
+                                        @foreach (var type in Inventory.AddableTypes) {
+                                            <option value="@type.FullName">@type.DisplayName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
+                                    <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
+                                        <option value="">Select item...</option>
+                                        @foreach (var blueprint in Inventory.GetAddableItems(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
+                                            <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </Content>
+                    </Tab>
+                }
+                <Tab Name="By blueprint">
                     <Content>
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label for="add-blueprint-item-type" class="form-label">Item type</label>
-                                <select id="add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
+                                <label for="manual-add-blueprint-item-type" class="form-label">Item type</label>
+                                <select id="manual-add-blueprint-item-type" class="form-control" @bind="AddBlueprintItemType">
                                     <option value="">Select item type...</option>
                                     @foreach (var type in Inventory.AddableTypes) {
                                         <option value="@type.FullName">@type.DisplayName</option>
@@ -42,13 +70,8 @@
                         </div>
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label for="add-blueprint-item-blueprint" class="form-label">Item</label>
-                                <select id="add-blueprint-item-blueprint" class="form-control" @bind="AddBlueprintItemBlueprint">
-                                    <option value="">Select item...</option>
-                                    @foreach (var blueprint in Inventory.GetAddableItems(AddBlueprintItemType).OrderBy(x => x.DisplayName)) {
-                                        <option value="@blueprint.Id">@blueprint.DisplayName</option>
-                                    }
-                                </select>
+                                <label for="manual-add-item-blueprint" class="form-label">Blueprint</label>
+                                <input id="manual-add-item-blueprint" type="text" class="form-control" @bind="AddBlueprintItemBlueprint" />
                             </div>
                         </div>
                     </Content>
@@ -85,7 +108,7 @@
 
     private Modal addBlueprintItemModal;
 
-    private bool IsBlueprintItemInputInvalid => string.IsNullOrEmpty(AddBlueprintItemBlueprint);
+    private bool IsBlueprintItemInputInvalid => string.IsNullOrEmpty(AddBlueprintItemBlueprint) || !Guid.TryParseExact(AddBlueprintItemBlueprint, "N", out _);
 
     private async Task AddBlueprintItemAsync()
     {

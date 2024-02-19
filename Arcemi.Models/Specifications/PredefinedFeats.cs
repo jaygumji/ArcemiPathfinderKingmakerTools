@@ -81,6 +81,7 @@ namespace Arcemi.Models
         protected FeatSpec ImprovedCritical(string name) => WeaponNew("Improved Critical", "f4201c85a991369408740c6888362e20", name);
         protected FeatSpec SlashingGrace(string name) => WeaponNew("Slashing Grace", "697d64669eb2c0543abb9c9b07998a38", name);
         protected FeatSpec FencingGrace(string name) => WeaponNew("Fencing Grace", "47b352ea0f73c354aba777945760b441", name);
+        protected FeatSpec SwordSaintWeapon(string name) => WeaponNew("Sword Saint Weapon", "c0b4ec0175e3ff940a45fc21f318a39a", name);
 
         protected abstract IEnumerable<FeatSpec> Melee(IEnumerable<FeatSpec> feats, string name);
 

@@ -89,7 +89,8 @@ namespace Arcemi.Models.Kingmaker
                 Focus(name), FocusGreater(name),
                 Specialization(name), SpecializationGreater(name), MasteryParametrized(name),
                 ImprovedCritical(name),
-                SlashingGrace(name), FencingGrace(name)
+                SlashingGrace(name), FencingGrace(name),
+                SwordSaintWeapon(name)
             });
         }
 

@@ -74,8 +74,9 @@ namespace Arcemi.Models.PathfinderWotr
                 .ToDictionary(i => i.UniqueId, i => (IGameItemEntry)new WotrGameItemEntry(i), StringComparer.Ordinal);
         }
 
-        public IGameItemEntry FindEquipped(string uniqueId)
+        public IGameItemEntry FindEquipped(object itemRef)
         {
+            if (!(itemRef is string uniqueId)) return null;
             if (string.IsNullOrEmpty(uniqueId)) return null;
             if (_equippedLookup.TryGetValue(uniqueId, out var item)) return item;
             return null;

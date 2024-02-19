@@ -3,16 +3,26 @@
     internal class KingmakerGameUnitAlignmentHistoryEntryModel : IGameUnitAlignmentHistoryEntryModel
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_Kingmaker.Resources;
-        public string Direction => Model.Direction;
-        public string Provider => Res.Blueprints.GetNameOrBlueprint(Model.Provider);
-        public int X => Model.Vector.X;
-        public int Y => Model.Vector.Y;
+        public string Direction { get => A.Value<string>(); set => A.Value(value); }
+        public string Provider => Res.Blueprints.GetNameOrBlueprint(A.Value<string>());
+        private VectorModel Position => A.Object<VectorModel>();
+        public int X => KingmakerAlignmentScale.ToView(Position?.X);
+        public int Y => KingmakerAlignmentScale.ToView(Position?.Y);
 
-        public KingmakerGameUnitAlignmentHistoryEntryModel(AlignmentHistoryModel model)
+        public KingmakerGameUnitAlignmentHistoryEntryModel(RefModel @ref)
         {
-            Model = model;
+            Ref = @ref;
+            A = Ref.GetAccessor();
         }
 
-        public AlignmentHistoryModel Model { get; }
+        public void Set(double x, double y)
+        {
+            Position.X = x;
+            Position.Y = y;
+            Direction = AlignmentExtensions.Detect(X, Y).ToString();
+        }
+
+        public RefModel Ref { get; }
+        public ModelDataAccessor A { get; }
     }
 }
