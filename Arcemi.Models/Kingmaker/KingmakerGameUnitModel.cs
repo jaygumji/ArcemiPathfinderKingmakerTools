@@ -33,7 +33,7 @@ namespace Arcemi.Models.Kingmaker
 
         public UnitWearinessPartItemModel Weariness { get; }
 
-        public KingmakerGameUnitModel(UnitEntityModel unit)
+        public KingmakerGameUnitModel(UnitEntityModel unit, IGameTimeProvider gameTimeProvider)
         {
             Ref = unit;
             if (unit.Descriptor is null) return;
@@ -54,7 +54,7 @@ namespace Arcemi.Models.Kingmaker
                 Ref.Descriptor.GetAccessor().Object<RefModel>("Abilities").GetAccessor().List("m_Facts", FactItemModel.Factory), x => new KingmakerGameUnitAbilityEntry(x), x => x is AbilityFactItemModel feat,
                 new KingmakerGameModelCollectionAbilityWriter());
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(
-                Ref.Descriptor.GetAccessor().Object<RefModel>("Buffs").GetAccessor().List("m_Facts", FactItemModel.Factory), x => new KingmakerGameUnitBuffEntry(x), x => x is BuffFactItemModel feat,
+                Ref.Descriptor.GetAccessor().Object<RefModel>("Buffs").GetAccessor().List("m_Facts", FactItemModel.Factory), x => new KingmakerGameUnitBuffEntry(x, gameTimeProvider), x => x is BuffFactItemModel feat,
                 new KingmakerGameModelCollectionBuffWriter());
 
             var parts = Ref.Descriptor.GetAccessor().Object<KingmakerPartsContainerModel>("m_Parts");

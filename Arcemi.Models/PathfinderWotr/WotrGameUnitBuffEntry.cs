@@ -5,16 +5,18 @@ namespace Arcemi.Models.PathfinderWotr
     internal class WotrGameUnitBuffEntry : IGameUnitBuffEntry
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
-        public WotrGameUnitBuffEntry(FactItemModel model)
+        public WotrGameUnitBuffEntry(FactItemModel model, IGameTimeProvider gameTimeProvider)
         {
             Model = (BuffFactItemModel)model;
+            DurationProvider = Model.GetDurationProvider(gameTimeProvider);
         }
 
         public BuffFactItemModel Model { get; }
+        public DurationProvider DurationProvider { get; }
 
         public string DisplayName => Res.Blueprints.GetNameOrBlueprint(Blueprint);
         public string Blueprint => Model.Blueprint;
         public bool IsActive { get => Model.IsActive; set => Model.IsActive = value; }
-        public TimeParts Duration => Model.DurationParts;
+        public TimeParts Duration => DurationProvider.DurationParts;
     }
 }

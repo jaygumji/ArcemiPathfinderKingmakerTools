@@ -51,6 +51,7 @@ namespace Arcemi.Models
     public interface IGameStateModel : IGameModel
     {
         IGameStateQuestBook QuestBook { get; }
+        IReadOnlyList<IGameDataObject> Sections { get; }
     }
 
     public interface IGameStateQuestBook

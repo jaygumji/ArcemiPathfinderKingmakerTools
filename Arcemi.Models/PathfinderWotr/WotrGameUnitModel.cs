@@ -30,7 +30,7 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
         public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
 
-        public WotrGameUnitModel(UnitEntityModel unit)
+        public WotrGameUnitModel(UnitEntityModel unit, IGameTimeProvider gameTimeProvider)
         {
             Ref = unit;
             if (unit.Descriptor is null) return;
@@ -48,7 +48,7 @@ namespace Arcemi.Models.PathfinderWotr
                 && x.Context?.ParentContext?.SourceItemRef == null, new WotrGameModelCollectionFeatWriter());
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitAbilityEntry(x), x => x is AbilityFactItemModel feat,
                 new WotrGameModelCollectionAbilityWriter());
-            Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x), x => x is BuffFactItemModel feat,
+            Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x, gameTimeProvider), x => x is BuffFactItemModel feat,
                 new WotrGameModelCollectionBuffWriter());
         }
 

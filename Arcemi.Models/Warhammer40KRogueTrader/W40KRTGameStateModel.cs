@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
@@ -14,6 +15,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public PlayerModel Player { get; }
         public bool IsSupported => false;
         public IGameStateQuestBook QuestBook { get; }
+        public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
     }
 
     internal class W40KRTGameStateQuestBookModel : IGameStateQuestBook

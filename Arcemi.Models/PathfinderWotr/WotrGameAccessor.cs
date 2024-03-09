@@ -15,9 +15,10 @@ namespace Arcemi.Models.PathfinderWotr
         public WotrGameAccessor(IGameEditFile file)
         {
             File = file;
+            GameTimeProvider = file.Player.GetGameTimeProvider();
             Party = new WotrGamePartyModel(file.Player);
             SharedStash = new WotrGameInventoryModel(file.Player.SharedStash, "Shared Stash");
-            Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new WotrGameUnitModel(a), a => a.Descriptor is object);
+            Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new WotrGameUnitModel(a, GameTimeProvider), a => a.Descriptor is object);
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
             SharedInventory = new WotrGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory, "Party");
             Management = new WotrGameManagementModel(file.Player);
@@ -33,6 +34,7 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameInventoryModel SharedStash { get; }
         public IGameManagementModel Management { get; }
         public IGameStateModel State { get; }
+        public IGameTimeProvider GameTimeProvider { get; }
 
         public void BeforeSave()
         {

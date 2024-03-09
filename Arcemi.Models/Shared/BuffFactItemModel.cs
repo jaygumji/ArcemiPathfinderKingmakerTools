@@ -15,21 +15,11 @@ namespace Arcemi.Models
         public TimeSpan NextTickTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public TimeSpan EndTime { get => A.Value<TimeSpan>("m_EndTime"); set => A.Value(value, "m_EndTime"); }
         public bool IsFromSpell { get => A.Value<bool>(); set => A.Value(value); }
-        public TimeSpan Duration
+        
+        public DurationProvider GetDurationProvider(IGameTimeProvider gameTimeProvider)
         {
-            get {
-                if (EndTime == TimeSpan.Zero || AttachTime == TimeSpan.Zero) return TimeSpan.Zero;
-                var duration = EndTime.Subtract(AttachTime);
-                if (duration < TimeSpan.Zero) return TimeSpan.Zero;
-                return duration;
-            }
-            set {
-                EndTime = AttachTime + value;
-            }
+            return new DurationProvider(() => EndTime, v => EndTime = v, gameTimeProvider);
         }
-
-        private TimeParts _durationParts;
-        public TimeParts DurationParts => _durationParts ?? (_durationParts = new TimeParts(() => Duration, v => Duration = v));
 
         public static new void Prepare(IReferences refs, JObject obj)
         {

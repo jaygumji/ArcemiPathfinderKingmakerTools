@@ -42,5 +42,15 @@ namespace Arcemi.Models
         //public string MainCharacterId { get => A.Value<string>("m_MainCharacter"); set => A.Value(value, "m_MainCharacter"); }
 
         public SettingsListModel SettingsList => A.Object(factory: a => new SettingsListModel(a));
+
+        public IGameTimeProvider GetGameTimeProvider()
+        {
+            return new StdGameTimeProvider(this);
+        }
+        private class StdGameTimeProvider : IGameTimeProvider {
+            private readonly PlayerModel _ref;
+            public StdGameTimeProvider(PlayerModel @ref) { _ref = @ref; }
+            public TimeSpan Get() => _ref.GameTime;
+        }
     }
 }

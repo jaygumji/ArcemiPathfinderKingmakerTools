@@ -15,7 +15,8 @@ namespace Arcemi.Models.Kingmaker
         public KingmakerGameAccessor(IGameEditFile file)
         {
             File = file;
-            Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new KingmakerGameUnitModel(a), a => a.Descriptor is object);
+            GameTimeProvider = file.Player.GetGameTimeProvider();
+            Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new KingmakerGameUnitModel(a, GameTimeProvider), a => a.Descriptor is object);
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
             Party = new KingmakerGamePartyModel(file.Player, Characters);
             SharedStash = new KingmakerGameInventoryModel(file.Player.SharedStash, file.Player.GameTime, "Shared Stash");
@@ -29,6 +30,7 @@ namespace Arcemi.Models.Kingmaker
             set => File.Player.GetAccessor().Object<Model>("m_MainCharacter").GetAccessor().Value(value, "m_UniqueId");
         }
         public IGameEditFile File { get; }
+        public IGameTimeProvider GameTimeProvider { get; }
         public IGamePartyModel Party { get; }
         public IGameUnitModel MainCharacter { get; private set; }
         public IGameModelCollection<IGameUnitModel> Characters { get; }
