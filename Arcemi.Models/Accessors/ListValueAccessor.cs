@@ -67,6 +67,12 @@ namespace Arcemi.Models
             _array.Add(JToken.FromObject(value));
         }
 
+        public void Insert(int index, T value)
+        {
+            _items.Insert(index, value);
+            _array.Insert(index, JToken.FromObject(value));
+        }
+
         public void AddRange(IEnumerable<T> values)
         {
             _items.AddRange(values);

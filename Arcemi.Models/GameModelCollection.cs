@@ -1,6 +1,9 @@
-﻿using System;
+﻿using SharpCompress.Writers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Arcemi.Models
 {
@@ -101,6 +104,29 @@ namespace Arcemi.Models
             return GetEnumerator();
         }
     }
+    public abstract class GameModelCollectionWriter<TGameModel>
+    {
+        public static GameModelCollectionWriter<TGameModel> ReadOnly { get; } = new ReadOnlyImpl();
+        private class ReadOnlyImpl : GameModelCollectionWriter<TGameModel>
+        {
+            public override TGameModel Add(AddCollectionItemArgs args) { throw new NotImplementedException(); }
+            public override TGameModel Insert(int index, AddCollectionItemArgs args) { throw new NotImplementedException(); }
+            public override void Remove(RemoveCollectionItemArgs<TGameModel> args) { throw new NotImplementedException(); }
+            public override bool IsAddEnabled => false;
+            public override bool IsRemoveEnabled => false;
+        }
+
+        public virtual bool IsAddEnabled => true;
+        public virtual bool IsRemoveEnabled => true;
+        public abstract TGameModel Add(AddCollectionItemArgs args);
+        public abstract TGameModel Insert(int index, AddCollectionItemArgs args);
+        public abstract void Remove(RemoveCollectionItemArgs<TGameModel> args);
+
+        public virtual IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<TGameModel> current)
+        {
+            return Array.Empty<IBlueprintMetadataEntry>();
+        }
+    }
     public abstract class GameModelCollectionWriter<TGameModel, TModel>
     {
         public static GameModelCollectionWriter<TGameModel, TModel> ReadOnly { get; } = new ReadOnlyImpl();
@@ -130,9 +156,76 @@ namespace Arcemi.Models
         }
 
     }
-    public static class GameModelCollection<TGameModel>
+    public class GameModelCollection<TGameModel> : IGameModelCollection<TGameModel>
     {
-        public static IGameModelCollection<TGameModel> Empty { get; } = new GameModelCollection<TGameModel, Model>(null, x => default);
+        public static IGameModelCollection<TGameModel> Empty { get; } = new GameModelCollection<TGameModel>(Array.Empty<TGameModel>());
+
+        private readonly List<TGameModel> _inner;
+        private readonly GameModelCollectionWriter<TGameModel> writer;
+
+        public GameModelCollection(IEnumerable<TGameModel> entries, GameModelCollectionWriter<TGameModel> writer = null)
+        {
+            _inner = entries.ToList();
+            this.writer = writer;
+        }
+
+        public TGameModel this[int index] => _inner[index];
+        public int Count => _inner.Count;
+        public IReadOnlyList<IBlueprintMetadataEntry> AvailableEntries => writer?.GetAvailableEntries(_inner) ?? Array.Empty<IBlueprintMetadataEntry>();
+
+        public IEnumerator<TGameModel> GetEnumerator() => _inner.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        bool IGameModelCollection.Remove(object model) => Remove((TGameModel)model);
+        public bool Remove(TGameModel model)
+        {
+            if (_inner.Remove(model)) {
+                writer.Remove(new RemoveCollectionItemArgs<TGameModel>(model));
+                return true;
+            }
+            return false;
+        }
+
+        public void Clear()
+        {
+            while (_inner.Count > 0) {
+                var model = _inner[0];
+                Remove(model);
+            }
+        }
+
+        public int IndexOf(TGameModel model)
+        {
+            return _inner.IndexOf(model);
+        }
+
+        public bool IsAddEnabled => writer is object && writer.IsAddEnabled;
+        public bool IsRemoveEnabled => writer is object && writer.IsRemoveEnabled;
+
+        public TGameModel AddByCode(string code)
+        {
+            throw new NotImplementedException();
+        }
+
+        object IGameModelCollection.AddByBlueprint(string blueprint, object data) => AddByBlueprint(blueprint, data);
+        public TGameModel AddByBlueprint(string blueprint, object data = null)
+        {
+            var model = writer.Add(new AddCollectionItemArgs(blueprint, null));
+            _inner.Add(model);
+            return model;
+        }
+
+        public TGameModel InsertByBlueprint(int index, string blueprint, object data = null)
+        {
+            var model = writer.Insert(index, new AddCollectionItemArgs(blueprint, data));
+            _inner.Add(model);
+            return model;
+        }
+
+        public TGameModel Duplicate(TGameModel model)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class GameModelCollection<TGameModel, TModel> : IGameModelCollection<TGameModel>
         where TModel : Model
@@ -160,7 +253,6 @@ namespace Arcemi.Models
             this.writer = writer;
         }
 
-        public string Name { get; }
         public TGameModel this[int index] => _inner[index];
         public int Count => _inner.Count;
 

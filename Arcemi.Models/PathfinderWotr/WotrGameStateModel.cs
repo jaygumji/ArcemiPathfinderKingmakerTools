@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Arcemi.Models.PathfinderWotr
@@ -15,6 +16,7 @@ namespace Arcemi.Models.PathfinderWotr
 
         public bool IsSupported => true;
         public IGameStateQuestBook QuestBook { get; }
+        public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
     }
 
     internal class WotrGameStateQuestBookModel : IGameStateQuestBook

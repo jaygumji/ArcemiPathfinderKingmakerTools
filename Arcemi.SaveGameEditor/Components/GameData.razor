@@ -90,14 +90,24 @@ else if (Data is IGameDataTime timeData) {
 }
 else if (Data is IGameDataList listData) {
     <div class="@SizeClass">
-        @if (listData.Entries.IsAddEnabled) {
+        @if (listData.Entries.IsAddEnabled || listData.SearchPredicate is not null) {
             <div class="row">
-                <div class="col-md-12">
-                    <button class="btn btn-info" @onclick="() => SelectListEntryAsync(listData.Entries, listData.ItemName)" disabled="@(listData.Entries.AvailableEntries.Count == 0)">
-                        <span class="oi oi-plus"></span>
-                        Add @listData.ItemName
-                    </button>
-                </div>
+                @if (listData.SearchPredicate is not null) {
+                    <div class="col-md-6 btn-group">
+                        <label class="btn btn-info">
+                            <span class="oi oi-magnifying-glass"></span>
+                        </label>
+                        <input type="text" class="form-control" @bind:event="oninput" @bind="Term" />
+                    </div>
+                }
+                @if (listData.Entries.IsAddEnabled) {
+                    <div class="col-md-6">
+                        <button class="btn btn-info" @onclick="() => SelectListEntryAsync(listData.Entries, listData.ItemName)" disabled="@(listData.Entries.AvailableEntries.Count == 0)">
+                            <span class="oi oi-plus"></span>
+                            Add @listData.ItemName
+                        </button>
+                    </div>
+                }
             </div>
         }
         @if (listData is IGameDataRowList rowListData) {
@@ -109,7 +119,7 @@ else if (Data is IGameDataList listData) {
 
                 <div class="form-list">
                     <div class="row">
-                        <div class="col-md-6">Name</div>
+                        <div class="@SizeClassOf(rowListData.NameSize)">Name</div>
                         @for (var i = 0; i < first.Properties.Count; i++) {
                             var prop = first.Properties[i];
                             if (prop is not IGameDataValue propValue) continue;
@@ -126,9 +136,9 @@ else if (Data is IGameDataList listData) {
                             <div class="col-md-2"></div>
                         }
                     </div>
-                    @foreach (var listEntry in listData.Entries) {
+                    @foreach (var listEntry in listData.Entries.Where(e => !Term.HasValue() || listData.SearchPredicate is null || listData.SearchPredicate(e, Term))) {
                         <div class="row">
-                            <div class="col-md-6">@listEntry.Name</div>
+                            <div class="@SizeClassOf(rowListData.NameSize)">@listEntry.Name</div>
                             @foreach (var index in props) {
                                 var prop = listEntry.Properties[index];
                                 <GameData Data="@prop" Parent="@listData" ShowHeader="false"></GameData>
@@ -147,7 +157,7 @@ else if (Data is IGameDataList listData) {
         }
         else {
             <AccordionContainer>
-                @foreach (var listEntry in listData.Entries) {
+                @foreach (var listEntry in listData.Entries.Where(e => !Term.HasValue() || listData.SearchPredicate is null || listData.SearchPredicate(e, Term))) {
                     <Accordion HeaderText="@listEntry.Name" IsRemoveEnabled="listData.Entries.IsRemoveEnabled" OnRemove="() => OnListDataRemoveClicked(listData, listEntry)">
                         <div class="row">
                             <GameData Data="@listEntry" Parent="@listData" ShowHeader="false"></GameData>
@@ -237,6 +247,8 @@ else if (Data is IGameDataObject objData) {
     [Parameter]
     public bool ShowHeader { get; set; } = true;
 
+    private string Term;
+
     private string SizeClass
     {
         get {
@@ -244,6 +256,7 @@ else if (Data is IGameDataObject objData) {
             return $"col-md-{SizeValueOf(dataValue)}";
         }
     }
+    private string SizeClassOf(GameDataSize size) => $"col-md-{SizeValueOf(size)}";
 
     private int SizeValueOf(IGameDataValue dataValue) => SizeValueOf(dataValue.Size);
 

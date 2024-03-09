@@ -39,6 +39,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         }
         public string ItemName => "Project";
         public IGameModelCollection<IGameDataObject> Entries { get; }
+        public Func<IGameDataObject, string, bool> SearchPredicate { get; }
     }
 
     internal class W40KRTGameManagementColonyProjectCollectionWriter : GameModelCollectionWriter<IGameDataObject, RefModel>

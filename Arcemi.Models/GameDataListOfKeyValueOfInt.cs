@@ -17,6 +17,7 @@ namespace Arcemi.Models
         public string ItemName { get; }
         public IGameModelCollection<IGameDataObject> Entries { get; }
         public GameDataSize NameSize => GameDataSize.Large;
+        public Func<IGameDataObject, string, bool> SearchPredicate { get; }
     }
 
     public class GameDataListOfKeyValueOfIntCollectionWriter : GameModelCollectionWriter<IGameDataObject, KeyValuePairModel<int>>

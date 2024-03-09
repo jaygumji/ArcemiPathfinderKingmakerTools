@@ -27,7 +27,7 @@ else {
                 </Content>
             </Tab>
         }
-        @if (Session.Player.QuestBook is not null) {
+        @if (Session.Game.State.QuestBook is not null) {
             <Tab Name="Quests Started">
                 <Content>
                     <QuestView EnableSpoilerAlert="true" Quests="Session.Game.State.QuestBook.Entries.Where(q => !q.IsCompleted)" />
@@ -36,6 +36,13 @@ else {
             <Tab Name="Quests Completed">
                 <Content>
                     <QuestView EnableSpoilerAlert="false" Quests="Session.Game.State.QuestBook.Entries.Where(q => q.IsCompleted)" />
+                </Content>
+            </Tab>
+        }
+        @foreach (var sect in Session.Game.State.Sections) {
+            <Tab Name="@sect.Name">
+                <Content>
+                    <GameData Data="@sect" ShowHeader="false"></GameData>
                 </Content>
             </Tab>
         }
