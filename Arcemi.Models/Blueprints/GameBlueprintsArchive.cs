@@ -4,14 +4,14 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Resources;
+using System.Linq;
 
 namespace Arcemi.Models
 {
     public class GameBlueprintsArchive : IDisposable
     {
         private readonly FileInfo _blueprintsFile;
-        private readonly FileStream _blueprintsStream;
-        private readonly ZipArchive _blueprints;
+        private readonly SharpCompress.Archives.Zip.ZipArchive _blueprints;
         private readonly IGameResourcesProvider _res;
 
         public GameBlueprintsArchive(string gameFolder, IGameResourcesProvider res)
@@ -20,8 +20,7 @@ namespace Arcemi.Models
             _blueprintsFile = new FileInfo(Path.Combine(gameFolder, "Blueprints.zip"));
             if (!_blueprintsFile.Exists) return;
 
-            _blueprintsStream = new FileStream(_blueprintsFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            _blueprints = new ZipArchive(_blueprintsStream);
+            _blueprints = SharpCompress.Archives.Zip.ZipArchive.Open(_blueprintsFile);
             _res = res;
         }
 
@@ -34,11 +33,11 @@ namespace Arcemi.Models
 
             actualPath = actualPath.Replace("\\", "/");
 
-            var entry = _blueprints.GetEntry(actualPath);
+            var entry = _blueprints.Entries.FirstOrDefault(e => e.Key.IStart(actualPath));
             if (entry is null) return null;
 
             JObject blueprintJson;
-            using (var stream = entry.Open())
+            using (var stream = entry.OpenEntryStream())
             using (var streamReader = new StreamReader(stream))
             using (var reader = new JsonTextReader(streamReader)) {
                 blueprintJson = JObject.Load(reader);
@@ -49,7 +48,6 @@ namespace Arcemi.Models
         public void Dispose()
         {
             if (_blueprints is object) _blueprints.Dispose();
-            if (_blueprintsStream is object) _blueprintsStream.Dispose();
         }
     }
 }

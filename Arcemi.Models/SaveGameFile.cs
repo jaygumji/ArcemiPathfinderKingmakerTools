@@ -5,10 +5,10 @@
 #endregion
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SharpCompress.Archives;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
@@ -33,10 +33,10 @@ namespace Arcemi.Models
         public static HeaderModel ReadHeader(string path)
         {
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var archive = new ZipArchive(stream, ZipArchiveMode.Read)) {
-                var entry = archive.Entries.FirstOrDefault(e => string.Equals(e.Name, "header.json", StringComparison.OrdinalIgnoreCase));
+            using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open(stream)) {
+                var entry = archive.Entries.FirstOrDefault(e => e.Key.IEq("header.json"));
                 if (entry == null) return null;
-                using (var entryStream = entry.Open())
+                using (var entryStream = entry.OpenEntryStream())
                 using (var entryReader = new StreamReader(entryStream))
                 using (var entryJsonReader = new JsonTextReader(entryReader)) {
                     var refs = new References();
@@ -54,11 +54,11 @@ namespace Arcemi.Models
             }
 
             using (var stream = new FileStream(Filepath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-                using (var archive = new ZipArchive(stream, ZipArchiveMode.Read)) {
+                using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open(stream)) {
                     foreach (var entry in archive.Entries) {
-                        using (var entryStream = entry.Open()) {
-                            var writePath = Path.Combine(WorkingPath, entry.Name);
-                            _lookup.Add(entry.Name, writePath);
+                        using (var entryStream = entry.OpenEntryStream()) {
+                            var writePath = Path.Combine(WorkingPath, entry.Key);
+                            _lookup.Add(entry.Key, writePath);
 
                             using (var writeStream = new FileStream(writePath, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) {
                                 entryStream.CopyTo(writeStream);
@@ -108,10 +108,10 @@ namespace Arcemi.Models
         public void Save(string filePath)
         {
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write)) {
-                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create)) {
+                using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open(stream)) {
                     foreach (var file in Directory.EnumerateFiles(WorkingPath)) {
                         var entryName = Path.GetFileName(file);
-                        archive.CreateEntryFromFile(file, entryName);
+                        archive.AddEntry(entryName, file);
                     }
                 }
             }
