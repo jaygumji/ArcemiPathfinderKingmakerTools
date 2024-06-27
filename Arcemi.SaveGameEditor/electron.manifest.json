@@ -11,7 +11,7 @@
     "appId": "com.Arcemi.SaveGameEditor.app",
     "productName": "Arcemi Save Game Editor",
     "copyright": "Copyright © 2024",
-    "buildVersion": "2.4.0",
+    "buildVersion": "2.3.0",
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"
