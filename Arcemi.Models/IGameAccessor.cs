@@ -199,6 +199,27 @@ namespace Arcemi.Models
         string Blueprint { get; }
     }
 
+    public interface IGameMagicHackSpellEntry : IGameSpellEntry
+    {
+        int SlotId { get; }
+        IBlueprintMetadataEntry Spell1 { get; set; }
+        IBlueprintMetadataEntry Spell2 { get; set; }
+        int SpellLevel { get; set; }
+        
+        string SpellSchool { get; set; }
+        IEnumerable<DataOption> SpellSchools { get; }
+
+        string SavingThrowType { get; set; }
+        IEnumerable<DataOption> SavingThrowTypes { get; }
+
+        string SpellTargetType { get; set; }
+        IEnumerable<DataOption> SpellTargetTypes { get; }
+
+        bool IsTouch { get; set; }
+        string DeliverBlueprint { get; set; }
+        string AdditionalAoeBlueprint { get; set; }
+    }
+
     public interface IGameCustomSpellEntry : IGameSpellEntry
     {
         int DecorationColor { get; set; }
@@ -207,7 +228,6 @@ namespace Arcemi.Models
         int HeightenLevel { get; set; }
         MetamagicCollection Metamagic { get; }
     }
-    
     public interface IGameMemorizedSpellEntry : IGameSpellEntry
     {
         bool IsAvailable { get; set; }

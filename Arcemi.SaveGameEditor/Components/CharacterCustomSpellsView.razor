@@ -115,7 +115,7 @@ else {
 <Modal @ref="modalEditSpell">
     <Title>Edit spell @Resources.Blueprints.GetNameOrBlueprint(Spell?.Blueprint)</Title>
     <Body>
-        @if (Spell != null) {
+        @if (Spell?.Metamagic is not null) {
         <div class="row">
             <div class="col-md-3">
                 <label class="form-label">Color</label>
@@ -213,6 +213,20 @@ else {
                             </HelpText>
                         </MetamagicControl>
                     </div>
+                    <div class="col-md-2">
+                        <MetamagicControl Metamagic="Spell.Metamagic.Intensified" HelpPosition="TooltipPosition.BottomRight">
+                            <HelpText>
+                                An intensified spell increases the maximum number of damage dice by 5 levels.
+                            </HelpText>
+                        </MetamagicControl>
+                    </div>
+                    <div class="col-md-2">
+                        <MetamagicControl Metamagic="Spell.Metamagic.Piercing" HelpPosition="TooltipPosition.BottomRight">
+                            <HelpText>
+                                When you cast a piercing spell against a target with spell resistance, it treats the spell resistance of the target as 5 lower than its actual SR.
+                            </HelpText>
+                        </MetamagicControl>
+                    </div>
                 }
         </div>
         }
@@ -229,7 +243,6 @@ else {
     private IGameSpellSlotCollection<IGameCustomSpellEntry> CustomSpells => Spellbook.CustomSpells;
 
     private bool OrderByName = true;
-
     private IEnumerable<IBlueprintMetadataEntry> AvailableSpellsBase => Resources.Blueprints.GetEntries(BlueprintTypeId.Ability)
         .Where(IsValidSpell);
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Arcemi.Models.Kingmaker;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -120,21 +122,83 @@ namespace Arcemi.Models.PathfinderWotr
         public int Count => Ref?.Count ?? 0;
         public IReadOnlyList<IGameMemorizedSpellEntry> this[int index] => _accessors[index];
         public bool CanAddNew => false;
-        public bool CanAddReference => false;
-        public bool CanRemove => false;
+        public bool CanAddReference => Count > 0;
+        public bool CanRemove => Count > 0;
         public ListD2Accessor<MemorizedSpellModel> Ref { get; }
 
         public IGameMemorizedSpellEntry AddNew(int index, string blueprint)
         {
-            throw new NotImplementedException();
-            //var spell = Ref.Add(index);
+            var memIndexes = Ref[index].OrderBy(x => x.Index).ToArray();
+            int memIndex = memIndexes.Length;
+            for (var i = 0; i < memIndexes.Length; i++) {
+                if (memIndexes[i].Index != index) {
+                    memIndex = i;
+                    break;
+                }
+            }
+            var spell = Ref.Add(index, (r, o) => {
+                o.Add("SpellLevel", index);
+                o.Add("Index", memIndex);
+                o.Add("Available", true);
 
-            //var entry = new WotrGameMemorizedSpellEntry(spell);
-            //_accessors[index].Add(entry);
-            //return entry;
+                var spellRef = r.Create();
+                spellRef.Add("Blueprint", blueprint);
+                spellRef.Add("DecorationColorNumber", 0);
+                spellRef.Add("DecorationBorderNumber", 0);
+                spellRef.Add("MetamagicData", null);
+                o.Add("Spell", spellRef);
+
+                var linkedSlots = new JArray();
+                linkedSlots.Add(r.CreateReference(linkedSlots, o));
+                o.Add("LinkedSlots", linkedSlots);
+            });
+            var entry = new WotrGameMemorizedSpellEntry(spell);
+            _accessors[index].Add(entry);
+            return entry;
         }
 
-        public IGameMemorizedSpellEntry AddReference(int index, IGameSpellEntry entry) => throw new NotImplementedException();
+        public IGameMemorizedSpellEntry AddReference(int index, IGameSpellEntry reference)
+        {
+            var memIndexes = Ref[index].OrderBy(x => x.Index).ToArray();
+            int memIndex = memIndexes.Length;
+            for (var i = 0; i < memIndexes.Length; i++) {
+                if (memIndexes[i].Index != index) {
+                    memIndex = i;
+                    break;
+                }
+            }
+            var spell = Ref.Add(index, (r, o) => {
+                o.Add("SpellLevel", index);
+                o.Add("Index", memIndex);
+
+                if (reference is WotrGameMemorizedSpellEntry memEntry && memEntry.Ref.Spell is null) {
+                    // No spell reference, spontaneous slots?
+                    o.Add("Spell", null);
+                    o.Add("Available", false);
+                }
+                else {
+                    if (reference is WotrGameLearnedSpellEntry learnedSpell) {
+                        o.Add("Spell", r.CreateReference(o, learnedSpell.Ref.Id));
+                    }
+                    else if (reference is WotrGameCustomSpellEntry custom) {
+                        o.Add("Spell", r.CreateReference(o, custom.Ref.Id));
+                    }
+                    else if (reference is WotrGameMemorizedSpellEntry memSpell) {
+                        o.Add("Spell", r.CreateReference(o, memSpell.Ref.Spell.Id));
+                    }
+                    else if (reference is WotrGameSpellReferenceEntry refSpell) {
+                        o.Add("Spell", r.CreateReference(o, refSpell.Ref.Id));
+                    }
+                    o.Add("Available", true);
+                    var linkedSlots = new JArray();
+                    linkedSlots.Add(r.CreateReference(linkedSlots, o));
+                    o.Add("LinkedSlots", linkedSlots);
+                }
+            });
+            var entry = new WotrGameMemorizedSpellEntry(spell);
+            _accessors[index].Add(entry);
+            return entry;
+        }
 
         public bool Remove(IGameMemorizedSpellEntry item)
         {
@@ -208,20 +272,24 @@ namespace Arcemi.Models.PathfinderWotr
         public int Count => Ref?.Count ?? 0;
         public IReadOnlyList<IGameCustomSpellEntry> this[int index] => _accessors[index];
         public bool CanAddNew => Count > 0;
-        public bool CanAddReference => false;
+        public bool CanAddReference => true;
         public bool CanRemove => Count > 0;
         public ListD2Accessor<CustomSpellModel> Ref { get; }
 
         public IGameCustomSpellEntry AddNew(int index, string blueprint)
         {
-            var spell = Ref.Add(index);
-            spell.Blueprint = blueprint;
-            spell.UniqueId = Guid.NewGuid().ToString();
-            spell.DecorationBorderNumber = 0;
-            spell.DecorationColorNumber = 0;
-            spell.MetamagicData.SpellLevelCost = 0;
-            spell.MetamagicData.MetamagicMask = "";
-
+            var spell = Ref.Add(index, (r, o) => {
+                o.Add("Blueprint", blueprint);
+                o.Add("DecorationColorNumber", 0);
+                o.Add("DecorationBorderNumber", 0);
+                //o.Add("HasActionBarSlot", 0);
+                //o.Add("TemporarilyDisabled", false);
+                o.Add("MetamagicData", new JObject {
+                    {"MetamagicMask", ""},
+                    {"SpellLevelCost", 0},
+                    {"HeightenLevel", 0}
+                });
+            });
             var entry = new WotrGameCustomSpellEntry(spell);
             _accessors[index].Add(entry);
             return entry;
