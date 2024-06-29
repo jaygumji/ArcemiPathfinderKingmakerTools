@@ -1,0 +1,242 @@
+﻿@inject IGameResourcesProvider Resources
+
+@if (Spellbook.MagicInfusions is null) {
+    <div class="row">
+        <div class="col-md-12">
+            <span class="oi oi-lock-locked"></span>
+        </div>
+    </div>
+}
+else {
+    <div class="alert alert-info">
+        The deliver spell and the spell target must be the same. If you set the deliver spell to Fireball, then you need to set the target type to Burst.
+        The deliver spell does not need to be the same as the combined spells. E. g. you can select Shocking Grasp and Snowball with deliver spell set to Fireball and Burst.
+    </div>
+    <button class="btn btn-secondary" disabled="@(!Spellbook.MagicInfusions.CanAdd)" @onclick="() => Spellbook.MagicInfusions.Add()">
+        <span class="oi oi-plus"></span> Add infusion
+    </button>
+    <div class="row">
+        @foreach (var spell in Spellbook.MagicInfusions) {
+            <div class="card col-md-6" style="width: 18rem">
+                <div class="card-body">
+                    <h5 class="card-title">Slot @spell.SlotId</h5>
+                    <p class="card-text btn-expand">
+                        <label>Spell 1</label>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditSpellAsync(spell, 1)">
+                            <span class="oi oi-pencil"></span>
+                        </button>
+                        @spell.Spell1Name
+                    </p>
+                    <p class="card-text btn-expand">
+                        <label>Spell 2</label>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditSpellAsync(spell, 2)">
+                            <span class="oi oi-pencil"></span>
+                        </button>
+                        @spell.Spell2Name
+                    </p>
+                    <p class="card-text btn-expand">
+                        <label>Delivered by</label>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditSpellAsync(spell, 3)">
+                            <span class="oi oi-pencil"></span>
+                        </button>
+                        @Resources.Blueprints.GetNameOrBlueprint(spell.DeliverBlueprint)
+                    </p>
+                    @*<p class="card-text btn-expand">
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditSpellAsync(spell, 4)">
+                            <span class="oi oi-pencil"></span>
+                        </button>
+                        @Resources.Blueprints.GetNameOrBlueprint(spell.AdditionalAoeBlueprint)
+                    </p>*@
+                    <p class="card-text btn-expand">
+                        <label>Modifiers</label>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => EditSpellModifiersAsync(spell)">
+                            <span class="oi oi-pencil"></span>
+                        </button>
+                        @spell.SpellSchool, @spell.SavingThrowType, @spell.SpellTargetType
+                    </p>
+                    <p class="card-text btn-select">
+                        <label>Level</label>
+                        @for (var i = 0; i < 10; i++) {
+                            var actLevel = i;
+                            <button class="btn btn-sm btn-secondary @(actLevel == spell.SpellLevel ? "active" : "")" @onclick="() => Spellbook.MagicInfusions.SetSpellLevel(spell, actLevel)">@actLevel</button>
+                        }
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-danger" @onclick="() => RemoveSpell(spell)">
+                        <span class="oi oi-trash"></span>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<Modal @ref="modalEditSpell">
+    <Title>Edit spell @SpellIndex, infusion slot @Spell?.SlotId</Title>
+    <Body>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="IBlueprintMetadataEntry" Items="AvailableSpellsBase" ItemSearchable="b => b.Name.DisplayName" Context="item" OnSelect="a => AddSpellBlueprint = a.Item.Id">
+                        <ResultItemTemplate>
+                            @item.Name.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Spell</label>
+                            <select class="form-control" @bind="AddSpellBlueprint">
+                                <option value="">Select spell...</option>
+                                @foreach (var blueprint in AvailableSpells) {
+                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+            <Tab Name="Known spell">
+                <Content>
+                    <Search TItem="KnownSpellEntry" Items="AvailableKnownSpells()" ItemSearchable="b => b.Spell.Name" Context="item" OnSelect="a => AddSpellKnownEntry = a.Item.Spell">
+                        <ResultItemTemplate>
+                            @item.Spell.Name
+                            @item.Type
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AcceptSpellIsInvalid" @onclick="() => AcceptEditSpellAsync()">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditSpell.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
+<Modal @ref="modalEditSpellModifiers">
+    <Title>Edit spell modifiers, infusion slot @Spell?.SlotId</Title>
+    <Body>
+        @if (Spell is not null) {
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">School</label>
+                    <select class="form-control" @bind="Spell.SpellSchool">
+                        @foreach (var option in Spell.SpellSchools) {
+                            <option value="@option.Id">@option.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Saving throw</label>
+                    <select class="form-control" @bind="Spell.SavingThrowType">
+                        @foreach (var option in Spell.SavingThrowTypes) {
+                            <option value="@option.Id">@option.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Target type</label>
+                    <select class="form-control" @bind="Spell.SpellTargetType">
+                        @foreach (var option in Spell.SpellTargetTypes) {
+                            <option value="@option.Id">@option.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+@*             <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Deliver spell</label>
+                    <select class="form-control" @bind="Spell.DeliverBlueprint">
+                        <option value="@Spell.Spell1Blueprint">@Spell.Spell1Name</option>
+                        <option value="@Spell.Spell2Blueprint">@Spell.Spell2Name</option>
+                    </select>
+                </div>
+            </div>
+ *@        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditSpellModifiers.CloseAsync()">Done</button>
+    </Footer>
+</Modal>
+
+@code {
+    [Parameter]
+    public IGameUnitSpellBookEntry Spellbook { get; set; }
+
+    private bool OrderByName = true;
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpellsBase => Resources.Blueprints.GetEntries(BlueprintTypeId.Ability)
+        .Where(IsValidSpell);
+
+    private IEnumerable<IBlueprintMetadataEntry> AvailableSpells => OrderByName ? AvailableSpellsBase.OrderBy(x => x.Name.DisplayName) : AvailableSpellsBase;
+
+    private bool IsValidSpell(IBlueprintMetadataEntry x)
+    {
+        return !Spells.IsSpecial(x);
+    }
+
+    private record KnownSpellEntry(IGameSpellEntry Spell, string Type);
+    private IEnumerable<KnownSpellEntry> AvailableKnownSpells()
+    {
+        for (var i = 0; i < Spellbook.KnownSpells.Count; i++) {
+            foreach (var entry in Spellbook.KnownSpells[i]) {
+                yield return new KnownSpellEntry(entry, "");
+            }
+        }
+        for (var i = 0; i < Spellbook.SpecialSpells.Count; i++) {
+            foreach (var entry in Spellbook.SpecialSpells[i]) {
+                yield return new KnownSpellEntry(entry, "");
+            }
+        }
+    }
+
+    private IGameMagicInfusionSpellEntry Spell;
+    private Modal modalEditSpell;
+    private Modal modalEditSpellModifiers;
+    private int SpellIndex;
+    private string AddSpellBlueprint;
+    private IGameSpellEntry AddSpellKnownEntry;
+    private bool AcceptSpellIsInvalid => string.IsNullOrEmpty(AddSpellBlueprint) && AddSpellKnownEntry is null;
+
+    private async Task EditSpellModifiersAsync(IGameMagicInfusionSpellEntry spell)
+    {
+        Spell = spell;
+        await modalEditSpellModifiers.OpenAsync();
+    }
+
+    private async Task AcceptEditSpellAsync()
+    {
+        var blueprint = AddSpellKnownEntry is not null ? AddSpellKnownEntry.Blueprint : AddSpellBlueprint;
+        if (SpellIndex == 1) {
+            Spell.Spell1Blueprint = blueprint;
+        }
+        else if (SpellIndex == 2) {
+            Spell.Spell2Blueprint = blueprint;
+        }
+        else if (SpellIndex == 3) {
+            Spell.DeliverBlueprint = blueprint;
+        }
+        else if (SpellIndex == 4) {
+            Spell.AdditionalAoeBlueprint = blueprint;
+        }
+        await modalEditSpell.CloseAsync();
+    }
+
+    private async Task EditSpellAsync(IGameMagicInfusionSpellEntry spell, int spellIndex)
+    {
+        SpellIndex = spellIndex;
+        Spell = spell;
+        await modalEditSpell.OpenAsync();
+    }
+
+    private void RemoveSpell(IGameMagicInfusionSpellEntry spell)
+    {
+        Spellbook.MagicInfusions.Remove(spell);
+    }
+}

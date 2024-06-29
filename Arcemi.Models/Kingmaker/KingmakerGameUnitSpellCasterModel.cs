@@ -52,6 +52,7 @@ namespace Arcemi.Models.Kingmaker
         public ListValueAccessor<string> SpecialLists => Ref.Value.SpecialLists;
         public ListValueAccessor<string> OppositionSchools => Ref.Value.OppositionSchools;
         public IEnumerable<SpellIndexAccessor> SpontaneousSlots => Ref.Value.SpontaneousSlots?.Count > 0 ? Ref.Value.SpontaneousSlotsAccessors : null;
+        public IGameMagicInfusionSpellSlotCollection MagicInfusions => null;
 
         public void EnableCustomSpells()
         {

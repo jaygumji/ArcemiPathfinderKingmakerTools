@@ -120,6 +120,11 @@ else {
             <Accordion HeaderText="Custom spells">
                 <CharacterCustomSpellsView Spellbook="spellbook" />
             </Accordion>
+            @if (spellbook.MagicInfusions is not null) {
+                <Accordion HeaderText="Magic Infusions">
+                    <CharacterMagicInfusionSpellsView Spellbook="spellbook" />
+                </Accordion>
+            }
             @if (spellbook.MemorizedSpells?.Count > 0) {
                 <Accordion HeaderText="Memorized Spells">
                     <CharacterMemorizedSpellsView Spellbook="spellbook" />

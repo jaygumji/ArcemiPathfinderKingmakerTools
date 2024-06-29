@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using System;
 using System.Collections.Generic;
+using Arcemi.Models.Kingmaker;
 
 namespace Arcemi.Models.PathfinderWotr
 {
     public class WotrGameUnitModel : IGameUnitModel
     {
+        private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
         public bool IsSupported => Ref.Descriptor is object;
         public UnitEntityModel Ref { get; }
         public string UniqueId => Ref.UniqueId;
@@ -30,6 +32,8 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
         public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
 
+        public UnitWearinessPartItemModel Weariness { get; }
+
         public WotrGameUnitModel(UnitEntityModel unit, IGameTimeProvider gameTimeProvider)
         {
             Ref = unit;
@@ -50,6 +54,24 @@ namespace Arcemi.Models.PathfinderWotr
                 new WotrGameModelCollectionAbilityWriter());
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x, gameTimeProvider), x => x is BuffFactItemModel feat,
                 new WotrGameModelCollectionBuffWriter());
+
+            Weariness = Ref.Parts.Items.OfType<UnitWearinessPartItemModel>().FirstOrDefault();
+
+            Sections = new[] {
+                GameDataModels.Object("Misc", new IGameData[] {
+                    GameDataModels.RowList(unit.Descriptor.Resources.PersistantResources, x => GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(x.Blueprint), new IGameData[] {
+                        GameDataModels.Integer("Amount", x, item => item.Amount, (item, val) => item.Amount = val, minValue: 0),
+                        GameDataModels.Integer("Retain", x, item => item.RetainCount, (item, val) => item.RetainCount = val, minValue: 0),
+                    })),
+                    GameDataModels.Object("Weariness", new IGameData[] {
+                        GameDataModels.Message("To easily remove weariness from your party, Use the button on the party overview. Set extra hours to a negative value to make the character last longer until needing rest"),
+                        GameDataModels.Integer("Stacks", Weariness, w => w.WearinessStacks, (w,v) => w.WearinessStacks = v, minValue: int.MinValue),
+                        GameDataModels.Double("Extra hours", Weariness, w => w.ExtraWearinessHours, (w, v) => w.ExtraWearinessHours = v, minValue: 0),
+                        GameDataModels.Time("Tick", new TimeParts(() => Weariness?.LastStackTime ?? TimeSpan.Zero, v => { if (Weariness is object) Weariness.LastStackTime = v; })),
+                        GameDataModels.Time("Debuff applied", new TimeParts(() => Weariness?.LastBuffApplyTime ?? TimeSpan.Zero, v => { if (Weariness is object) Weariness.LastBuffApplyTime = v; }))
+                    })
+                })
+            };
         }
 
         public UnitEntityType Type
