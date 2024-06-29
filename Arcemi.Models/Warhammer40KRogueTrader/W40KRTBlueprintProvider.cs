@@ -20,7 +20,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         protected override async Task OnBeforeSetupAsync(BlueprintProviderSetupArgs args)
         {
-            var cacheInfo = await W40KRTBlueprintCachedData.LoadAsync(args.WorkingDirectory);
+            var cacheInfo = await W40KRTBlueprintCachedData.LoadAsync(args?.WorkingDirectory);
 
             _displayNameLookup = cacheInfo.DisplayNames;
             _descriptionLookup = cacheInfo.Descriptions;
@@ -28,21 +28,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
             if (string.IsNullOrEmpty(args.GameFolder)) return;
 
-            var serializer = new JsonSerializer();
-            var localizationPath = Path.Combine(args.GameFolder, "WH40KRT_Data", "StreamingAssets", "Localization", "enGB.json");
-            if (File.Exists(localizationPath)) {
-                try {
-                    using (var stream = new FileStream(localizationPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    using (var reader = new StreamReader(stream))
-                    using (var jsonReader = new JsonTextReader(reader)) {
-                        _localizationFileEnGB = serializer.Deserialize<W40KRTLocalizationAsset>(jsonReader)?.Strings;
-                    }
-                }
-                catch (Exception ex) {
-                    Logger.Current.Warning($"Unable to load localization asset file, continuing without '{localizationPath}'", ex);
-                }
-            }
-            if (_localizationFileEnGB is null) _localizationFileEnGB = new Dictionary<string, W40KRTLocalizationEntry>();
+            LoadLocalizationFileEnGB(args);
 
             var archiveInfo = new FileInfo(Path.Combine(args.GameFolder, "WhRtModificationTemplate-release.rar"));
             if (!archiveInfo.Exists) return;
@@ -50,10 +36,17 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 return;
             }
 
+            LoadGameArchive(cacheInfo, archiveInfo);
+            await cacheInfo.SaveAsync(args.WorkingDirectory);
+        }
+
+        private void LoadGameArchive(W40KRTBlueprintCachedData cacheInfo, FileInfo archiveInfo)
+        {
             const string localizationPrefix = @"WhRtModificationTemplate-release\Strings\Mechanics\Blueprints\";
             const string blueprintPrefix = @"WhRtModificationTemplate-release\Blueprints\";
 
             try {
+                var serializer = new JsonSerializer();
                 using (var rar = SharpCompress.Archives.Rar.RarArchive.Open(archiveInfo, new SharpCompress.Readers.ReaderOptions())) {
                     foreach (var entry in rar.Entries) {
                         if (entry.IsDirectory) continue;
@@ -107,7 +100,25 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 Logger.Current.Error("Unable to load localization cache", ex);
                 return;
             }
-            await cacheInfo.SaveAsync(args.WorkingDirectory);
+        }
+
+        private void LoadLocalizationFileEnGB(BlueprintProviderSetupArgs args)
+        {
+            var serializer = new JsonSerializer();
+            var localizationPath = Path.Combine(args.GameFolder, "WH40KRT_Data", "StreamingAssets", "Localization", "enGB.json");
+            if (File.Exists(localizationPath)) {
+                try {
+                    using (var stream = new FileStream(localizationPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var reader = new StreamReader(stream))
+                    using (var jsonReader = new JsonTextReader(reader)) {
+                        _localizationFileEnGB = serializer.Deserialize<W40KRTLocalizationAsset>(jsonReader)?.Strings;
+                    }
+                }
+                catch (Exception ex) {
+                    Logger.Current.Warning($"Unable to load localization asset file, continuing without '{localizationPath}'", ex);
+                }
+            }
+            if (_localizationFileEnGB is null) _localizationFileEnGB = new Dictionary<string, W40KRTLocalizationEntry>();
         }
 
         protected override BlueprintName ResolveName(BlueprintMetadataEntry entry)
