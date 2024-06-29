@@ -31,6 +31,31 @@ h5 {
 .toolbar-h4 {
   margin-top: 20px;
 }
+.card p.btn-expand {
+  position: relative;
+}
+.card p.btn-expand label {
+  display: block;
+  position: absolute;
+  top: -12px;
+  left: 36px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+.card p.btn-select {
+  position: relative;
+}
+.card p.btn-select label {
+  display: block;
+  position: absolute;
+  top: -16px;
+  left: 0;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+.card p.btn-select button {
+  margin-right: 1px;
+}
 .time-parts {
   display: flex;
   flex-direction: row;

@@ -5,35 +5,37 @@ namespace Arcemi.Models
 {
     public class Metamagic
     {
-        public static Metamagic Empower(ISet<string> active, Action<Metamagic> update) => new Metamagic("Empower", 0x1, active, update);
-        public static Metamagic Maximize(ISet<string> active, Action<Metamagic> update) => new Metamagic("Maximize", 0x2, active, update);
-        public static Metamagic Quicken(ISet<string> active, Action<Metamagic> update) => new Metamagic("Quicken", 0x4, active, update);
-        public static Metamagic Extend(ISet<string> active, Action<Metamagic> update) => new Metamagic("Extend", 0x8, active, update);
-        public static Metamagic Heighten(ISet<string> active, Action<Metamagic> update) => new Metamagic("Heighten", 0x10, active, update);
-        public static Metamagic Reach(ISet<string> active, Action<Metamagic> update) => new Metamagic("Reach", 0x20, active, update);
-        public static Metamagic CompletelyNormal(ISet<string> active, Action<Metamagic> update) => new Metamagic("Completely normal", "CompletelyNormal", 0x40, active, update);
-        public static Metamagic Persistent(ISet<string> active, Action<Metamagic> update) => new Metamagic("Persistent", 0x80, active, update);
-        public static Metamagic Selective(ISet<string> active, Action<Metamagic> update) => new Metamagic("Selective", 0x100, active, update);
-        public static Metamagic Bolstered(ISet<string> active, Action<Metamagic> update) => new Metamagic("Bolstered", 0x200, active, update);
+        public static Metamagic Empower(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Empower, active, update);
+        public static Metamagic Maximize(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Maximize, active, update);
+        public static Metamagic Quicken(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Quicken, active, update);
+        public static Metamagic Extend(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Extend, active, update);
+        public static Metamagic Heighten(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Heighten, active, update);
+        public static Metamagic Reach(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Reach, active, update);
+        public static Metamagic CompletelyNormal(ISet<string> active, Action<Metamagic> update) => new Metamagic("Completely normal", MetamagicFlags.CompletelyNormal, active, update);
+        public static Metamagic Persistent(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Persistent, active, update);
+        public static Metamagic Selective(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Selective, active, update);
+        public static Metamagic Bolstered(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Bolstered, active, update);
+        public static Metamagic Intensified(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Intensified, active, update);
+        public static Metamagic Piercing(ISet<string> active, Action<Metamagic> update) => new Metamagic(MetamagicFlags.Piercing, active, update);
 
         private readonly Action<Metamagic> _update;
         public string Name { get; }
         public string UID { get; }
-        public int Flag { get; }
+        public MetamagicFlags Flag { get; }
         private bool _IsActive;
         public bool IsActive { get => _IsActive; set { _IsActive = value; _update(this); } }
 
-        public Metamagic(string name, int flag, ISet<string> active, Action<Metamagic> update) : this(name, name, flag, active, update)
+        public Metamagic(MetamagicFlags flag, ISet<string> active, Action<Metamagic> update) : this(flag.ToString(), flag, active, update)
         {
         }
 
-        public Metamagic(string name, string uid, int flag, ISet<string> active, Action<Metamagic> update)
+        public Metamagic(string name, MetamagicFlags flag, ISet<string> active, Action<Metamagic> update)
         {
             Name = name;
-            UID = uid;
+            UID = flag.ToString();
             Flag = flag;
             _update = update;
-            _IsActive = active.Contains(uid);
+            _IsActive = active.Contains(UID);
         }
 
     }

@@ -5,9 +5,9 @@ name: Create Linux Version
 
 on:
   push:
-    branches: [ "generic" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "generic" ]
+    branches: [ "main" ]
   workflow_dispatch:
     
 

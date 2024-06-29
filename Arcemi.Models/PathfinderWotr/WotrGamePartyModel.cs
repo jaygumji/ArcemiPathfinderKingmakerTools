@@ -1,16 +1,39 @@
 ﻿using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace Arcemi.Models.PathfinderWotr
 {
     public class WotrGamePartyModel : IGamePartyModel
     {
-        public WotrGamePartyModel(PlayerModel player)
+        public WotrGamePartyModel(PlayerModel player, IGameModelCollection<IGameUnitModel> characters)
         {
             Player = player;
+            var wearinessDebuffBlueprints = new HashSet<string>(StringComparer.Ordinal) {
+                "e6f2fc5d73d88064583cb828801212f4", // Fatigued
+                "46d1b9cc3d0fd36469a471b047d773a2", // Exhausted
+            };
             Data = GameDataModels.Object(new IGameData[] {
                 new WotrMoneyResourceEntry(player),
                 new WotrCorruptionResourceEntry(player),
-                new WotrRespecsResourceEntry(player)
+                new WotrRespecsResourceEntry(player),
+                GameDataModels.Action("Reset Weariness", () => {
+                    foreach (WotrGameUnitModel character in characters) {
+                        if (character.Weariness is object) {
+                            character.Weariness.WearinessStacks = 0;
+                            if (character.Weariness.ExtraWearinessHours > 0)
+                                character.Weariness.ExtraWearinessHours = 0;
+                            character.Weariness.LastStackTime = player.GameTime;
+                            character.Weariness.LastBuffApplyTime = player.GameTime;
+                        }
+
+                        // Remove the debuffs
+                        var debuffs = character.Buffs.Where(b => wearinessDebuffBlueprints.Contains(b.Blueprint)).ToArray();
+                        foreach (var debuff in debuffs) {
+                            character.Buffs.Remove(debuff);
+                        }
+                    }
+                }, isEnabled: () => characters.Cast<WotrGameUnitModel>().Any(c => c.Weariness?.WearinessStacks > 0))
             });
         }
 

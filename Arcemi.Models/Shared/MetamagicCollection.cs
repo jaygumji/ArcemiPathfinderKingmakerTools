@@ -16,6 +16,8 @@ namespace Arcemi.Models
         public Metamagic Persistent { get; }
         public Metamagic Selective { get; }
         public Metamagic Bolstered { get; }
+        public Metamagic Intensified { get; }
+        public Metamagic Piercing { get; }
 
         public MetamagicCollection(string value, Action<string> update)
         {
@@ -36,6 +38,8 @@ namespace Arcemi.Models
             Persistent = Metamagic.Persistent(active, Update);
             Selective = Metamagic.Selective(active, Update);
             Bolstered = Metamagic.Bolstered(active, Update);
+            Intensified = Metamagic.Intensified(active, Update);
+            Piercing = Metamagic.Piercing(active, Update);
         }
 
         public override string ToString()
@@ -55,11 +59,29 @@ namespace Arcemi.Models
             yield return Persistent;
             yield return Selective;
             yield return Bolstered;
+            yield return Piercing;
+            yield return Intensified;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
+    }
+    [Flags]
+    public enum MetamagicFlags
+    {
+        Empower = 1,
+        Maximize = 2,
+        Quicken = 4,
+        Extend = 8,
+        Heighten = 0x10,
+        Reach = 0x20,
+        CompletelyNormal = 0x40,
+        Persistent = 0x80,
+        Selective = 0x100,
+        Bolstered = 0x200,
+        Piercing = 0x400,
+        Intensified = 0x800
     }
 }

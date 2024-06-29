@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System;
+using Arcemi.Models.Shared;
 
 namespace Arcemi.Models.PathfinderWotr
 {
@@ -16,11 +17,12 @@ namespace Arcemi.Models.PathfinderWotr
         {
             File = file;
             GameTimeProvider = file.Player.GetGameTimeProvider();
-            Party = new WotrGamePartyModel(file.Player);
-            SharedStash = new WotrGameInventoryModel(file.Player.SharedStash, "Shared Stash");
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new WotrGameUnitModel(a, GameTimeProvider), a => a.Descriptor is object);
+            Party = new WotrGamePartyModel(file.Player, Characters);
+            SharedStash = new WotrGameInventoryModel(file.Player.SharedStash, "Shared Stash");
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
             SharedInventory = new WotrGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory, "Party");
+            PathfinderInventoryPatch.RemoveNaturalUnequippedWeapons(SharedInventory);
             Management = new WotrGameManagementModel(file.Player);
             State = new WotrGameStateModel(file.Player);
         }

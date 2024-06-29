@@ -350,6 +350,8 @@
     { "id": "28d1986d57a7081439fbb581aa6f960c", "name": "Velociraptor", "portrait": "f03d5a6461a8437facfa77f8c276c45b" },
     { "id": "eab864d9ca3415644a792792fd81bf87", "name": "Wolf", "portrait": "af3fe1a30c9e2844eb9af74fca39f322" },
     { "id": "42f0d5ec3dc844feb44b04507a7c1bfc", "name": "Ulbrig", "portrait": "1faff0d995004389a6638388d6d4b5f2" },
+    { "id": "bb25a055bc26469e8926c8c8f2834d41", "name": "Hippogriff", "portrait": "624c584aae8f4805ba25a68ed84957f5" },
+
     //{ "id": "34cbc3fbf30269740b259c4053a1f581", "name": "Deer", "portrait": "9d8a2cddc5550da4490ab5b692e0bd98" },
     //{ "id": "", "name": "Pig", "portrait": "f8f62a718fbcac343a50d495f7d12a29" },
     //{ "id": "", "name": "", "portrait": "" },

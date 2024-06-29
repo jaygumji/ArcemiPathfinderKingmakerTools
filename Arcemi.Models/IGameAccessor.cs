@@ -186,6 +186,9 @@ namespace Arcemi.Models
         IGameSpellSlotCollection<IGameSpellEntry> SpecialSpells { get; }
         IGameSpellSlotCollection<IGameCustomSpellEntry> CustomSpells { get; }
         IGameSpellSlotCollection<IGameMemorizedSpellEntry> MemorizedSpells { get; }
+
+        IGameMagicInfusionSpellSlotCollection MagicInfusions { get; }
+
         ListValueAccessor<string> SpecialLists { get; }
         ListValueAccessor<string> OppositionSchools { get; }
         IEnumerable<SpellIndexAccessor> SpontaneousSlots { get; }
@@ -193,10 +196,44 @@ namespace Arcemi.Models
         void EnableCustomSpells();
     }
 
+    public interface IGameMagicInfusionSpellSlotCollection : IEnumerable<IGameMagicInfusionSpellEntry>
+    {
+        bool CanAdd { get; }
+        IReadOnlyList<IGameMagicInfusionSpellEntry> Slots { get; }
+
+        IGameMagicInfusionSpellEntry Add();
+        void Remove(IGameMagicInfusionSpellEntry entry);
+
+        void SetSpellLevel(IGameMagicInfusionSpellEntry spell, int level);
+    }
+
     public interface IGameSpellEntry
     {
         string Name { get; }
         string Blueprint { get; }
+    }
+
+    public interface IGameMagicInfusionSpellEntry
+    {
+        int SlotId { get; }
+        string Spell1Blueprint { get; set; }
+        string Spell1Name { get; }
+        string Spell2Blueprint { get; set; }
+        string Spell2Name { get; }
+        int SpellLevel { get; set; }
+
+        string SpellSchool { get; set; }
+        IEnumerable<DataOption> SpellSchools { get; }
+
+        string SavingThrowType { get; set; }
+        IEnumerable<DataOption> SavingThrowTypes { get; }
+
+        string SpellTargetType { get; set; }
+        IEnumerable<DataOption> SpellTargetTypes { get; }
+
+        bool IsTouch { get; set; }
+        string DeliverBlueprint { get; set; }
+        string AdditionalAoeBlueprint { get; set; }
     }
 
     public interface IGameCustomSpellEntry : IGameSpellEntry
@@ -207,7 +244,6 @@ namespace Arcemi.Models
         int HeightenLevel { get; set; }
         MetamagicCollection Metamagic { get; }
     }
-    
     public interface IGameMemorizedSpellEntry : IGameSpellEntry
     {
         bool IsAvailable { get; set; }

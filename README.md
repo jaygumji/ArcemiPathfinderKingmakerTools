@@ -1,5 +1,6 @@
 # Arcemi Save Game Editor
 A save game editor for the games
+- Pathfinder - Kingmaker
 - Pathfinder - Wrath of the Righteous
 - Warhammer 40000 Rogue Trader
 

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System;
+using Arcemi.Models.Shared;
 
 namespace Arcemi.Models.Kingmaker
 {
@@ -21,6 +22,7 @@ namespace Arcemi.Models.Kingmaker
             Party = new KingmakerGamePartyModel(file.Player, Characters);
             SharedStash = new KingmakerGameInventoryModel(file.Player.SharedStash, file.Player.GameTime, "Shared Stash");
             SharedInventory = new KingmakerGameInventoryModel(MainCharacter.Ref.Descriptor.Inventory, file.Player.GameTime, "Party");
+            PathfinderInventoryPatch.RemoveNaturalUnequippedWeapons(SharedInventory);
             Management = new KingmakerGameManagementModel(file.Player, Characters);
             State = new KingmakerGameStateModel(file.Player);
         }

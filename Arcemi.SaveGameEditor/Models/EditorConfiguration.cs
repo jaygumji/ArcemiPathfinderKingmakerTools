@@ -47,6 +47,7 @@ namespace Arcemi.SaveGameEditor.Models
 
             ConfigPath = await AppUserConfiguration.GetAppUserConfigFilename();
             try {
+                Logger.Current.Information("Loading configuration from " + ConfigPath);
                 Instance = await AppUserConfiguration.LoadAsync(ConfigPath);
             }
             catch (Exception ex) {

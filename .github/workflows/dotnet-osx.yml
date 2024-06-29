@@ -5,9 +5,9 @@ name: Create OSX Version
 
 on:
   push:
-    branches: [ "generic" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "generic" ]
+    branches: [ "main" ]
   workflow_dispatch:
     
 
@@ -17,18 +17,20 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: |
+          6.0.x
+          8.0.x
     - name: Install Electron.NET CLI
       run: dotnet tool install ElectronNET.CLI -g
     - name: Electronize Build
       working-directory: ./Arcemi.SaveGameEditor
       run: electronize build /target osx /PublishReadyToRun false
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-OSX
         path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor-*.dmg
