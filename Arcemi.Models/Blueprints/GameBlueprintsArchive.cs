@@ -24,6 +24,8 @@ namespace Arcemi.Models
 
         public Blueprint Load(IBlueprintMetadataEntry metadata)
         {
+            if (!(_blueprintsFile?.Exists ?? false)) return null;
+
             if (_blueprints is null) {
                 _blueprintsStream = new FileStream(_blueprintsFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 _blueprints = new ZipArchive(_blueprintsStream);

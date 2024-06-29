@@ -30,6 +30,12 @@
         </button>
     </div>
     <div class="col-md-4">
+        <button class="btn btn-info" @onclick="() => GeneratePathfinderWotrNaturalWeapons()">
+            <span class="oi oi-play-circle"></span>
+            Natural Weapons
+        </button>
+    </div>
+    <div class="col-md-4">
         <button class="btn btn-info" @onclick="() => GeneratePathfinderKingmakerBlueprintAsync()">
             <span class="oi oi-play-circle"></span>
             Pathfinder Kingmaker blueprint backup
@@ -179,6 +185,32 @@
                 b.Append($"{{\"Name\":\"{entry.Name}\",\"Guid\":\"{entry.Guid}\",\"TypeFullName\":\"{entry.TypeFullName}\"}}");
             }
             b.Append("]}");
+            Output = b.ToString();
+        }
+    }
+
+    private void GeneratePathfinderWotrNaturalWeapons()
+    {
+        var game = Config.Instance.GetGame(GameDefinition.Pathfinder_WrathOfTheRighteous);
+        var cheatDataFile = System.IO.Path.Combine(game.GameFolder, "Bundles", "cheatdata.json");
+        if (!System.IO.File.Exists(cheatDataFile)) {
+            Output = "Could not find cheatdata.json @ " + cheatDataFile;
+        }
+        var serializer = new Newtonsoft.Json.JsonSerializer();
+        using (var stream = new System.IO.FileStream(cheatDataFile, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+        using (var reader = new System.IO.StreamReader(stream))
+        using (var jsonReader = new Newtonsoft.Json.JsonTextReader(reader)) {
+            var cheatdata = serializer.Deserialize<BlueprintMetadataContainer>(jsonReader);
+            var res = (BlueprintProvider)game.GetDefinition().Resources.Blueprints;
+
+            for (var i = cheatdata.Entries.Count-1; i >= 0; i--) {
+                var entry = cheatdata.Entries[i];
+                if (!entry.Path.Contains("NaturalWeapon", StringComparison.OrdinalIgnoreCase)) cheatdata.Entries.RemoveAt(i);
+            }
+            var b = new System.Text.StringBuilder();
+            foreach (var entry in cheatdata.Entries) {
+                b.Append("\"").Append(entry.Guid).AppendLine("\",");
+            }
             Output = b.ToString();
         }
     }

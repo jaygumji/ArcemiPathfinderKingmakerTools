@@ -81,7 +81,7 @@ namespace Arcemi.Models.PathfinderWotr
             if (_equippedLookup.TryGetValue(uniqueId, out var item)) return item;
             return null;
         }
-        
+
         private static readonly HashSet<string> ItemFilter = new HashSet<string>(StringComparer.Ordinal) {
             "95c126deb99ba054aa5b84710520c035" // Finnean Base Item
         };
