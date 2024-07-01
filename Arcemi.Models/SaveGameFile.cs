@@ -6,6 +6,8 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Writers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -92,7 +94,7 @@ namespace Arcemi.Models
             Directory.Delete(WorkingPath);
         }
 
-        private string GetWorkingPath(string name)  
+        private string GetWorkingPath(string name)
         {
             if (!_lookup.TryGetValue(name, out var path)) {
                 throw new ArgumentException($"No entries with the name {name} exists.");
@@ -108,11 +110,12 @@ namespace Arcemi.Models
         public void Save(string filePath)
         {
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write)) {
-                using (var archive = SharpCompress.Archives.Zip.ZipArchive.Open(stream)) {
+                using (var archive = SharpCompress.Archives.Zip.ZipArchive.Create()) {
                     foreach (var file in Directory.EnumerateFiles(WorkingPath)) {
                         var entryName = Path.GetFileName(file);
                         archive.AddEntry(entryName, file);
                     }
+                    archive.SaveTo(stream, new WriterOptions(CompressionType.Deflate) { ArchiveEncoding = new ArchiveEncoding() { Default = Encoding.UTF8 } });
                 }
             }
             Filepath = filePath;
