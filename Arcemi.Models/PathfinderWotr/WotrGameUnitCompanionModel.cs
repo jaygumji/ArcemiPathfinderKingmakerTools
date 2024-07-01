@@ -18,7 +18,7 @@ namespace Arcemi.Models.PathfinderWotr
         public CompanionPartItemModel Part { get; }
 
         public IReadOnlyList<GameEnumValue> AllStates { get; }
-        public string State { get => Part.State; set => Part.State = value; }
+        public string State { get => Part?.State; set => Part.State = value; }
 
         public bool IsReadOnly
         {
