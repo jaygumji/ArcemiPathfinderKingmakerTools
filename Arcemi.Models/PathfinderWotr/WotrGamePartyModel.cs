@@ -6,6 +6,7 @@ namespace Arcemi.Models.PathfinderWotr
 {
     public class WotrGamePartyModel : IGamePartyModel
     {
+        private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
         public WotrGamePartyModel(PlayerModel player, IGameModelCollection<IGameUnitModel> characters)
         {
             Player = player;
@@ -17,6 +18,9 @@ namespace Arcemi.Models.PathfinderWotr
                 new WotrMoneyResourceEntry(player),
                 new WotrCorruptionResourceEntry(player),
                 new WotrRespecsResourceEntry(player),
+                GameDataModels.Object("Imported Campaigns", new[] {
+                    GameDataModels.RowList(player.GetAccessor().ListValue<string>("ImportedCampaigns"), Res, Res.Blueprints.GetEntries(WotrBlueprintProvider.Campaign), "Campaign")
+                }, isCollapsable: true),
                 GameDataModels.Action("Reset Weariness", () => {
                     foreach (WotrGameUnitModel character in characters) {
                         if (character.Weariness is object) {
