@@ -7,15 +7,26 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
 
-        public W40KRTGameUnitDollModel(W40KRTDollModel doll, string name)
+        public W40KRTGameUnitDollModel(W40KRTGameUnitModel unit, W40KRTDollModel doll, string name)
         {
+            Unit = unit;
             Ref = doll;
             Name = name;
         }
 
         public string Name { get; }
+        public W40KRTGameUnitModel Unit { get; }
         public W40KRTDollModel Ref { get; }
-        public string Gender { get => Ref.Gender; set => Ref.Gender = value; }
+        public string Gender
+        {
+            get => Ref.Gender;
+            set {
+                Ref.Gender = value;
+                if (Unit?.RefDescriptor is object) {
+                    Unit.RefDescriptor.CustomGender = value;
+                }
+            }
+        }
         public IReadOnlyList<GenderOption> GenderOptions => GenderOption.Get(Gender, out _);
 
         public string Race { get => Ref.RacePreset; set => Ref.RacePreset = value; }
@@ -56,15 +67,14 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public bool IsSupported => Ref is object;
 
-        public string Export()
-
-        {
-            return Ref.Export();
-        }
+        public string Export() => Ref.Export();
 
         public void Import(string code)
         {
             Ref.Import(code);
+            if (Unit?.RefDescriptor is object) {
+                Unit.RefDescriptor.CustomGender = Ref.Gender;
+            }
         }
     }
 }

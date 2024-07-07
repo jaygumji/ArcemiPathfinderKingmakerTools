@@ -54,7 +54,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     Body = new W40KRTGameUnitBodyModel(this, body);
                 }
                 else if (part is UnitViewSettingsPartItemModel viewSettings) {
-                    Appearance = new W40KRTGameUnitAppearanceModel(viewSettings);
+                    Appearance = new W40KRTGameUnitAppearanceModel(this, viewSettings);
                 }
                 else if (part is UnitAsksPartItemModel asks) {
                     Asks = new W40KRTGameUnitAsksModel(asks);
@@ -82,7 +82,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             if (Race is null) Race = new W40KRTGameUnitRaceModel(null);
             if (Progression is null) Progression = new W40KRTGameUnitProgressionModel(this, null);
             if (Stats is null) Stats = new W40KRTGameUnitStatsModel(null);
-            if (Appearance is null) Appearance = new W40KRTGameUnitAppearanceModel(null);
+            if (Appearance is null) Appearance = new W40KRTGameUnitAppearanceModel(null, null);
             if (Body is null) Body = new W40KRTGameUnitBodyModel(this, null);
 
             SpellCaster = new W40KRTGameUnitSpellCasterModel(this, Ref);
