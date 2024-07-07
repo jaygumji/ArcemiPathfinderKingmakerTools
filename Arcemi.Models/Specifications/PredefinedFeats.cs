@@ -64,15 +64,15 @@ namespace Arcemi.Models
                 return Combined;
             }
 
-            var hashset = new HashSet<string>(entries.Select(e => e.DisplayName));
-            Combined = entries.Concat(DefinedAll.Where(x => !hashset.Contains(x.Name))).ToArray();
+            var hashset = new HashSet<string>(DefinedAll.Select(e => e.Name));
+            Combined = DefinedAll.Concat(entries.Where(x => !hashset.Contains(x.DisplayName))).ToArray();
             Source = entries;
             return Combined;
         }
 
         protected FeatSpec New(string name, string blueprint, string paraName, string paraValue)
             => FeatSpec.New(name, blueprint, PathfinderWotr.WotrBlueprintProvider.Feature, paraName, paraValue);
-        protected FeatSpec WeaponNew(string featName, string blueprint, string name) => New(string.Concat(featName, ' ', name.AsDisplayable()), blueprint, "WeaponCategory", name);
+        protected FeatSpec WeaponNew(string featName, string blueprint, string name) => New(string.Concat(featName, " - ", name.AsDisplayable()), blueprint, "WeaponCategory", name);
         protected FeatSpec Focus(string name) => WeaponNew("Weapon Focus", "1e1f627d26ad36f43bbd26cc2bf8ac7e", name);
         protected FeatSpec FocusGreater(string name) => WeaponNew("Weapon Focus Greater", "09c9e82965fb4334b984a1e9df3bd088", name);
         protected FeatSpec Specialization(string name) => WeaponNew("Weapon Specialization", "31470b17e8446ae4ea0dacd6c5817d86", name);
@@ -89,7 +89,7 @@ namespace Arcemi.Models
 
         protected abstract IEnumerable<FeatSpec> Ranged(IEnumerable<FeatSpec> feats, string name);
 
-        protected FeatSpec SpellNew(string featName, string blueprint, string name) => New(string.Concat(featName, ' ', name.AsDisplayable()), blueprint, "SpellSchool", name);
+        protected FeatSpec SpellNew(string featName, string blueprint, string name) => New(string.Concat(featName, " - ", name.AsDisplayable()), blueprint, "SpellSchool", name);
         protected FeatSpec SpellFocus(string name) => SpellNew("Spell Focus", "16fa59cc9a72a6043b566b49184f53fe", name);
         protected FeatSpec SpellFocusGreater(string name) => SpellNew("Spell Focus Greater", "5b04b45b228461c43bad768eb0f7c7bf", name);
 

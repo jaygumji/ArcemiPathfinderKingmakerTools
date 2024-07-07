@@ -19,7 +19,7 @@ namespace Arcemi.Models.PathfinderWotr
         public override void AfterAdd(AfterAddCollectionItemArgs<IGameUnitFeatEntry, FactItemModel> args)
         {
             if (WotrPredefinedFeats.Instance.Is(args.Blueprint)) return;
-            
+
             var template = Res.GetFeatTemplate(args.Blueprint);
             if (template is object) {
                 args.Model.Import(template);
@@ -34,7 +34,7 @@ namespace Arcemi.Models.PathfinderWotr
             }), StringComparer.Ordinal);
 
             var entries = WotrPredefinedFeats.Instance.Combine(Res.Blueprints.GetEntries(BlueprintTypeId.Feature));
-            return entries.Where(x =>  !hashset.Contains(x.Id)).ToArray();
+            return entries.Where(x => !hashset.Contains(x.Id)).ToArray();
         }
     }
     public class WotrPredefinedFeats : FeatSpecCollection
