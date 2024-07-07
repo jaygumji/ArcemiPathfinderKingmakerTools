@@ -11,18 +11,20 @@ namespace Arcemi.Models.PathfinderWotr
         {
             FeatureFactItemModel.Prepare(args.References, args.Obj);
             args.Obj.Add("Blueprint", args.Blueprint);
-            if (WotrPredefinedFeats.Instance.TryGet(args.Blueprint, out var spec)) {
+            if (args.Blueprint.HasValue() && WotrPredefinedFeats.Instance.TryGet(args.Blueprint, out var spec)) {
                 spec.ApplyOn(args.Obj);
             }
         }
 
         public override void AfterAdd(AfterAddCollectionItemArgs<IGameUnitFeatEntry, FactItemModel> args)
         {
-            if (WotrPredefinedFeats.Instance.Is(args.Blueprint)) return;
+            if (args.Blueprint.HasValue()) {
+                if (WotrPredefinedFeats.Instance.Is(args.Blueprint)) return;
 
-            var template = Res.GetFeatTemplate(args.Blueprint);
-            if (template is object) {
-                args.Model.Import(template);
+                var template = Res.GetFeatTemplate(args.Blueprint);
+                if (template is object) {
+                    args.Model.Import(template);
+                }
             }
         }
 
