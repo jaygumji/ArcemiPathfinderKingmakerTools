@@ -15,7 +15,7 @@ namespace Arcemi.Models
         public TimeSpan NextTickTime { get => A.Value<TimeSpan>(); set => A.Value(value); }
         public TimeSpan EndTime { get => A.Value<TimeSpan>("m_EndTime"); set => A.Value(value, "m_EndTime"); }
         public bool IsFromSpell { get => A.Value<bool>(); set => A.Value(value); }
-        
+
         public DurationProvider GetDurationProvider(IGameTimeProvider gameTimeProvider)
         {
             return new DurationProvider(() => EndTime, v => EndTime = v, gameTimeProvider);

@@ -154,6 +154,7 @@ namespace Arcemi.Models
         IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
+        IGameModelCollection<IGameUnitBuffEntry> UniqueBuffs { get; }
         IReadOnlyList<IGameDataObject> Sections { get; }
 
         void ReplacePartyMemberWith(IGameUnitModel unit);

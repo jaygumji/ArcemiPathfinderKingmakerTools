@@ -87,6 +87,9 @@ namespace Arcemi.Models
             if (type.Eq(CombatGroupPartItemModel.TypeRef)) {
                 return new CombatGroupPartItemModel(accessor);
             }
+            if (type.Eq(BuffUniquePartItemModel.TypeRef)) {
+                return new BuffUniquePartItemModel(accessor);
+            }
             return new PartItemModel(accessor);
         }
     }

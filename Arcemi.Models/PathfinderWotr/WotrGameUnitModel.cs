@@ -30,6 +30,7 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         public IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
+        public IGameModelCollection<IGameUnitBuffEntry> UniqueBuffs { get; } = GameModelCollection<IGameUnitBuffEntry>.Empty;
         public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
 
         public UnitWearinessPartItemModel Weariness { get; }
@@ -55,8 +56,11 @@ namespace Arcemi.Models.PathfinderWotr
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x, gameTimeProvider), x => x is BuffFactItemModel feat,
                 new WotrGameModelCollectionBuffWriter());
 
+            var uniqueBuffs = Ref.Parts.Items.OfType<BuffUniquePartItemModel>().FirstOrDefault();
+            if (uniqueBuffs?.Buffs?.Count > 0) {
+                UniqueBuffs = new GameModelCollection<IGameUnitBuffEntry, BuffFactItemModel>(uniqueBuffs.Buffs, x => new WotrGameUnitBuffEntry(x, gameTimeProvider));
+            }
             Weariness = Ref.Parts.Items.OfType<UnitWearinessPartItemModel>().FirstOrDefault();
-
             Sections = new[] {
                 GameDataModels.Object("Misc", new IGameData[] {
                     GameDataModels.RowList(unit.Descriptor.Resources.PersistantResources, x => GameDataModels.Object(Res.Blueprints.GetNameOrBlueprint(x.Blueprint), new IGameData[] {

@@ -29,6 +29,7 @@ namespace Arcemi.Models.Kingmaker
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         public IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
+        public IGameModelCollection<IGameUnitBuffEntry> UniqueBuffs { get; } = GameModelCollection<IGameUnitBuffEntry>.Empty;
         public IReadOnlyList<IGameDataObject> Sections { get; } = Array.Empty<IGameDataObject>();
 
         public UnitWearinessPartItemModel Weariness { get; }

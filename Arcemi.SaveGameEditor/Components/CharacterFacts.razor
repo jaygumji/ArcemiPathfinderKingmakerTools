@@ -6,8 +6,13 @@
         <CharacterAbilities Unit="Unit"/>
     </Accordion>
     <Accordion HeaderText="Buffs">
-        <CharacterBuffs Unit="Unit"/>
+        <CharacterBuffs Buffs="Unit.Buffs"/>
     </Accordion>
+    @if (Unit.UniqueBuffs.Count > 0) {
+        <Accordion HeaderText="Unique Buffs">
+            <CharacterBuffs Buffs="Unit.UniqueBuffs" />
+        </Accordion>
+    }
 </AccordionContainer>
 
 

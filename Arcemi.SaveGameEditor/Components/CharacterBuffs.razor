@@ -18,7 +18,7 @@
         <div class="col-md-1">
         </div>
     </div>
-    @foreach (var buff in Buffs) {
+    @foreach (var buff in OrderedBuffs) {
     <div class="row">
         <div class="col-md-4 overflow-hidden">
             <label class="form-label">@buff.DisplayName</label>
@@ -45,12 +45,12 @@
 
 @code {
     [Parameter]
-    public IGameUnitModel Unit { get; set; }
-    private IEnumerable<IGameUnitBuffEntry> Buffs => Unit.Buffs
+    public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; set; }
+    private IEnumerable<IGameUnitBuffEntry> OrderedBuffs => Buffs
         .OrderBy(b => b.DisplayName);
 
     private void Remove(IGameUnitBuffEntry buff)
     {
-        Unit.Buffs.Remove(buff);
+        Buffs.Remove(buff);
     }
 }

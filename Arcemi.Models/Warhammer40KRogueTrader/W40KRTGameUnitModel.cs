@@ -34,6 +34,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameModelCollection<IGameUnitFeatEntry> Feats { get; }
         public IGameModelCollection<IGameUnitAbilityEntry> Abilities { get; }
         public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; }
+        public IGameModelCollection<IGameUnitBuffEntry> UniqueBuffs { get; } = GameModelCollection<IGameUnitBuffEntry>.Empty;
         public IReadOnlyList<IGameDataObject> Sections { get; }
 
         public W40KRTGameUnitModel(UnitEntityModel unit)
