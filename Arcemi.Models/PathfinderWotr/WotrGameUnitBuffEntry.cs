@@ -7,11 +7,13 @@ namespace Arcemi.Models.PathfinderWotr
         private readonly IGameResourcesProvider Res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
         public WotrGameUnitBuffEntry(FactItemModel model, IGameTimeProvider gameTimeProvider)
         {
-            Model = (BuffFactItemModel)model;
-            DurationProvider = Model.GetDurationProvider(gameTimeProvider);
+            Model = model;
+            DurationProvider = Model is BuffFactItemModel buff
+                ? buff.GetDurationProvider(gameTimeProvider)
+                : new DurationProvider(() => model.GetAccessor().Value<TimeSpan>("EndTime"), v => model.GetAccessor().Value(v, "EndTime"), gameTimeProvider);
         }
 
-        public BuffFactItemModel Model { get; }
+        public FactItemModel Model { get; }
         public DurationProvider DurationProvider { get; }
 
         public string DisplayName => Res.Blueprints.GetNameOrBlueprint(Blueprint);

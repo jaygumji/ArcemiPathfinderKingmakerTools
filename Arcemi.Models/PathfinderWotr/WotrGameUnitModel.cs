@@ -51,9 +51,19 @@ namespace Arcemi.Models.PathfinderWotr
             SpellCaster = new WotrGameUnitSpellCasterModel(unit);
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitFeatEntry(x), x => x is FeatureFactItemModel feat
                 && x.Context?.ParentContext?.SourceItemRef == null, new WotrGameModelCollectionFeatWriter());
-            Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitAbilityEntry(x), x => x is AbilityFactItemModel feat,
+            Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitAbilityEntry(x), x => x is AbilityFactItemModel || x is ActivatableAbilityFactItemModel,
                 new WotrGameModelCollectionAbilityWriter());
-            Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x, gameTimeProvider), x => x is BuffFactItemModel feat,
+
+            bool IsBuff(FactItemModel fact) {
+                if (fact is BuffFactItemModel) return true;
+                if (Res.Blueprints.TryGet(fact.Blueprint, out var blueprint)) {
+                    if (blueprint.Type == WotrBlueprintProvider.Buff) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x, gameTimeProvider), IsBuff,
                 new WotrGameModelCollectionBuffWriter());
 
             var uniqueBuffs = Ref.Parts.Items.OfType<BuffUniquePartItemModel>().FirstOrDefault();
