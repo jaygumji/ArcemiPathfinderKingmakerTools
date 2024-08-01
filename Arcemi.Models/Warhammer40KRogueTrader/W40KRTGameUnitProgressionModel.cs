@@ -13,9 +13,18 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Owner = owner;
             Model = model;
             Selections = new GameModelCollection<IGameUnitSelectionProgressionEntry, UnitProgressionSelectionOfPartModel>(model?.Selections, s => new W40KRTGameUnitSelectionProgressionEntry(owner, s), writer: new W40KRTGameUnitSelectionProgressionEntryWriter(owner));
-            Data = GameDataModels.Object("All choices", new[] {
+            var dataProperties = new List<IGameData>();
+            var respecs = model.GetAccessor().Object<Model>("RespecInfo");
+            if (respecs is object) {
+                dataProperties.Add(GameDataModels.Object("Respecs", new IGameData[] {
+                    GameDataModels.Integer("Count", respecs, r => r.GetAccessor().Value<int>("m_RespecCount"), (r, v) => r.GetAccessor().Value(v, "m_RespecCount"), 0, size: GameDataSize.Small),
+                    GameDataModels.Boolean("Extra", respecs, r => r.GetAccessor().Value<bool>("m_HasExtraRespec"), (r, v) => r.GetAccessor().Value(v, "m_HasExtraRespec"))
+                }, isCollapsable: true));
+            }
+            dataProperties.Add(GameDataModels.Object("All choices", new[] {
                 GameDataModels.RowList(Selections.Project(x => (IGameDataObject)x), nameSize: GameDataSize.Medium)
-            }, isCollapsable: true);
+            }, isCollapsable: true));
+            Data = GameDataModels.Object(dataProperties);
         }
 
         public IGameUnitModel Owner { get; }
