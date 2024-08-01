@@ -351,6 +351,9 @@
     { "id": "eab864d9ca3415644a792792fd81bf87", "name": "Wolf", "portrait": "af3fe1a30c9e2844eb9af74fca39f322" },
     { "id": "42f0d5ec3dc844feb44b04507a7c1bfc", "name": "Ulbrig", "portrait": "1faff0d995004389a6638388d6d4b5f2" },
     { "id": "bb25a055bc26469e8926c8c8f2834d41", "name": "Hippogriff", "portrait": "624c584aae8f4805ba25a68ed84957f5" },
+    { "id": "3e0014e4be454482a2797fd81123d7b4", "name": "Rekarth", "portrait": "13697036bbaa4ebf94e33b442a4f0c16" },
+    { "id": "561036c882a640089b1d42f03ebe3a6c", "name": "Sendri", "portrait": "d1220a8757e941dfac299e436fef3cdb" },
+    { "id": "942862a48f1644ae85ac5e3c9deb720c", "name": "Penta", "portrait": "35c5ef333a2e4ce69f5368b12e40124a" },
 
     //{ "id": "34cbc3fbf30269740b259c4053a1f581", "name": "Deer", "portrait": "9d8a2cddc5550da4490ab5b692e0bd98" },
     //{ "id": "", "name": "Pig", "portrait": "f8f62a718fbcac343a50d495f7d12a29" },

@@ -55,7 +55,7 @@ else {
             </div>
             @if (spellbook.IsModifierSupported) {
                 <div class="col-md-2">
-                    <label class="form-label">@spellbook.Modifier</label>
+                    <label class="form-label">@spellbook.ModifierName</label>
                     <input type="number" class="form-control" @bind="spellbook.Modifier" />
                 </div>
             }

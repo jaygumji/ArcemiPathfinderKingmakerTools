@@ -56,7 +56,7 @@ namespace Arcemi.Models
             if (prefix != null) {
                 for (var i = 0; i < prefix.Length; i++) {
                     var p = prefix[i];
-                    if (name.StartsWith(p, StringComparison.Ordinal)) {
+                    if (name.IEnd(p)) {
                         name = name.Substring(p.Length);
                         break;
                     }
@@ -65,7 +65,7 @@ namespace Arcemi.Models
             if (suffix != null) {
                 for (var i = 0; i < suffix.Length; i++) {
                     var s = suffix[i];
-                    if (name.EndsWith(s, StringComparison.Ordinal)) {
+                    if (name.IEnd(s)) {
                         name = name.Remove(name.Length - s.Length, s.Length);
                         break;
                     }

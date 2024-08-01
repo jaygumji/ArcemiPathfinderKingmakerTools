@@ -90,92 +90,17 @@ namespace Arcemi.Models.PathfinderWotr
 
         protected override void OnDefine(FeatSpecDefineArgs args)
         {
-            args
-                .Melee("Bardiche")
-                .Melee("BastardSword")
-                .Melee("Battleaxe")
-                .Melee("Bite")
-                .Melee("Claw")
-                .Melee("Club")
-                .Melee("Dagger")
-                .Melee("DoubleAxe")
-                .Melee("DoubleSword")
-                .Melee("DuelingSword")
-                .Melee("Urgrosh")
-                .Melee("DwarvenWaraxe")
-                .Melee("EarthBreaker")
-                .Melee("ElvenCurveBlade")
-                .Melee("Estoc")
-                .Melee("Falcata")
-                .Melee("Falchion")
-                .Melee("Fauchard")
-                .Melee("Flail")
-                .Melee("Glaive")
-                .Melee("Gore")
-                .Melee("Greataxe")
-                .Melee("Greatclub")
-                .Melee("Greatsword")
-                .Melee("Handaxe")
-                .Melee("HeavyFlail")
-                .Melee("HeavyMace")
-                .Melee("HeavyPick")
-                .Melee("Hoof")
-                .Melee("HookedHammer")
-                .Melee("IncorporealTouch")
-                .Melee("Kama")
-                .Melee("Kukri")
-                .Melee("LightHammer")
-                .Melee("LightMace")
-                .Melee("LightPick")
-                .Melee("LightShield")
-                .Melee("Longspear")
-                .Melee("Longsword")
-                .Melee("Nunchaku")
-                .Melee("PunchingDagger")
-                .Melee("Quarterstaff")
-                .Melee("Rapier")
-                .Melee("Sai")
-                .Melee("Scimitar")
-                .Melee("Scythe")
-                .Melee("Shortspear")
-                .Melee("Shortsword")
-                .Melee("Sickle")
-                .Melee("Slam")
-                .Melee("Spear")
-                .Melee("Spike")
-                .Melee("Starknife")
-                .Melee("Sting")
-                .Melee("Tail")
-                .Melee("Talon")
-                .Melee("Tentacle")
-                .Melee("Tongi")
-                .Melee("Trident")
-                .Melee("Warhammer")
-                .Melee("Unarmed")
-                .Melee("Wing")
-
-                // Ranged
-                .Ranged("Bomb")
-                .Ranged("Dart")
-                .Ranged("HeavyCrossbow")
-                .Ranged("Javelin")
-                .Ranged("LightCrossbow")
-                .Ranged("Longbow")
-                .Ranged("Ray")
-                .Ranged("Shortbow")
-                .Ranged("SlingStaff")
-                .Ranged("ThrowingAxe")
-                .Ranged("Touch")
-
-                // Spell Schools
-                .SpellSchool("Abjuration")
-                .SpellSchool("Conjuration")
-                .SpellSchool("Divination")
-                .SpellSchool("Enchantment")
-                .SpellSchool("Evocation")
-                .SpellSchool("Illusion")
-                .SpellSchool("Necromancy")
-                .SpellSchool("Transmutation");
+            foreach (WotrWeaponCategory weaponCategory in Enum.GetValues(typeof(WotrWeaponCategory))) {
+                if (weaponCategory.IsCaster() || weaponCategory.IsRanged()) {
+                    args.Ranged(weaponCategory.ToString());
+                }
+                else if (weaponCategory.IsMelee()) {
+                    args.Melee(weaponCategory.ToString());
+                }
+            }
+            foreach (var spellSchool in WotrSpellSchools.Options) {
+                args.SpellSchool(spellSchool.Id);
+            }
         }
     }
 
