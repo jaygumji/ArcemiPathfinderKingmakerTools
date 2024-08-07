@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Arcemi.Models.PathfinderWotr
+namespace Arcemi.Models.Kingmaker
 {
-    internal static class WotrSpellSchools
+    internal static class KingmakerSpellSchools
     {
         public static IReadOnlyList<DataOption> Options { get; } = new[] {
             new DataOption("Abjuration"),
@@ -20,7 +20,7 @@ namespace Arcemi.Models.PathfinderWotr
             return DataOption.Get(Options, id, out _);
         }
     }
-    public enum WotrSpellSchool
+    public enum KingmakerSpellSchool
     {
         None,
         Abjuration,
