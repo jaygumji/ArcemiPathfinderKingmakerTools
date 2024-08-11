@@ -29,77 +29,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             if (string.IsNullOrEmpty(args.GameFolder)) return;
 
             LoadLocalizationFileEnGB(args);
+            W40KRTModificationTemplateFile.LoadInto(args.GameFolder, cacheInfo);
 
-            var archiveInfo = new FileInfo(Path.Combine(args.GameFolder, "WhRtModificationTemplate-release.rar"));
-            if (!archiveInfo.Exists) return;
-            if (cacheInfo.IsValidCache(archiveInfo.LastWriteTimeUtc)) {
-                return;
-            }
-
-            LoadGameArchive(cacheInfo, archiveInfo);
             await cacheInfo.SaveAsync(args.WorkingDirectory);
-        }
-
-        private void LoadGameArchive(W40KRTBlueprintCachedData cacheInfo, FileInfo archiveInfo)
-        {
-            const string localizationPrefix = @"WhRtModificationTemplate-release\Strings\Mechanics\Blueprints\";
-            const string blueprintPrefix = @"WhRtModificationTemplate-release\Blueprints\";
-
-            try {
-                var serializer = new JsonSerializer();
-                using (var rar = SharpCompress.Archives.Rar.RarArchive.Open(archiveInfo, new SharpCompress.Readers.ReaderOptions())) {
-                    foreach (var entry in rar.Entries) {
-                        if (entry.IsDirectory) continue;
-                        var isLocalization = entry.Key.IStart(localizationPrefix);
-                        var isBlueprint = entry.Key.IStart(blueprintPrefix);
-
-                        if (!isLocalization && !isBlueprint) continue;
-
-                        using (var stream = entry.OpenEntryStream())
-                        using (var reader = new StreamReader(stream))
-                        using (var jsonReader = new JsonTextReader(reader)) {
-                            if (isLocalization) {
-                                var localizationEntry = serializer.Deserialize<W40KRTLocalization>(jsonReader);
-                                if (string.IsNullOrEmpty(localizationEntry.OwnerGuid)) continue;
-                                if (!(localizationEntry.Languages?.Count > 0)) continue;
-                                if (entry.Key.IEnd("DisplayName.json") || entry.Key.IEnd("DisplayName_.json")) {
-                                    if (_displayNameLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
-                                    }
-                                    else {
-                                        _displayNameLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
-                                    }
-                                }
-                                else if (entry.Key.IEnd("Description.json") || entry.Key.IEnd("Description_.json")) {
-                                    if (_descriptionLookup.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
-                                    }
-                                    else {
-                                        _descriptionLookup.Add(localizationEntry.OwnerGuid, localizationEntry);
-                                    }
-                                }
-                                else {
-                                    var key = entry.Key;
-                                    key.ToString();
-                                }
-                            }
-                            else if (isBlueprint) {
-                                var blueprintAsset = serializer.Deserialize<W40KRTBlueprintAsset>(jsonReader);
-                                if (string.IsNullOrEmpty(blueprintAsset?.AssetId)) continue;
-                                if (_blueprintAssetLookup.TryGetValue(blueprintAsset.AssetId, out var existing)) {
-                                    existing.ToString();
-                                }
-                                else {
-                                    _blueprintAssetLookup.Add(blueprintAsset.AssetId, blueprintAsset);
-                                }
-                            }
-                        }
-                    }
-                }
-                cacheInfo.TimestampUtc = archiveInfo.LastWriteTimeUtc;
-            }
-            catch (Exception ex) {
-                Logger.Current.Error("Unable to load localization cache", ex);
-                return;
-            }
         }
 
         private void LoadLocalizationFileEnGB(BlueprintProviderSetupArgs args)
