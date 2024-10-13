@@ -16,7 +16,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
             if (model is null) return;
             var dataProperties = new List<IGameData>();
-            var respecs = model?.GetAccessor().Object<Model>("RespecInfo");
+            var respecs = model.GetAccessor().Object<Model>("RespecInfo");
             if (respecs is object) {
                 dataProperties.Add(GameDataModels.Object("Respecs", new IGameData[] {
                     GameDataModels.Integer("Count", respecs, r => r.GetAccessor().Value<int>("m_RespecCount"), (r, v) => r.GetAccessor().Value(v, "m_RespecCount"), 0, size: GameDataSize.Small),

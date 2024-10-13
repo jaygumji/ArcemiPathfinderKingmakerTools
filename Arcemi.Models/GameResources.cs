@@ -72,8 +72,8 @@ namespace Arcemi.Models
 
             var unknownUri = AppData.Portraits.GetUnknownUri();
             var unmappedPortraits = Blueprints.GetEntries(BlueprintTypeId.Portrait)
-                .Where(e => e.Name.Original.IndexOf("BCT_", StringComparison.OrdinalIgnoreCase) < 0)
-                .Where(e => !AppData.Portraits.Available.Any(p => string.Equals(p.Key, e.Id, StringComparison.Ordinal)))
+                .Where(e => !e.Name.Original.ILike("BCT_"))
+                .Where(e => !AppData.Portraits.Available.Any(p => p.Key.Eq(e.Id)))
                 .Select(e => new Portrait(e.Id, unknownUri, PortraitCategory.Unmapped, name: e.DisplayName))
                 .ToArray();
 

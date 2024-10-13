@@ -88,12 +88,14 @@
 <Modal @ref="modalAddFeat">
     <Title>Add feat</Title>
     <Body>
-        <b>Warning: </b>
-        <span>This feature is experimental. Be sure to keep a backup of your save. If you encounter problems, consider using feat codes instead.</span>
+        <AlertInfo>
+            Note that some features might be named the same, the tooltip might show more info to guide you into selecting the right feature to add.
+            If you still can't identify the correct feature, then copy the feature from another character is your best bet.
+        </AlertInfo>
         <TabControl StartIndex="0">
             <Tab Name="Search">
                 <Content>
-                    <Search TItem="SelectableFeat" Items="AvailableFeatsBase" ItemSearchable="b => b.DisplayName" Context="item" OnSelect="a => AddFeatBlueprint = a.Item.Id">
+                    <Search TItem="SelectableFeat" Items="AvailableFeatsBase" ItemSearchable="b => b.DisplayName" Context="item" OnSelect="a => AddFeatBlueprint = a.Item.Id" TooltipProvider="i => i.Tooltip">
                         <ResultItemTemplate>
                             @item.DisplayName
                         </ResultItemTemplate>
@@ -108,7 +110,7 @@
                             <select class="form-control" @bind="AddFeatBlueprint">
                                 <option value="">Select feat...</option>
                                 @foreach (var blueprint in AvailableFeatsBase) {
-                                    <option value="@blueprint.Id">@blueprint.DisplayName</option>
+                                    <option value="@blueprint.Id" title="@blueprint.Tooltip">@blueprint.DisplayName</option>
                                 }
                             </select>
                         </div>

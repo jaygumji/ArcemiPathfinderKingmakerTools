@@ -49,7 +49,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTArchetype("Soldier", "06f4f78a9c1a472b85cd79a9a142153d", "567936698f674003bba05fa02e7130ae", "7a76af1ef02c4699b62db147e2b9a172", new [] {
                 new W40KRTArchetypeAutomaticFeat("7354c0ae9bf84c49adf82f95c05d4d5c", 1), // Ascension
                 new W40KRTArchetypeAutomaticFeat("8638221f9caf46649cefcbd7574804d1", 3), // Revel in slaughter
-                new W40KRTArchetypeAutomaticFeat("618bd712c61d4b2d89e55ecf5f3a6348", 4), // Ultimate 
+                new W40KRTArchetypeAutomaticFeat("618bd712c61d4b2d89e55ecf5f3a6348", 4), // Ultimate
             }),
             new W40KRTArchetype("Operative", "1529e5a0e7844bf3bb8d0cc0501264d4", "81c325968f774360a61536404a57c2ec", "6cfd9b9830ea403db07a816843a8e39a", new [] {
                 new W40KRTArchetypeAutomaticFeat("5dc9e4fdc7284b6e8de76f421dd28f5e", 1), // Ascension
@@ -59,8 +59,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTArchetype("Warrior", "974496d72fbe4329b438ee15cf004bd2", "3a9169d7ece94faf86b53298067a5b4c", "6a4310c9966946a3b82ed7acc94464da", new [] {
                 new W40KRTArchetypeAutomaticFeat("a2ff69ee11a348b59f754bab649fc6a3", 1), // Ascension
                 new W40KRTArchetypeAutomaticFeat("92193f4629c84812825841ae1b01d1da", 3), // Endure
-                new W40KRTArchetypeAutomaticFeat("2ee6f62308474fd7b765a08467eb5ae6", 4), // Ultimate 
+                new W40KRTArchetypeAutomaticFeat("2ee6f62308474fd7b765a08467eb5ae6", 4), // Ultimate
             }),
+            new W40KRTArchetype("Bladedancer", "dd6948ee596346a69733d0bb107c2f42", "1c12ab2cda9e46e49253a425e29733a5", "de2fa09b36314b2dafe09c3e8354d214", new[] {
+                new W40KRTArchetypeAutomaticFeat("1cf0a934f1364670ba2679bf42fc2afd", 1), // Ascension
+                new W40KRTArchetypeAutomaticFeat("c3d6e29e74e440a79cb243e4e93e0501", 3), // Death from above
+                new W40KRTArchetypeAutomaticFeat("916fcf40f9cc410f9b0a810516089207", 4), // Ultimate
+            })
         });
 
         public static W40KRTArchetypes Tier2 { get; } = new W40KRTArchetypes("Tier 2", 16, 35, "", new[] {
@@ -82,6 +87,14 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTArchetype("Arch-Militant", "651684417def4c258c72ba91f481b817", "63125df1390b45ac9cc6b2e0e777e9c2", "7f7d109653f24774939f758d094b8812", new [] {
                 new W40KRTArchetypeAutomaticFeat("ad31784e7ced47a394736d4aeb4ec745", 4), // Ultimate
             }),
+            new W40KRTArchetype("Executioner", "d6c0498a227040c891e4e2703eb55c13", "3e5f2be4dce140ab91343cee8ded6d2e", new [] {
+                "4f04773685be45c29927c6740ccf64d8", // Executioner_Keystone_Passive1_Feature, Forced Repentance
+                "47f5b3809fba409b9d27611ef0a77cd3", // Executioner_Keystone_Passive2_Feature, Scourging Strikes
+                "5c06542194b74ecc922b92f3543703d2" // Executioner_Keystone_Active_Feature, Where It Hurts
+                }, new [] {
+                    new W40KRTArchetypeAutomaticFeat("e5874ecd259b4878bc71239c281c17e4", 4), // Ultimate
+                }
+            ),
         }, new[] {
             new W40KRTArchetypeAutomaticFeat("064ce50cc4fa448a9e4c71c874301309", 5), // APIncreaseLevel20
         });

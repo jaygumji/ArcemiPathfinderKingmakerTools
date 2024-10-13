@@ -262,6 +262,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 "b5fe044e47604f47bf99ebd14440b579", // Drukhari Weapon Proficiency
                 "1b26e486d9974b9ca26d055413fb3e01", // Dual-Weapon Combat
             }),
+            new W40KRTCharacterSelectionOption("9b090810169e4a42b22afd5995d3720d", "Death Cult Assassin", feats: new[] {
+                "6d4c042a5a71482d87c6087fb0a3a245", // Raining Blood
+                //"467b1b00c1a6498190317a72fc58a12a", // Death Cult Breastplate item?
+            }),
 
             //new W40KRTCharacterSelectionOption("53970cc124ea433f93baa41028a8781a", "Comissar (Duplicate?)"),
             //new W40KRTCharacterSelectionOption("b23606b3443b42e490951c03203e0a10", "Criminal (Duplicate?)"),

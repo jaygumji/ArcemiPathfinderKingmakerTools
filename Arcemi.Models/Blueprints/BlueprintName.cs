@@ -9,7 +9,7 @@ namespace Arcemi.Models
         public BlueprintName(BlueprintType type, string displayName, string original)
         {
             Type = type;
-            DisplayName = displayName;
+            DisplayName = displayName.OrIfEmpty(original);
             Original = original;
         }
 

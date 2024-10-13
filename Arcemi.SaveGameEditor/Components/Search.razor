@@ -17,7 +17,7 @@
     <div class="col-md-12">
         <ul class="search-result @GeneratedClasses">
             @foreach (var item in FilteredItems) {
-                <li class="@(item.Equals(Current) ? "toggled" : "")" @onclick="() => SelectAsync(item)">
+                <li class="@(item.Equals(Current) ? "toggled" : "")" @onclick="() => SelectAsync(item)" title="@GetTooltip(item)">
                     @ResultItemTemplate.Invoke(item)
                 </li>
             }
@@ -45,6 +45,9 @@
     public Func<TItem, string> ItemSearchable { get; set; }
 
     [Parameter]
+    public Func<TItem, string> TooltipProvider { get; set; }
+
+    [Parameter]
     public int MaxCount { get; set; } = 300;
 
     public string Term { get; private set; }
@@ -67,6 +70,7 @@
         ? Items.Where(x => ItemSearchable(x).ILike(Term) || (x is IBlueprintMetadataEntry e && e.Id.IEq(Term))).Take(300)
         : Items.Take(MaxCount);
 
+    private string GetTooltip(TItem item) => TooltipProvider?.Invoke(item) ?? "";
     private async Task SelectAsync(TItem item)
     {
         Current = item;

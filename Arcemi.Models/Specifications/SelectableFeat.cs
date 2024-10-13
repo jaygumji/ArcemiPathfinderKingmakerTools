@@ -17,6 +17,7 @@
 
         public string Id => Entry is object ? Entry.Id : Spec.Id;
         public string DisplayName => Entry is object ? Entry.DisplayName : Spec?.Name;
+        public string Tooltip => Entry is object ? string.Concat(Entry.Name.Original, " (", Entry.Id, ")") : Spec?.Blueprint;
 
         public override int GetHashCode()
         {

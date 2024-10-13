@@ -92,7 +92,7 @@ namespace Arcemi.Models
             Directory.Delete(WorkingPath);
         }
 
-        private string GetWorkingPath(string name)  
+        private string GetWorkingPath(string name)
         {
             if (!_lookup.TryGetValue(name, out var path)) {
                 throw new ArgumentException($"No entries with the name {name} exists.");
