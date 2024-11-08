@@ -51,9 +51,6 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     var oldValue = Ref.Feature;
                     Ref.Feature = value;
 
-                    var oldType = W40KRTArchetypes.Tier1.Get(oldValue);
-                    if (oldType is null) return;
-
                     var type = W40KRTArchetypes.Tier1.Get(value);
                     if (type is null) return;
 
@@ -69,12 +66,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     foreach (var autoFeat in type.AutomaticFeats.Where(x => x.Level <= 1)) {
                         Owner.Feats.AddByBlueprint(autoFeat.Id);
                     }
-
-                    var part = ((W40KRTGameUnitProgressionModel)Owner.Progression).Model;
-                    var oldSelections = part.Selections.Where(x => x.Path.Eq(Ref.Path)).ToArray();
-                    foreach (var selection in oldSelections) {
-                        part.Selections.Remove(selection);
-                    }
+                    Ref.Feature = value;
                 }
                 else {
                     var option = Options.FirstOrDefault(o => o.Id.Eq(value));
