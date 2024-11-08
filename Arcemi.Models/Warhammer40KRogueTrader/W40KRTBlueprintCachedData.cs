@@ -32,7 +32,11 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                         using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
                         using (var streamReader = new StreamReader(fileStream)) {
                             var json = await streamReader.ReadToEndAsync();
-                            return JsonConvert.DeserializeObject<W40KRTBlueprintCachedData>(json);
+                            var cacheData = JsonConvert.DeserializeObject<W40KRTBlueprintCachedData>(json);
+                            if (cacheData is object) {
+                                return cacheData;
+                            }
+                            Logger.Current.Warning("Detected corrupt cache (null value), reseted cache");
                         }
                     }
                 }
