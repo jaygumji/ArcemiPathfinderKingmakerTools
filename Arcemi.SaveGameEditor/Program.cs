@@ -6,6 +6,8 @@ namespace Arcemi.SaveGameEditor
 {
     public class Program
     {
+        public static string Version { get; } = "2.8.0";
+
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
