@@ -21,10 +21,13 @@ namespace Arcemi.Models
             return new DurationProvider(() => EndTime, v => EndTime = v, gameTimeProvider);
         }
 
-        public static new void Prepare(IReferences refs, JObject obj)
+        public static void Prepare(IReferences refs, JObject obj, IGameTimeProvider gameTimeProvider)
         {
             obj.Add("$type", TypeRef);
             FactItemModel.Prepare(refs, obj);
+            //obj.Add("TickTime", "00:00:00");
+            //obj.Add("NextTickTime", "00:00:00");
+            obj.Add("EndTime", gameTimeProvider.Get().ToString());
         }
     }
 }

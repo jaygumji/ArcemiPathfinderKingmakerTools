@@ -18,6 +18,9 @@ namespace Arcemi.Models
         {
             obj.Add("$type", TypeRef);
             FactItemModel.Prepare(refs, obj);
+            //obj.Add(nameof(Rank), 0);
+            //obj.Add(nameof(RoundNumber), 0);
+            //obj.Add(nameof(PlayedFirstHitSound), false);
         }
     }
 }

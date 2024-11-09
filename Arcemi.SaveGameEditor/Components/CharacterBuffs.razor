@@ -1,6 +1,17 @@
 ﻿@inject CharacterViewModel Model
 @inject IGameResourcesProvider Resources
 
+@if (Buffs.IsAddEnabled && Buffs.AvailableEntries.Count > 0) {
+    <div class="row">
+        <div class="col-md-6">
+            <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddAsync()">
+                <span class="oi oi-plus"></span>
+                Add
+            </button>
+        </div>
+    </div>
+}
+
 <div class="form-list">
     <div class="row">
         <div class="col-md-4">
@@ -43,11 +54,70 @@
     }
 </div>
 
+<Modal @ref="modalAdd">
+    <Title>Add feat</Title>
+    <Body>
+        <AlertInfo>
+            Note that some buffs might be named the same, the tooltip might show more info to guide you into selecting the right buff to add.
+        </AlertInfo>
+        <TabControl StartIndex="0">
+            <Tab Name="Search">
+                <Content>
+                    <Search TItem="IBlueprintMetadataEntry" Items="Available" ItemSearchable="b => b.DisplayName" Context="item" OnSelect="a => AddBlueprint = a.Item.Id" TooltipProvider="i => string.Concat(i.Name.Original, ' ', '(', i.Id, ')')">
+                        <ResultItemTemplate>
+                            @item.DisplayName
+                        </ResultItemTemplate>
+                    </Search>
+                </Content>
+            </Tab>
+            <Tab Name="All">
+                <Content>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Buff</label>
+                            <select class="form-control" @bind="AddBlueprint">
+                                <option value="">Select buff...</option>
+                                @foreach (var blueprint in Available) {
+                                    <option value="@blueprint.Id" title="@string.Concat(blueprint.Name.Original, ' ', '(', blueprint.Id, ')')">@blueprint.DisplayName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </Content>
+            </Tab>
+        </TabControl>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddIsInvalid" @onclick="AddAsync">
+            Confirm
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAdd.CloseAsync()">Cancel</button>
+    </Footer>
+</Modal>
+
 @code {
     [Parameter]
     public IGameModelCollection<IGameUnitBuffEntry> Buffs { get; set; }
     private IEnumerable<IGameUnitBuffEntry> OrderedBuffs => Buffs
         .OrderBy(b => b.DisplayName);
+
+    private IEnumerable<IBlueprintMetadataEntry> Available => Buffs.AvailableEntries
+        .OrderBy(e => e.DisplayName);
+
+    private Modal modalAdd;
+    private string AddBlueprint;
+    private bool AddIsInvalid => string.IsNullOrEmpty(AddBlueprint);
+
+    private Task OpenAddAsync()
+    {
+        return modalAdd.OpenAsync();
+    }
+
+    private Task AddAsync()
+    {
+        var buff = Buffs.AddByBlueprint(AddBlueprint);
+        return modalAdd.CloseAsync();
+    }
 
     private void Remove(IGameUnitBuffEntry buff)
     {

@@ -64,7 +64,7 @@ namespace Arcemi.Models.PathfinderWotr
                 return false;
             }
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitBuffEntry(x, gameTimeProvider), IsBuff,
-                new WotrGameModelCollectionBuffWriter());
+                new WotrGameModelCollectionBuffWriter(gameTimeProvider));
 
             var uniqueBuffs = Ref.Parts.Items.OfType<BuffUniquePartItemModel>().FirstOrDefault();
             if (uniqueBuffs?.Buffs?.Count > 0) {

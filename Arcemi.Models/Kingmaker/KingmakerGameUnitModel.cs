@@ -56,7 +56,7 @@ namespace Arcemi.Models.Kingmaker
                 new KingmakerGameModelCollectionAbilityWriter());
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(
                 Ref.Descriptor.GetAccessor().Object<RefModel>("Buffs").GetAccessor().List("m_Facts", FactItemModel.Factory), x => new KingmakerGameUnitBuffEntry(x, gameTimeProvider), x => x is BuffFactItemModel feat,
-                new KingmakerGameModelCollectionBuffWriter());
+                new KingmakerGameModelCollectionBuffWriter(gameTimeProvider));
 
             var parts = Ref.Descriptor.GetAccessor().Object<KingmakerPartsContainerModel>("m_Parts");
             Weariness = (UnitWearinessPartItemModel)parts.Items.FirstOrDefault(x => x.Value is UnitWearinessPartItemModel)?.Value;
