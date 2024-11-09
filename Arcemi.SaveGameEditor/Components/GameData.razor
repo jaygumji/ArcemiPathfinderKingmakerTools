@@ -33,6 +33,18 @@ else if (Data is IGameDataMessage message){
         </div>
     </div>
 }
+else if (Data is IGameDataSeparator separator) {
+    <div class="@SizeClass">
+        <div class="form-group">
+            @if (separator.Type == GameDataSeparatorType.Header) {
+                <h4>@separator.Text</h4>
+            }
+            else {
+                @separator.Text
+            }
+        </div>
+    </div>
+}
 else if (Data is IGameDataText textData) {
     <div class="@SizeClass">
         <div class="form-group">

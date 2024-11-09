@@ -34,6 +34,17 @@ namespace Arcemi.Models
         Warning,
         Error
     }
+    public interface IGameDataSeparator : IGameData
+    {
+        string Text { get; }
+        GameDataSize Size { get; }
+        GameDataSeparatorType Type { get; }
+    }
+    public enum GameDataSeparatorType
+    {
+        Plain,
+        Header
+    }
     public enum GameDataActionType
     {
         Normal,
@@ -279,7 +290,7 @@ namespace Arcemi.Models
         {
             return RowList(GameModelCollectionBlueprintListWriter.CreateCollection(blueprints, res, availableEntries), itemName, searchPredicate, nameSize);
         }
-        
+
         private class GameDataInteger<T> : IGameDataInteger
             where T : class
         {
@@ -406,6 +417,25 @@ namespace Arcemi.Models
         public static IGameDataMessage Message(string text, GameDataMessageType type = GameDataMessageType.Info, GameDataSize size = GameDataSize.Row)
         {
             return new GameDataMessage(text, type, size);
+        }
+
+        private class GameDataSeparator : IGameDataSeparator
+        {
+
+            public GameDataSeparator(string text, GameDataSeparatorType type, GameDataSize size)
+            {
+                Text = text;
+                Type = type;
+                Size = size;
+            }
+
+            public string Text { get; }
+            public GameDataSeparatorType Type { get; }
+            public GameDataSize Size { get; }
+        }
+        public static IGameDataSeparator Separator(string text, GameDataSeparatorType type = GameDataSeparatorType.Plain, GameDataSize size = GameDataSize.Row)
+        {
+            return new GameDataSeparator(text, type, size);
         }
     }
 }
