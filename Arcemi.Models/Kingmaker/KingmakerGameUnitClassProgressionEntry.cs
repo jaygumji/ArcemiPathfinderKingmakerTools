@@ -11,6 +11,7 @@
         public ClassModel Model { get; }
         public string Name => Res.GetClassTypeName(Model.CharacterClass);
         public string SpecializationName => Res.GetClassArchetypeName(Model.Archetypes);
-        public int Level => Model.Level;
+        public int Level { get => Model.Level; set { } }
+        public bool IsReadOnly => true;
     }
 }

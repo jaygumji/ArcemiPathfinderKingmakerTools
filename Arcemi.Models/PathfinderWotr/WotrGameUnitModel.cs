@@ -44,9 +44,9 @@ namespace Arcemi.Models.PathfinderWotr
             Alignment = new WotrGameUnitAlignmentModel(unit);
             Asks = new WotrGameUnitAsksModel(unit);
             Race = new WotrGameUnitRaceModel(unit);
-            Progression = new WotrGameUnitProgressionModel(unit);
+            Progression = new WotrGameUnitProgressionModel(this);
             Stats = new WotrGameUnitStatsModel(unit);
-            Appearance = new WotrGameUnitAppearanceModel(unit.Parts.Items.OfType<UnitDollDataPartItemModel>().FirstOrDefault());
+            Appearance = new WotrGameUnitAppearanceModel(this, unit.Parts.Items.OfType<UnitDollDataPartItemModel>().FirstOrDefault());
             Body = new WotrGameUnitBodyModel(unit);
             SpellCaster = new WotrGameUnitSpellCasterModel(unit);
             Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new WotrGameUnitFeatEntry(x), x => x is FeatureFactItemModel feat

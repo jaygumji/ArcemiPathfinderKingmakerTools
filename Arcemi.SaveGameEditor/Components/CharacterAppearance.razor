@@ -1,8 +1,22 @@
-﻿@inject CharacterViewModel Model
-@inject IGameResourcesProvider Resources
+﻿@inject IGameResourcesProvider Resources
 
 @if (Appearance.Dolls.Count == 0) {
     <p class="alert alert-info">Character has no appearance data</p>
+    @if (Appearance.CanRestore) {
+        <AlertInfo>
+            Attempt to restore appearance data to character. Note that characters such as companions might not work 100%.
+            They might miss class equipment and require gear to look good.
+            You also need to import an appearance code for the dolls.
+        </AlertInfo>
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-info w-100" @onclick="() => Appearance.Restore()">
+                    <span class="oi oi-script"></span>
+                    Restore
+                </button>
+            </div>
+        </div>
+    }
 }
 else {
     <AlertInfo>
@@ -15,6 +29,17 @@ else {
             Then open the save in the editor and copy the code here, and then import the code on the character you want the appearance on
         </p>
     </AlertInfo>
+    @if (Appearance.CanDelete) {
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-info w-100" @onclick="() => Appearance.Delete()">
+                    <span class="oi oi-danger"></span>
+                    Delete
+                </button>
+            </div>
+        </div>
+    }
+
     <AccordionContainer>
         @foreach (var doll in Appearance.Dolls) {
             <Accordion HeaderText="@doll.Name" StartAsExpanded="@(doll == Appearance.Dolls.First())">

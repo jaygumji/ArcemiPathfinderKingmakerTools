@@ -20,11 +20,10 @@ namespace Arcemi.Tests
             });
 
             var saveFileProvider = MockEditFileSession.FromPartyJson(fileText, mainCharacterId, resources);
-            var target = new CharacterLevelManipulator(saveFileProvider.Game.MainCharacter, resources);
 
             var cls = saveFileProvider.Game.MainCharacter.Progression.Classes.First();
             Assert.Equal(7, cls.Level);
-            target.DowngradeClass(cls);
+            cls.Level--;
             Assert.Equal(6, cls.Level);
         }
     }

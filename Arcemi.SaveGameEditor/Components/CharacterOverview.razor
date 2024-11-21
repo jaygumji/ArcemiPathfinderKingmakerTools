@@ -186,7 +186,7 @@
                     </div>
                     @if (Unit is Arcemi.Models.PathfinderWotr.WotrGameUnitModel) {
                         <div class="col-md-2">
-                            <button class="btn btn-sm btn-warning" disabled="@(!LevelManipulator.CanDowngrade(cls))" @onclick="() => DowngradeClass(cls)">
+                            <button class="btn btn-sm btn-warning" disabled="@cls.IsReadOnly" @onclick="() => cls.Level--">
                                 <span class="oi oi-arrow-thick-bottom"></span>
                             </button>
                         </div>
@@ -223,13 +223,6 @@
     [Parameter]
     public IGameUnitModel Unit { get; set; }
 
-    private CharacterLevelManipulator LevelManipulator;
-
-    protected override void OnParametersSet()
-    {
-        LevelManipulator = new CharacterLevelManipulator(Unit, Model.Resources);
-    }
-
     private Modal modalEditCompanionState;
     private IGameUnitModel SelectedReplaceCompanion;
     private bool ConfirmCompanionStateIsDisabled => SelectedReplaceCompanion is null;
@@ -245,10 +238,5 @@
     private async Task ConfirmCompanionStateAsync(){
         SelectedReplaceCompanion.ReplacePartyMemberWith(Unit);
         await modalEditCompanionState.CloseAsync();
-    }
-
-    private void DowngradeClass(IGameUnitClassProgressionEntry cls)
-    {
-        LevelManipulator.DowngradeClass(cls);
     }
 }

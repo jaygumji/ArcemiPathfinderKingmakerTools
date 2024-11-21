@@ -18,6 +18,11 @@ namespace Arcemi.Models.Kingmaker
         public IReadOnlyList<IGameUnitDollModel> Dolls { get; }
         public bool IsSupported => Ref is object;
 
+        public bool CanRestore => false;
+        public bool CanDelete => false;
+        public void Restore() { }
+        public void Delete() { }
+
         public UnitEntityModel Ref { get; }
     }
 

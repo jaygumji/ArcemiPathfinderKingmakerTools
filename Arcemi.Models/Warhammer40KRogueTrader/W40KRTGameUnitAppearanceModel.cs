@@ -19,5 +19,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public UnitViewSettingsPartItemModel Ref { get; }
         public IReadOnlyList<IGameUnitDollModel> Dolls { get; } = Array.Empty<IGameUnitDollModel>();
         public bool IsSupported => Ref is object;
+
+        public bool CanRestore => false;
+        public bool CanDelete => false;
+        public void Restore() { }
+        public void Delete() { }
     }
 }

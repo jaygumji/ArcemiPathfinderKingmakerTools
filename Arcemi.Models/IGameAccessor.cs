@@ -301,6 +301,10 @@ namespace Arcemi.Models
     public interface IGameUnitAppearanceModel : IGameModel
     {
         IReadOnlyList<IGameUnitDollModel> Dolls { get; }
+        bool CanRestore { get; }
+        bool CanDelete { get; }
+        void Restore();
+        void Delete();
     }
 
     public interface IGameUnitDollModel : IGameModel
@@ -417,7 +421,8 @@ namespace Arcemi.Models
     {
         string Name { get; }
         string SpecializationName { get; }
-        int Level { get; }
+        int Level { get; set; }
+        bool IsReadOnly { get; }
     }
 
     public interface IGameUnitUltimateProgressionEntry
