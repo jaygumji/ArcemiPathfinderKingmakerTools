@@ -28,12 +28,12 @@ jobs:
       working-directory: ./Arcemi.SaveGameEditor
       run: electronize build /target win
     - name: Upload Artifact Setup
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Windows-Setup
         path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor Setup *.exe
     - name: Upload Artifact Archive
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Windows-Archive
         path: ./Arcemi.SaveGameEditor/bin/Desktop/win-unpacked/*
