@@ -28,7 +28,7 @@ jobs:
       working-directory: ./Arcemi.SaveGameEditor
       run: electronize build /target linux /PublishReadyToRun false
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Linux
         path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor-*.AppImage
