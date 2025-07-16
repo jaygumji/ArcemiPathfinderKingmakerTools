@@ -88,6 +88,8 @@ namespace Arcemi.Models.PathfinderWotr
             };
         }
 
+        public string Blueprint => Ref.Descriptor?.Blueprint;
+
         public UnitEntityType Type
         {
             get {

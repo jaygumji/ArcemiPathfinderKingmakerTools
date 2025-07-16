@@ -1,38 +1,55 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     public class W40KRTGameUnitPortraitModel : IGameUnitPortraitModel
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
-        private readonly string unitBlueprint;
 
-        public W40KRTGameUnitPortraitModel(UnitUISettingsPartItemModel uiSettings, string unitBlueprint)
+        public W40KRTGameUnitPortraitModel(IGameUnitModel owner, UnitUISettingsPartItemModel uiSettings)
         {
+            Owner = owner;
             UiSettings = uiSettings;
-            this.unitBlueprint = unitBlueprint;
         }
 
+        public IGameUnitModel Owner { get; }
         public UnitUISettingsPartItemModel UiSettings { get; }
 
         public string Blueprint => UiSettings?.m_Portrait;
 
+        private static readonly IReadOnlyDictionary<string, string> Reroutes = new Dictionary<string, string>(StringComparer.Ordinal) {
+            {"fffed8b281aa45fc9926d62d7aaf94c9", "64c01932603e419585d9bfa92b8ba367" }, // Master_ArbitesCyberMastiff_PetUnit
+            {"dbdd1762ef204564b5255af113609602", "9170af4bd2a7480bba619b444d1fb12c" }, // Master_ServoskullSwarm_PetUnit
+            {"65636e47aafd47399c479ebf49153985", "28676476a9e14601b2e17de5fa65f65f" }, // Master_PsykerPsyberRaven_PetUnit
+            {"7a9448a35ad449bcbcb9af8bed810134", "5164ccb798dd434a81ad05cabba43263" }, // Master_CyberEagle_PetUnit
+            {"df761ea549574f888876390dfd2292aa", "" }, // Master_ExperimentalServitor_PetUnit
+        };
+
         public string Path
         {
             get {
-                if (UiSettings is null) return Res.AppData.Portraits.GetUnknownUri();
+                if (UiSettings is object) {
+                    if (!string.IsNullOrEmpty(UiSettings.m_CustomPortrait?.CustomPortraitId)) {
+                        return Res.GetPortraitsUri(UiSettings.m_CustomPortrait.CustomPortraitId);
+                    }
+                    if (!string.IsNullOrEmpty(Blueprint)) {
+                        return Res.GetPortraitsUri(Blueprint);
+                    }
+                }
 
-                if (!string.IsNullOrEmpty(UiSettings.m_CustomPortrait?.CustomPortraitId)) {
-                    return Res.GetPortraitsUri(UiSettings.m_CustomPortrait.CustomPortraitId);
-                }
-                if (!string.IsNullOrEmpty(Blueprint)) {
-                    return Res.GetPortraitsUri(Blueprint);
-                }
+                var unitBlueprint = Owner.Blueprint;
                 if (string.IsNullOrEmpty(unitBlueprint)) {
                     return Res.AppData.Portraits.GetUnknownUri();
                 }
+                Logger.Current.Information($"Attempting to resolve portrait from unit '{unitBlueprint}'");
                 if (Res.TryGetPortraitsUri(unitBlueprint, out var uri)) {
                     return uri;
+                }
+                if (Reroutes.TryGetValue(unitBlueprint, out var reroute)) {
+                    Logger.Current.Information($"Rerouted '{unitBlueprint}' to '{reroute}'");
+                    return Res.GetPortraitsUri(reroute);
                 }
                 var name = Res.GetCharacterName(unitBlueprint);
                 if (name.HasValue()) {

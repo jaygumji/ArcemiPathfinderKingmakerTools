@@ -60,7 +60,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     Asks = new W40KRTGameUnitAsksModel(asks);
                 }
                 else if (part is UnitUISettingsPartItemModel uiSettings) {
-                    Portrait = new W40KRTGameUnitPortraitModel(uiSettings, Blueprint);
+                    Portrait = new W40KRTGameUnitPortraitModel(this, uiSettings);
                 }
                 else if (part is UnitCompanionPartItemModel companion) {
                     Companion = new W40KRTGameUnitCompanionModel(this, companion);
@@ -75,7 +75,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     RefInventory = part;
                 }
             }
-            if (Portrait is null) Portrait = new W40KRTGameUnitPortraitModel(null, null);
+            if (Portrait is null) Portrait = new W40KRTGameUnitPortraitModel(this, null);
             if (Companion is null) Companion = new W40KRTGameUnitCompanionModel(this, null);
             if (Alignment is null) Alignment = new W40KRTGameUnitAlignmentModel(null);
             if (Asks is null) Asks = new W40KRTGameUnitAsksModel(null);
@@ -98,7 +98,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     GameDataModels.BlueprintOptions("Type", starshipTypes, this, x => x.Blueprint, (x, v) => x.Blueprint = v)
                 });
             }
-            else if (Type.IsCharacter()) {
+            else if (Type.IsCharacter() && Type != UnitEntityType.Pet) {
                 var soulMarks = Ref.Facts.Items.OfType<W40KRTSoulMarkFactItemModel>().ToArray();
                 var heretical = soulMarks.FirstOrDefault(sm => sm.Blueprint.Eq("175d1fd853b24f188a4078306ca066ad"));
                 var dogmatic = soulMarks.FirstOrDefault(sm => sm.Blueprint.Eq("1aa7cb5ae17c4ed19aa2596b6bcca9d3"));
@@ -136,7 +136,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             }
         }
 
-        private string Blueprint { get => A.Value<string>(); set => A.Value(value); }
+        public string Blueprint { get => A.Value<string>(); private set => A.Value(value); }
+        private string MasterRef => A.Value<string>();
 
         public UnitEntityType Type
         {
@@ -144,7 +145,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 if (A.TypeValue().Eq("Kingmaker.EntitySystem.Entities.UnitEntity, Code")) {
                     if (Blueprint.Eq("3a849d3674644c0085d5099ccf6813df")) return UnitEntityType.Player;
                     if (Blueprint.Eq("baaff53a675a84f4983f1e2113b24552")) return UnitEntityType.Mercenary;
-                    if (Ref.Parts.Items.OfType<UnitPetPartItemModel>().Any()) return UnitEntityType.Pet;
+                    if (MasterRef.HasValue()) return UnitEntityType.Pet;
                     return UnitEntityType.Companion;
                 }
                 if (A.TypeValue().Eq("Kingmaker.EntitySystem.Entities.StarshipEntity, Code")) return UnitEntityType.Starship;

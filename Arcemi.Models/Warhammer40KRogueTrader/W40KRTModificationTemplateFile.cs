@@ -39,6 +39,23 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             }
         }
 
+        private static bool TryDeserialize<T>(JsonSerializer serializer, SharpCompress.Archives.IArchiveEntry entry, out T value)
+        {
+            using (var stream = entry.OpenEntryStream())
+            using (var reader = new StreamReader(stream))
+            using (var jsonReader = new JsonTextReader(reader)) {
+                try {
+                    value = serializer.Deserialize<T>(jsonReader);
+                    return true;
+                }
+                catch (Exception ex) {
+                    Logger.Current.Warning($"Could not read entry '{entry.Key}' as {typeof(T).Name}, message was '{ex.Message}'");
+                    value = default;
+                    return false;
+                }
+            }
+        }
+
         private static void LoadGameArchive(W40KRTBlueprintCachedData cacheInfo, W40KRTModificationArchiveOptions options, FileInfo archiveInfo)
         {
             if (cacheInfo.IsValidCache(archiveInfo.LastWriteTimeUtc)) {
@@ -53,46 +70,43 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 using (var archive = options.GetArchive(archiveInfo)) {
                     foreach (var entry in archive.Entries) {
                         if (entry.IsDirectory) continue;
+                        if (!entry.Key.IEnd(".json")) continue;
                         var isLocalization = entry.Key.IStart(localizationPrefix);
                         var isBlueprint = entry.Key.IStart(blueprintPrefix);
 
                         if (!isLocalization && !isBlueprint) continue;
 
-                        using (var stream = entry.OpenEntryStream())
-                        using (var reader = new StreamReader(stream))
-                        using (var jsonReader = new JsonTextReader(reader)) {
-                            if (isLocalization) {
-                                var localizationEntry = serializer.Deserialize<W40KRTLocalization>(jsonReader);
-                                if (string.IsNullOrEmpty(localizationEntry.OwnerGuid)) continue;
-                                if (!(localizationEntry.Languages?.Count > 0)) continue;
-                                if (entry.Key.IEnd("DisplayName.json") || entry.Key.IEnd("DisplayName_.json") || entry.Key.IEnd("DisplayName_String.json")) {
-                                    if (cacheInfo.DisplayNames.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
-                                    }
-                                    else {
-                                        cacheInfo.DisplayNames.Add(localizationEntry.OwnerGuid, localizationEntry);
-                                    }
-                                }
-                                else if (entry.Key.IEnd("Description.json") || entry.Key.IEnd("Description_.json") || entry.Key.IEnd("Description_String.json")) {
-                                    if (cacheInfo.Descriptions.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
-                                    }
-                                    else {
-                                        cacheInfo.Descriptions.Add(localizationEntry.OwnerGuid, localizationEntry);
-                                    }
+                        if (isLocalization) {
+                            if (!TryDeserialize<W40KRTLocalization>(serializer, entry, out var localizationEntry)) continue;
+                            if (string.IsNullOrEmpty(localizationEntry.OwnerGuid)) continue;
+                            if (!(localizationEntry.Languages?.Count > 0)) continue;
+                            if (entry.Key.IEnd("DisplayName.json") || entry.Key.IEnd("DisplayName_.json") || entry.Key.IEnd("DisplayName_String.json")) {
+                                if (cacheInfo.DisplayNames.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
                                 }
                                 else {
-                                    var key = entry.Key;
-                                    key.ToString();
+                                    cacheInfo.DisplayNames.Add(localizationEntry.OwnerGuid, localizationEntry);
                                 }
                             }
-                            else if (isBlueprint) {
-                                var blueprintAsset = serializer.Deserialize<W40KRTBlueprintAsset>(jsonReader);
-                                if (string.IsNullOrEmpty(blueprintAsset?.AssetId)) continue;
-                                if (cacheInfo.BlueprintAssets.TryGetValue(blueprintAsset.AssetId, out var existing)) {
-                                    existing.ToString();
+                            else if (entry.Key.IEnd("Description.json") || entry.Key.IEnd("Description_.json") || entry.Key.IEnd("Description_String.json")) {
+                                if (cacheInfo.Descriptions.TryGetValue(localizationEntry.OwnerGuid, out var existing)) {
                                 }
                                 else {
-                                    cacheInfo.BlueprintAssets.Add(blueprintAsset.AssetId, blueprintAsset);
+                                    cacheInfo.Descriptions.Add(localizationEntry.OwnerGuid, localizationEntry);
                                 }
+                            }
+                            else {
+                                var key = entry.Key;
+                                key.ToString();
+                            }
+                        }
+                        else if (isBlueprint) {
+                            if (!TryDeserialize<W40KRTBlueprintAsset>(serializer, entry, out var blueprintAsset)) continue;
+                            if (string.IsNullOrEmpty(blueprintAsset?.AssetId)) continue;
+                            if (cacheInfo.BlueprintAssets.TryGetValue(blueprintAsset.AssetId, out var existing)) {
+                                existing.ToString();
+                            }
+                            else {
+                                cacheInfo.BlueprintAssets.Add(blueprintAsset.AssetId, blueprintAsset);
                             }
                         }
                     }

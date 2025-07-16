@@ -92,7 +92,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public bool IsSupported => Model is object;
 
-        public bool IsSelectionsRepairable => IsSupported && Selections.Count == 0 && Owner.Type.IsCharacter();
+        public bool IsSelectionsRepairable => IsSupported && Selections.Count == 0 && Owner.Type.IsCharacter() && Owner.Type != UnitEntityType.Pet;
 
         public void RepairSelections()
         {

@@ -30,7 +30,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             }
         }
 
-        public bool IsInParty => State.Eq(CompanionPartState.InParty);
-        public bool IsExCompanion => State.Eq(CompanionPartState.ExCompanion);
+        public bool IsInParty => Model?.State.Eq(CompanionPartState.InParty) ?? false;
+        public bool IsExCompanion => Model?.State.Eq(CompanionPartState.ExCompanion) ?? false;
     }
 }

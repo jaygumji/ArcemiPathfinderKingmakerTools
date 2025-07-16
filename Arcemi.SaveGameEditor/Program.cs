@@ -6,7 +6,7 @@ namespace Arcemi.SaveGameEditor
 {
     public class Program
     {
-        public static string Version { get; } = "2.9.0";
+        public static string Version { get; } = "2.10.0";
 
         public static void Main(string[] args)
         {

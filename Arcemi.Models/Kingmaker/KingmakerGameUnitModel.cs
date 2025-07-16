@@ -76,6 +76,8 @@ namespace Arcemi.Models.Kingmaker
             };
         }
 
+        public string Blueprint => Ref.Descriptor?.Blueprint;
+
         public UnitEntityType Type
         {
             get {

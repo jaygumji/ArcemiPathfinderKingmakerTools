@@ -135,6 +135,7 @@ namespace Arcemi.Models
     public interface IGameUnitModel : IGameModel
     {
         string UniqueId { get; }
+        string Blueprint { get; }
         string Name { get; }
         string CustomName { get; set; }
         string DefaultName { get; }
