@@ -20,15 +20,15 @@ else {
                     <GeneralOverview Member="Member" />
                 </Content>
             </Tab>
-            @if (Member is Arcemi.Models.PathfinderWotr.WotrGameManagementMemberModelEntry wotr) {
+            @if (Member is Arcemi.Models.PathfinderWotr.WotrGameManagementMemberModelEntry) {
                 <Tab Name="Attributes">
                     <Content>
-                        <GeneralAttributes Unit="wotr.Model" />
+                        <GeneralAttributes Unit="Member" />
                     </Content>
                 </Tab>
                 <Tab Name="Feats (Skills)">
                     <Content>
-                        <GeneralSkills Unit="wotr.Model" />
+                        <GeneralSkills Unit="Member" />
                     </Content>
                 </Tab>
 @*            <Tab Name="Ritual">

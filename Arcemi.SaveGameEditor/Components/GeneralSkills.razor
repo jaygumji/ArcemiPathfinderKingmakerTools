@@ -81,19 +81,22 @@
 
 @code {
     [Parameter]
-    public PlayerLeaderModel Unit { get; set; }
+    public IGameManagementMemberModelEntry Unit { get; set; }
 
-    private IEnumerable<IBlueprintMetadataEntry> Feats => Unit.Skills
+    private PlayerLeaderModel Wotr => ((Arcemi.Models.PathfinderWotr.WotrGameManagementMemberModelEntry)Unit).Model;
+
+    private IEnumerable<IBlueprintMetadataEntry> Feats => Wotr.Skills
         .Select(s => Resources.Blueprints.Get(s))
         .Where(f => SearchTerm.IsEmpty() || f.DisplayName.ILike(SearchTerm))
         .OrderBy(s => s.DisplayName);
 
     private IEnumerable<IBlueprintMetadataEntry> AvailableFeatsBase => Resources.Blueprints.GetEntries(BlueprintTypeId.MemberSkill)
         .Where(IsValidFeat)
+        .Where(f => !Wotr.Skills.Contains(f.Id, StringComparer.Ordinal))
         .OrderBy(s => s.DisplayName);
 
     private string SearchTerm;
- 
+
     private Modal modalAddFeat;
     private string AddFeatBlueprint;
     private bool AddFeatIsInvalid => string.IsNullOrEmpty(AddFeatBlueprint);
@@ -111,7 +114,7 @@
     private async Task AddFeatAsync()
     {
         if (!IsDuplicateBlueprintId(AddFeatBlueprint)) {
-            Unit.Skills.Add(AddFeatBlueprint);
+            Wotr.Skills.Add(AddFeatBlueprint);
         }
 
         await modalAddFeat.CloseAsync();
@@ -119,13 +122,13 @@
 
     private bool IsDuplicateBlueprintId(string blueprint)
     {
-        var feats = Unit.Skills.Where(f => f.Eq(blueprint));
+        var feats = Wotr.Skills.Where(f => f.Eq(blueprint));
         return feats.Any();
     }
 
     private void RemoveFeature(string feature)
     {
-        Unit.Skills.Remove(feature);
+        Wotr.Skills.Remove(feature);
     }
 
 }

@@ -10,7 +10,7 @@
             <label class="form-label">Value</label>
         </div>
     </div>
-    @foreach (var attr in Unit.Stats) {
+    @foreach (var attr in Wotr.Stats) {
         <div class="row g-3">
             <div class="col-md-4">
                 <label class="form-label">@attr.Name</label>
@@ -24,5 +24,7 @@
 
 @code {
     [Parameter]
-    public PlayerLeaderModel Unit { get; set; }
+    public IGameManagementMemberModelEntry Unit { get; set; }
+
+    private PlayerLeaderModel Wotr => ((Arcemi.Models.PathfinderWotr.WotrGameManagementMemberModelEntry)Unit).Model;
 }
