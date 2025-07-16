@@ -9,7 +9,7 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
-    
+
 
 jobs:
   build:
@@ -19,16 +19,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: |
+          6.0.x
+          8.0.x
     - name: Install Electron.NET CLI
       run: dotnet tool install ElectronNET.CLI -g
     - name: Electronize Build
       working-directory: ./Arcemi.SaveGameEditor
       run: electronize build /target linux /PublishReadyToRun false
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Linux
         path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor-*.AppImage
