@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpCompress.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,11 +8,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
     public class W40KRTGameUnitProgressionModel : IGameUnitProgressionModel
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
+        private readonly W40KRTUnitMediator _mediator;
 
-        public W40KRTGameUnitProgressionModel(IGameUnitModel owner, UnitProgressionPartItemModel model)
+        public W40KRTGameUnitProgressionModel(IGameUnitModel owner, UnitProgressionPartItemModel model, W40KRTUnitMediator mediator)
         {
             Owner = owner;
             Model = model;
+            _mediator = mediator;
             Selections = new GameModelCollection<IGameUnitSelectionProgressionEntry, UnitProgressionSelectionOfPartModel>(model?.Selections, s => new W40KRTGameUnitSelectionProgressionEntry(owner, s), writer: new W40KRTGameUnitSelectionProgressionEntryWriter(owner));
 
             if (model is null) return;
@@ -66,10 +69,10 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     from a in t.Types
                     where a.CareerPathId.Eq(feat.Blueprint)
                     select new { Tier = t, Archetype = a }).FirstOrDefault();
-                if (match is null || match.Tier.Level > value) {
+                if (match is null) {
                     if (feat.Rank > 1) {
                         feat.Rank -= 1;
-                        Logger.Current.Information($"Downranked path {feat.DisplayName} to {feat.Rank}");
+                        Logger.Current.Information($"Downranked feat {feat.DisplayName} to {feat.Rank}");
                     }
                     else {
                         Owner.Feats.Remove(feat);
@@ -77,8 +80,18 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     }
                 }
                 else {
-                    feat.Rank = value - match.Tier.Level + 1;
-                    Logger.Current.Information($"Downranked path {feat.DisplayName} to {feat.Rank}");
+                    if (match.Tier.Level > value) {
+                        Owner.Feats.Remove(feat);
+                        Logger.Current.Information($"Removed path {feat.DisplayName}");
+                    }
+                    else {
+                        feat.Rank = value - match.Tier.Level + 1;
+                        Logger.Current.Information($"Downranked path {feat.DisplayName} to {feat.Rank}");
+                    }
+
+                    if (match.Archetype?.Downgrade is object) {
+                        match.Archetype.Downgrade.Invoke(new W40KRTArchetypeDowngradeArguments(Owner, _mediator, match.Tier, match.Archetype, value));
+                    }
                 }
             }
 

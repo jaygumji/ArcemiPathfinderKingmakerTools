@@ -11,10 +11,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public W40KRTGameAccessor(IGameEditFile file)
         {
+            var evt = new GameOperationEvents(this);
+            _mediator = new W40KRTUnitMediator(this, evt);
+            OperationEvents = evt;
             File = file;
             Party = new W40KRTGamePartyModel(file.Player, file.Header);
             SharedStash = new W40KRTCargoInventoryModel(file.Player.GetAccessor().Object<RefModel>("CargoState"));
-            Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new W40KRTGameUnitModel(a));
+            Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new W40KRTGameUnitModel(a, _mediator));
             MainCharacter = Characters.FirstOrDefault(c => c.UniqueId.Eq(MainCharacterId));
             SharedInventory = new W40KRTGameSharedInventoryModel(((W40KRTGameUnitModel)MainCharacter)?.RefInventory);
             Management = new W40KRTGameManagementModel(file.Player);
@@ -22,6 +25,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         }
 
         public string MainCharacterId { get => File.Player.GetAccessor().Value<string>("MainCharacter"); set => File.Player.GetAccessor().Value(value, "MainCharacter"); }
+
+        private readonly W40KRTUnitMediator _mediator;
+
         public IGameEditFile File { get; }
         public IGamePartyModel Party { get; }
         public IGameUnitModel MainCharacter { get; private set; }
@@ -30,15 +36,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameInventoryModel SharedStash { get; }
         public IGameManagementModel Management { get; }
         public IGameStateModel State { get; }
+        public IGameOperationEvents OperationEvents { get; }
 
         public void BeforeSave()
         {
         }
 
-        public IGameUnitModel GetOwnerOf(IGameUnitModel unit)
-        {
-            return null;
-        }
+        public IGameUnitModel GetOwnerOf(IGameUnitModel unit) => _mediator.ParentOf(unit);
 
         public void SetMainCharacter(IGameUnitModel unit)
         {

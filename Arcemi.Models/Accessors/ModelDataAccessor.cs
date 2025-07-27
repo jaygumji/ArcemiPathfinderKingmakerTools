@@ -203,5 +203,10 @@ namespace Arcemi.Models
         {
             return _obj.Property(name) != null;
         }
+
+        public bool RemoveProperty(string name)
+        {
+            return _obj.Remove(name);
+        }
     }
 }

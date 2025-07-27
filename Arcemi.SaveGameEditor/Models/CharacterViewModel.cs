@@ -1,8 +1,6 @@
 ﻿using Arcemi.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
 namespace Arcemi.SaveGameEditor.Models
 {
     public class CharacterViewModel
@@ -16,6 +14,7 @@ namespace Arcemi.SaveGameEditor.Models
 
         public bool CanEdit => _session.CanEdit;
         public IEnumerable<IGameUnitModel> Characters => _session.Game.Characters;
+        public IGameAccessor Game => _session.Game;
 
         public IGameResourcesProvider Resources => _session.Game.Definition.Resources;
 

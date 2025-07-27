@@ -15,6 +15,7 @@ namespace Arcemi.Models.Kingmaker
 
         public KingmakerGameAccessor(IGameEditFile file)
         {
+            OperationEvents = new GameOperationEvents(this);
             File = file;
             GameTimeProvider = file.Player.GetGameTimeProvider();
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new KingmakerGameUnitModel(a, GameTimeProvider), a => a.Descriptor is object);
@@ -40,6 +41,7 @@ namespace Arcemi.Models.Kingmaker
         public IGameInventoryModel SharedStash { get; }
         public IGameManagementModel Management { get; }
         public IGameStateModel State { get; }
+        public IGameOperationEvents OperationEvents { get; }
 
         public void BeforeSave()
         {

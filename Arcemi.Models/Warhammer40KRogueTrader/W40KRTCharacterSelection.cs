@@ -266,6 +266,12 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 "6d4c042a5a71482d87c6087fb0a3a245", // Raining Blood
                 //"467b1b00c1a6498190317a72fc58a12a", // Death Cult Breastplate item?
             }),
+            new W40KRTCharacterSelectionOption("8ca6cc2ee71748ddab3513339cf05ad6", "Arbitrator (Solomorne)", feats: new [] {
+                "e9fc0a90ebe8458a86c9b7db9f6770b3", // Swift Justice
+                "a2437c418d824e1b990eac368c6a9273", // Fulminating Shot
+            }),
+            new W40KRTCharacterSelectionOption("cd1baf99dad544168bbf4962b3389d94", "Arbitrator", "090a3dc366dd4a6c9dcc7bf4239cd768"),
+
 
             //new W40KRTCharacterSelectionOption("53970cc124ea433f93baa41028a8781a", "Comissar (Duplicate?)"),
             //new W40KRTCharacterSelectionOption("b23606b3443b42e490951c03203e0a10", "Criminal (Duplicate?)"),
@@ -299,8 +305,27 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             //new W40KRTCharacterSelectionOption("3bc17e7685f343a39b6a800f7f95a623", "Telepathy"), //???
         });
 
+        private const string ArbitratorDeathSentenceId = "6a4c3b65dff840e0aab5966ffe8aa7ba";
+        public static W40KRTCharacterSelection Arbitrator { get; } = new W40KRTCharacterSelection("Arbitrator", 0, "090a3dc366dd4a6c9dcc7bf4239cd768", new[] {
+            new W40KRTCharacterSelectionOption("2d6fa8bc6c064d2580388e97db49ae82", "Vigilant", feats: new [] {
+                "e9fc0a90ebe8458a86c9b7db9f6770b3", // Swift Justice
+                "a2437c418d824e1b990eac368c6a9273", // Fulminating Shot
+            }),
+            new W40KRTCharacterSelectionOption("037ac91349d945b785120849e8d51bf9", "Castigator", feats: new [] {
+                "2533d30143ec4008ae7c1b0c0919a3ad", // Castigated!
+            }, upgrade: a => a.Owner.Abilities.AddByBlueprint(ArbitratorDeathSentenceId), downgrade: a => {
+                var ability = a.Owner.Abilities.FirstOrDefault(x => x.Blueprint.Eq(ArbitratorDeathSentenceId));
+                if (ability is object) a.Owner.Abilities.Remove(ability);
+            }),
+            new W40KRTCharacterSelectionOption("3ef2ffb9a92b4e4b9cde5371644e95d1", "Subductor", feats: new [] {
+                "613246cc28464ade9845da9b30dc65c3", // Ruthless Supression
+                "747e37ddcc294865b5a9f5c83050db9a", // Assault Onslaught
+            }),
+       });
+
         public static W40KRTCharacterSelection DarkestHour { get; } = new W40KRTCharacterSelection("Darkest Hour", 0, "a54affd2f8404dbcbffc3e0312061b17", new[] {
             new W40KRTCharacterSelectionOption("be767d8335c24f1788f543cef7fde0e6", "None (Companion)"),
+            new W40KRTCharacterSelectionOption("4680708374fd4aba88651a420379c54c", "Dark Signs Arbitrator"),
             new W40KRTCharacterSelectionOption("04f4eca5cad54087a648a05168cbea96", "Dark Signs Commissar"),
             new W40KRTCharacterSelectionOption("6c68b0b4d1a64b2791473d4daaa50aec", "Dark Signs Criminal"),
             new W40KRTCharacterSelectionOption("7b7ece038d3343bfbf31646fecca3ea3", "Dark Signs Ecclesiarchy"),
@@ -308,6 +333,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTCharacterSelectionOption("4385c080dade487fa7b743b5e2600662", "Dark Signs Navy"),
             new W40KRTCharacterSelectionOption("12c37b4a75944ce79edaa02fac6dd751", "Dark Signs Nobility"),
             new W40KRTCharacterSelectionOption("5b6e0dff115643559d0eba1f1328ace7", "Dark Signs Psyker"),
+            new W40KRTCharacterSelectionOption("8523fd0f7081464d996648118aaf98fe", "Shame Arbitrator"),
             new W40KRTCharacterSelectionOption("8a83889572ac45bd80a9941a9cd0e9b8", "Shame Commissar"),
             new W40KRTCharacterSelectionOption("368650db0ef647fd8e62b680386dc071", "Shame Criminal"),
             new W40KRTCharacterSelectionOption("a88fa4c3b3de42408a1030e864a28c18", "Shame Ecclesiarchy"),
@@ -315,6 +341,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTCharacterSelectionOption("fd5566807b6f4a79ad0972fb97d3cb9b", "Shame Navy"),
             new W40KRTCharacterSelectionOption("139f390bf5c84cee95846301020baeaf", "Shame Nobility"),
             new W40KRTCharacterSelectionOption("a3c6bfc6917a49718a333f1e3ed4b2aa", "Shame Psyker"),
+            new W40KRTCharacterSelectionOption("49ca462e0c6e48c9b9fe31698176cb45", "Tortures Arbitrator"),
             new W40KRTCharacterSelectionOption("a609de0f250d499fbaffcfd37c59c5fd", "Tortures Commissar"),
             new W40KRTCharacterSelectionOption("9380ef2326334b2d95e1eeacbb785cef", "Tortures Criminal"),
             new W40KRTCharacterSelectionOption("7f05891ab82b48b2b9aef99722024591", "Tortures Ecclesiarchy"),
@@ -326,6 +353,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public static W40KRTCharacterSelection MomentOfTriumph { get; } = new W40KRTCharacterSelection("Moment Of Triumph", 0, "d97cf3c474034359851b1a8ffba73715", new[] {
             new W40KRTCharacterSelectionOption("1420e40e2a114a8b961a5587381359e0", "None (Companion)"),
+            new W40KRTCharacterSelectionOption("872a161ed63e441a9196d22fb7651112", "Feat Of Mind Arbitrator"),
             new W40KRTCharacterSelectionOption("7dbb4d8408c34bf0a840b277feafa021", "Feat Of Mind Commisar"),
             new W40KRTCharacterSelectionOption("12af6c0764aa4cd0a51719cb16dd56be", "Feat Of Mind Criminal"),
             new W40KRTCharacterSelectionOption("53befc9fdc6f4856ae8aaa14d67356ca", "Feat Of Mind Ecclesiarchy"),
@@ -333,6 +361,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTCharacterSelectionOption("18de8919406c4d589a0b74a512f04608", "Feat Of Mind Navy"),
             new W40KRTCharacterSelectionOption("83b0ed54c3ed48129b91860e873c4952", "Feat Of Mind Nobility"),
             new W40KRTCharacterSelectionOption("fd2e95e7e1254088a4959bde4f219105", "Feat Of Mind Psyker"),
+            new W40KRTCharacterSelectionOption("f31d8202501640eea9e6a934c436d2b2", "Glory Arbitrator"),
             new W40KRTCharacterSelectionOption("d92ccc0f17a14e8e8df0082edbd0427a", "Glory Commissar"),
             new W40KRTCharacterSelectionOption("ad3286f82b9044968f64264c9f431068", "Glory Criminal"),
             new W40KRTCharacterSelectionOption("5d6f71aa393340908f26b27474021fd6", "Glory Ecclesiarchy"),
@@ -340,6 +369,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             new W40KRTCharacterSelectionOption("c73eca5c4570412097a2399a98403baf", "Glory Navy"),
             new W40KRTCharacterSelectionOption("57956895f8a1469e8cb5c27a6a5fcd52", "Glory Nobility"),
             new W40KRTCharacterSelectionOption("66a1900bac4f4c2db6bfd1254b10126d", "Glory Psyker"),
+            new W40KRTCharacterSelectionOption("535c75aeaa174618a5c05f0478952c72", "Great Deed Arbitrator"),
             new W40KRTCharacterSelectionOption("36928a81856640ea9296904a7b9f2178", "Great Deed Commissar"),
             new W40KRTCharacterSelectionOption("9aa6694a186d4af6b64d0ead2a4c312c", "Great Deed Criminal"),
             new W40KRTCharacterSelectionOption("675cb7de11ec49559ca1a5ef314b8676", "Great Deed Ecclesiarchy"),
@@ -362,6 +392,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             ImperialWorld,
             Occupation,
             SanctionedPsyker,
+            Arbitrator,
             DarkestHour,
             MomentOfTriumph,
             Attribute1,

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,6 +96,39 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     new W40KRTArchetypeAutomaticFeat("e5874ecd259b4878bc71239c281c17e4", 4), // Ultimate
                 }
             ),
+            new W40KRTArchetype("Overseer", "21b0fc8cfbe940ecbef0114d5d27b44a", "bf826b7565cf4363bcca587a03b3ac4b", new [] {
+                "79d7b9273feb4554b09c82f69c0b62d6", // Mastiff
+                "9afe9cd1f46748fd8ffbc960b61744da", // Eagle
+                "29b296e0153241f3aca55b7c4d50cec0", // Raven
+                "dc7ce6fdeb964544b613e749c2610623", // Servoskull
+            }, new [] {
+                new W40KRTArchetypeAutomaticFeat("0cded06c29174502823f0f52154d8162", 1), // Reactivate
+                new W40KRTArchetypeAutomaticFeat("616f42e2f9a842f191fdeca28d1bbf0d", 1), // Mastiff: Battle mode: Standby
+                new W40KRTArchetypeAutomaticFeat("5955723361094eada17c84c6c9f84476", 1), // Mastiff: Protect
+                new W40KRTArchetypeAutomaticFeat("078bea05041540fa87a53b93d639f243", 1), // Mastiff: Apprehend
+                new W40KRTArchetypeAutomaticFeat("469ab777f2284aa18e1d242db2f9cc64", 1), // Mastiff: The Null Directive
+                new W40KRTArchetypeAutomaticFeat("bf9f7a1559664c17b3ac5565c4771f06", 1), // Raven: Purification Discharge
+                new W40KRTArchetypeAutomaticFeat("781021a32fd04104a523a33d986f1bee", 1), // Raven: Relocate
+                new W40KRTArchetypeAutomaticFeat("0345824c4a104cca9438f871bcfff0c7", 1), // Raven: Warp Relay
+                new W40KRTArchetypeAutomaticFeat("90622e48744a474e91770f71359dae9b", 1), // Raven: The Null Directive
+                new W40KRTArchetypeAutomaticFeat("b2779133cc324256b3663dcbc5d9c377", 1), // Servoskull: Extrapolation
+                new W40KRTArchetypeAutomaticFeat("57e2562dac5c40268e27f87317f008d0", 1), // Servoskull: Relocation
+                new W40KRTArchetypeAutomaticFeat("a62ff7d3719640d0b5f23976cbb9544f", 1), // Servoskull: The Null Directive
+                new W40KRTArchetypeAutomaticFeat("98362e16cc3a4e7f9ce63039186c2b23", 1), // Eagle: Obstruct Vision
+                new W40KRTArchetypeAutomaticFeat("71bb3db5c0bd4fed938e8cfc01968f7b", 1), // Eagle: Soar!
+                new W40KRTArchetypeAutomaticFeat("9c71981e5f6846ac994916c480331f82", 1), // Eagle: Winged Aegis
+                new W40KRTArchetypeAutomaticFeat("0bff20e811334914a23cc29d3682da94", 1), // Eagle: The Null Directive
+                //new W40KRTArchetypeAutomaticFeat("", 1), //
+                new W40KRTArchetypeAutomaticFeat("67bed913aca646fca8bef97d7cc0648f", 4), // Ultimate
+            }, downgrade: W40KRTArchetypeOverseer.Downgrade),
+            new W40KRTArchetype("Overseer (Solomorne)", "f95e3d9a049345ec918926f092ec67e2", "bf826b7565cf4363bcca587a03b3ac4b", "b83f88696cd848f894dc01e5ad0d0d1b", new [] {
+                new W40KRTArchetypeAutomaticFeat("0cded06c29174502823f0f52154d8162", 1), // Reactivate
+                new W40KRTArchetypeAutomaticFeat("469ab777f2284aa18e1d242db2f9cc64", 1), // The Null Directive
+                new W40KRTArchetypeAutomaticFeat("616f42e2f9a842f191fdeca28d1bbf0d", 1), // Mastiff: Battle mode: Standby
+                new W40KRTArchetypeAutomaticFeat("5955723361094eada17c84c6c9f84476", 1), // Mastiff: Protect
+                new W40KRTArchetypeAutomaticFeat("078bea05041540fa87a53b93d639f243", 1), // Mastiff: Apprehend
+                new W40KRTArchetypeAutomaticFeat("67bed913aca646fca8bef97d7cc0648f", 4), // Ultimate
+            }, downgrade: W40KRTArchetypeOverseer.Downgrade),
         }, new[] {
             new W40KRTArchetypeAutomaticFeat("064ce50cc4fa448a9e4c71c874301309", 5), // APIncreaseLevel20
         });
@@ -162,16 +196,17 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
     public class W40KRTArchetype
     {
-        public W40KRTArchetype(string name, string careerPathId, string selectionId, string[] keystoneAbilityIds, IReadOnlyList<W40KRTArchetypeAutomaticFeat> automaticFeats = null)
+        public W40KRTArchetype(string name, string careerPathId, string selectionId, string[] keystoneAbilityIds, IReadOnlyList<W40KRTArchetypeAutomaticFeat> automaticFeats = null, Action<W40KRTArchetypeDowngradeArguments> downgrade = null)
         {
             Name = name;
             CareerPathId = careerPathId;
             SelectionId = selectionId;
             KeystoneAbilityIds = keystoneAbilityIds;
             AutomaticFeats = automaticFeats ?? Array.Empty<W40KRTArchetypeAutomaticFeat>();
+            Downgrade = downgrade;
         }
-        public W40KRTArchetype(string name, string careerPathId, string selectionId, string keystoneAbilityId, IReadOnlyList<W40KRTArchetypeAutomaticFeat> automaticFeats = null)
-            : this(name, careerPathId, selectionId, new[] { keystoneAbilityId }, automaticFeats)
+        public W40KRTArchetype(string name, string careerPathId, string selectionId, string keystoneAbilityId, IReadOnlyList<W40KRTArchetypeAutomaticFeat> automaticFeats = null, Action<W40KRTArchetypeDowngradeArguments> downgrade = null)
+            : this(name, careerPathId, selectionId, new[] { keystoneAbilityId }, automaticFeats, downgrade)
         {
         }
 
@@ -180,5 +215,25 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public string SelectionId { get; }
         public IReadOnlyList<string> KeystoneAbilityIds { get; }
         public IReadOnlyList<W40KRTArchetypeAutomaticFeat> AutomaticFeats { get; }
+        public Action<W40KRTArchetypeDowngradeArguments> Downgrade { get; }
+    }
+
+    public class W40KRTArchetypeDowngradeArguments
+    {
+        public W40KRTArchetypeDowngradeArguments(IGameUnitModel owner, W40KRTUnitMediator mediator, W40KRTArchetypes tier, W40KRTArchetype archetype, int downgradeToLevel)
+        {
+            Owner = owner;
+            Mediator = mediator;
+            Tier = tier;
+            Archetype = archetype;
+            DowngradeToLevel = downgradeToLevel;
+        }
+
+        public IGameUnitModel Owner { get; }
+        public W40KRTUnitMediator Mediator { get; }
+        public W40KRTArchetypes Tier { get; }
+        public W40KRTArchetype Archetype { get; }
+        public int DowngradeToLevel { get; }
+        public bool IsLastLevel => Tier.Level == DowngradeToLevel + 1;
     }
 }

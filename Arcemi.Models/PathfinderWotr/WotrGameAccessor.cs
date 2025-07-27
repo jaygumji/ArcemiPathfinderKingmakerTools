@@ -15,6 +15,7 @@ namespace Arcemi.Models.PathfinderWotr
 
         public WotrGameAccessor(IGameEditFile file)
         {
+            OperationEvents = new GameOperationEvents(this);
             File = file;
             GameTimeProvider = file.Player.GetGameTimeProvider();
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new WotrGameUnitModel(a, GameTimeProvider), a => a.Descriptor is object);
@@ -37,6 +38,7 @@ namespace Arcemi.Models.PathfinderWotr
         public IGameManagementModel Management { get; }
         public IGameStateModel State { get; }
         public IGameTimeProvider GameTimeProvider { get; }
+        public IGameOperationEvents OperationEvents { get; }
 
         public void BeforeSave()
         {

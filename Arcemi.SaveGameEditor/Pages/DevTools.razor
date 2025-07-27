@@ -144,9 +144,16 @@
         }
     }
 
-    private void GeneratePathfinderWotrBlueprintBackup()
+    private async Task GeneratePathfinderWotrBlueprintBackup()
     {
         var game = Config.Instance.GetGame(GameDefinition.Pathfinder_WrathOfTheRighteous);
+
+        var outputFolder = await ElectronNET.API.Electron.App.GetAppPathAsync();
+        outputFolder = System.IO.Path.Combine(outputFolder, "Dev", game.DefinitionId, "Assets");
+        if (!System.IO.Directory.Exists(outputFolder)) {
+            System.IO.Directory.CreateDirectory(outputFolder);
+        }
+
         var cheatDataFile = System.IO.Path.Combine(game.GameFolder, "Bundles", "cheatdata.json");
         if (!System.IO.File.Exists(cheatDataFile)) {
             Output = "Could not find cheatdata.json @ " + cheatDataFile;
@@ -185,7 +192,41 @@
                 b.Append($"{{\"Name\":\"{entry.Name}\",\"Guid\":\"{entry.Guid}\",\"TypeFullName\":\"{entry.TypeFullName}\"}}");
             }
             b.Append("]}");
-            Output = b.ToString();
+
+            var blueprintsFile = System.IO.Path.Combine(game.GameFolder, "blueprints.zip");
+            var targetBlueprints = SharpCompress.Archives.Zip.ZipArchive.Create();
+            using (var blueprintsStream = System.IO.File.OpenRead(blueprintsFile))
+            using (var blueprints = new System.IO.Compression.ZipArchive(blueprintsStream, System.IO.Compression.ZipArchiveMode.Read)) {
+                foreach (var metadata in cheatdata.Entries) {
+                    if (!metadata.Path.HasValue()) continue;
+
+                    var actualPath = metadata.Path.StartsWith("Blueprints\\", StringComparison.OrdinalIgnoreCase)
+                        ? metadata.Path.Remove(0, 11)
+                        : metadata.Path;
+                    actualPath = actualPath.Replace("\\", "/");
+
+                    var entry = blueprints.GetEntry(actualPath);
+                    using (var srcStream = entry.Open()) {
+                        var memStream = new System.IO.MemoryStream();
+                        srcStream.CopyTo(memStream);
+                        memStream.Seek(0, System.IO.SeekOrigin.Begin);
+                        targetBlueprints.AddEntry(entry.FullName, memStream, memStream.Length, entry.LastWriteTime.DateTime);
+                    }
+                }
+            }
+            var targetBlueprintsFile = System.IO.Path.Combine(outputFolder, "blueprints.zip");
+            using (var targetBlueprintsStream = System.IO.File.OpenWrite(targetBlueprintsFile))
+                targetBlueprints.SaveTo(targetBlueprintsStream);
+
+            var outputBundleFolder = System.IO.Path.Combine(outputFolder, "Bundles");
+            if (!System.IO.Directory.Exists(outputBundleFolder)) {
+                System.IO.Directory.CreateDirectory(outputBundleFolder);
+            }
+
+            var targetCheatDataFile = System.IO.Path.Combine(outputBundleFolder, "cheatdata.json");
+            await System.IO.File.WriteAllTextAsync(targetCheatDataFile, b.ToString());
+
+            Output = $"Data written to {outputFolder}";
         }
     }
 

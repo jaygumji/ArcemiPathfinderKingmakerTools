@@ -36,11 +36,67 @@ namespace Arcemi.Models
         IGameInventoryModel SharedStash { get; }
         IGameManagementModel Management { get; }
         IGameStateModel State { get; }
+        IGameOperationEvents OperationEvents { get; }
 
         void BeforeSave();
 
         IGameUnitModel GetOwnerOf(IGameUnitModel unit);
         void SetMainCharacter(IGameUnitModel unit);
+    }
+
+    public interface IGameOperationEvents
+    {
+        void Listen(string handle, Action<GameOperationEventArgs> callback);
+    }
+    public class GameOperationEvents : IGameOperationEvents
+    {
+        private readonly Dictionary<string, Action<GameOperationEventArgs>> _registeredCallbacks;
+        public GameOperationEvents(IGameAccessor game)
+        {
+            Game = game;
+            _registeredCallbacks = new Dictionary<string, Action<GameOperationEventArgs>>(StringComparer.Ordinal);
+        }
+
+        public IGameAccessor Game { get; }
+
+        public void Listen(string handle, Action<GameOperationEventArgs> callback)
+        {
+            if (_registeredCallbacks.ContainsKey(handle)) {
+                _registeredCallbacks[handle] = callback;
+            }
+            else {
+                _registeredCallbacks.Add(handle, callback);
+            }
+        }
+
+        public void Raise(string eventName, params object[] arguments)
+        {
+            var bag = new Dictionary<Type, object>();
+            foreach (var arg in arguments) bag.Add(arg.GetType(), arg);
+            var args = new GameOperationEventArgs(Game, eventName, bag);
+            foreach (var callback in _registeredCallbacks.Values) { callback(args); }
+        }
+    }
+
+    public class GameOperationEventArgs
+    {
+        private readonly Dictionary<Type, object> _bag;
+
+        public GameOperationEventArgs(IGameAccessor game, string eventName, Dictionary<Type, object> bag)
+        {
+            Game = game;
+            EventName = eventName;
+            _bag = bag;
+        }
+
+        public IGameAccessor Game { get; }
+        public string EventName { get; }
+
+        public T Value<T>() where T : class
+        {
+            if (_bag.TryGetValue(typeof(T), out var val)) return (T)val;
+            return default(T);
+        }
     }
 
     public interface IGamePartyModel : IGameModel
@@ -86,6 +142,12 @@ namespace Arcemi.Models
         public IGamePartyModel Party { get; }
         public IGameStateModel State { get; }
         public string MainCharacterId { get; set; }
+        public IGameOperationEvents OperationEvents { get; }
+
+        public NotSetGameAccessor()
+        {
+            OperationEvents = new GameOperationEvents(this);
+        }
 
         public void BeforeSave()
         {

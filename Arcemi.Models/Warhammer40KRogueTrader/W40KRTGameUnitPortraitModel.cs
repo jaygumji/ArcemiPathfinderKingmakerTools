@@ -25,6 +25,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             {"65636e47aafd47399c479ebf49153985", "28676476a9e14601b2e17de5fa65f65f" }, // Master_PsykerPsyberRaven_PetUnit
             {"7a9448a35ad449bcbcb9af8bed810134", "5164ccb798dd434a81ad05cabba43263" }, // Master_CyberEagle_PetUnit
             {"df761ea549574f888876390dfd2292aa", "" }, // Master_ExperimentalServitor_PetUnit
+            {"c3128c02ae674a8cabe2dfff081449ad", "64c01932603e419585d9bfa92b8ba367" }, // Glaito_Cybermastiff_PetUnit
+            {"a699795d21f74159abb00f9a217fa97d", "d78de329292a47e4a439ef463b826a52" }, // Unit = SolomorneCompanion, Portrait = SolomorneAnthar
+            {"51604d37ac0e499da70e2c4a4f086066", "295917ceecac418bbac0a508b12d8d2d" }, // Unit = AbelardCompanion, Portrait = Abeliard_Portrait
         };
 
         public string Path
@@ -43,17 +46,16 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 if (string.IsNullOrEmpty(unitBlueprint)) {
                     return Res.AppData.Portraits.GetUnknownUri();
                 }
-                Logger.Current.Information($"Attempting to resolve portrait from unit '{unitBlueprint}'");
+                //Logger.Current.Information($"Attempting to resolve portrait from unit '{unitBlueprint}'");
                 if (Res.TryGetPortraitsUri(unitBlueprint, out var uri)) {
                     return uri;
                 }
                 if (Reroutes.TryGetValue(unitBlueprint, out var reroute)) {
-                    Logger.Current.Information($"Rerouted '{unitBlueprint}' to '{reroute}'");
+                    //Logger.Current.Information($"Rerouted '{unitBlueprint}' to '{reroute}'");
                     return Res.GetPortraitsUri(reroute);
                 }
                 var name = Res.GetCharacterName(unitBlueprint);
                 if (name.HasValue()) {
-                    if (name.Eq("Abelard")) name = "Abeliard"; // Misspell in game resources
                     name = name + "_Portrait";
                     var entry = Res.Blueprints.GetEntries(BlueprintTypeId.Portrait).FirstOrDefault(e => e.Name.Original.Eq(name));
                     if (entry is object)

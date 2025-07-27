@@ -27,6 +27,8 @@ namespace Arcemi.Models
         {
         }
 
+        public string Type { get => A.Value<string>("$type"); set => A.Value(value, "$type"); }
+
         public static PartItemModel Factory(ModelDataAccessor accessor)
         {
             var type = accessor.TypeValue();

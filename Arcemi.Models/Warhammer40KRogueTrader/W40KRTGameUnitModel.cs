@@ -8,10 +8,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     public class W40KRTGameUnitModel : Model, IGameUnitModel
     {
+        private static IReadOnlyDictionary<string, string> NameReroutes { get; } = new Dictionary<string, string>(StringComparer.Ordinal) {
+            {"c3128c02ae674a8cabe2dfff081449ad", "Glaito"}, // Glaito_Cybermastiff_PetUnit
+        };
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
         public string UniqueId => Ref.UniqueId;
         public string Name => CustomName ?? DefaultName;
-        public string DefaultName => Res.GetCharacterName(Blueprint);
+        public string DefaultName => NameReroutes.TryGetValue(Blueprint, out var name) ? name : Res.GetCharacterName(Blueprint);
         public string CustomName { get => RefDescriptor?.CustomName; set => RefDescriptor.CustomName = value; }
         public bool IsSupported => RefDescriptor is object;
 
@@ -37,7 +40,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameModelCollection<IGameUnitBuffEntry> UniqueBuffs { get; } = GameModelCollection<IGameUnitBuffEntry>.Empty;
         public IReadOnlyList<IGameDataObject> Sections { get; }
 
-        public W40KRTGameUnitModel(UnitEntityModel unit)
+        public W40KRTGameUnitModel(UnitEntityModel unit, W40KRTUnitMediator mediator)
             : base(unit.GetAccessor())
         {
             Ref = unit;
@@ -47,7 +50,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     RefDescriptor = descriptor;
                 }
                 else if (part is UnitProgressionPartItemModel progression) {
-                    Progression = new W40KRTGameUnitProgressionModel(this, progression);
+                    Progression = new W40KRTGameUnitProgressionModel(this, progression, mediator);
                     Race = new W40KRTGameUnitRaceModel(progression);
                 }
                 else if (part is UnitBodyPartItemModel body) {
@@ -80,7 +83,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             if (Alignment is null) Alignment = new W40KRTGameUnitAlignmentModel(null);
             if (Asks is null) Asks = new W40KRTGameUnitAsksModel(null);
             if (Race is null) Race = new W40KRTGameUnitRaceModel(null);
-            if (Progression is null) Progression = new W40KRTGameUnitProgressionModel(this, null);
+            if (Progression is null) Progression = new W40KRTGameUnitProgressionModel(this, null, mediator);
             if (Stats is null) Stats = new W40KRTGameUnitStatsModel(null);
             if (Appearance is null) Appearance = new W40KRTGameUnitAppearanceModel(null, null);
             if (Body is null) Body = new W40KRTGameUnitBodyModel(this, null);
@@ -133,11 +136,24 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 Sections = new IGameDataObject[] {
                     GameDataModels.Object("Biography", biographyProperties)
                 };
+
+                if (Type == UnitEntityType.Companion) {
+                    if (Blueprint.Eq("a699795d21f74159abb00f9a217fa97d")) { // Solomorne
+                        Overview = GameDataModels.Object(new[] {
+                            GameDataModels.Message("Downlevel to 15 or below might break the game and cause you to be unable to progress certain quests", GameDataMessageType.Warning)
+                        });
+                    }
+                    else {
+                        Overview = GameDataModels.Object(new[] {
+                            GameDataModels.Message("Downlevel a companion below it's starting level might not work 100%, there might be leftover feats and abilities", GameDataMessageType.Warning)
+                        });
+                    }
+                }
             }
         }
 
         public string Blueprint { get => A.Value<string>(); private set => A.Value(value); }
-        private string MasterRef => A.Value<string>();
+        internal string MasterRef => A.Value<string>();
 
         public UnitEntityType Type
         {
