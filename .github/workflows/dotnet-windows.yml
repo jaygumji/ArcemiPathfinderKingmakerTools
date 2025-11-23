@@ -5,9 +5,9 @@ name: Create Windows Version
 
 on:
   push:
-    branches: [ "generic" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "generic" ]
+    branches: [ "main" ]
   workflow_dispatch:
     
 
@@ -21,19 +21,29 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: |
+          8.0.x
     - name: Install Electron.NET CLI
       run: dotnet tool install ElectronNET.CLI -g
+    - name: Prune Electron host node_modules (production only)
+      shell: bash
+      working-directory: ./Arcemi.SaveGameEditor/ElectronHostHook
+      run: |
+        if [ -f package.json ]; then
+          npm ci --omit=dev
+        else
+          echo "ElectronHostHook package.json not found; skipping npm prune."
+        fi
     - name: Electronize Build
       working-directory: ./Arcemi.SaveGameEditor
       run: electronize build /target win
     - name: Upload Artifact Setup
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Windows-Setup
         path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor Setup *.exe
     - name: Upload Artifact Archive
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Windows-Archive
         path: ./Arcemi.SaveGameEditor/bin/Desktop/win-unpacked/*

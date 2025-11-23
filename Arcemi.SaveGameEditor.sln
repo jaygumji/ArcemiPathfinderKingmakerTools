@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31521.260
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11217.181 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{60DEEB5F-5287-408F-9D35-B1E8C0DDD699}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		.github\workflows\dotnet-linux.yml = .github\workflows\dotnet-linux.yml
+		.github\workflows\dotnet-osx.yml = .github\workflows\dotnet-osx.yml
+		.github\workflows\dotnet-windows.yml = .github\workflows\dotnet-windows.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

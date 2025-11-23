@@ -64,6 +64,15 @@
         Output = b.ToString();
     }
 
+    private static readonly IReadOnlyDictionary<string, string> FixedNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+        {"Item", "Other"}
+    };
+
+    private static readonly IReadOnlyList<string> FixedPrefixes = new[] {
+        "ItemEquipment",
+        "Item"
+    };
+
     public void GenerateBlueprintTypes(EditorGameConfiguration game) {
         var cheatDataFile = System.IO.Path.Combine(game.GameFolder, "Bundles", "cheatdata.json");
         if (!System.IO.File.Exists(cheatDataFile)) {
@@ -88,7 +97,18 @@
             var typeNames = cheatdata.Entries.Select(e => e.TypeFullName).Distinct(StringComparer.Ordinal).Select(x => new { Name = NameOf(x), FullName = x }).OrderBy(x => x.Name).ToArray();
             var b = new System.Text.StringBuilder();
             foreach (var typeName in typeNames) {
-                b.AppendLine($"public static BlueprintType {typeName.Name} {{ get; }} = new BlueprintType(\"\", \"{typeName.FullName}\");");
+                var displayName = typeName.Name;
+                if (FixedNames.TryGetValue(displayName, out var fixedName)) {
+                    displayName = fixedName;
+                }
+                else {
+                    var prefix = FixedPrefixes.FirstOrDefault(p => displayName.IStart(p));
+                    if (prefix.HasValue() && prefix.Length < displayName.Length){
+                        displayName = displayName.Substring(prefix.Length);
+                    }
+                }
+                displayName = displayName.AsDisplayable();
+                b.AppendLine($"public static BlueprintType {typeName.Name} {{ get; }} = new BlueprintType(\"{displayName}\", \"{typeName.FullName}\");");
             }
             b.AppendLine();
             b.AppendLine("private static readonly Dictionary<string, BlueprintType> LookupFullName = new Dictionary<string, BlueprintType>(StringComparer.Ordinal) {");

@@ -56,6 +56,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
            W40KRTBlueprintProvider.Item,
            W40KRTBlueprintProvider.ItemArmor,
            W40KRTBlueprintProvider.ItemWeapon,
+           W40KRTBlueprintProvider.ItemShield,
            W40KRTBlueprintProvider.ItemArmorPlating,
            W40KRTBlueprintProvider.ItemAugerArray,
            W40KRTBlueprintProvider.ItemLifeSustainer,

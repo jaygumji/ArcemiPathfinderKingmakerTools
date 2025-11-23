@@ -20,6 +20,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             W40KRTBlueprintProvider.ItemMechadendrite);
         public static W40KRTItemType Weapon { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityWeapon, Code",
             W40KRTBlueprintProvider.ItemWeapon);
+        public static W40KRTItemType Shield { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityShield, Code",
+            W40KRTBlueprintProvider.ItemShield);
         public static W40KRTItemType Armor { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityArmor, Code",
             W40KRTBlueprintProvider.ItemArmor);
         public static W40KRTItemType Usable { get; } = new W40KRTItemType("Kingmaker.Items.ItemEntityUsable, Code",

@@ -11,25 +11,29 @@
     "appId": "com.Arcemi.SaveGameEditor.app",
     "productName": "Arcemi Save Game Editor",
     "copyright": "Copyright © 2025",
-    "buildVersion": "2.11.0",
+    "buildVersion": "2.12.0",
+    "asar": true,
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"
     },
     "extraResources": [
       {
-        "from": "./bin",
+        "from": "./bin/Release/net8.0/${os}-${arch}/publish",
         "to": "bin",
-        "filter": [ "**/*" ]
+        "filter": [
+          "**/*",
+          "!**/*.pdb",
+          "!**/*.xml"
+        ]
       }
     ],
     "files": [
-      {
-        "from": "./ElectronHostHook/node_modules",
-        "to": "ElectronHostHook/node_modules",
-        "filter": [ "**/*" ]
-      },
-      "**/*"
+      "**/*",
+      "!**/*.pdb",
+      "!**/*.xml",
+      "!**/obj/**",
+      "!**/bin/**"
     ]
   }
 }

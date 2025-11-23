@@ -22,10 +22,18 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          6.0.x
           8.0.x
     - name: Install Electron.NET CLI
       run: dotnet tool install ElectronNET.CLI -g
+    - name: Prune Electron host node_modules (production only)
+      shell: bash
+      working-directory: ./Arcemi.SaveGameEditor/ElectronHostHook
+      run: |
+        if [ -f package.json ]; then
+          npm ci --omit=dev
+        else
+          echo "ElectronHostHook package.json not found; skipping npm prune."
+        fi
     - name: Electronize Build
       working-directory: ./Arcemi.SaveGameEditor
       run: electronize build /target osx /PublishReadyToRun false
