@@ -27,12 +27,12 @@ jobs:
       run: dotnet tool install ElectronNET.CLI -g
     - name: Prune Electron host node_modules (production only)
       shell: bash
-      working-directory: ./Arcemi.SaveGameEditor/ElectronHostHook
       run: |
-        if [ -f package.json ]; then
+        if [ -d "./Arcemi.SaveGameEditor/ElectronHostHook" ] && [ -f "./Arcemi.SaveGameEditor/ElectronHostHook/package.json" ]; then
+          cd ./Arcemi.SaveGameEditor/ElectronHostHook
           npm ci --omit=dev
         else
-          echo "ElectronHostHook package.json not found; skipping npm prune."
+          echo "ElectronHostHook not found; skipping npm prune."
         fi
     - name: Electronize Build
       working-directory: ./Arcemi.SaveGameEditor
