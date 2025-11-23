@@ -19,7 +19,7 @@
     },
     "extraResources": [
       {
-        "from": "./bin/Release/net8.0/${os}-${arch}/publish",
+        "from": "./bin",
         "to": "bin",
         "filter": [
           "**/*",
