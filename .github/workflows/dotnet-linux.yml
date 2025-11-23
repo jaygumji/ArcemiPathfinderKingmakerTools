@@ -22,6 +22,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
+          6.0.x
           8.0.x
     - name: Install Electron.NET CLI
       run: dotnet tool install ElectronNET.CLI -g
