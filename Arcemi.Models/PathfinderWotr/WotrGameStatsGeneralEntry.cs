@@ -12,6 +12,7 @@
         public string Name => Model.Name;
         public int Value { get => Model.PairedValue; set => Model.PairedValue = value; }
         public string Info => Model.TotalValue.ToString();
+        public bool IsReadOnly => false;
     }
     internal class WotrGameStatsAttributesEntry : IGameUnitStatsEntry
     {
@@ -25,6 +26,7 @@
         public string Name => Model.Name;
         public int Value { get => Model.PairedValue; set => Model.PairedValue = value; }
         public string Info => Model.ModifiersSum;
+        public bool IsReadOnly => false;
     }
     internal class WotrGameStatsSkillsEntry : IGameUnitStatsEntry
     {
@@ -38,6 +40,7 @@
         public string Name => Model.Name;
         public int Value { get => Model.BaseValue; set => Model.BaseValue = value; }
         public string Info => Model.PermanentValue.ToString();
+        public bool IsReadOnly => false;
     }
     internal class WotrGameStatsCombatEntry : IGameUnitStatsEntry
     {
@@ -51,6 +54,7 @@
         public string Name => Model.Name;
         public int Value { get => Model.BaseValue; set => Model.BaseValue = value; }
         public string Info => Model.PermanentValue.ToString();
+        public bool IsReadOnly => false;
     }
     internal class WotrGameStatsSavesEntry : IGameUnitStatsEntry
     {
@@ -64,5 +68,6 @@
         public string Name => Model.Name;
         public int Value { get => Model.BaseValue; set => Model.BaseValue = value; }
         public string Info => Model.PermanentValue.ToString();
+        public bool IsReadOnly => false;
     }
 }

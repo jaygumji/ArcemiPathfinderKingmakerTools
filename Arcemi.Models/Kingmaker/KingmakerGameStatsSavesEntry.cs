@@ -12,5 +12,6 @@
         public string Name => Model.Name;
         public int Value { get => Model.BaseValue; set => Model.BaseValue = value; }
         public string Info => Model.PermanentValue.ToString();
+        public bool IsReadOnly => false;
     }
 }

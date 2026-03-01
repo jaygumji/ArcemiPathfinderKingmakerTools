@@ -1,12 +1,12 @@
 using Arcemi.Models;
 using Arcemi.Models.PathfinderWotr;
-using Arcemi.SaveGameEditor.Models;
 using Arcemi.Tests.Mocks;
 using System.Linq;
 using Xunit;
 
 namespace Arcemi.Tests
 {
+    [Collection("SharedGameResources")]
     public class CharacterViewModelTests
     {
         [Fact]

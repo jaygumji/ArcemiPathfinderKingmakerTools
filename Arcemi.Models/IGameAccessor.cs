@@ -13,15 +13,17 @@ namespace Arcemi.Models
     public static class SupportedGames
     {
         public static IReadOnlyList<GameDefinition> All { get; } = new[] {
+            GameDefinition.Warhammer40K_DarkHeresy,
             GameDefinition.Warhammer40K_RogueTrader,
             GameDefinition.Pathfinder_WrathOfTheRighteous,
             GameDefinition.Pathfinder_Kingmaker
         };
         public static IGameAccessor Detect(IGameEditFile file)
         {
+            if (Warhammer40KRogueTrader.W40KRTGameAccessor.Detect(file)) return new Warhammer40KRogueTrader.W40KRTGameAccessor(file);
             if (PathfinderWotr.WotrGameAccessor.Detect(file)) return new PathfinderWotr.WotrGameAccessor(file);
             if (Kingmaker.KingmakerGameAccessor.Detect(file)) return new Kingmaker.KingmakerGameAccessor(file);
-            if (Warhammer40KRogueTrader.W40KRTGameAccessor.Detect(file)) return new Warhammer40KRogueTrader.W40KRTGameAccessor(file);
+            if (Warhammer40KDarkHeresy.W40KDHGameAccessor.Detect(file)) return new Warhammer40KDarkHeresy.W40KDHGameAccessor(file);
             return new NotSetGameAccessor();
         }
     }
@@ -452,6 +454,7 @@ namespace Arcemi.Models
         string Name { get; }
         int Value { get; set; }
         string Info { get; }
+        bool IsReadOnly { get; }
     }
 
     public interface IGameUnitProgressionModel : IGameModel

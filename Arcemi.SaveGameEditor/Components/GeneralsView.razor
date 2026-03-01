@@ -8,7 +8,7 @@ else {
     <ul class="portraits leaders">
         @foreach (var member in Members) {
         <li @onclick="() => SelectMember(member)" class="@(Member == member ? "toggled" : "")">
-            <img src="file://@member.PortraitPath" alt="Portrait" />
+            <img src="@LocalImageUrl.ToApiUrl(member.PortraitPath)" alt="Portrait" />
             <span>@member.Name</span>
         </li>
         }

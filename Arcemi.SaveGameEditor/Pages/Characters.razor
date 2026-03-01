@@ -10,7 +10,7 @@ else {
     <ul class="portraits">
         @foreach (var unit in Model.Characters.Where(c => c.Type.IsDisplayedInCharactersPage())) {
         <li @onclick="() => SelectCharacter(unit)" class="@(Unit == unit ? "toggled" : "")" title="@unit.Name">
-            <img src="file://@unit.Portrait.Path" alt="Portrait" />
+            <img src="@LocalImageUrl.ToApiUrl(unit.Portrait.IsSupported ? unit.Portrait.Path : null)" alt="Portrait" />
             <span>@unit.CustomName.OrIfEmpty(unit.Name)</span>
         </li>
         }
@@ -32,40 +32,42 @@ else {
                     </button>
                 </div>
             }
-            <div class="col-md-3">
-                <div>
-                    <label>&nbsp;</label>
+            @if (Unit.Portrait.IsSupported) {
+                <div class="col-md-3">
+                    <div>
+                        <label>&nbsp;</label>
+                    </div>
+                    <div>
+                    <button class="btn btn-info w-100" @onclick="() => modalChosePortrait.OpenAsync()">
+                        <span class="oi oi-person"></span>
+                        Portrait
+                    </button>
+                    <Modal @ref="modalChosePortrait">
+                        <Title>Select new portrait</Title>
+                        <Body>
+                            <TabControl StartIndex="0">
+                                @foreach (var catKV in AvailablePortraits){
+                                    <Tab Name="@catKV.Key.Name">
+                                        <Content>
+                                            <ul class="portraits portraits-selection">
+                                                @foreach (var portrait in catKV.Value) {
+                                                <li @onclick="() => SelectPortrait(portrait)" title="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))">
+                                                    <img src="@LocalImageUrl.ToApiUrl(portrait.Uri)" alt="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))" />
+                                                </li>
+                                                }
+                                            </ul>
+                                        </Content>
+                                    </Tab>
+                                }
+                            </TabControl>
+                        </Body>
+                        <Footer>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalChosePortrait.CloseAsync()">Cancel</button>
+                        </Footer>
+                    </Modal>
+                    </div>
                 </div>
-                <div>
-                <button class="btn btn-info w-100" @onclick="() => modalChosePortrait.OpenAsync()">
-                    <span class="oi oi-person"></span>
-                    Portrait
-                </button>
-                <Modal @ref="modalChosePortrait">
-                    <Title>Select new portrait</Title>
-                    <Body>
-                        <TabControl StartIndex="0">
-                            @foreach (var catKV in AvailablePortraits){
-                                <Tab Name="@catKV.Key.Name">
-                                    <Content>
-                                        <ul class="portraits portraits-selection">
-                                            @foreach (var portrait in catKV.Value) {
-                                            <li @onclick="() => SelectPortrait(portrait)" title="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))">
-                                                <img src="file://@portrait.Uri" alt="@(portrait.Name ?? Resources.Blueprints.GetNameOrBlueprint(portrait.Key))" />
-                                            </li>
-                                            }
-                                        </ul>
-                                    </Content>
-                                </Tab>
-                            }
-                        </TabControl>
-                    </Body>
-                    <Footer>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalChosePortrait.CloseAsync()">Cancel</button>
-                    </Footer>
-                </Modal>
-                </div>
-            </div>
+            }
 
             @if (Unit.Type == UnitEntityType.Mercenary || (Unit.Type == UnitEntityType.Pet && Model.GetOwnerOf(Unit) == null)) {
             <div class="col-md-3">

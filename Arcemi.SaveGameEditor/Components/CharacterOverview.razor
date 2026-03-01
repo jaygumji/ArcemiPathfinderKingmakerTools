@@ -203,7 +203,7 @@
         <ul class="portraits">
             @foreach (var unit in Model.Characters.Where(c => c.Type.IsDisplayedInCharactersPage() && c.Companion.IsInParty && (c.Type == UnitEntityType.Companion || c.Type == UnitEntityType.Mercenary))) {
                 <li @onclick="() => SelectedReplaceCompanion = unit" class="@(SelectedReplaceCompanion == unit ? "toggled" : "")" title="@unit.Name">
-                    <img src="file://@unit.Portrait.Path" alt="Portrait" />
+                    <img src="@LocalImageUrl.ToApiUrl(unit.Portrait.Path)" alt="Portrait" />
                     <span>@(unit.CustomName ?? unit.Name)</span>
                 </li>
             }

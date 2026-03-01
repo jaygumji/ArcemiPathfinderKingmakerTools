@@ -2,6 +2,7 @@
 using ElectronNET.API;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,16 +48,40 @@ namespace Arcemi.SaveGameEditor.Models
 
         public void Open(string path, string originalPath = null)
         {
+            var swTotal = Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
+
             _file?.Close();
             _file = new SaveGameFile(path);
+            sw.Stop();
+            Logger.Current.Information($"Open timing: SaveGameFile ctor/extract took {sw.ElapsedMilliseconds} ms");
+
+            sw.Restart();
             _partyFile = _file.GetParty();
+            sw.Stop();
+            Logger.Current.Information($"Open timing: GetParty took {sw.ElapsedMilliseconds} ms");
+
+            sw.Restart();
             _playerFile = _file.GetPlayer();
+            sw.Stop();
+            Logger.Current.Information($"Open timing: GetPlayer took {sw.ElapsedMilliseconds} ms");
+
+            sw.Restart();
             _headerFile = _file.GetHeader();
+            sw.Stop();
+            Logger.Current.Information($"Open timing: GetHeader took {sw.ElapsedMilliseconds} ms");
+
+            sw.Restart();
             Player = _playerFile.GetRoot<PlayerModel>();
             Party = _partyFile.GetRoot<PartyModel>();
             Header = _headerFile.GetRoot<HeaderModel>();
+            sw.Stop();
+            Logger.Current.Information($"Open timing: GetRoot models took {sw.ElapsedMilliseconds} ms");
 
+            sw.Restart();
             Game = SupportedGames.Detect(this);
+            sw.Stop();
+            Logger.Current.Information($"Open timing: SupportedGames.Detect took {sw.ElapsedMilliseconds} ms");
             //if (Game.Definition.Resources.AppData is null) {
             //    _editorConfig.Instance
             //}
@@ -69,6 +94,9 @@ namespace Arcemi.SaveGameEditor.Models
 
             CanEdit = true;
             if (Opened is not null) Opened.Invoke(this, new EditFileSessionOpenedArgs(Game, Location));
+
+            swTotal.Stop();
+            Logger.Current.Information($"Open timing: total={swTotal.ElapsedMilliseconds} ms, game={Game.Definition.Id}, characters={Game.Characters?.Count ?? 0}");
         }
 
         public void Restore()
@@ -98,7 +126,8 @@ namespace Arcemi.SaveGameEditor.Models
                 Header.PlayerCharacterName = currentMainCharacterName;
                 Header.GameId = Guid.NewGuid().ToString("N");
             }
-            if (Header.GameSaveTime != Player.GameTime) {
+            if (Game.Definition != GameDefinition.Warhammer40K_DarkHeresy
+                && Header.GameSaveTime != Player.GameTime) {
                 Header.GameSaveTime = Player.GameTime;
             }
             Game.BeforeSave();

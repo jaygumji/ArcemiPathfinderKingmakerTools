@@ -301,11 +301,16 @@ namespace Arcemi.Models
         public FactItemModel GetFeatTemplate(string blueprint)
         {
             var metadata = Blueprints.Get(blueprint);
+            if (metadata is null) {
+                return FeatTemplates?.FirstOrDefault(t => t.Blueprint == blueprint);
+            }
             return GetFeatTemplate(metadata);
         }
         public FactItemModel GetFeatTemplate(IBlueprintMetadataEntry metadata)
         {
-            var blueprintAccessor = BlueprintsArchive.Load(metadata);
+            if (metadata is null) return null;
+
+            var blueprintAccessor = BlueprintsArchive?.Load(metadata);
             if (blueprintAccessor is object) {
                 var factTemplateRaw = new JObject();
                 var refs = new References();

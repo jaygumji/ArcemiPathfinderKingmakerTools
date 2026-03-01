@@ -22,22 +22,20 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
-          6.0.x
           8.0.x
-    - name: Install Electron.NET CLI
-      run: dotnet tool install ElectronNET.CLI -g
-    - name: Prune Electron host node_modules (production only)
-      shell: bash
+          10.0.x
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+    - name: Build and Test
       run: |
-        if [ -d "./Arcemi.SaveGameEditor/ElectronHostHook" ] && [ -f "./Arcemi.SaveGameEditor/ElectronHostHook/package.json" ]; then
-          cd ./Arcemi.SaveGameEditor/ElectronHostHook
-          npm ci --omit=dev
-        else
-          echo "ElectronHostHook not found; skipping npm prune."
-        fi
-    - name: Electronize Build
+        dotnet restore Arcemi.SaveGameEditor.sln
+        dotnet build Arcemi.SaveGameEditor.sln -c Release --no-restore
+        dotnet test Arcemi.Tests/Arcemi.Tests.csproj -c Release --no-build
+    - name: Publish Windows package
       working-directory: ./Arcemi.SaveGameEditor
-      run: electronize build /target win
+      run: dotnet publish -c Release /p:ElectronTarget=custom /p:ElectronBuildTarget=win /p:ElectronPlatform=win32 /p:ElectronArch=x64 /p:ElectronPublishReadyToRun=false /p:ElectronPublishSingleFile=false
     - name: Upload Artifact Setup
       uses: actions/upload-artifact@v4
       with:

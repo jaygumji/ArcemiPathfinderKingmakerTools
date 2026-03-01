@@ -40,23 +40,25 @@ else {
                 <input class="form-control" type="text" readonly="readonly" value="@Session.Location?.FilePath" />
             </div>
         </div>
-        <div class="row g-3">
-            <h4 class="col-md-12">Game Time</h4>
-        </div>
-        <div class="row g-3">
-            <div class="col-md-2 form-group">
-                <label class="form-label">Days</label>
-                <input class="form-control" type="text" @bind="Session.Player.GameTimeParts.Days" />
+        @if (Session.Game.Definition != GameDefinition.Warhammer40K_DarkHeresy) {
+            <div class="row g-3">
+                <h4 class="col-md-12">Game Time</h4>
             </div>
-            <div class="col-md-2 form-group">
-                <label class="form-label">Hours</label>
-                <input class="form-control" type="text" @bind="Session.Player.GameTimeParts.Hours" />
+            <div class="row g-3">
+                <div class="col-md-2 form-group">
+                    <label class="form-label">Days</label>
+                    <input class="form-control" type="text" @bind="Session.Player.GameTimeParts.Days" />
+                </div>
+                <div class="col-md-2 form-group">
+                    <label class="form-label">Hours</label>
+                    <input class="form-control" type="text" @bind="Session.Player.GameTimeParts.Hours" />
+                </div>
+                <div class="col-md-2 form-group">
+                    <label class="form-label">Minutes</label>
+                    <input class="form-control" type="text" @bind="Session.Player.GameTimeParts.Minutes" />
+                </div>
             </div>
-            <div class="col-md-2 form-group">
-                <label class="form-label">Minutes</label>
-                <input class="form-control" type="text" @bind="Session.Player.GameTimeParts.Minutes" />
-            </div>
-        </div>
+        }
         @if (Session.Game.Party.Data is not null) {
             <GameData Data="@Session.Game.Party.Data"></GameData>
         }

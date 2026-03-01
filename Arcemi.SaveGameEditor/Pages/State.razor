@@ -4,6 +4,9 @@
 @if (!Session.CanEdit) {
     <p><em>Save file not loaded.</em></p>
 }
+else if (!Session.Game.State.IsSupported) {
+    <p><em>Not available.</em></p>
+}
 else {
     <TabControl StartIndex="0">
         @if (Session.Game.Definition == GameDefinition.Pathfinder_WrathOfTheRighteous || Session.Game.Definition == GameDefinition.Pathfinder_Kingmaker) {

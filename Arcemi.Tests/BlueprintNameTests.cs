@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Arcemi.Tests
 {
+    [Collection("SharedGameResources")]
     public class BlueprintNameTests
     {
         public static IEnumerable<object[]> NameDisplayTestData()

@@ -12,5 +12,6 @@
         public string Name => Model.Name;
         public int Value { get => Model.PairedValue; set => Model.PairedValue = value; }
         public string Info => Model.ModifiersSum;
+        public bool IsReadOnly => false;
     }
 }

@@ -8,8 +8,8 @@ namespace Arcemi.Tests
     {
         public static IEnumerable<object[]> AsDisplayableData()
         {
-            yield return new object[] { "ShortswordPlus4Item", "Shortsword +4" };
-            yield return new object[] { "ShieldItemPlus1", "Shield +1" };
+            yield return new object[] { "ShortswordPlus4Item", "Shortsword Plus 4 Item" };
+            yield return new object[] { "ShieldItemPlus1", "Shield Item Plus 1" };
         }
 
         [Theory]

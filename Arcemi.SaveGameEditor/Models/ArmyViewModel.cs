@@ -112,8 +112,9 @@ namespace Arcemi.SaveGameEditor.Models
         public void RemoveArmyUnit(ArmyUnitViewModel armyUnit)
         {
             var pos = armyUnit.PositionIndex;
+            var size = FindSizeFromPosition(Army, armyUnit.Squad);
             Army.Data.Squads.Remove(armyUnit.Squad);
-            if (armyUnit.Mapping.Size == ArmyUnitSize.Large) {
+            if (size == ArmyUnitSize.Large) {
                 Army.Data.SquadsPosition[pos] = null;
                 Army.Data.SquadsPosition[pos + 1] = null;
                 Army.Data.SquadsPosition[pos + 7] = null;

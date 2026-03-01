@@ -1,5 +1,9 @@
 ﻿@inject CharacterViewModel Model
+@inject IEditFileSession Session
 @inject IGameResourcesProvider Resources
+@inject EditorConfiguration Config
+@using ElectronNET.API
+@using Newtonsoft.Json
 
 @foreach (var grouping in Unit.Stats.Groupings.Where(g => g.Count > 0)) {
     <div class="row">
@@ -23,7 +27,7 @@
                     <label class="form-label">@stat.Name</label>
                 </div>
                 <div class="col-md-2">
-                    <input class="form-control" type="number" @bind="@stat.Value" />
+                    <input class="form-control" type="number" step="@GetStatStep(stat)" @bind="@stat.Value" disabled="@(!Model.CanEdit || stat.IsReadOnly)" />
                 </div>
                 <div class="col-md-2">
                     @stat.Info
@@ -33,7 +37,213 @@
     </div>
 }
 
+@if (ShowDarkHeresyDiagnostics && Diagnostics is object) {
+    <div class="row mt-4">
+        <h3 class="col-md-8">Dark Heresy diagnostics</h3>
+        <div class="col-md-4 d-flex justify-content-end">
+            <button class="btn btn-info" @onclick="CopyDiagnosticsJson">
+                <span class="oi oi-clipboard"></span>
+                Copy diagnostics JSON
+            </button>
+        </div>
+    </div>
+    <div class="form-list static-content">
+        <div class="row">
+            <div class="col-md-2"><label class="form-label">Index</label></div>
+            <div class="col-md-4"><label class="form-label">Unit Blueprint</label></div>
+            <div class="col-md-3"><label class="form-label">Portrait Blueprint</label></div>
+            <div class="col-md-3"><label class="form-label">Display Name</label></div>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-2">@Diagnostics.Index</div>
+            <div class="col-md-4">@Diagnostics.UnitBlueprint</div>
+            <div class="col-md-3">@Diagnostics.PortraitBlueprint</div>
+            <div class="col-md-3">@Diagnostics.DisplayName</div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-3"><label class="form-label">Stat</label></div>
+            <div class="col-md-1"><label class="form-label">Value</label></div>
+            <div class="col-md-1"><label class="form-label">Editable</label></div>
+            <div class="col-md-1"><label class="form-label">Scale</label></div>
+            <div class="col-md-1"><label class="form-label">Base</label></div>
+            <div class="col-md-5"><label class="form-label">Slot Path</label></div>
+        </div>
+        @foreach (var stat in Diagnostics.Stats) {
+            <div class="row g-3">
+                <div class="col-md-3">@stat.Name</div>
+                <div class="col-md-1">@stat.Value</div>
+                <div class="col-md-1">@(stat.Editable ? "Yes" : "No")</div>
+                <div class="col-md-1">@stat.Scale</div>
+                <div class="col-md-1">@stat.Base</div>
+                <div class="col-md-5"><code>@stat.SlotPath</code></div>
+            </div>
+        }
+        <div class="row mt-3">
+            <div class="col-md-6"><label class="form-label">Feature Blueprint</label></div>
+            <div class="col-md-1"><label class="form-label">Rank</label></div>
+            <div class="col-md-5"><label class="form-label">Rank Slot Path</label></div>
+        </div>
+        @foreach (var selection in Diagnostics.Selections) {
+            <div class="row g-3">
+                <div class="col-md-6"><code>@selection.FeatureBlueprint</code></div>
+                <div class="col-md-1">@selection.Rank</div>
+                <div class="col-md-5"><code>@selection.RankSlotPath</code></div>
+            </div>
+        }
+    </div>
+    @if (_copyStatus.HasValue()) {
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <small>@_copyStatus</small>
+            </div>
+        </div>
+    }
+}
+
 @code {
     [Parameter]
     public IGameUnitModel Unit { get; set; }
+
+    private bool ShowDarkHeresyDiagnostics =>
+        (Config.Instance?.Development?.IsEnabled ?? false)
+        && Unit is object
+        && Model.Game?.Definition == GameDefinition.Warhammer40K_DarkHeresy;
+
+    private DarkHeresyCharacterDiagnostics Diagnostics => ShowDarkHeresyDiagnostics
+        ? LoadDarkHeresyDiagnostics()
+        : null;
+
+    private string _copyStatus;
+    private static readonly HashSet<string> DhAttributeStats = new(StringComparer.Ordinal) {
+        "Weapon Skill", "Ballistic Skill", "Strength", "Toughness", "Agility", "Intelligence", "Perception", "Willpower", "Fellowship",
+    };
+    private static readonly HashSet<string> DhSkillStats = new(StringComparer.Ordinal) {
+        "Athletics", "Tenacity", "Mobility", "Resistance", "Demolition", "Reflexes", "Sleight Of Hand",
+        "Lore Heresy", "Lore Xenos", "Lore Warp", "Tech Use", "Interrogation", "Mettle", "Awareness", "Wits",
+        "Intimidation", "Diplomacy", "Medicae", "Lore Imperium",
+    };
+
+    private static int GetStatStep(IGameUnitStatsEntry stat)
+    {
+        if (stat is null) return 1;
+        if (DhAttributeStats.Contains(stat.Name)) return 5;
+        if (DhSkillStats.Contains(stat.Name)) return 10;
+        return 1;
+    }
+
+    private DarkHeresyCharacterDiagnostics LoadDarkHeresyDiagnostics()
+    {
+        try {
+            var root = Session?.Party?.GetAccessor()?.UnderlyingObject as Newtonsoft.Json.Linq.JObject;
+            var chars = root?["__arcemi_dh"]?["characters"] as Newtonsoft.Json.Linq.JArray;
+            if (chars is null) return null;
+
+            var idx = TryResolveCharacterIndex();
+            if (idx < 0 || idx >= chars.Count) return null;
+            if (chars[idx] is not Newtonsoft.Json.Linq.JObject ch) return null;
+
+            var stats = (ch["stats"] as Newtonsoft.Json.Linq.JArray)
+                ?.OfType<Newtonsoft.Json.Linq.JObject>()
+                .Select(x => new DarkHeresyStatDiagnostics {
+                    Name = x["name"]?.ToString() ?? string.Empty,
+                    Value = x["value"]?.ToObject<int?>() ?? 0,
+                    Editable = x["editable"]?.ToObject<bool?>() == true,
+                    Scale = x["slotScale"]?.ToObject<int?>() ?? 1,
+                    Base = x["slotBase"]?.ToObject<int?>() ?? 0,
+                    SlotPath = x["slotPath"]?.ToString() ?? string.Empty,
+                })
+                .ToArray()
+                ?? Array.Empty<DarkHeresyStatDiagnostics>();
+
+            var selections = (ch["selections"] as Newtonsoft.Json.Linq.JArray)
+                ?.OfType<Newtonsoft.Json.Linq.JObject>()
+                .Select(x => new DarkHeresySelectionDiagnostics {
+                    FeatureBlueprint = x["featureBlueprint"]?.ToString() ?? string.Empty,
+                    Rank = x["rank"]?.ToObject<int?>() ?? 0,
+                    RankSlotPath = x["rankSlotPath"]?.ToString() ?? string.Empty,
+                })
+                .ToArray()
+                ?? Array.Empty<DarkHeresySelectionDiagnostics>();
+
+            return new DarkHeresyCharacterDiagnostics {
+                Index = idx,
+                UnitBlueprint = ch["unitBlueprint"]?.ToString() ?? string.Empty,
+                PortraitBlueprint = ch["portraitBlueprint"]?.ToString() ?? string.Empty,
+                DisplayName = ch["displayName"]?.ToString() ?? string.Empty,
+                Stats = stats,
+                Selections = selections,
+            };
+        }
+        catch {
+            return null;
+        }
+    }
+
+    private int TryResolveCharacterIndex()
+    {
+        const string Prefix = "dh-unit-";
+        if (Unit?.UniqueId is object && Unit.UniqueId.StartsWith(Prefix, StringComparison.Ordinal)) {
+            var indexRaw = Unit.UniqueId.Substring(Prefix.Length);
+            if (int.TryParse(indexRaw, out var parsed)) return parsed;
+        }
+        return Model.Characters
+            .Where(c => c.Type.IsDisplayedInCharactersPage())
+            .Select((c, i) => new { Character = c, Index = i })
+            .Where(x => string.Equals(x.Character.UniqueId, Unit?.UniqueId, StringComparison.Ordinal))
+            .Select(x => x.Index)
+            .DefaultIfEmpty(-1)
+            .First();
+    }
+
+    private Task CopyDiagnosticsJson()
+    {
+        try {
+            var diagnostics = Diagnostics;
+            if (diagnostics is null) {
+                _copyStatus = "No diagnostics available.";
+                return Task.CompletedTask;
+            }
+
+            if (HybridSupport.IsElectronActive) {
+                var payload = JsonConvert.SerializeObject(diagnostics, Formatting.Indented);
+                Electron.Clipboard.WriteText(payload);
+                _copyStatus = "Diagnostics copied to clipboard.";
+            }
+            else {
+                _copyStatus = "Clipboard copy is available in Electron mode only.";
+            }
+        }
+        catch (Exception ex) {
+            _copyStatus = "Failed to copy diagnostics: " + ex.Message;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private sealed class DarkHeresyCharacterDiagnostics
+    {
+        public int Index { get; set; }
+        public string UnitBlueprint { get; set; }
+        public string PortraitBlueprint { get; set; }
+        public string DisplayName { get; set; }
+        public IReadOnlyList<DarkHeresyStatDiagnostics> Stats { get; set; }
+        public IReadOnlyList<DarkHeresySelectionDiagnostics> Selections { get; set; }
+    }
+
+    private sealed class DarkHeresyStatDiagnostics
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public bool Editable { get; set; }
+        public int Scale { get; set; }
+        public int Base { get; set; }
+        public string SlotPath { get; set; }
+    }
+
+    private sealed class DarkHeresySelectionDiagnostics
+    {
+        public string FeatureBlueprint { get; set; }
+        public int Rank { get; set; }
+        public string RankSlotPath { get; set; }
+    }
 }

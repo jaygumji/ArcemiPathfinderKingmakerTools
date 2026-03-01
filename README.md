@@ -8,24 +8,24 @@ Compiled files are available at https://www.nexusmods.com/warhammer40kroguetrade
 
 # Structure
 - Arcemi.Models is a library project.
-- Arcemi.SaveGameEditor is the new project for the new editor using Electron.NET in an attempt to make it cross platform
+- Arcemi.SaveGameEditor is the desktop editor project using ElectronNET.Core and ASP.NET/Blazor.
 
 # Credits
 
 Electron.NET https://github.com/ElectronNET/Electron.NET
 
-# Start/Build Windows
-To start the application from the source code, first install Electron.Net as specified at their project page.
-Open a console and set your location to Arcemi.Pathfinder.SaveGameEditor project folder and run:
-electronize start
+# Prerequisites
+- .NET SDK 10
+- Node.js 22+
 
-To buid run
-electronize build /target win
+# Start locally
+Open a console and set your location to the `Arcemi.SaveGameEditor` project folder, then run:
+`dotnet run`
 
-# Start/Build Linux
-To start the application from the source code, first install Electron.Net as specified at their project page.
-Open a console and set your location to Arcemi.Pathfinder.SaveGameEditor project folder and run:
-electronize start
+# Build desktop packages
+Run these from the `Arcemi.SaveGameEditor` folder:
+- Windows: `dotnet publish -c Release /p:ElectronTarget=custom /p:ElectronBuildTarget=win /p:ElectronPlatform=win32 /p:ElectronArch=x64`
+- Linux: `dotnet publish -c Release /p:ElectronTarget=custom /p:ElectronBuildTarget=linux /p:ElectronPlatform=linux /p:ElectronArch=x64`
+- macOS: `dotnet publish -c Release /p:ElectronTarget=custom /p:ElectronBuildTarget=osx /p:ElectronPlatform=darwin /p:ElectronArch=x64`
 
-To buid run
-electronize build /target linux /PublishReadyToRun false
+Artifacts are generated under `Arcemi.SaveGameEditor/bin/Desktop`.

@@ -28,15 +28,17 @@ namespace Arcemi.Models
             .ToDictionary(x => x.Type);
 
         private readonly string _path;
+        private readonly Action<JObject> _onSave;
         public JObject Json { get; }
         private readonly Dictionary<string, List<Model>> _types;
 
         private Model _root;
 
-        public JsonPartSaveGameFile(string path, JObject json)
+        public JsonPartSaveGameFile(string path, JObject json, Action<JObject> onSave = null)
         {
             _path = path;
             Json = json;
+            _onSave = onSave;
             _types = new Dictionary<string, List<Model>>(StringComparer.Ordinal);
         }
 
@@ -102,6 +104,11 @@ namespace Arcemi.Models
 
         public void Save()
         {
+            if (_onSave is object) {
+                _onSave(Json);
+                return;
+            }
+
             using (var stream = new FileStream(_path, FileMode.Create, FileAccess.Write)) {
                 using (var streamWriter = new StreamWriter(stream, Encoding.UTF8)) {
                     using (var writer = new JsonTextWriter(streamWriter)) {

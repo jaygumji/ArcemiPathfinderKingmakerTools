@@ -22,5 +22,6 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public string Name { get; }
         public int Value { get => Model.Value.BaseValue; set => Model.Value.BaseValue = value; }
         public string Info => null;
+        public bool IsReadOnly => false;
     }
 }

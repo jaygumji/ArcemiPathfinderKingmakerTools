@@ -1,7 +1,5 @@
 using Arcemi.Models;
 using Arcemi.SaveGameEditor.Models;
-using ElectronNET.API;
-using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +21,7 @@ namespace Arcemi.SaveGameEditor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddControllers();
             services.AddTransient(p => p.GetService<IEditFileSession>().Game.Definition.Resources);
             services.AddTransient<IGameResourcesProvider>(p => p.GetService<GameResources>());
             services.AddSingleton<IEditFileSession, EditFileSession>();
@@ -54,54 +53,12 @@ namespace Arcemi.SaveGameEditor
             //app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
                 //endpoints.MapRazorPages();
             });
 
-            if (HybridSupport.IsElectronActive) {
-                SetupElectron();
-            }
-        }
-
-        private async void SetupElectron()
-        {
-            var options = new BrowserWindowOptions {
-                Show = true,
-                Width = 1024,
-                Height = 768,
-                WebPreferences = new WebPreferences {
-                    WebSecurity = false,
-                    NodeIntegration = false
-                }
-            };
-            var window = await Electron.WindowManager.CreateWindowAsync(options);
-
-            //var menu = new MenuItem[] {
-            //    new MenuItem
-            //    {
-            //        Label = "File",
-            //        Type = MenuType.submenu,
-            //        Submenu = new MenuItem[] {
-            //            new MenuItem {
-            //                Label = "Open...",
-            //                Click = async () =>  await Electron.Dialog.ShowMessageBoxAsync("Open menu clicked"),
-            //            },
-            //            new MenuItem {
-            //                Type = MenuType.separator,
-            //            },
-            //            new MenuItem {
-            //                Label = "Exit",
-            //                Role = MenuRole.close
-            //            }
-            //        }
-            //    }
-            //};
-            //Electron.Menu.SetApplicationMenu(menu);
-
-            //window.OnClosed += () => {
-            //};
-            Electron.App.WindowAllClosed += Electron.App.Quit;
         }
     }
 }

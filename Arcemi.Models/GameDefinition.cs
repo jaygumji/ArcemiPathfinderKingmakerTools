@@ -7,6 +7,10 @@
             @"LocalLow\Owlcat Games\Warhammer 40000 Rogue Trader",
             "Warhammer 40,000 Rogue Trader",
             new Warhammer40KRogueTrader.W40KRTBlueprintProvider());
+        public static GameDefinition Warhammer40K_DarkHeresy { get; } = new GameDefinition("W40KDH", "Warhammer 40K Dark Heresy",
+            @"LocalLow\Owlcat Games\WHDH",
+            "Warhammer 40,000 Dark Heresy Playtest",
+            new Warhammer40KRogueTrader.W40KRTBlueprintProvider());
         public static GameDefinition Pathfinder_WrathOfTheRighteous { get; } = new GameDefinition("PATHWOTR", "Pathfinder Wrath of the Righteous",
             @"LocalLow\Owlcat Games\Pathfinder Wrath Of The Righteous",
             "Pathfinder Wrath Of The Righteous",

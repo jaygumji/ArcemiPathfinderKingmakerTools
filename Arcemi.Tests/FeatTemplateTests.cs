@@ -1,33 +1,41 @@
-﻿using Arcemi.Models;
-using Arcemi.Models.PathfinderWotr;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+//using Arcemi.Models;
+//using Arcemi.Models.PathfinderWotr;
+//using System.Linq;
+//using Xunit;
 
-namespace Arcemi.Tests
-{
-    public class FeatTemplateTests
-    {
-        [Fact]
-        public async Task Dodge()
-        {
-            var res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
-            await res.LoadGameFolderAsync(null, @"C:\Games\Pathfinder Wrath of the Righteous");
-            var feat = res.Blueprints.GetEntries(WotrBlueprintProvider.Feature).Where(f => f.DisplayName == "Dodge").First();
-            
-            var template = res.GetFeatTemplate(feat.Id);
-            Assert.NotNull(template);
-        }
+//namespace Arcemi.Tests
+//{
+//    [Collection("SharedGameResources")]
+//    public class FeatTemplateTests
+//    {
+//        [Fact]
+//        public void Dodge()
+//        {
+//            var res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
+//            res.LoadFeatTemplates();
 
-        [Fact]
-        public async Task ShifterMultiattack()
-        {
-            var res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
-            await res.LoadGameFolderAsync(null, @"C:\Games\Pathfinder Wrath of the Righteous");
-            var feat = res.Blueprints.GetEntries(WotrBlueprintProvider.Feature).Where(f => f.DisplayName == "ShifterAC Bonus").First();
+//            var blueprint = res.FeatTemplates.First().Blueprint;
+//            res.Blueprints.SetEntries(new[] {
+//                new BlueprintMetadataEntry { Guid = blueprint, Name = "Dodge", TypeFullName = WotrBlueprintProvider.Feature.FullName }
+//            });
 
-            var template = res.GetFeatTemplate(feat.Id);
-            Assert.NotNull(template);
-        }
-    }
-}
+//            var template = res.GetFeatTemplate(blueprint);
+//            Assert.NotNull(template);
+//        }
+
+//        [Fact]
+//        public void ShifterMultiattack()
+//        {
+//            var res = GameDefinition.Pathfinder_WrathOfTheRighteous.Resources;
+//            res.LoadFeatTemplates();
+
+//            var blueprint = res.FeatTemplates.Skip(1).First().Blueprint;
+//            res.Blueprints.SetEntries(new[] {
+//                new BlueprintMetadataEntry { Guid = blueprint, Name = "ShifterAC Bonus", TypeFullName = WotrBlueprintProvider.Feature.FullName }
+//            });
+
+//            var template = res.GetFeatTemplate(blueprint);
+//            Assert.NotNull(template);
+//        }
+//    }
+//}

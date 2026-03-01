@@ -8,7 +8,7 @@ else {
     <ul class="portraits leaders">
         @foreach (var unit in Model.Armies) {
         <li @onclick="() => SelectArmy(unit)" class="@(Unit == unit ? "toggled" : "")">
-            <img src="file://@Model.FindLeaderPortrait(unit)" alt="Portrait" />
+            <img src="@LocalImageUrl.ToApiUrl(Model.FindLeaderPortrait(unit))" alt="Portrait" />
             <span>@unit.Data.ArmyName.Name</span>
         </li>
         }
