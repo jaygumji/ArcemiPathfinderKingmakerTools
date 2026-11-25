@@ -14,12 +14,15 @@ namespace Arcemi.SaveGameEditor.Models
         public IGameAccessor Game { get; }
         public SaveFileLocation Location { get; }
     }
-    public interface IEditFileSession : IGameEditFile
+    public interface IEditFileSession
     {
         event EventHandler<EditFileSessionOpenedArgs> Opened;
 
+        bool IsOpen { get; }
         bool CanEdit { get; }
+        PlayerModel Player { get; }
         SaveFileLocation Location { get; }
+        string BackupPath { get; }
         IGameAccessor Game { get; }
 
         void OpenBackup(SaveFileLocation loc);

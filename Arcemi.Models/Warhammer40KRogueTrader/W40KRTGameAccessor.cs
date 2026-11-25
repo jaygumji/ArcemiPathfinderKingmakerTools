@@ -15,6 +15,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             _mediator = new W40KRTUnitMediator(this, evt);
             OperationEvents = evt;
             File = file;
+            file.Party.GetAccessor().PreserveNestedReferencesOnRemoval();
             Party = new W40KRTGamePartyModel(file.Player, file.Header);
             SharedStash = new W40KRTCargoInventoryModel(file.Player.GetAccessor().Object<RefModel>("CargoState"));
             Characters = new GameModelCollection<IGameUnitModel, UnitEntityModel>(file.Party.UnitEntities, a => new W40KRTGameUnitModel(a, _mediator));
@@ -37,10 +38,6 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public IGameManagementModel Management { get; }
         public IGameStateModel State { get; }
         public IGameOperationEvents OperationEvents { get; }
-
-        public void BeforeSave()
-        {
-        }
 
         public IGameUnitModel GetOwnerOf(IGameUnitModel unit) => _mediator.ParentOf(unit);
 

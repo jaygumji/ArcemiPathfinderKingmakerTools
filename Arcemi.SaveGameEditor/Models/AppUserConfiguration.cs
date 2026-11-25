@@ -35,12 +35,7 @@ namespace Arcemi.SaveGameEditor.Models
             return Directory.Exists(folder);
         }
 
-        public bool ValidateGameFolder()
-        {
-            if (string.IsNullOrEmpty(GameFolder)) return false;
-            var cheatdataPath = Path.Combine(GameFolder, "Bundles", "cheatdata.json");
-            return File.Exists(cheatdataPath);
-        }
+        public bool ValidateGameFolder() => GameFolderDiscovery.HasBlueprintData(GameFolder);
 
         public string GetSaveGamesFolder()
         {
@@ -55,59 +50,22 @@ namespace Arcemi.SaveGameEditor.Models
             return GameDefinition.NotSet;
         }
 
-        public async Task DetectFoldersAsync()
+        public void DetectMissingFolders(GameFolderDiscovery discovery)
         {
-            var appDataPath = await GetAppDataDirectory();
-            DetectGameFolder(appDataPath);
-
-            var path = Path.Combine(appDataPath, GetDefinition().WindowsRelativeAppDataPath);
-
-            if (Directory.Exists(path)) {
-                AppDataFolder = path;
-                return;
-            }
-
-            path = Path.Combine(Path.GetDirectoryName(appDataPath), GetDefinition().WindowsRelativeAppDataPath);
-
-            if (Directory.Exists(path)) {
-                AppDataFolder = path;
-                return;
-            }
-        }
-
-        private void DetectGameFolder(string appDataPath)
-        {
-            var root = Path.GetPathRoot(appDataPath);
-            bool FolderExists(string folder, out string path)
-            {
-                path = Path.Combine(root, folder, "Steam", "steamapps", GetDefinition().WindowsGameFolderName);
-                return Directory.Exists(path);
-            }
-            if (FolderExists("Program Files", out var path)) {
-                GameFolder = path;
-            }
-            else if (FolderExists("Programs", out path)) {
-                GameFolder = path;
-            }
-            else if (FolderExists("Games", out path)) {
-                GameFolder = path;
-            }
-        }
-
-        private static async Task<string> GetAppDataDirectory()
-        {
-            if (HybridSupport.IsElectronActive) {
-                return await Electron.App.GetPathAsync(ElectronNET.API.Entities.PathName.AppData);
-            }
-            else {
-                return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-            }
+            var definition = GetDefinition();
+            if (string.IsNullOrWhiteSpace(AppDataFolder)) AppDataFolder = discovery.FindSaveDataFolder(definition);
+            if (!definition.IsReadingGameFolder) return;
+            GameFolder = string.IsNullOrWhiteSpace(GameFolder)
+                ? discovery.FindGameFolder(definition)
+                : GameFolderDiscovery.ResolveGameFolder(GameFolder, definition) ?? GameFolder;
         }
 
     }
     public class AppUserConfiguration
     {
         public string LastGameDefinitionId { get; set; }
+        public string BackupFolder { get; set; }
+        public bool AllowSaveFolderBackupFallback { get; set; }
         public AppUserDevelopmentConfiguration Development { get; set; } = new AppUserDevelopmentConfiguration();
         public List<EditorGameConfiguration> Games { get; set; } = new List<EditorGameConfiguration>();
 
@@ -135,6 +93,8 @@ namespace Arcemi.SaveGameEditor.Models
         public void ApplyOn(AppUserConfiguration target)
         {
             target.EnsureDefaults();
+            target.BackupFolder = BackupFolder;
+            target.AllowSaveFolderBackupFallback = AllowSaveFolderBackupFallback;
             foreach (var game in Games) {
                 var targetGame = target.Games.First(g => g.DefinitionId.Eq(game.DefinitionId));
                 targetGame.AppDataFolder = game.AppDataFolder;
@@ -147,6 +107,8 @@ namespace Arcemi.SaveGameEditor.Models
         public override int GetHashCode()
         {
             var hashCode = new HashCode();
+            hashCode.Add(BackupFolder);
+            hashCode.Add(AllowSaveFolderBackupFallback);
             for (var i = 0; i < Games.Count; i++) {
                 hashCode.Add(Games[i]);
             }
@@ -156,7 +118,9 @@ namespace Arcemi.SaveGameEditor.Models
         public override bool Equals(object obj)
         {
             if (obj is not AppUserConfiguration other) return false;
-            if (Development?.IsEnabled != other.Development?.IsEnabled) return false;
+            if (Development?.IsEnabled != other.Development?.IsEnabled
+                || BackupFolder != other.BackupFolder
+                || AllowSaveFolderBackupFallback != other.AllowSaveFolderBackupFallback) return false;
             foreach (var l in Games) {
                 var r = other.Games.FirstOrDefault(g => g.DefinitionId.Eq(l.DefinitionId));
                 if (r is null) return false;
@@ -211,7 +175,7 @@ namespace Arcemi.SaveGameEditor.Models
 
         public static async Task<AppUserConfiguration> LoadAsync(string path)
         {
-            if (!File.Exists(path)) return await DetectAsync();
+            if (!File.Exists(path)) return new AppUserConfiguration();
             Exception lastException = null;
             for (var i = 0; i < 3; i++) {
                 try {
@@ -226,18 +190,16 @@ namespace Arcemi.SaveGameEditor.Models
             if (lastException != null) {
                 ExceptionDispatchInfo.Capture(lastException).Throw();
             }
-            return await DetectAsync();
+            return new AppUserConfiguration();
         }
 
-        public static async Task<AppUserConfiguration> DetectAsync()
+        public void DetectMissingFolders()
         {
-            var cfg = new AppUserConfiguration();
-            foreach (var def in SupportedGames.All) {
-                var game = new EditorGameConfiguration { DefinitionId = def.Id };
-                await game.DetectFoldersAsync();
-                cfg.Games.Add(game);
+            EnsureDefaults();
+            var discovery = GameFolderDiscovery.ForCurrentUser();
+            foreach (var game in Games) {
+                game.DetectMissingFolders(discovery);
             }
-            return cfg;
         }
 
         public static async Task<string> GetAppUserConfigFilename()

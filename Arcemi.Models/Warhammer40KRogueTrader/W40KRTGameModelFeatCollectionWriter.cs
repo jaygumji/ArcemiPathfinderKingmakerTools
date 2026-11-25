@@ -8,40 +8,42 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
     internal class W40KRTGameModelFeatCollectionWriter : GameModelCollectionWriter<IGameUnitFeatEntry, FactItemModel>
     {
         private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
-        private readonly string ownerUniqueId;
+        private readonly W40KRTGameUnitModel _owner;
 
-        public W40KRTGameModelFeatCollectionWriter(string ownerUniqueId)
+        public W40KRTGameModelFeatCollectionWriter(W40KRTGameUnitModel owner)
         {
-            this.ownerUniqueId = ownerUniqueId;
+            _owner = owner;
         }
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
         {
-            args.Obj.Add("$type", "Kingmaker.UnitLogic.Feature, Code");
+            PrepareFeature(args.Obj, args.Blueprint, _owner.UniqueId);
+        }
+
+        internal static void PrepareFeature(JObject obj, string blueprint, string ownerUniqueId)
+        {
+            obj.Add("$type", "Kingmaker.UnitLogic.Feature, Code");
             var factUniqueId = Guid.NewGuid().ToString("N");
-            args.Obj.Add("m_Context", new JObject {
+            obj.Add("m_Context", new JObject {
                 {"m_OwnerRef",  ownerUniqueId},
                 {"m_CasterRef", ownerUniqueId},
                 {"m_Ranks", new JArray {0, 0, 0, 0, 0, 0, 0} },
                 {"m_SharedValues", new JArray {0, 0, 0, 0, 0, 0, 0} },
-                {"AssociatedBlueprint", args.Blueprint},
+                {"AssociatedBlueprint", blueprint},
             });
-            args.Obj.Add("m_Components", new JArray());
-            args.Obj.Add("m_Sources", new JArray());
-            //args.Obj.Add("m_Sources", new JArray {
-            //    new JObject {
-            //        {"m_FactRef", new JObject {
-            //            {"EntityId", ownerUniqueId},
-            //            {"FactId", factUniqueId}
-            //        } }
-            //    }
-            //});
-            args.Obj.Add("Rank", 1);
-            args.Obj.Add("Param", new JObject());
-            args.Obj.Add("IgnorePrerequisites", true);
-            args.Obj.Add("DisabledBecauseOfPrerequisites", false);
-            args.Obj.Add("Blueprint", args.Blueprint);
-            args.Obj.Add("UniqueId", ownerUniqueId);
-            args.Obj.Add("IsActive", true);
+            obj.Add("m_Components", new JArray());
+            obj.Add("m_Sources", new JArray());
+            obj.Add("Rank", 1);
+            obj.Add("Param", new JObject());
+            obj.Add("IgnorePrerequisites", true);
+            obj.Add("DisabledBecauseOfPrerequisites", false);
+            obj.Add("Blueprint", blueprint);
+            obj.Add("UniqueId", factUniqueId);
+            obj.Add("IsActive", true);
+        }
+
+        public override void AfterRemove(AfterRemoveCollectionItemArgs<IGameUnitFeatEntry, FactItemModel> args)
+        {
+            W40KRTProgressionFacts.RemoveGrants(_owner, args.Model);
         }
 
         public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameUnitFeatEntry> current)

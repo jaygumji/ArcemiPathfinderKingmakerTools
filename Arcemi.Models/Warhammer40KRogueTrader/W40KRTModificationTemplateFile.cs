@@ -6,18 +6,16 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     internal class W40KRTModificationArchiveOptions
     {
-        public static W40KRTModificationArchiveOptions Rar { get; } = new W40KRTModificationArchiveOptions('\\', "WhRtModificationTemplate-release",
-            f => SharpCompress.Archives.Rar.RarArchive.Open(f, new SharpCompress.Readers.ReaderOptions()));
-        public static W40KRTModificationArchiveOptions Tar { get; } = new W40KRTModificationArchiveOptions('/', "WhRtModificationTemplate",
-            f => SharpCompress.Archives.Tar.TarArchive.Open(f, new SharpCompress.Readers.ReaderOptions()));
-        public W40KRTModificationArchiveOptions(char pathSeparator, string rootFolder, Func<FileInfo, SharpCompress.Archives.IArchive> getArchive)
+        public static W40KRTModificationArchiveOptions Rar { get; } = new W40KRTModificationArchiveOptions("WhRtModificationTemplate-release",
+            f => SharpCompress.Archives.Rar.RarArchive.OpenArchive(f, new SharpCompress.Readers.ReaderOptions()));
+        public static W40KRTModificationArchiveOptions Tar { get; } = new W40KRTModificationArchiveOptions("WhRtModificationTemplate",
+            f => SharpCompress.Archives.Tar.TarArchive.OpenArchive(f, new SharpCompress.Readers.ReaderOptions()));
+        public W40KRTModificationArchiveOptions(string rootFolder, Func<FileInfo, SharpCompress.Archives.IArchive> getArchive)
         {
-            PathSeparator = pathSeparator;
             RootFolder = rootFolder;
             GetArchive = getArchive;
         }
 
-        public char PathSeparator { get; }
         public string RootFolder { get; }
         public Func<FileInfo, SharpCompress.Archives.IArchive> GetArchive { get; }
     }
@@ -63,16 +61,16 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 return;
             }
 
-            var localizationPrefix = $@"{options.RootFolder}{options.PathSeparator}Strings{options.PathSeparator}Mechanics{options.PathSeparator}Blueprints{options.PathSeparator}";
-            var blueprintPrefix = $@"{options.RootFolder}{options.PathSeparator}Blueprints{options.PathSeparator}";
+            var localizationPrefix = $"{options.RootFolder}/Strings/Mechanics/Blueprints/";
+            var blueprintPrefix = $"{options.RootFolder}/Blueprints/";
             try {
                 var serializer = new JsonSerializer();
                 using (var archive = options.GetArchive(archiveInfo)) {
                     foreach (var entry in archive.Entries) {
                         if (entry.IsDirectory) continue;
-                        if (!entry.Key.IEnd(".json")) continue;
-                        var isLocalization = entry.Key.IStart(localizationPrefix);
-                        var isBlueprint = entry.Key.IStart(blueprintPrefix);
+                        var entryPath = entry.Key?.Replace('\\', '/');
+                        var isLocalization = entryPath.IStart(localizationPrefix) && entryPath.IEnd(".json");
+                        var isBlueprint = entryPath.IStart(blueprintPrefix) && (entryPath.IEnd(".jbp") || entryPath.IEnd(".json"));
 
                         if (!isLocalization && !isBlueprint) continue;
 
@@ -102,16 +100,12 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                         else if (isBlueprint) {
                             if (!TryDeserialize<W40KRTBlueprintAsset>(serializer, entry, out var blueprintAsset)) continue;
                             if (string.IsNullOrEmpty(blueprintAsset?.AssetId)) continue;
-                            if (cacheInfo.BlueprintAssets.TryGetValue(blueprintAsset.AssetId, out var existing)) {
-                                existing.ToString();
-                            }
-                            else {
-                                cacheInfo.BlueprintAssets.Add(blueprintAsset.AssetId, blueprintAsset);
-                            }
+                            cacheInfo.BlueprintAssets[blueprintAsset.AssetId] = blueprintAsset;
                         }
                     }
                 }
                 cacheInfo.TimestampUtc = archiveInfo.LastWriteTimeUtc;
+                cacheInfo.BlueprintDataVersion = W40KRTBlueprintCachedData.CurrentBlueprintDataVersion;
             }
             catch (Exception ex) {
                 Logger.Current.Error("Unable to load localization cache", ex);

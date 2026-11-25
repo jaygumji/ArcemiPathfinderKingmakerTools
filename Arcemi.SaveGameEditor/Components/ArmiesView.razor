@@ -62,7 +62,7 @@ else {
                                     The army units that's loaded from the game resources does not have the same name in game.
                                     So don't expect the army unit name to be the same as in game. It's usually similar though.
                                 </Help>
-                                <select id="add-unit-type" class="form-control" @bind="KnownArmyUnitBlueprint">
+                                <select id="add-unit-type" class="form-select" @bind="KnownArmyUnitBlueprint">
                                     <option value="">Select army unit...</option>
                                     @foreach (var type in AllArmyUnitTypes) {
                                         <option value="@type.Id">@type.Name</option>
@@ -88,7 +88,7 @@ else {
                                     If this is incorrect, then the unit will be invisible in game.
                                     If your army can't fit the large unit, it will not be added.
                                 </Help>
-                                <select class="form-control" disabled="@IsArmyUnitSizeDisabled" @bind="ArmyUnitSize">
+                                <select class="form-select" disabled="@IsArmyUnitSizeDisabled" @bind="ArmyUnitSize">
                                     <option value="Default">Default</option>
                                     <option value="Large">Large</option>
                                 </select>
@@ -96,8 +96,8 @@ else {
                         </div>
                     </Body>
                     <Footer>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(!IsArmyUnitInputValid)" @onclick="() => AddArmyUnitAsync()">Confirm</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddArmyUnit.CloseAsync()">Cancel</button>
+                        <button type="button" class="btn btn-primary" disabled="@(!IsArmyUnitInputValid)" @onclick="() => AddArmyUnitAsync()">Confirm</button>
+                        <button type="button" class="btn btn-secondary" @onclick="() => modalAddArmyUnit.CloseAsync()">Cancel</button>
                     </Footer>
                 </Modal>
             </div>

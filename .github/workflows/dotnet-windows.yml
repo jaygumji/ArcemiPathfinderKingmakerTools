@@ -27,7 +27,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 22.x
+        node-version: 24.x
     - name: Build and Test
       run: |
         dotnet restore Arcemi.SaveGameEditor.sln
@@ -35,14 +35,16 @@ jobs:
         dotnet test Arcemi.Tests/Arcemi.Tests.csproj -c Release --no-build
     - name: Publish Windows package
       working-directory: ./Arcemi.SaveGameEditor
-      run: dotnet publish -c Release /p:ElectronTarget=custom /p:ElectronBuildTarget=win /p:ElectronPlatform=win32 /p:ElectronArch=x64 /p:ElectronPublishReadyToRun=false /p:ElectronPublishSingleFile=false
+      run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishUrl=bin/Desktop
     - name: Upload Artifact Setup
       uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Windows-Setup
         path: ./Arcemi.SaveGameEditor/bin/Desktop/Arcemi Save Game Editor Setup *.exe
+        if-no-files-found: error
     - name: Upload Artifact Archive
       uses: actions/upload-artifact@v4
       with:
         name: Arcemi-SaveGameEditor-Windows-Archive
         path: ./Arcemi.SaveGameEditor/bin/Desktop/win-unpacked/*
+        if-no-files-found: error

@@ -1,5 +1,4 @@
-﻿using SharpCompress.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +6,6 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 {
     public class W40KRTGameUnitProgressionModel : IGameUnitProgressionModel
     {
-        private readonly IGameResourcesProvider Res = GameDefinition.Warhammer40K_RogueTrader.Resources;
         private readonly W40KRTUnitMediator _mediator;
 
         public W40KRTGameUnitProgressionModel(IGameUnitModel owner, UnitProgressionPartItemModel model, W40KRTUnitMediator mediator)
@@ -52,49 +50,41 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         private void DowngradeLevel()
         {
-            var value = Model.CharacterLevel - 1;
-            Model.CharacterLevel = value;
-            var oldSelections = Selections.Where(x => x.Level > value).Cast<W40KRTGameUnitSelectionProgressionEntry>().ToArray();
-            var featIds = new HashSet<string>(oldSelections.Select(x => x.Feature)
-                .Concat(W40KRTArchetypes.GetBlueprintsHigherThan(value)), StringComparer.Ordinal);
-            var feats = Owner.Feats.Where(f => featIds.Contains(f.Blueprint)).ToArray();
+            var level = Model.CharacterLevel;
+            var oldSelections = Selections.OfType<W40KRTGameUnitSelectionProgressionEntry>()
+                .Where(x => !x.IsCreation && x.Level >= level).Reverse().ToArray();
+            var careerPaths = (from tier in W40KRTArchetypes.All
+                               from path in tier.Types
+                               from feat in Owner.Feats
+                               where feat.Blueprint.Eq(path.CareerPathId)
+                               select (tier, path, feat)).ToArray();
 
             foreach (var selection in oldSelections) {
+                W40KRTProgressionFacts.RemoveSelectionRank(Owner, selection.Ref);
                 Selections.Remove(selection);
-                Logger.Current.Information($"Removed selection {selection.Name}, Feature {Res.Blueprints.GetNameOrBlueprint(selection.Feature)}, Level {selection.Ref.Level}, Rank {selection.Ref.Rank}");
             }
-            foreach (var feat in feats) {
-                var match = (
-                    from t in W40KRTArchetypes.All
-                    from a in t.Types
-                    where a.CareerPathId.Eq(feat.Blueprint)
-                    select new { Tier = t, Archetype = a }).FirstOrDefault();
-                if (match is null) {
-                    if (feat.Rank > 1) {
-                        feat.Rank -= 1;
-                        Logger.Current.Information($"Downranked feat {feat.DisplayName} to {feat.Rank}");
-                    }
-                    else {
-                        Owner.Feats.Remove(feat);
-                        Logger.Current.Information("Removed feat " + feat.DisplayName);
+
+            foreach (var (tier, path, feat) in careerPaths) {
+                var pathRank = feat.Rank;
+                if (pathRank <= 0 || tier.Level + pathRank - 1 != level) continue;
+                var automatic = W40KRTProgressionFacts.GetAutomaticFeatures(path.CareerPathId, pathRank)
+                    ?? tier.AutomaticFeats.Concat(path.AutomaticFeats)
+                        .Where(f => f.Level == pathRank && pathRank > 1).Select(f => f.Id)
+                        .Concat(pathRank == 1 ? path.KeystoneAbilityIds : Array.Empty<string>());
+                W40KRTProgressionFacts.RemovePathRank(Owner, path.CareerPathId, pathRank, automatic);
+                if (pathRank == 1) {
+                    Owner.Feats.Remove(feat);
+                    foreach (var marker in Owner.Feats.Where(f => f.Blueprint.Eq(path.SelectionId)).ToArray()) {
+                        Owner.Feats.Remove(marker);
                     }
                 }
                 else {
-                    if (match.Tier.Level > value) {
-                        Owner.Feats.Remove(feat);
-                        Logger.Current.Information($"Removed path {feat.DisplayName}");
-                    }
-                    else {
-                        feat.Rank = value - match.Tier.Level + 1;
-                        Logger.Current.Information($"Downranked path {feat.DisplayName} to {feat.Rank}");
-                    }
-
-                    if (match.Archetype?.Downgrade is object) {
-                        match.Archetype.Downgrade.Invoke(new W40KRTArchetypeDowngradeArguments(Owner, _mediator, match.Tier, match.Archetype, value));
-                    }
+                    feat.Rank--;
                 }
+                path.Downgrade?.Invoke(new W40KRTArchetypeDowngradeArguments(Owner, _mediator, tier, path, level - 1));
             }
 
+            Model.CharacterLevel = level - 1;
         }
 
         public bool IsLevelReadOnly => false;
@@ -118,7 +108,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                     option = feat is object ? sel.Options.First(x => x.Id.Eq(feat.Blueprint)) : sel.Options.Skip(optionIndex).First();
                 }
                 var entry = Selections.InsertByBlueprint(index++, sel.SelectionId, option.Id);
-                option.Select(entry);
+                if (!Owner.Feats.Any(f => f.Blueprint.Eq(option.Id))) {
+                    W40KRTProgressionFacts.AddSelectionRank(Owner, ((W40KRTGameUnitSelectionProgressionEntry)entry).Ref);
+                }
 
                 if (option.SubSelectionId.HasValue() && W40KRTCharacterSelection.TryGet(option.SubSelectionId, out var subsel)) {
                     Insert(subsel);
@@ -146,7 +138,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             var afeats = Owner.Feats.Where(f => attrFeatIds.Contains(f.Blueprint)).ToArray();
             var aindex = 0;
             foreach (var afeat in afeats) {
-                for (var arankIndex = 0; arankIndex < afeat.Rank; arankIndex++) {
+                for (var arankIndex = 0; arankIndex < afeat.Rank && aindex < attrSelOptions.Length; arankIndex++) {
                     attrSelOptions[aindex++] = W40KRTCharacterSelectionOption.AllAttributes.First(a => a.Id.Eq(afeat.Blueprint));
                 }
             }

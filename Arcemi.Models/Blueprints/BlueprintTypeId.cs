@@ -26,6 +26,7 @@
         UnlockableFlag,
         RaceVisualPreset,
         Unit,
-        AbilityResource
+        AbilityResource,
+        ItemAugment
     }
 }

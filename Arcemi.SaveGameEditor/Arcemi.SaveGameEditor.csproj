@@ -2,10 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
 	  <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
-    <Version>1.0.1</Version>
+    <Version>3.0.0</Version>
     <StartupObject></StartupObject>
   </PropertyGroup>
   <PropertyGroup Label="ElectronNetCommon">
+    <ElectronVersion>45.5.0</ElectronVersion>
+    <ElectronBuilderVersion>26.18.0</ElectronBuilderVersion>
+    <ElectronIcon>wwwroot/images/app-icon.png</ElectronIcon>
     <ElectronPackageId>arcemi-save-game-editor</ElectronPackageId>
     <Title>Arcemi Save Game Editor</Title>
     <Description>Save game editor for Pathfinder and Rogue Trader titles.</Description>
@@ -20,40 +23,46 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="compilerconfig.json" />
+    <EditorElectronHostFile Include="Properties/editor-window-state.js;Properties/custom_main.js;Properties/startup.html" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ElectronNET.Core" Version="0.4.1-pre.40" />
-    <PackageReference Include="ElectronNET.Core.AspNet" Version="0.4.1-pre.40" />
-    <PackageReference Include="ElectronNET.Core.API" Version="0.4.1-pre.40" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SharpCompress" Version="0.35.0" />
+    <PackageReference Include="ElectronNET.Core" Version="0.6.0" />
+    <PackageReference Include="ElectronNET.Core.AspNet" Version="0.6.0" />
+    <PackageReference Include="ElectronNET.Core.API" Version="0.6.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="SharpCompress" Version="0.50.11" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Arcemi.Models\Arcemi.Models.csproj" />
   </ItemGroup>
-  <Target Name="CleanElectronHostHookNodeModule" BeforeTargets="Build">
+  <Target Name="SetDefaultElectronRuntimeIdentifier" BeforeTargets="ElectronResolveRuntimeIdentifier"
+          Condition="'$(ElectronRuntimeIdentifier)' == '' And '$(RuntimeIdentifier)' == ''">
     <PropertyGroup>
-      <_ElectronHostHookNodeModule>$(OutDir).electron\node_modules\electron-host-hook</_ElectronHostHookNodeModule>
+      <ElectronRuntimeIdentifier>$(NETCoreSdkPortableRuntimeIdentifier)</ElectronRuntimeIdentifier>
     </PropertyGroup>
-    <Delete Files="$(_ElectronHostHookNodeModule)" Condition="Exists('$(_ElectronHostHookNodeModule)')" />
-    <RemoveDir Directories="$(_ElectronHostHookNodeModule)" Condition="Exists('$(_ElectronHostHookNodeModule)')" />
   </Target>
-  <Target Name="CleanElectronHostHookNodeModuleBeforeConfigure" BeforeTargets="ElectronConfigureApp">
+  <Target Name="PrepareElectronHost" BeforeTargets="ElectronResolvePaths" DependsOnTargets="ElectronCreatePackageJson">
     <PropertyGroup>
-      <_ElectronOutDir>$(OutDir).electron\</_ElectronOutDir>
-      <_ElectronNodeModulesDir>$(_ElectronOutDir)node_modules</_ElectronNodeModulesDir>
-      <_ElectronHostHookNodeModule>$(OutDir).electron\node_modules\electron-host-hook</_ElectronHostHookNodeModule>
-      <_ElectronNpmConfigFile>$(_ElectronOutDir).npmrc</_ElectronNpmConfigFile>
+      <_PatchedElectronHostPath>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(ElectronIntermediateOutputPath)', 'host'))</_PatchedElectronHostPath>
     </PropertyGroup>
-    <WriteLinesToFile
-      File="$(_ElectronNpmConfigFile)"
-      Lines="install-links=false&#x0A;bin-links=false&#x0A;audit=false&#x0A;fund=false&#x0A;loglevel=error"
-      Overwrite="true" />
-    <RemoveDir Directories="$(_ElectronNodeModulesDir)" Condition="Exists('$(_ElectronNodeModulesDir)')" />
-    <Delete Files="$(_ElectronHostHookNodeModule)" Condition="Exists('$(_ElectronHostHookNodeModule)')" />
-    <RemoveDir Directories="$(_ElectronHostHookNodeModule)" Condition="Exists('$(_ElectronHostHookNodeModule)')" />
+    <ItemGroup>
+      <_ElectronHostFiles Include="$(ElectronSourceFilesPath)\**\*"
+                          Exclude="$(ElectronSourceFilesPath)\main.js;$(ElectronSourceFilesPath)\api\browserWindows.js" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ElectronHostFiles)"
+          DestinationFiles="@(_ElectronHostFiles->'$(_PatchedElectronHostPath)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(EditorElectronHostFile)" DestinationFolder="$(_PatchedElectronHostPath)" SkipUnchangedFiles="true" />
+    <Exec Command="node &quot;$(MSBuildProjectDirectory)/Properties/prepare-electron-host.cjs&quot; &quot;$(ElectronIntermediatePackageJson)&quot; &quot;$([MSBuild]::NormalizePath('$(ElectronSourceFilesPath)', 'main.js'))&quot; &quot;$([MSBuild]::NormalizePath('$(_PatchedElectronHostPath)', 'main.js'))&quot;" />
+    <PropertyGroup>
+      <ElectronSourceFilesPath>$(_PatchedElectronHostPath)</ElectronSourceFilesPath>
+    </PropertyGroup>
   </Target>
-  <Target Name="PatchElectronIntermediatePackageJson" BeforeTargets="ElectronConfigureApp" DependsOnTargets="ElectronCreatePackageJson;ElectronSetPaths" Condition="Exists('$(ElectronIntermediatePackageJson)')">
-    <Exec Command="pwsh -NoProfile -Command &quot;$p='$(ElectronIntermediatePackageJson)'; $obj=Get-Content -Raw $p | ConvertFrom-Json; if($obj.dependencies -and $obj.dependencies.PSObject.Properties['electron-host-hook']){ $obj.dependencies.PSObject.Properties.Remove('electron-host-hook') }; $obj | ConvertTo-Json -Depth 32 | Set-Content -NoNewline $p&quot;" />
+  <Target Name="CollectEditorElectronHostUpToDateFiles" AfterTargets="ElectronCollectUpToDateCheckBuiltDesignTime"
+          DependsOnTargets="ElectronResolvePaths">
+    <ItemGroup>
+      <UpToDateCheckBuilt Include="$(OutDir)$(ElectronDirName)/%(EditorElectronHostFile.Filename)%(EditorElectronHostFile.Extension)"
+                          Original="%(EditorElectronHostFile.FullPath)" />
+    </ItemGroup>
   </Target>
 </Project>

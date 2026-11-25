@@ -31,6 +31,8 @@ namespace Arcemi.Models
             await Blueprints.SetupAsync(new BlueprintProviderSetupArgs(Game, workingDirectory, gameFolder));
             if (BlueprintsArchive is object) BlueprintsArchive.Dispose();
             BlueprintsArchive = new GameBlueprintsArchive(gameFolder, this);
+            _weaponEnchantments = null;
+            _armorEnchantments = null;
         }
 
         public void LoadFeatTemplates()
@@ -340,8 +342,9 @@ namespace Arcemi.Models
             var blueprintEnchantments =
                 from b in Blueprints.GetEntries(type)
                 where !predefined.Any(e => e.Blueprint.Eq(b.Id))
-                let bspec = BlueprintsArchive.Load(b)
-                select new EnchantmentSpec(DisplayName(b), b.Id, bspec.Data.Components.Select(c => c.Name).ToArray());
+                let components = BlueprintsArchive?.Load(b)?.Data?.Components
+                where components is not null
+                select new EnchantmentSpec(DisplayName(b), b.Id, components.Select(c => c.Name).ToArray());
 
             return blueprintEnchantments
                     .Concat(predefined)

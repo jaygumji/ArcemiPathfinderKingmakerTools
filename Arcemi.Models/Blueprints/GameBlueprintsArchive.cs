@@ -18,13 +18,15 @@ namespace Arcemi.Models
         {
             if (string.IsNullOrEmpty(gameFolder)) return;
             _blueprintsFile = new FileInfo(Path.Combine(gameFolder, "Blueprints.zip"));
-            if (!_blueprintsFile.Exists) return;
+            if (!_blueprintsFile.Exists) {
+                _blueprintsFile = new FileInfo(Path.Combine(gameFolder, "blueprints.zip"));
+            }
             _res = res;
         }
 
         public Blueprint Load(IBlueprintMetadataEntry metadata)
         {
-            if (!(_blueprintsFile?.Exists ?? false)) return null;
+            if (string.IsNullOrWhiteSpace(metadata?.Path) || _blueprintsFile?.Exists != true) return null;
 
             if (_blueprints is null) {
                 _blueprintsStream = new FileStream(_blueprintsFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);

@@ -6,7 +6,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-editor-version="@Program.Version">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,24 +14,21 @@
           content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' ws://localhost:* http://localhost:* https://localhost:*;" />
     <title>Arcemi Editor @Program.Version</title>
     <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link href="css/main.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/images/app-icon.png" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/bootstrap/bootstrap.min.css" asp-append-version="true" />
+    <link href="~/css/main.css" rel="stylesheet" asp-append-version="true" />
     <link href="arcemi-save-game-editor.styles.css" rel="stylesheet" />
 </head>
 <body>
-    <component type="typeof(App)" render-mode="ServerPrerendered" />
+    @await Html.PartialAsync("_EditorTitleBar")
+    <component type="typeof(Shared.EditorRoot)" render-mode="ServerPrerendered" />
 
-    <div id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
+    @await Html.PartialAsync("_EditorErrorDialog")
+    <div id="blazor-error-ui" role="alert">
+        The editor session stopped responding. <a href="" class="reload">Reload editor</a>
     </div>
 
+    <script src="~/js/editor-errors.js" asp-append-version="true"></script>
     <script src="_framework/blazor.server.js"></script>
 </body>
 </html>

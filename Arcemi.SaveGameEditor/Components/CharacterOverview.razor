@@ -16,7 +16,7 @@
     <div class="col-md-4 form-group">
         <label class="form-label">Voice</label>
         @if (Unit.Asks.IsSupported) {
-            <select class="form-control" @bind="Unit.Asks.Custom">
+            <select class="form-select" @bind="Unit.Asks.Custom">
                 <option value="">Default</option>
                 @foreach (var blueprint in Model.Resources.Blueprints.GetEntries(BlueprintTypeId.UnitAsksList).OrderBy(b => b.DisplayName)) {
                     <option value="@blueprint.Id">@blueprint.DisplayName</option>
@@ -24,7 +24,7 @@
             </select>
         }
         else {
-            <select class="form-control">
+            <select class="form-select">
                 <option value="" selected="selected">Default</option>
             </select>
         }
@@ -37,13 +37,13 @@
         <div class="col-md-4 form-group">
             <label class="form-label">State</label>
             <div class="input-group">
-                <select class="form-control" disabled="@Unit.Companion.IsReadOnly" @bind="Unit.Companion.State">
+                <select class="form-select" disabled="@Unit.Companion.IsReadOnly" @bind="Unit.Companion.State">
                     @foreach (var state in Unit.Companion.AllStates) {
                         <option value="@state.Value">@state.Name</option>
                     }
                 </select>
                 @if (Unit.Companion.IsDialogEnabled && !Unit.Companion.IsInParty) {
-                    <button class="btn btn-info input-group-append" @onclick="OpenEditCompanionStateAsync">
+                    <button class="btn btn-info" @onclick="OpenEditCompanionStateAsync">
                         @if (Unit.Companion.IsExCompanion){
                             <span class="oi oi-plus"></span>
                         }
@@ -72,14 +72,14 @@
     <div class="row">
         <div class="col-md-4 form-group">
             <label class="form-label">Experience</label>
-            <input class="form-control" type="number" @bind="@Unit.Progression.Experience" />
+            <input class="form-control" type="number" readonly="@Unit.Progression.IsExperienceReadOnly" @bind="@Unit.Progression.Experience" />
         </div>
         <div class="col-md-2 form-group">
             <label class="form-label">
                 Level
                 @if (Unit.Progression.IsLevelReadOnly) {
                     <Help Size="ElementSize.Small">
-                        The save game file does not save your current level, it is calculated based on the experience of your characters.
+                        The editor displays this level as read-only.
                     </Help>
                 }
                 else {
@@ -101,7 +101,7 @@
         <GameData Data="Unit.Overview"></GameData>
     }
 
-    @if (Unit.Progression.IsSupported) {
+    @if (Unit.Progression.Selections.Count > 0 || Unit.Progression.Data is not null || Unit.Progression.IsSelectionsRepairable) {
         <div class="row">
             <h3 class="col-md-12">Selections</h3>
         </div>
@@ -119,11 +119,11 @@
                 </div>
             </div>
         }
-        @if (Unit.Progression.Selections.Count > 0) {
+        @if (Unit.Progression.Selections.Any(item => item.IsCreation)) {
             <AlertInfo>
                 <p>
-                    Changing the career path (Archetype) is best used either by doing it just after a respec, or at the same time change the level of the character to level 1.
-                    If you change it on a character above level 1 without changing the level you will need to do manual changes or the game UI can be locked.
+                    Changing the starting archetype returns the character to level 1 and keeps their experience.
+                    Changing a starter selection rolls back to before the first saved level-up choice that depended on it.
                 </p>
                 <p>
                     Note that when changing career path (Archetype) on companions, some selections might be locked during level up and you need to select something else.
@@ -132,12 +132,12 @@
             </AlertInfo>
             <div class="row">
                 @foreach (var sel in Unit.Progression.Selections.Where(s => s.IsCreation)) {
-                    <div class="col-md-4">
+                    <div class="col-md-4" @key="sel">
                         <div class="card">
                             <div class="card-body overflow-hidden text-nowrap">
                                 <h5 class="card-title">@sel.Name</h5>
                                 <p class="card-text">
-                                    <select class="form-control" disabled="@sel.IsReadOnly" @bind="sel.Feature">
+                                    <select class="form-select" disabled="@sel.IsReadOnly" @bind="sel.Feature">
                                         @foreach (var option in sel.Options) {
                                             <option value="@option.Id">@option.Name</option>
                                         }
@@ -210,10 +210,10 @@
         </ul>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@ConfirmCompanionStateIsDisabled" @onclick="ConfirmCompanionStateAsync">
+        <button type="button" class="btn btn-primary" disabled="@ConfirmCompanionStateIsDisabled" @onclick="ConfirmCompanionStateAsync">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditCompanionState.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalEditCompanionState.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 

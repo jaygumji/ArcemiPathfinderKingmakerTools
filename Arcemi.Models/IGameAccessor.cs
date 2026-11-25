@@ -23,7 +23,6 @@ namespace Arcemi.Models
             if (Warhammer40KRogueTrader.W40KRTGameAccessor.Detect(file)) return new Warhammer40KRogueTrader.W40KRTGameAccessor(file);
             if (PathfinderWotr.WotrGameAccessor.Detect(file)) return new PathfinderWotr.WotrGameAccessor(file);
             if (Kingmaker.KingmakerGameAccessor.Detect(file)) return new Kingmaker.KingmakerGameAccessor(file);
-            if (Warhammer40KDarkHeresy.W40KDHGameAccessor.Detect(file)) return new Warhammer40KDarkHeresy.W40KDHGameAccessor(file);
             return new NotSetGameAccessor();
         }
     }
@@ -40,10 +39,13 @@ namespace Arcemi.Models
         IGameStateModel State { get; }
         IGameOperationEvents OperationEvents { get; }
 
-        void BeforeSave();
-
         IGameUnitModel GetOwnerOf(IGameUnitModel unit);
         void SetMainCharacter(IGameUnitModel unit);
+    }
+
+    internal interface IGameSavePreparation
+    {
+        void BeforeSave();
     }
 
     public interface IGameOperationEvents
@@ -121,6 +123,7 @@ namespace Arcemi.Models
     {
         string Name { get; }
         string State { get; set; }
+        bool IsReadOnly => false;
         bool IsCompleted { get; }
         IReadOnlyList<DataOption> StateOptions { get; }
         IReadOnlyList<IGameStateQuestObjectiveEntry> Objectives { get; }
@@ -130,6 +133,7 @@ namespace Arcemi.Models
     {
         string Name { get; }
         string State { get; set; }
+        bool IsReadOnly => false;
         IReadOnlyList<DataOption> StateOptions { get; }
     }
 
@@ -149,11 +153,6 @@ namespace Arcemi.Models
         public NotSetGameAccessor()
         {
             OperationEvents = new GameOperationEvents(this);
-        }
-
-        public void BeforeSave()
-        {
-            throw new NotSupportedException("Unknown game, unable to save");
         }
 
         public IGameUnitModel GetOwnerOf(IGameUnitModel unit)
@@ -187,10 +186,26 @@ namespace Arcemi.Models
         string Type { get; }
         string Description { get; }
         int Index { get; }
+        bool CanEditQuantity => true;
+        int? MinimumCount => null;
+        bool CanEditCharges => CanEditQuantity;
+        int? MinimumCharges => null;
         bool IsChargable { get; }
         int Charges { get; set; }
+        bool TrySetCharges(int charges)
+        {
+            if (!CanEditCharges || charges < MinimumCharges) return false;
+            Charges = charges;
+            return true;
+        }
         bool IsStackable { get; }
         int Count { get; set; }
+        bool TrySetCount(int count)
+        {
+            if (!CanEditQuantity || count < MinimumCount) return false;
+            Count = count;
+            return true;
+        }
         bool CanEdit { get; }
         string IconUrl { get; }
         bool IsLocked { get; set; }
@@ -202,6 +217,7 @@ namespace Arcemi.Models
         string Blueprint { get; }
         string Name { get; }
         string CustomName { get; set; }
+        bool CanRename => true;
         string DefaultName { get; }
         UnitEntityType Type { get; }
         UnitEntityModel Ref { get; }
@@ -331,7 +347,10 @@ namespace Arcemi.Models
     public interface IGameUnitBodyModel : IGameModel
     {
         IReadOnlyList<IGameUnitHandsEquippedEntry> HandsEquipmentSets { get; }
+        int? ActiveHandsEquipmentSetIndex => null;
         IReadOnlyList<IGameUnitEquippedEntry> QuickSlots { get; }
+        IEnumerable<(string Name, IGameUnitEquippedEntry Slot, BlueprintTypeId ItemType)> AdditionalSlots =>
+            Array.Empty<(string, IGameUnitEquippedEntry, BlueprintTypeId)>();
 
         IGameUnitEquippedEntry Armor { get; }
         IGameUnitEquippedEntry Shirt { get; }
@@ -355,6 +374,7 @@ namespace Arcemi.Models
     public interface IGameUnitEquippedEntry
     {
         object ItemRef { get; }
+        bool IsReadOnly => false;
     }
 
     public interface IGameUnitFactEntry
@@ -399,6 +419,7 @@ namespace Arcemi.Models
         string DisplayName { get; }
         string Blueprint { get; }
         bool IsActive { get; set; }
+        bool IsReadOnly => false;
         TimeParts Duration { get; }
     }
 
@@ -407,6 +428,7 @@ namespace Arcemi.Models
         string DisplayName { get; }
         string Blueprint { get; }
         bool IsActive { get; set; }
+        bool IsReadOnly => false;
     }
 
     public interface IGameUnitFeatEntry
@@ -416,6 +438,9 @@ namespace Arcemi.Models
         string Blueprint { get; }
         string Category { get; }
         bool IsRanked { get; }
+        bool CanEditRank => IsRanked;
+        int? MaximumRank => null;
+        bool CanExport => true;
         int Rank { get; set; }
 
         /// <summary>
@@ -455,11 +480,22 @@ namespace Arcemi.Models
         int Value { get; set; }
         string Info { get; }
         bool IsReadOnly { get; }
+        int Step => 1;
+        int? Minimum => null;
+        int? Maximum => null;
+
+        bool TrySetValue(int value)
+        {
+            if (IsReadOnly) return false;
+            Value = value;
+            return true;
+        }
     }
 
     public interface IGameUnitProgressionModel : IGameModel
     {
         int Experience { get; set; }
+        bool IsExperienceReadOnly => false;
         int CurrentLevel { get; set; }
         bool IsLevelReadOnly { get; }
         bool IsSelectionsRepairable { get; }
@@ -548,6 +584,7 @@ namespace Arcemi.Models
         string Blueprint { get; }
         string Path { get; }
 
+        bool CanSet => true;
         void Set(Portrait portrait);
     }
 

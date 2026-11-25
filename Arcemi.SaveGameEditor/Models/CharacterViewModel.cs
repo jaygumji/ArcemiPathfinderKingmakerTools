@@ -12,6 +12,7 @@ namespace Arcemi.SaveGameEditor.Models
             _session = session;
         }
 
+        public bool IsOpen => _session.IsOpen;
         public bool CanEdit => _session.CanEdit;
         public IEnumerable<IGameUnitModel> Characters => _session.Game.Characters;
         public IGameAccessor Game => _session.Game;

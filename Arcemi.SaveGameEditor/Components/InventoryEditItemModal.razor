@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         @foreach (var fact in ItemEnchantable.Facts.Items.OfType<EnchantmentFactItemModel>().Where(f => !f.IsLevel)) {
-                            <span class="badge badge-secondary m-1">
+                            <span class="badge text-bg-secondary m-1">
                                 @fact.DisplayName(Resources)
                                 @if (!fact.IsMapped) {
                                     <button class="btn btn-sm btn-secondary" @onclick="() => CopyEnchantmentData(fact)">
@@ -100,7 +100,7 @@
             }
         </Body>
         <Footer>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditItem.CloseAsync()">Close</button>
+            <button type="button" class="btn btn-secondary" @onclick="() => modalEditItem.CloseAsync()">Close</button>
         </Footer>
     </Modal>
 </div>

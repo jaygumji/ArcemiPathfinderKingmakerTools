@@ -32,22 +32,28 @@
     }
 
     .nav-item ::deep a {
-        color: #d7d7d7;
-        border-radius: 4px;
+        color: var(--editor-sidebar-text);
+        border-radius: .375rem;
         height: 3rem;
         display: flex;
         align-items: center;
         line-height: 3rem;
     }
 
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
+.nav-item ::deep a:hover {
+    background-color: var(--editor-sidebar-hover);
     color: white;
 }
 
-.nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
+.nav-item ::deep a.active {
+    background-color: var(--editor-sidebar-active);
+    box-shadow: inset 3px 0 var(--editor-sidebar-accent);
     color: white;
+}
+
+.nav-item ::deep a:focus-visible {
+    outline: 2px solid var(--editor-sidebar-accent);
+    outline-offset: 2px;
 }
 
 @media (min-width: 641px) {

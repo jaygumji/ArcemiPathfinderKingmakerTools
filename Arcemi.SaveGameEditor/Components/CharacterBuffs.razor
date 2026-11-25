@@ -35,7 +35,7 @@
             <label class="form-label">@buff.DisplayName</label>
         </div>
         <div class="col-md-1">
-            <Switch @bind-IsChecked="buff.IsActive" />
+            <Switch @bind-IsChecked="buff.IsActive" IsReadOnly="@buff.IsReadOnly" />
         </div>
         <div class="col-md-5">
             @if (buff.Duration?.IsEmpty ?? true){
@@ -46,7 +46,7 @@
             }
         </div>
         <div class="col-md-1">
-            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => Remove(buff)">
+            <button class="btn btn-sm btn-danger" title="Remove buff" disabled="@(!Buffs.IsRemoveEnabled)" @onclick="() => Remove(buff)">
                 <span class="oi oi-trash"></span>
             </button>
         </div>
@@ -75,7 +75,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">Buff</label>
-                            <select class="form-control" @bind="AddBlueprint">
+                            <select class="form-select" @bind="AddBlueprint">
                                 <option value="">Select buff...</option>
                                 @foreach (var blueprint in Available) {
                                     <option value="@blueprint.Id" title="@string.Concat(blueprint.Name.Original, ' ', '(', blueprint.Id, ')')">@blueprint.DisplayName</option>
@@ -88,10 +88,10 @@
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddIsInvalid" @onclick="AddAsync">
+        <button type="button" class="btn btn-primary" disabled="@AddIsInvalid" @onclick="AddAsync">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAdd.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAdd.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 

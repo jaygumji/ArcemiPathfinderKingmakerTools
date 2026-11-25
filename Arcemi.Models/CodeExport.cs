@@ -14,6 +14,15 @@ namespace Arcemi.Models
             return JObject.Parse(json);
         }
 
+        public static string GetFeatureBlueprint(JObject data)
+        {
+            if (data?["Blueprint"] is JValue { Type: JTokenType.String, Value: string blueprint }
+                && !string.IsNullOrWhiteSpace(blueprint)) {
+                return blueprint;
+            }
+            throw new FormatException("The feat code must include a blueprint ID.");
+        }
+
         public static string ToCode(JToken token)
         {
             var json = token.ToString(Formatting.None);

@@ -1,0 +1,12 @@
+<dialog id="editor-error-dialog" aria-labelledby="editor-error-title">
+    <h2 id="editor-error-title" class="h5 mb-3">Editor error</h2>
+    <p id="editor-error-message"></p>
+    <label for="editor-error-report" class="form-label">Error report</label>
+    <textarea id="editor-error-report" class="form-control" rows="9" readonly spellcheck="false"></textarea>
+    <p class="small text-muted mt-2 mb-3">Review the report before sharing it.</p>
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <button type="button" class="btn btn-info" id="editor-error-copy">Copy report</button>
+        <button type="button" class="btn btn-secondary" id="editor-error-close">Close</button>
+        <span class="small" role="status" id="editor-error-status"></span>
+    </div>
+</dialog>

@@ -12,7 +12,13 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             Player = player;
             var A = player.GetAccessor();
             var difficulty = A.Object<RefModel>("MinDifficultyController")?.GetAccessor().Object<RefModel>("MinDifficulty")?.GetAccessor();
+            // The game refreshes the save list header from the player's playtime when it saves.
+            var playtime = new TimeParts(() => A.Value<TimeSpan>(nameof(PlayerModel.RealTime), defaultValue: header.GameTotalTime), value => {
+                player.RealTime = value;
+                header.GameTotalTime = value;
+            });
             Data = GameDataModels.Object(new IGameData[] {
+                GameDataModels.Time("Playtime (In Game Time in Rogue Trader)", playtime),
                 GameDataModels.Object("Party resources", new IGameData[] {
                     A.Object<W40KRTScrapResourceEntry>("Scrap"),
                     A.Object<W40KRTProfitFactorResourceEntry>("ProfitFactor"),

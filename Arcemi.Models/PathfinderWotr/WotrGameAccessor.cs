@@ -4,7 +4,7 @@ using Arcemi.Models.Shared;
 
 namespace Arcemi.Models.PathfinderWotr
 {
-    public class WotrGameAccessor : IGameAccessor
+    public class WotrGameAccessor : IGameAccessor, IGameSavePreparation
     {
         public static bool Detect(IGameEditFile file)
         {

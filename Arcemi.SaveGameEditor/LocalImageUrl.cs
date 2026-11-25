@@ -8,7 +8,7 @@ namespace Arcemi.SaveGameEditor
         public static string ToApiUrl(string pathOrUrl)
         {
             if (string.IsNullOrWhiteSpace(pathOrUrl)) return string.Empty;
-            if (pathOrUrl.StartsWith("/", StringComparison.Ordinal)) return pathOrUrl;
+            if (pathOrUrl.StartsWith("/", StringComparison.Ordinal) && !File.Exists(pathOrUrl)) return pathOrUrl;
             if (pathOrUrl.StartsWith("data:", StringComparison.OrdinalIgnoreCase)) return pathOrUrl;
             if (pathOrUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
                 || pathOrUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) {

@@ -4,7 +4,7 @@ using Arcemi.Models.Shared;
 
 namespace Arcemi.Models.Kingmaker
 {
-    public class KingmakerGameAccessor : IGameAccessor
+    public class KingmakerGameAccessor : IGameAccessor, IGameSavePreparation
     {
         public static bool Detect(IGameEditFile file)
         {

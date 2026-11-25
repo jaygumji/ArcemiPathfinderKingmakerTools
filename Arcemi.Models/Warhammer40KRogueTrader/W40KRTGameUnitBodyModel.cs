@@ -28,6 +28,33 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         }
         public IReadOnlyList<IGameUnitHandsEquippedEntry> HandsEquipmentSets { get; }
         public IReadOnlyList<IGameUnitEquippedEntry> QuickSlots { get; }
+        public IEnumerable<(string Name, IGameUnitEquippedEntry Slot, BlueprintTypeId ItemType)> AdditionalSlots
+        {
+            get {
+                var slots = Ref?.GetAccessor().Object<RefModel>("Augments")?.GetAccessor().List<RefModel>("m_Slots");
+                if (slots is null) yield break;
+                var blueprints = GameDefinition.Warhammer40K_RogueTrader.Resources.Blueprints;
+                foreach (var entry in slots) {
+                    var accessor = entry.GetAccessor();
+                    var slot = accessor.Object<RefModel>("Value");
+                    if (slot is null) continue;
+                    var key = accessor.Value<string>("Key");
+                    var name = W40KRTForgeWorldAugments.Slot.Eq(key) ? "Forge World" : blueprints.GetNameOrBlueprint(key);
+                    yield return (name, new AugmentSlotEntry(slot), BlueprintTypeId.ItemAugment);
+                }
+            }
+        }
+
+        private sealed class AugmentSlotEntry : IGameUnitEquippedEntry
+        {
+            private readonly RefModel _slot;
+
+            public AugmentSlotEntry(RefModel slot) => _slot = slot;
+
+            public object ItemRef => _slot.GetAccessor().Value<string>("m_ItemRef");
+            public bool IsReadOnly => true;
+        }
+
         public IGameUnitEquippedEntry Armor { get; }
         public IGameUnitEquippedEntry Shirt { get; }
         public IGameUnitEquippedEntry Belt { get; }

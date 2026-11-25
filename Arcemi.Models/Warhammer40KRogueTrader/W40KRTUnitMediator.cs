@@ -14,6 +14,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             _events = events;
         }
 
+        internal W40KRTGameSharedInventoryModel SharedInventory => (W40KRTGameSharedInventoryModel)_accessor?.SharedInventory;
+
         public IGameUnitModel ParentOf(IGameUnitModel child)
         {
             var parentId = child.Ref.GetAccessor().Value<string>("MasterRef");

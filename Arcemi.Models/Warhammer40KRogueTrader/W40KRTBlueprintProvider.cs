@@ -34,6 +34,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             await cacheInfo.SaveAsync(args.WorkingDirectory);
         }
 
+        internal W40KRTBlueprintAssetData GetAssetData(string id) =>
+            id.HasValue() && _blueprintAssetLookup?.TryGetValue(id, out var asset) == true ? asset.Data : null;
+
         private void LoadLocalizationFileEnGB(BlueprintProviderSetupArgs args)
         {
             var serializer = new JsonSerializer();
@@ -58,7 +61,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             var localizationId = entry.Guid;
             if (_blueprintAssetLookup.TryGetValue(entry.Guid, out var asset)) {
                 if (asset.Data?.DisplayName?.Shared?.StringKey?.HasValue() ?? false) {
-                    if (_localizationFileEnGB.TryGetValue(asset.Data.DisplayName.Shared.StringKey, out var localizationEntry))
+                    if (_localizationFileEnGB?.TryGetValue(asset.Data.DisplayName.Shared.StringKey, out var localizationEntry) == true)
                         return new BlueprintName(((IBlueprintMetadataEntry)entry).Type, localizationEntry.Text, entry.Name);
                 }
                 if (asset.Data?.DisplayName?.Shared?.AssetGuid?.HasValue() ?? false) {
@@ -238,6 +241,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public static BlueprintType ItemArmor { get; } = new BlueprintType("Armor", "Kingmaker.Blueprints.Items.Armors.BlueprintItemArmor, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType ItemArmorPlating { get; } = new BlueprintType("Armor Plating", "Warhammer.SpaceCombat.Blueprints.BlueprintItemArmorPlating, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType ItemArsenal { get; } = new BlueprintType("Arsenal", "Warhammer.SpaceCombat.Blueprints.BlueprintItemArsenal, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
+        public static BlueprintType ItemAugment { get; } = new BlueprintType("Augment", "Kingmaker.Blueprints.Items.Augments.BlueprintItemAugment, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType ItemAugerArray { get; } = new BlueprintType("Auger Array", "Warhammer.SpaceCombat.Blueprints.BlueprintItemAugerArray, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType ItemEquipmentFeet { get; } = new BlueprintType("Feet", "Kingmaker.Blueprints.Items.Equipment.BlueprintItemEquipmentFeet, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
         public static BlueprintType ItemEquipmentGloves { get; } = new BlueprintType("Gloves", "Kingmaker.Blueprints.Items.Equipment.BlueprintItemEquipmentGloves, Code, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
@@ -546,6 +550,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             {ItemArmor.FullName, ItemArmor},
             {ItemArmorPlating.FullName, ItemArmorPlating},
             {ItemArsenal.FullName, ItemArsenal},
+            {ItemAugment.FullName, ItemAugment},
             {ItemAugerArray.FullName, ItemAugerArray},
             {ItemEquipmentFeet.FullName, ItemEquipmentFeet},
             {ItemEquipmentGloves.FullName, ItemEquipmentGloves},
@@ -699,6 +704,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             {BlueprintTypeId.ItemArmor, ItemArmor},
             {BlueprintTypeId.ItemEquipmentShoulders, ItemEquipmentShoulders},
             {BlueprintTypeId.ItemEquipmentRing, ItemEquipmentRing},
+            {BlueprintTypeId.ItemAugment, ItemAugment},
             {BlueprintTypeId.ItemEquipmentGloves, ItemEquipmentGloves},
             {BlueprintTypeId.ItemEquipmentFeet, ItemEquipmentFeet},
             {BlueprintTypeId.ItemWeapon, ItemWeapon},

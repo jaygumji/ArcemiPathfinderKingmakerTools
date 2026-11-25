@@ -78,8 +78,8 @@
     private Task OnTabIndexChangedAsync(TabIndexChangedArgs args)
     {
         if (Games.Count <= args.NewIndex || args.NewIndex < 0) return Task.CompletedTask;
-        Config.Instance.LastGameDefinitionId = Games[args.NewIndex].Definition.Id;
-        Config.Save();
+        TabIndex = args.NewIndex;
+        Config.RememberGame(Games[TabIndex].Definition);
         return Task.CompletedTask;
     }
 }

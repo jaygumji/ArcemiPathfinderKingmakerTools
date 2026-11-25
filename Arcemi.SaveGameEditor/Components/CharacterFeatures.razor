@@ -1,13 +1,17 @@
 ﻿@inject CharacterViewModel Model
 @inject IGameResourcesProvider Resources
 
+@if (Unit.Feats.IsAddEnabled || Unit.Feats.Any(feature => feature.CanExport)) {
 <div class="row">
     <div class="col-md-12">
-        <textarea class="form-control" placeholder="Paste feature codes that you want to import" @bind:event="oninput" @bind="ImportCode"></textarea>
+        @if (Unit.Feats.IsAddEnabled) {
+            <textarea class="form-control" placeholder="Paste feature codes that you want to import" @bind:event="oninput" @bind="ImportCode"></textarea>
+        }
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
+        @if (Unit.Feats.IsAddEnabled) {
         <button class="btn btn-info" disabled="@ImportCode.IsEmpty()" @onclick="() => ImportFeature()">
             <span class="oi oi-script"></span>
             Import Code
@@ -18,12 +22,21 @@
             Or go to the wiki and copy a shared code.
         </Help>
         <ExternalLink Target="ExternalLinks.WikiFeatCodes" Text="Wiki" />
-        <button class="btn btn-info" @onclick="() => ExportAllFeatures()" title="Export all codes to clipboard">
-            <span class="oi oi-script"></span>
-            Export all codes
-        </button>
+        }
+        @if (Unit.Feats.Any(feature => feature.CanExport)) {
+            <button class="btn btn-info" @onclick="() => ExportAllFeatures()" title="Export all codes to clipboard">
+                <span class="oi oi-script"></span>
+                Export all codes
+            </button>
+        }
     </div>
 </div>
+
+}
+
+@if (ImportError.HasValue()) {
+    <p class="alert alert-warning" role="alert">@ImportError</p>
+}
 
 <div class="row g-3 top-toolbar mt-3">
     <div class="col-md-6 btn-group">
@@ -34,7 +47,7 @@
     </div>
 </div>
 
-@if (Unit.Feats.AvailableEntries.Count > 0) {
+@if (Unit.Feats.IsAddEnabled && Unit.Feats.AvailableEntries.Count > 0) {
 <div class="row">
     <div class="col-md-6">
         <button class="btn btn-sm btn-info btn-h4" @onclick="() => OpenAddFeatAsync()">
@@ -70,18 +83,20 @@
                 <label class="form-label" title="Last level this feat was updated">@feature.SourceLevel</label>
             </div>
             <div class="col-md-3">
-                <button class="btn btn-sm btn-secondary" title="Export to clipboard" @onclick="() => ExportFeature(feature)">
-                    <span class="oi oi-script"></span>
-                </button>
-                @if (feature.IsRanked) {
+                @if (feature.CanExport) {
+                    <button class="btn btn-sm btn-secondary" title="Export to clipboard" @onclick="() => ExportFeature(feature)">
+                        <span class="oi oi-script"></span>
+                    </button>
+                }
+                @if (feature.CanEditRank) {
                     <button class="btn btn-sm btn-warning" disabled="@(feature.Rank <= 1)" @onclick="() => DownrankFeature(feature)">
                         <span class="oi oi-arrow-thick-bottom"></span>
                     </button>
-                    <button class="btn btn-sm btn-warning" @onclick="() => UprankFeature(feature)">
+                    <button class="btn btn-sm btn-warning" disabled="@(feature.MaximumRank is int max && feature.Rank >= max)" @onclick="() => UprankFeature(feature)">
                         <span class="oi oi-arrow-thick-top"></span>
                     </button>
                 }
-                <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveFeature(feature)">
+                <button class="btn btn-sm btn-danger" title="Remove feature" disabled="@(!Unit.Feats.IsRemoveEnabled)" @onclick="() => RemoveFeature(feature)">
                     <span class="oi oi-trash"></span>
                 </button>
             </div>
@@ -111,7 +126,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">Feat</label>
-                            <select class="form-control" @bind="AddFeatBlueprint">
+                            <select class="form-select" @bind="AddFeatBlueprint">
                                 <option value="">Select feat...</option>
                                 @foreach (var blueprint in AvailableFeatsBase) {
                                     <option value="@blueprint.Id" title="@blueprint.Tooltip">@blueprint.DisplayName</option>
@@ -124,10 +139,10 @@
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddFeatIsInvalid" @onclick="AddFeatAsync">
+        <button type="button" class="btn btn-primary" disabled="@AddFeatIsInvalid" @onclick="AddFeatAsync">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFeat.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAddFeat.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 
@@ -142,6 +157,7 @@
 
     private string SearchTerm;
     private string ImportCode;
+    private string ImportError;
 
     private Modal modalAddFeat;
     private string AddFeatBlueprint;
@@ -182,18 +198,16 @@
     private void ExportAllFeatures()
     {
         var sb = new System.Text.StringBuilder();
-        foreach (var feat in Feats) {
+        foreach (var feat in Feats.Where(feat => feat.CanExport)) {
             if (sb.Length > 0) sb.AppendLine();
             sb.Append("# ").AppendLine(feat.DisplayName).AppendLine(feat.Export());
         }
         ElectronNET.API.Electron.Clipboard.WriteText(sb.ToString());
     }
 
-    private bool IsDuplicate(string code)
+    private bool IsDuplicate(Newtonsoft.Json.Linq.JObject obj, string blueprint)
     {
-        var obj = CodeExport.FromCode(code);
-        if (!obj.TryGetValue(nameof(FeatureFactItemModel.Blueprint), out string blueprint)) return false;
-        var feats = Feats.Where(f => f.Blueprint.Eq(blueprint)).ToArray();
+        var feats = Unit.Feats.Where(f => f.Blueprint.Eq(blueprint)).ToArray();
         if (feats.Length == 0) return false;
 
         var paramToken = obj[nameof(FeatureFactItemModel.Param)];
@@ -207,17 +221,13 @@
         return true;
     }
 
-    private bool IsDuplicateBlueprintId(string blueprint)
-    {
-        return Feats.Any(f => f.Blueprint.Eq(blueprint));
-    }
-
     private void ImportFeature()
     {
         var codes = ImportCode?.Trim()?.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (!(codes?.Length > 0)) return;
 
         var allowDuplicates = false;
+        var failed = new List<string>();
         foreach (var code in codes) {
             if (code[0] == '#') continue;
             if (code.IEq("$allow-dups")) {
@@ -229,10 +239,23 @@
                 continue;
             }
             if (code[0] == '$') continue;
-            if (!allowDuplicates && IsDuplicate(code)) continue;
-            var feat = Unit.Feats.AddByCode(code);
+            try {
+                var feat = CodeExport.FromCode(code);
+                var blueprint = CodeExport.GetFeatureBlueprint(feat);
+                if (allowDuplicates || !IsDuplicate(feat, blueprint)) {
+                    Unit.Feats.AddByCode(code);
+                }
+            }
+            catch (Exception ex) when (ex is FormatException or Newtonsoft.Json.JsonException or ArgumentException) {
+                failed.Add(code);
+            }
         }
-        ImportCode = "";
+        ImportError = failed.Count switch {
+            0 => null,
+            1 => "One line could not be imported. Paste a feat code exported by the editor.",
+            _ => $"{failed.Count} lines could not be imported. Paste feat codes exported by the editor."
+        };
+        ImportCode = string.Join(Environment.NewLine, failed);
     }
 
     private void RemoveFeature(IGameUnitFeatEntry feature)

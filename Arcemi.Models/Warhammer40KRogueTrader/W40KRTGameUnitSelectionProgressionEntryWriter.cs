@@ -10,7 +10,7 @@
         }
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
         {
-            args.Obj.Add("Path", GetPathFor(owner.Type));
+            args.Obj.Add("Path", args.Data is UnitProgressionSelectionOfPartModel parent ? parent.Path : GetPathFor(owner.Type));
             args.Obj.Add("Level", 0);
             args.Obj.Add("Selection", args.Blueprint);
             args.Obj.Add("Feature", args.Data is string str ? str : "");

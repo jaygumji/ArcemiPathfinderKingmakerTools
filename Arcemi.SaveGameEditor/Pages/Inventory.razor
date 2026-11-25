@@ -1,7 +1,7 @@
 ﻿@page "/Inventory"
 @inject IEditFileSession Session
 
-@if (!Session.CanEdit) {
+@if (!Session.IsOpen) {
     <p><em>Save file not loaded.</em></p>
 }
 else {

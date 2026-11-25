@@ -76,7 +76,7 @@
         </div>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditTable.CloseAsync()">Close</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalEditTable.CloseAsync()">Close</button>
     </Footer>
 </Modal>
 
@@ -88,7 +88,7 @@
                 <Content>
                     <div class="row g-3">
                         <div class="col-md-12">
-                            <select class="form-control" @bind="AddItemType">
+                            <select class="form-select" @bind="AddItemType">
                                 <option value="">All Types</option>
                                 @foreach (var type in BlueprintType.AllVendorItems) {
                                     <option value="@type.FullName">@type.DisplayName</option>
@@ -108,7 +108,7 @@
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label for="add-item-type" class="form-label">Item type</label>
-                            <select id="add-item-type" class="form-control" @bind="AddItemType">
+                            <select id="add-item-type" class="form-select" @bind="AddItemType">
                                 <option value="">Select item type...</option>
                                 @foreach (var type in BlueprintType.AllVendorItems) {
                                     <option value="@type.FullName">@type.DisplayName</option>
@@ -119,7 +119,7 @@
                     <div class="row g-3">
                         <div class="col-md-10">
                             <label for="add-item-blueprint" class="form-label">Item</label>
-                            <select id="add-item-blueprint" class="form-control" @bind="AddItemBlueprint">
+                            <select id="add-item-blueprint" class="form-select" @bind="AddItemBlueprint">
                                 <option value="">Select item...</option>
                                 @foreach (var blueprint in AddableItemBlueprints) {
                                     <option value="@blueprint.Id">@blueprint.DisplayName</option>
@@ -136,8 +136,8 @@
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@IsAddItemInvalid" @onclick="() => AddItemAsync()">Confirm</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddItem.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-primary" disabled="@IsAddItemInvalid" @onclick="() => AddItemAsync()">Confirm</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAddItem.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 

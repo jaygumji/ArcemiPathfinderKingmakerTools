@@ -130,7 +130,7 @@
         var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
         var file = files?.FirstOrDefault();
         if (!string.IsNullOrEmpty(file)) {
-            using (var zip = SharpCompress.Archives.Zip.ZipArchive.Open(file, new SharpCompress.Readers.ReaderOptions())) {
+            using (var zip = SharpCompress.Archives.Zip.ZipArchive.OpenArchive(file, new SharpCompress.Readers.ReaderOptions())) {
                 var entry = zip.Entries.FirstOrDefault(e => e.Key.IEq("Blueprints.txt"));
                 if (entry is null) {
                     Output = "Couldn't find entry Blueprints.txt";
@@ -214,7 +214,7 @@
             b.Append("]}");
 
             var blueprintsFile = System.IO.Path.Combine(game.GameFolder, "blueprints.zip");
-            var targetBlueprints = SharpCompress.Archives.Zip.ZipArchive.Create();
+            using var targetBlueprints = SharpCompress.Archives.Zip.ZipArchive.CreateArchive();
             using (var blueprintsStream = System.IO.File.OpenRead(blueprintsFile))
             using (var blueprints = new System.IO.Compression.ZipArchive(blueprintsStream, System.IO.Compression.ZipArchiveMode.Read)) {
                 foreach (var metadata in cheatdata.Entries) {
@@ -230,13 +230,14 @@
                         var memStream = new System.IO.MemoryStream();
                         srcStream.CopyTo(memStream);
                         memStream.Seek(0, System.IO.SeekOrigin.Begin);
-                        targetBlueprints.AddEntry(entry.FullName, memStream, memStream.Length, entry.LastWriteTime.DateTime);
+                        targetBlueprints.AddEntry(entry.FullName, memStream, closeStream: true, size: memStream.Length,
+                            modified: entry.LastWriteTime.DateTime);
                     }
                 }
             }
             var targetBlueprintsFile = System.IO.Path.Combine(outputFolder, "blueprints.zip");
-            using (var targetBlueprintsStream = System.IO.File.OpenWrite(targetBlueprintsFile))
-                targetBlueprints.SaveTo(targetBlueprintsStream);
+            using (var targetBlueprintsStream = System.IO.File.Create(targetBlueprintsFile))
+                targetBlueprints.SaveTo(targetBlueprintsStream, SharpCompress.Common.CompressionType.Deflate);
 
             var outputBundleFolder = System.IO.Path.Combine(outputFolder, "Bundles");
             if (!System.IO.Directory.Exists(outputBundleFolder)) {

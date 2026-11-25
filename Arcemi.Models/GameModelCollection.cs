@@ -1,4 +1,4 @@
-﻿using SharpCompress.Writers;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -140,6 +140,13 @@ namespace Arcemi.Models
         public virtual bool IsAddEnabled => true;
         public virtual bool IsRemoveEnabled => true;
         public abstract void BeforeAdd(BeforeAddCollectionItemArgs args);
+
+        public virtual void BeforeImport(IReferences references, JObject target, JObject data)
+        {
+            BeforeAdd(new BeforeAddCollectionItemArgs(references, target, null, null));
+            data.ImportTo(target, ImportOptions.CodeScripts);
+        }
+
         public virtual void AfterAdd(AfterAddCollectionItemArgs<TGameModel, TModel> args) { }
         public virtual void AfterRemove(AfterRemoveCollectionItemArgs<TGameModel, TModel> args) { }
 
@@ -290,8 +297,15 @@ namespace Arcemi.Models
 
         public TGameModel AddByCode(string code)
         {
-            var model = _accessor.Add((r, o) => writer?.BeforeAdd(new BeforeAddCollectionItemArgs(r, o, null, null)));
-            model.Import(code);
+            var data = CodeExport.FromCode(code);
+            var model = _accessor.Add((references, target) => {
+                if (writer is null) {
+                    data.ImportTo(target, ImportOptions.CodeScripts);
+                }
+                else {
+                    writer.BeforeImport(references, target, data);
+                }
+            });
             var gameModel = _factory(model);
             writer?.AfterAdd(new AfterAddCollectionItemArgs<TGameModel, TModel>(gameModel, model, null, null));
 
@@ -318,9 +332,17 @@ namespace Arcemi.Models
             var gameModel = _factory(model);
             writer?.AfterAdd(new AfterAddCollectionItemArgs<TGameModel, TModel>(gameModel, model, blueprint, data));
 
-            _inner.Add(gameModel);
+            _inner.Insert(index, gameModel);
             _reverse.Add(gameModel, model);
             return gameModel;
+        }
+
+        internal void AddReference<TRef>(TRef model) where TRef : RefModel, TModel
+        {
+            _accessor.AddRef(model);
+            var gameModel = _factory(model);
+            _inner.Add(gameModel);
+            _reverse.Add(gameModel, model);
         }
 
         public TGameModel Duplicate(TGameModel model)

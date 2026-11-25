@@ -30,7 +30,7 @@
                 <Content>
                     <div class="row g-3">
                         <div class="col-md-12">
-                            <select class="form-control" @bind="SelectedFlag">
+                            <select class="form-select" @bind="SelectedFlag">
                                 <option value="">Select flag...</option>
                                 @foreach (var type in AddableFlags) {
                                     <option value="@type.Id">@type.DisplayName</option>
@@ -43,8 +43,8 @@
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(string.IsNullOrEmpty(SelectedFlag))" @onclick="() => AddFlagAsync()">Confirm</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFlag.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(SelectedFlag))" @onclick="() => AddFlagAsync()">Confirm</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAddFlag.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 <div class="form-list">

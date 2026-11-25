@@ -1,5 +1,5 @@
 ﻿@inject EditorConfiguration ConfigurationProvider
-@inject IJSRuntime JSRuntime
+@if (_initialized) {
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -10,22 +10,13 @@
         </LayoutView>
     </NotFound>
 </Router>
+}
 @code {
+    private bool _initialized;
+
     protected override async Task OnInitializedAsync()
     {
         await ConfigurationProvider.InitializeAsync();
-        Logger.UseDeferred((o, t) => {
-            switch (t) {
-                case LogEventType.Error:
-                    JSRuntime.InvokeVoidAsync("console.error", o);
-                    break;
-                case LogEventType.Warning:
-                    JSRuntime.InvokeVoidAsync("console.warning", o);
-                    break;
-                default:
-                    JSRuntime.InvokeVoidAsync("console.log", o);
-                    break;
-            }
-        });
+        _initialized = true;
     }
 }

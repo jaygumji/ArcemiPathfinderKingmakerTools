@@ -58,7 +58,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">Feat</label>
-                            <select class="form-control" @bind="AddFeatBlueprint">
+                            <select class="form-select" @bind="AddFeatBlueprint">
                                 <option value="">Select feat...</option>
                                 @foreach (var blueprint in AvailableFeatsBase) {
                                     <option value="@blueprint.Id">@blueprint.DisplayName</option>
@@ -71,10 +71,10 @@
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddFeatIsInvalid" @onclick="AddFeatAsync">
+        <button type="button" class="btn btn-primary" disabled="@AddFeatIsInvalid" @onclick="AddFeatAsync">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddFeat.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAddFeat.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 

@@ -22,7 +22,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             else {
                 Options = new List<BlueprintOption>();
             }
-            if (!Options.Any(o => o.Id.Eq(Feature))) {
+            if (Feature.HasValue() && !Options.Any(o => o.Id.Eq(Feature))) {
                 ((List<BlueprintOption>)Options).Insert(0, new BlueprintOption(Feature, Res.Blueprints.TryGet(Feature, out var entry) ? NameWithout(entry.DisplayName, Name) : Feature + " (Unknown)"));
                 IsReadOnly = true;
             }
@@ -45,36 +45,39 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public string Feature
         {
-            get => Ref.Feature;
+            get => Ref.Selection.Eq(W40KRTForgeWorldAugments.Selection)
+                ? W40KRTForgeWorldAugments.CanonicalChoice(Ref.Feature) : Ref.Feature;
             set {
                 if (Ref.Selection.Eq(W40KRTArchetypes.Tier1.SelectionId)) {
-                    var oldValue = Ref.Feature;
-                    Ref.Feature = value;
-
+                    if (Ref.Feature.Eq(value)) return;
                     var type = W40KRTArchetypes.Tier1.Get(value);
                     if (type is null) return;
 
-                    var feats = Owner.Feats.Where(f => W40KRTArchetypes.Tier1.Has(f.Blueprint)).ToArray();
-                    foreach (var feat in feats) {
+                    Owner.Progression.CurrentLevel = 1;
+                    var tier = W40KRTArchetypes.Tier1;
+                    var oldFeats = tier.Types.SelectMany(t => t.KeystoneAbilityIds
+                        .Concat(t.AutomaticFeats.Select(f => f.Id))
+                        .Append(t.CareerPathId).Append(t.SelectionId)).ToHashSet(StringComparer.Ordinal);
+                    foreach (var feat in Owner.Feats.Where(f => oldFeats.Contains(f.Blueprint)).ToArray()) {
                         Owner.Feats.Remove(feat);
                     }
-                    Owner.Feats.AddByBlueprint(type.SelectionId);
-                    Owner.Feats.AddByBlueprint(type.CareerPathId);
-                    foreach (var keystoneAbilityId in type.KeystoneAbilityIds) {
-                        Owner.Feats.AddByBlueprint(keystoneAbilityId);
-                    }
-                    foreach (var autoFeat in type.AutomaticFeats.Where(x => x.Level <= 1)) {
-                        Owner.Feats.AddByBlueprint(autoFeat.Id);
-                    }
                     Ref.Feature = value;
+                    W40KRTProgressionFacts.AddSelectionRank(Owner, Ref);
+                    Owner.Feats.AddByBlueprint(type.CareerPathId);
+                    foreach (var id in W40KRTProgressionFacts.GetAutomaticFeatures(type.CareerPathId, 1)
+                        ?? type.KeystoneAbilityIds) {
+                        W40KRTProgressionFacts.AddPathRank(Owner, id, type.CareerPathId, type.CareerPathId, 1);
+                    }
+                    foreach (var grant in type.AutomaticFeats.Where(f => f.Level == 1)) {
+                        if (!Owner.Feats.Any(f => f.Blueprint.Eq(grant.Id))) {
+                            Owner.Feats.AddByBlueprint(grant.Id);
+                        }
+                    }
                 }
                 else {
-                    var option = Options.FirstOrDefault(o => o.Id.Eq(value));
-                    if (option is null) {
-                        Ref.Feature = value;
-                        return;
+                    if (Options.FirstOrDefault(o => o.Id.Eq(value)) is W40KRTCharacterSelectionOption option) {
+                        option.Select(this);
                     }
-                    ((W40KRTCharacterSelectionOption)option).Select(this);
                 }
             }
         }

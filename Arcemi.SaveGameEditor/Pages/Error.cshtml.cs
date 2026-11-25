@@ -1,11 +1,7 @@
+using Arcemi.SaveGameEditor.Models;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Arcemi.SaveGameEditor.Pages
 {
@@ -13,20 +9,16 @@ namespace Arcemi.SaveGameEditor.Pages
     [IgnoreAntiforgeryToken]
     public class ErrorModel : PageModel
     {
-        public string RequestId { get; set; }
+        public string Report { get; private set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        public void OnGet() => BuildReport();
+        public void OnPost() => BuildReport();
 
-        private readonly ILogger<ErrorModel> _logger;
-
-        public ErrorModel(ILogger<ErrorModel> logger)
+        private void BuildReport()
         {
-            _logger = logger;
-        }
-
-        public void OnGet()
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            var error = HttpContext.Features.Get<IExceptionHandlerFeature>();
+            Report = error is null ? "The editor could not load this page."
+                : EditorErrorReports.Describe(error.Error, "Load editor page");
         }
     }
 }

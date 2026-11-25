@@ -6,7 +6,7 @@
 @inject StateManager State
 
 @if (!Model.CanEdit) {
-    <p><em>Save file not loaded.</em></p>
+    <p><em>@(Model.IsOpen ? "This save is open in read-only mode." : "Save file not loaded.")</em></p>
 }
 else {
 <fieldset class="form-controller" disabled="@State.IsBusy">
@@ -71,10 +71,12 @@ else {
         GameConfig = Config.Instance.GetGame(Model.Game.Definition);
     }
 
-    void SaveNewFile()
+    async Task SaveNewFile()
     {
-        Model.Save(new SaveFileLocation(GameConfig.GetSaveGamesFolder(), NewSaveFileName));
-        NavManager.NavigateTo("/Overview");
+        await State.ExecuteAsync(() => {
+            Model.Save(new SaveFileLocation(GameConfig.GetSaveGamesFolder(), NewSaveFileName));
+            NavManager.NavigateTo("/Overview");
+        });
     }
 
     async Task SaveFile()
@@ -83,7 +85,7 @@ else {
             var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
             var options = new ElectronNET.API.SaveDialogOptions {
                 Title = "Save the game file",
-                Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } },
+                Filters = new[] { new ElectronNET.API.Entities.FileFilter { Name = "Owlcat saves", Extensions = new[] { "zks" } } },
                 DefaultPath = Model.Location.FilePath
             };
             var file = await ElectronNET.API.Electron.Dialog.ShowSaveDialogAsync(window, options);

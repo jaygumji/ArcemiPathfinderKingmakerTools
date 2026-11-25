@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -27,18 +26,16 @@ namespace Arcemi.Models
         private static readonly Dictionary<Type, SaveFileTypeMetadata> TypesLookup = Metadatas
             .ToDictionary(x => x.Type);
 
-        private readonly string _path;
-        private readonly Action<JObject> _onSave;
+        private JObject _original;
         public JObject Json { get; }
         private readonly Dictionary<string, List<Model>> _types;
 
         private Model _root;
 
-        public JsonPartSaveGameFile(string path, JObject json, Action<JObject> onSave = null)
+        public JsonPartSaveGameFile(JObject json)
         {
-            _path = path;
             Json = json;
-            _onSave = onSave;
+            AcceptChanges();
             _types = new Dictionary<string, List<Model>>(StringComparer.Ordinal);
         }
 
@@ -102,20 +99,10 @@ namespace Arcemi.Models
             }
         }
 
-        public void Save()
-        {
-            if (_onSave is object) {
-                _onSave(Json);
-                return;
-            }
+        internal bool HasChanges => !JToken.DeepEquals(Json, _original);
 
-            using (var stream = new FileStream(_path, FileMode.Create, FileAccess.Write)) {
-                using (var streamWriter = new StreamWriter(stream, Encoding.UTF8)) {
-                    using (var writer = new JsonTextWriter(streamWriter)) {
-                        Json.WriteTo(writer);
-                    }
-                }
-            }
-        }
+        internal byte[] ToBytes() => Encoding.UTF8.GetBytes(Json.ToString(Formatting.None));
+
+        internal void AcceptChanges() => _original = (JObject)Json.DeepClone();
     }
 }

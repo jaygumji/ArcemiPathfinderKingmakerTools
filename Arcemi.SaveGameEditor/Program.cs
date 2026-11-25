@@ -8,7 +8,7 @@ namespace Arcemi.SaveGameEditor
 {
     public class Program
     {
-        public static string Version { get; } = "2.12.0";
+        public static string Version { get; } = "3.0.0";
 
         public static void Main(string[] args)
         {
@@ -26,8 +26,9 @@ namespace Arcemi.SaveGameEditor
         {
             var options = new BrowserWindowOptions {
                 Show = false,
-                Width = 1024,
-                Height = 768,
+                Width = 1440,
+                Height = 900,
+                BackgroundColor = "#f3f6f8",
                 IsRunningBlazor = true,
                 WebPreferences = new WebPreferences {
                     WebSecurity = true,

@@ -17,8 +17,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public override void BeforeAdd(BeforeAddCollectionItemArgs args)
         {
             if (args.Blueprint.HasValue()) {
-                var blueprint = Res.Blueprints.Get(args.Blueprint);
-                var itemType = W40KRTItemType.Get(blueprint.Type);
+                var itemType = args.Data as W40KRTItemType ?? W40KRTItemType.Get(Res.Blueprints.Get(args.Blueprint).Type);
                 args.Obj.Add("$type", itemType.TypeRef);
                 args.Obj.Add("Blueprint", args.Blueprint);
                 args.Obj.Add("OriginalBlueprint", args.Blueprint);
@@ -27,17 +26,21 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 args.Obj.Add("Abilities", new JArray());
                 args.Obj.Add("IsIdentified", true);
                 args.Obj.Add("UniqueId", Guid.NewGuid().ToString("N"));
-                args.Obj.Add("Facts", new JObject { { "m_Facts", new JArray { new JObject {
-                    { "$type", "Kingmaker.Items.ItemFact, Code" },
-                    { "m_Components", new JArray() },
-                    { "Blueprint", args.Blueprint },
-                    { "UniqueId", Guid.NewGuid().ToString("N") },
-                    { "IsActive", true }
-                } } } });
+                var mainFact = args.References.Create();
+                mainFact.Add("$type", "Kingmaker.Items.ItemFact, Code");
+                mainFact.Add("m_Components", new JArray());
+                mainFact.Add("Blueprint", args.Blueprint);
+                mainFact.Add("UniqueId", Guid.NewGuid().ToString("N"));
+                mainFact.Add("IsActive", true);
+                args.Obj.Add("Facts", new JObject { { "m_Facts", new JArray(mainFact) } });
+                args.Obj.Add("MainFact", args.References.CreateReference(args.Obj, mainFact));
                 args.Obj.Add("Parts", new JObject { { "Container", new JArray { new JObject {
                     { "$type", "Kingmaker.UnitLogic.PartMechanicFeatures, Code" }
                 } } } });
-                args.Obj.Add("m_InventorySlotIndex", Ref.GetAccessor().List<RefModel>("m_Items").Max(i => i.GetAccessor().Value<int>("m_InventorySlotIndex")) + 1);
+                var lastSlot = Ref.GetAccessor().List<RefModel>("m_Items")
+                    .Select(item => item.GetAccessor().Value<int>("m_InventorySlotIndex"))
+                    .DefaultIfEmpty(-1).Max();
+                args.Obj.Add("m_InventorySlotIndex", lastSlot + 1);
                 args.Obj.Add("m_Count", 1);
                 if (itemType == W40KRTItemType.Usable) {
                     args.Obj.Add("Charges", 1);

@@ -56,14 +56,26 @@ namespace Arcemi.Models.Kingmaker
             }
         }
 
-        public override void AfterAdd(AfterAddCollectionItemArgs<IGameUnitFeatEntry, FactItemModel> args)
+        public override void BeforeImport(IReferences references, JObject target, JObject data)
         {
-            if (KingmakerPredefinedFeats.Instance.Is(args.Blueprint)) return;
+            var blueprint = CodeExport.GetFeatureBlueprint(data);
+            if (data["$type"] is { Type: not JTokenType.Null } type
+                && (type.Type != JTokenType.String || !type.Value<string>().Eq(FeatureFactItemModel.TypeRef))) {
+                throw new FormatException("The code does not describe a Kingmaker feat.");
+            }
 
-            //var template = Res.GetFeatTemplate(args.Blueprint);
-            //if (template is object) {
-            //    args.Model.Import(template);
-            //}
+            var param = data["Param"];
+            if (param is { Type: not (JTokenType.Null or JTokenType.Object) }) {
+                throw new FormatException("The feat code contains an invalid parameter.");
+            }
+
+            BeforeAdd(new BeforeAddCollectionItemArgs(references, target, blueprint, null));
+            if (param is JObject parameters) {
+                target["Param"] = parameters.Export(deep: true);
+            }
+            if (data["Rank"] is JValue { Type: JTokenType.Integer, Value: long rank } && rank is >= 1 and <= int.MaxValue) {
+                target["Rank"] = (int)rank;
+            }
         }
 
         public override IReadOnlyList<IBlueprintMetadataEntry> GetAvailableEntries(IEnumerable<IGameUnitFeatEntry> current)

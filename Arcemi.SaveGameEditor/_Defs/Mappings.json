@@ -307,6 +307,18 @@
     {"id": "64e8b7d5f1ae91d45bbf1e56a3fdff01", "name": "Dhampir"}
   ],
   "characters": [
+    { "id": "5820bb4a67764af2b99ed6a01e6cb86b", "name": "Haymar Devos", "portrait": "ae7ebcd0df5e420e82f2161b1b4f529f", "gameId": "W40KDH" },
+    { "id": "35bf6276c8b44dadac02be0a2bdb8f28", "name": "Epione Spes", "portrait": "29834a8100f247ac995dde0ae448e9f8", "gameId": "W40KDH" },
+    { "id": "e1dbaf72f5654c82aa81a9a49eb5d02f", "name": "Laarthyr Cairnareth", "portrait": "20d66104c77e47238af6bdcb9e60fdcf", "gameId": "W40KDH" },
+    { "id": "f5689d54dcdf4ab08ece1ea644856962", "name": "Raakhti", "portrait": "0c46596e5fea4a44a4c026e74bdb87d2", "gameId": "W40KDH" },
+    { "id": "37d20ce621234877b0b1b742b27d467a", "name": "Aspis Chorda", "portrait": "3c3958ee59f94e2780f770ae50a076ec", "gameId": "W40KDH" },
+    { "id": "5e6ca8974dfd48718afdcec6c49f0ced", "name": "Cogg", "portrait": "e91f1d4ba578457c820f718bb1b6a671", "gameId": "W40KDH" },
+    { "id": "51880655802645dead2e5ba4ff64007c", "name": "Iraidis", "portrait": "200fcf726f3d4080ad4591584a020c6c", "gameId": "W40KDH" },
+    { "id": "e9530687c357421f9f9de739f1a05055", "name": "Persephone", "portrait": "605dada113424d7f97d221a1edd22717", "gameId": "W40KDH" },
+    { "id": "95109c09e28a430f9fb37b3de8a9aac4", "name": "Saro", "portrait": "00fd50a9b74e446faeb5e11a70953447", "gameId": "W40KDH" },
+    { "id": "8301471195fc406ca7bb28a77baf5153", "name": "Touma Ortos", "portrait": "0b0c4cd693ec4ba1824cedd5718137e2", "gameId": "W40KDH" },
+    { "id": "2b55d167a6af47e4a1907e867cb98df1", "name": "Hypatia", "portrait": "233466328b834cb8b5780493396a445b", "gameId": "W40KDH" },
+    { "id": "512c7dd08ceb4d85ab73cf1d2b7dbb01", "name": "Discordance", "portrait": "8165710448ac4e7280e8e67a37f5506b", "gameId": "W40KDH" },
     { "id": "4391e8b9afbb0cf43aeba700c089f56d", "name": "Player" },
     { "id": "baaff53a675a84f4983f1e2113b24552", "name": "Custom" },
     { "id": "54be53f0b35bf3c4592a97ae335fe765", "name": "Seelah", "portrait": "0ebca33b0e5eb514aa75d9989a565f2f", "gameId": "PATHWOTR" },

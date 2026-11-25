@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'unsafe-inline'">
+    <title>Arcemi Save Game Editor</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            box-sizing: border-box;
+            display: grid;
+            align-content: center;
+            gap: 23px;
+            padding: 26px 30px;
+            border: 1px solid #304653;
+            background: #172733;
+            color: #f3f6f8;
+            font: 15px system-ui, sans-serif;
+        }
+
+        main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        h1 {
+            margin: 0 0 5px;
+            font-size: 21px;
+            font-weight: 650;
+        }
+
+        p {
+            margin: 0;
+            color: #c5d2dc;
+        }
+
+        .progress {
+            overflow: hidden;
+            height: 3px;
+            border-radius: 3px;
+            background: #304653;
+        }
+
+        .progress::before {
+            content: "";
+            display: block;
+            width: 30%;
+            height: 100%;
+            border-radius: inherit;
+            background: #78cdbb;
+            animation: sweep 1.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes sweep {
+            from { transform: translateX(0); }
+            to { transform: translateX(233%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .progress::before { animation: none; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <img src="app-icon.png" alt="" width="62" height="62">
+        <div>
+            <h1>Arcemi Save Game Editor</h1>
+            <p role="status">Opening editor…</p>
+        </div>
+    </main>
+    <div class="progress" aria-hidden="true"></div>
+</body>
+</html>

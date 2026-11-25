@@ -1,0 +1,40 @@
+@implements IDisposable
+@inject EditorErrorReports Reports
+@inject IJSRuntime JS
+
+<ErrorBoundary>
+    <ChildContent>
+        <App />
+    </ChildContent>
+    <ErrorContent Context="exception">
+        <div hidden data-editor-fatal-report="@EditorErrorReports.Describe(exception)"></div>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) {
+            return Task.CompletedTask;
+        }
+
+        Reports.Reported += OnReport;
+        return ShowReportsAsync();
+    }
+
+    private void OnReport() => _ = InvokeAsync(ShowReportsAsync);
+
+    private async Task ShowReportsAsync()
+    {
+        try {
+            while (Reports.TryTake(out var report)) {
+                await JS.InvokeVoidAsync("arcemiErrors.showRecoverable", report);
+            }
+        }
+        catch (JSDisconnectedException) {
+            // A new renderer will handle subsequent reports.
+        }
+    }
+
+    public void Dispose() => Reports.Reported -= OnReport;
+}

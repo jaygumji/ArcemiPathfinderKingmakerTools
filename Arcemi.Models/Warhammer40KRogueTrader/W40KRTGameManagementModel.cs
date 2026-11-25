@@ -28,7 +28,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
             Places = GameDataModels.Object("Colonies", new IGameData[] {
                 GameDataModels.List("Colony", csa.List<W40KRTColonyModel>("Colonies"), m => {
-                    return GameDataModels.Object(m.Name, new IGameData[] {
+                    var properties = new List<IGameData> {
                         GameDataModels.Time("Foundation Time", m.ColonyFoundationTime),
                         GameDataModels.Time("Last Event Time", m.LastEventTime),
                         new W40KRTGameManagementPlaceIntDataEntry(m.CA.Object<RefModel>("Contentment"), "Complacency"),
@@ -53,7 +53,17 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                         GameDataModels.Object("Projects", new [] {
                             new W40KRTGameDataListOfProject(m.CA.List<RefModel>("Projects"))
                         })
-                    }, m);
+                    };
+
+                    var consumables = m.CA.List<W40KRTColonyConsumableModel>("Consumables");
+                    if (consumables?.Count > 0) {
+                        var loot = m.CA.Object<RefModel>("LootToReceive")?.GetAccessor().Object<InventoryModel>("m_Items");
+                        properties.Add(GameDataModels.Object("Refill status", new[] {
+                            GameDataModels.List("Reward", consumables, reward => reward.CreateEditorData(Player, loot, Res)),
+                        }, isCollapsable: true));
+                    }
+
+                    return GameDataModels.Object(m.Name, properties, m);
                 }, writer: new W40KRTGameManagementPlaceModelEntryWriter())
             });
         }

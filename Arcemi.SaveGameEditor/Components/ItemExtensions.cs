@@ -1,10 +1,25 @@
 ﻿using Arcemi.Models;
-using System.Resources;
 
 namespace Arcemi.SaveGameEditor.Components
 {
     public static class ItemExtensions
     {
+        public static string GetIconUrl(this IGameItemEntry item)
+        {
+            if (item.IconUrl.HasValue()) return item.IconUrl;
+            var icon = item.Type switch {
+                "Weapon" => "weapon",
+                "Armor" => "armor",
+                "Shield" => "shield",
+                "Usable" => "usable",
+                "Mechadendrite" => "tool",
+                "Key" => "key",
+                "Note" => "note",
+                _ => "item"
+            };
+            return $"/images/ItemTypes/DarkHeresy/{icon}.png";
+        }
+
         public static string GetIconUrl(this BlueprintType type)
         {
             if (type.IsItemWeapon) {

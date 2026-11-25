@@ -23,10 +23,10 @@
             <textarea class="form-control" @bind:event="oninput" @bind="ImportScript"></textarea>
         </Body>
         <Footer>
-            <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsImportInvalid" @onclick="ImportAsync">
+            <button type="button" class="btn btn-info" disabled="@IsImportInvalid" @onclick="ImportAsync">
                 Confirm
             </button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalImport.CloseAsync()">Cancel</button>
+            <button type="button" class="btn btn-secondary" @onclick="() => modalImport.CloseAsync()">Cancel</button>
         </Footer>
     </Modal>
     <div class="col-md-1">
@@ -49,7 +49,7 @@
 <div class="row">
     <div class="col-md-6">
         <label class="form-label">Gender</label>
-        <select class="form-control" @bind="DollData.Gender">
+        <select class="form-select" @bind="DollData.Gender">
             @foreach (var option in DollData.GenderOptions) {
                 <option value="@option.Id">@option.Name</option>
             }
@@ -57,7 +57,7 @@
     </div>
     <div class="col-md-6">
         <label class="form-label">Race</label>
-        <select class="form-control" @bind="DollData.Race">
+        <select class="form-select" @bind="DollData.Race">
             @foreach (var option in DollData.RaceOptions) {
                 <option value="@option.Id">@option.Name</option>
             }
@@ -82,10 +82,10 @@
                     <input type="text" class="form-control" @bind:event="oninput" @bind="EquipmentEntityId" />
                 </Body>
                 <Footer>
-                    <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsEquipmentInvalid" @onclick="AddEquipmentAsync">
+                    <button type="button" class="btn btn-info" disabled="@IsEquipmentInvalid" @onclick="AddEquipmentAsync">
                         Confirm
                     </button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddEquipment.CloseAsync()">Cancel</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => modalAddEquipment.CloseAsync()">Cancel</button>
                 </Footer>
             </Modal>
         </div>
@@ -132,10 +132,10 @@
                     </div>
                 </Body>
                 <Footer>
-                    <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsPrimaryStyleInvalid" @onclick="AddPrimaryStyle">
+                    <button type="button" class="btn btn-info" disabled="@IsPrimaryStyleInvalid" @onclick="AddPrimaryStyle">
                         Confirm
                     </button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddPrimaryStyle.CloseAsync()">Cancel</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => modalAddPrimaryStyle.CloseAsync()">Cancel</button>
                 </Footer>
             </Modal>
         </div>
@@ -185,10 +185,10 @@
                     </div>
                 </Body>
                 <Footer>
-                    <button type="button" class="btn btn-info" data-dismiss="modal" disabled="@IsSecondaryStyleInvalid" @onclick="AddSecondaryStyle">
+                    <button type="button" class="btn btn-info" disabled="@IsSecondaryStyleInvalid" @onclick="AddSecondaryStyle">
                         Confirm
                     </button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddSecondaryStyle.CloseAsync()">Cancel</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => modalAddSecondaryStyle.CloseAsync()">Cancel</button>
                 </Footer>
             </Modal>
         </div>

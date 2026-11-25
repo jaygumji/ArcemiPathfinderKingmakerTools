@@ -12,6 +12,9 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         {
         }
 
+        internal const int CurrentBlueprintDataVersion = 2;
+
+        public int BlueprintDataVersion { get; set; }
         public DateTime? TimestampUtc { get; set; }
         public Dictionary<string, W40KRTLocalization> DisplayNames { get; set; } = new Dictionary<string, W40KRTLocalization>();
         public Dictionary<string, W40KRTLocalization> Descriptions { get; set; } = new Dictionary<string, W40KRTLocalization>();
@@ -19,7 +22,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         public bool IsValidCache(DateTime timestampUtc)
         {
-            return TimestampUtc.HasValue && TimestampUtc == timestampUtc;
+            return BlueprintDataVersion == CurrentBlueprintDataVersion && TimestampUtc == timestampUtc;
         }
 
         private const string FileName = "cache.blueprints.json";

@@ -1,5 +1,4 @@
 ﻿using Arcemi.Models;
-using ElectronNET.API;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,39 +22,76 @@ namespace Arcemi.SaveGameEditor.Models
         }
 
         public string AppDataFolder { get => game.AppDataFolder; set { game.AppDataFolder = value; save(); } }
-        public string GameFolder { get => game.GameFolder; set { game.GameFolder = value; save(); } }
+        public string GameFolder { get => game.GameFolder; set { game.GameFolder = GameFolderDiscovery.ResolveGameFolder(value, Definition) ?? value; save(); } }
 
         public bool IsValidAppDataFolder => game.ValidateAppDataFolder();
         public bool IsValidGameFolder => game.ValidateGameFolder();
+        public bool HasMissingFolders => string.IsNullOrWhiteSpace(AppDataFolder)
+            || (Definition.IsReadingGameFolder && string.IsNullOrWhiteSpace(GameFolder));
+
+        public void DetectMissingFolders()
+        {
+            var previous = (game.AppDataFolder, game.GameFolder);
+            game.DetectMissingFolders(GameFolderDiscovery.ForCurrentUser());
+            if (previous != (game.AppDataFolder, game.GameFolder)) save();
+        }
     }
     public class EditorConfiguration
     {
-        private bool _isInitialized;
+        private readonly EditorErrorReports _reports;
+        private readonly object _initializationLock = new();
+        private Task _initialization;
+
+        public EditorConfiguration(EditorErrorReports reports)
+        {
+            _reports = reports;
+        }
 
         public string ConfigPath { get; set; }
         public AppUserConfiguration Instance { get; private set; }
 
-        private string FormatError(Exception ex)
-        {
-            return string.Concat(ex.Message, Environment.NewLine, ex.StackTrace.CutAt(500));
-        }
+        public string DefaultBackupFolder => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.DoNotVerify),
+            "Arcemi Save Game Editor", "Backups");
+
+        public SaveBackupStorage Backups => new(DefaultBackupFolder, Instance?.BackupFolder, Instance?.AllowSaveFolderBackupFallback == true);
+
+        public void SaveBackupSettings() => QueueSave(reloadResources: false);
 
         public async Task InitializeAsync()
         {
-            if (_isInitialized) return;
-            _isInitialized = true;
+            Task initialization;
+            lock (_initializationLock) {
+                initialization = _initialization ??= InitializeCoreAsync();
+            }
 
+            try {
+                await initialization;
+            }
+            catch {
+                lock (_initializationLock) {
+                    if (_initialization == initialization) {
+                        _initialization = null;
+                    }
+                }
+                throw;
+            }
+        }
+
+        private async Task InitializeCoreAsync()
+        {
             ConfigPath = await AppUserConfiguration.GetAppUserConfigFilename();
             try {
                 Logger.Current.Information("Loading configuration from " + ConfigPath);
-                Instance = await AppUserConfiguration.LoadAsync(ConfigPath);
+                Instance = await AppUserConfiguration.LoadAsync(ConfigPath)
+                    ?? throw new InvalidDataException("The settings file is empty.");
             }
             catch (Exception ex) {
-                Instance = await AppUserConfiguration.DetectAsync();
+                Instance = new AppUserConfiguration();
 
-                if (HybridSupport.IsElectronActive)
-                    Electron.Dialog.ShowErrorBox("Configuration error", $"Failed to load the configuration file. Please go to settings page and setup your settings again. Error was '{FormatError(ex)}'");
+                _reports.Report("Load settings", ex);
             }
+            Instance.DetectMissingFolders();
             await LoadConfigResourcesAsync();
         }
 
@@ -78,35 +114,56 @@ namespace Arcemi.SaveGameEditor.Models
             }
         }
 
-        private async Task SaveConfigAsync()
+        public string SaveMessage { get; private set; }
+        private readonly object _saveLock = new();
+        private bool _isSaving;
+        private bool _savePending;
+        private bool _reloadResources;
+
+        public void Save() => QueueSave(reloadResources: true);
+
+        public void RememberGame(GameDefinition game)
         {
-            await Instance.SaveAsync(ConfigPath);
-            await LoadConfigResourcesAsync();
+            if (Instance.LastGameDefinitionId.Eq(game.Id)) return;
+            Instance.LastGameDefinitionId = game.Id;
+            QueueSave(reloadResources: false);
         }
 
-        public string SaveMessage { get; private set; }
-
-        private int _saveMarker;
-        private int _isSaving;
-        public void Save()
+        private void QueueSave(bool reloadResources)
         {
-            System.Threading.Interlocked.Increment(ref _saveMarker);
-            var s = System.Threading.Interlocked.CompareExchange(ref _isSaving, 1, 0);
-            if (s == 1) return; // Already saving
-            SaveMessage = null;
+            lock (_saveLock) {
+                _savePending = true;
+                _reloadResources |= reloadResources;
+                if (_isSaving) return;
+                _isSaving = true;
+                SaveMessage = null;
+            }
+            _ = Task.Run(SavePendingAsync);
+        }
 
-            Task.Factory.StartNew(async () => {
-                while (_saveMarker > 0) {
-                    System.Threading.Interlocked.Exchange(ref _saveMarker, 0);
-                    try {
-                        await SaveConfigAsync();
+        private async Task SavePendingAsync()
+        {
+            while (true) {
+                bool reloadResources;
+                lock (_saveLock) {
+                    if (!_savePending) {
+                        _isSaving = false;
+                        return;
                     }
-                    catch (Exception ex) {
-                        SaveMessage = "Error when saving: " + ex.Message;
-                    }
+                    _savePending = false;
+                    reloadResources = _reloadResources;
+                    _reloadResources = false;
                 }
-                System.Threading.Interlocked.Exchange(ref _isSaving, 0);
-            });
+
+                try {
+                    await Instance.SaveAsync(ConfigPath);
+                    if (reloadResources) await LoadConfigResourcesAsync();
+                }
+                catch (Exception ex) {
+                    SaveMessage = "Error when saving: " + ex.Message;
+                    _reports.Report("Save settings", ex);
+                }
+            }
         }
 
     }

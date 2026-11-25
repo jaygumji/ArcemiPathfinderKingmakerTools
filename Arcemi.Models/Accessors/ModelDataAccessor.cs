@@ -22,6 +22,11 @@ namespace Arcemi.Models
 
         public JObject UnderlyingObject => _obj;
 
+        internal void PreserveNestedReferencesOnRemoval()
+        {
+            if (_refs is References references) references.PreserveNestedReferencesOnRemoval = true;
+        }
+
         public string TypeValue()
         {
             return Value<string>("$type", "Type");

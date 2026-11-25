@@ -3,61 +3,63 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Arcemi.Models.Warhammer40KDarkHeresy
 {
+    internal sealed record W40KDHPlayerData(int? ExperienceRate, int? Chapter, int? MoneyOffset, long? Money,
+        string Difficulty, bool? RespecAllowed, bool? OnlyOneSave, int? SkillCheckModifier, W40KDHInventoryData Stash,
+        IReadOnlyList<W40KDHQuest> Quests, W40KDHInvestigationCounts Investigations);
+
+    internal sealed record W40KDHQuest(string Blueprint, string State, IReadOnlyList<W40KDHQuestObjective> Objectives);
+    internal sealed record W40KDHQuestObjective(string Blueprint, string State);
+    internal sealed record W40KDHInvestigationCounts(int? Cases, int? Clues, int? Conclusions);
+
+    internal sealed record W40KDHItem(string Id, string Blueprint, string Type, int? Count, int? CountOffset, int? Charges, int? ChargesOffset);
+    internal sealed record W40KDHInventoryData(IReadOnlyList<W40KDHItem> Items, bool ForceStackable);
+    internal sealed record W40KDHPartyData(IReadOnlyList<W40KDHParsedUnitStats> Units, W40KDHInventoryData Inventory,
+        OwlFieldRange Scene, IReadOnlyDictionary<string, OwlWritableType> WritableFeatureTypes);
+
     internal sealed class W40KDHParsedUnitStats
     {
         public W40KDHParsedUnitStats()
         {
             Characteristics = new Dictionary<string, W40KDHParsedCharacteristic>(StringComparer.Ordinal);
             ProgressionSelections = new List<W40KDHParsedProgressionSelection>();
-            DebugFactTypes = new Dictionary<string, int>(StringComparer.Ordinal);
         }
 
         public int EntityIndex { get; set; }
+        public OwlFactList FactList { get; set; }
+        public string EntityId { get; set; }
         public bool IsMainCharacter { get; set; }
-        public bool IsCompanion { get; set; }
-        public bool? InParty { get; set; }
-        public bool? ExCompanion { get; set; }
+        public string CompanionState { get; set; }
+        public string FormerCompanionState { get; set; }
+        public bool IsInParty => CompanionState == "InParty";
+        public bool IsCompanion => CompanionState is "InParty" or "InPartyDetached" or "Remote";
         public string PortraitBlueprint { get; set; }
         public string UnitBlueprint { get; set; }
         public string CustomName { get; set; }
         public int? CharacterLevel { get; set; }
-        public int? CharacterLevelOffset { get; set; }
         public int? Experience { get; set; }
-        public int? ExperienceOffset { get; set; }
         public float? MissingHpFraction { get; set; }
+        public IGameUnitBodyModel Body { get; set; } = W40KDHGameUnitBodyModel.Empty;
         public Dictionary<string, W40KDHParsedCharacteristic> Characteristics { get; }
         public List<W40KDHParsedProgressionSelection> ProgressionSelections { get; }
-        public int DebugFactCount { get; set; }
-        public int DebugFeatureFactCount { get; set; }
-        public Dictionary<string, int> DebugFactTypes { get; }
+        public List<W40KDHFactStatus> FactStatuses { get; } = new();
     }
 
-    internal sealed class W40KDHParsedCharacteristic
-    {
-        public W40KDHParsedCharacteristic(string name, int value, int? offset)
-        {
-            Name = name;
-            Value = value;
-            Offset = offset;
-        }
+    internal sealed record W40KDHFactStatus(string Category, string Blueprint, bool IsActive);
 
-        public string Name { get; }
-        public int Value { get; }
-        public int? Offset { get; }
-    }
+    internal sealed record W40KDHParsedCharacteristic(string Name, int Value);
 
     internal sealed class W40KDHParsedProgressionSelection
     {
         public string FeatureBlueprint { get; set; }
-        public int? FeatureBlueprintOffset { get; set; }
-        public int? FeatureBlueprintLength { get; set; }
+
         public int Rank { get; set; }
-        public int? RankOffset { get; set; }
+        public int? Level { get; set; }
+        public bool IsFeatureFact { get; set; }
+        public int? ActiveFactRankOffset { get; set; }
     }
 
     internal static class W40KDHOwlTraversal
@@ -67,15 +69,35 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
         private const byte ObjectKindObject = 2;
         private const ushort NullableBit = 0x8000;
 
+        private const string PartyInventoryType = "Kingmaker.Code.Gameplay.Entities.PartySharedInventory";
+        private const string ItemsCollectionType = "Kingmaker.Items.ItemsCollection";
+        private const string ItemTypePrefix = "Kingmaker.Items.ItemEntity";
+        private const string QuestBookType = "Kingmaker.AreaLogic.QuestSystem.QuestBook";
+        private const string QuestType = "Kingmaker.AreaLogic.QuestSystem.Quest";
+        private const string QuestObjectiveType = "Kingmaker.AreaLogic.QuestSystem.QuestObjective";
+        private const string DetectiveSystemType = "Kingmaker.Framework.DetectiveSystem.DetectiveSystem";
+        private const string PlayerType = "Kingmaker.Player";
+        private const string DifficultyControllerType = "Kingmaker.Settings.Difficulty.MinDifficultyController";
+        private const string DifficultyPresetType = "Kingmaker.Settings.Difficulty.DifficultyPreset";
+        private const string UnitUiSettingsType = "Kingmaker.UI.Models.UnitSettings.PartUnitUISettings";
         private const string SceneEntitiesStateType = "Kingmaker.EntitySystem.SceneEntitiesState";
         private const string UnitEntityType = "Kingmaker.EntitySystem.Entities.UnitEntity";
         private const string EntityPartsManagerType = "Kingmaker.EntitySystem.Entities.Base.EntityPartsManager";
         private const string EntityFactsManagerType = "Kingmaker.EntitySystem.EntityFactsManager";
+        private const string BlueprintedFactType = "Kingmaker.UnitLogic.Mechanics.Facts.MechanicEntityFactBlueprinted";
+        private const string UnitFactType = "Kingmaker.UnitLogic.UnitFact";
+        private const string AbilityFactType = "Kingmaker.UnitLogic.Abilities.Ability";
+        private const string BuffFactType = "Kingmaker.UnitLogic.Buffs.Buff";
         private const string FeatureFactType = "Kingmaker.UnitLogic.Feature";
         private const string PartUnitMainCharacterType = "Kingmaker.UnitLogic.Parts.UnitPartMainCharacter";
         private const string PartUnitCompanionType = "Kingmaker.UnitLogic.Parts.UnitPartCompanion";
         private const string PartUnitProgressionType = "Kingmaker.UnitLogic.PartUnitProgression";
         private const string FeatureSelectionDataType = "Kingmaker.UnitLogic.FeatureSelectionData";
+        private const string PartUnitDescriptionType = "Kingmaker.UnitLogic.Parts.PartUnitDescription";
+        private const string PartUnitBodyType = "Kingmaker.Items.PartUnitBody";
+        private const string HandsEquipmentSetType = "Kingmaker.Items.HandsEquipmentSet";
+        private const string ItemSlotTypePrefix = "Kingmaker.Items.Slots.";
+        private const string ItemReferenceType = "Kingmaker.EntitySystem.Entities.Base.EntityRef`1[[Kingmaker.Items.ItemEntity";
         private const string PartHealthType = "Kingmaker.UnitLogic.Parts.PartHealth";
         private const string PartStatsContainerType = "Kingmaker.UnitLogic.Parts.PartStatsContainer";
         private const string PartStatsAttributesType = "Kingmaker.UnitLogic.Parts.PartStatsAttributes";
@@ -84,13 +106,27 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
         private const string ModifiableValueType = "ModifiableValue";
         private const string ModifiableValueAttributeStatType = "ModifiableValueAttributeStat";
         private static readonly Dictionary<string, HashSet<string>> RelevantFieldsByType = new(StringComparer.Ordinal) {
+            { PlayerType, new HashSet<string>(StringComparer.Ordinal) { "ExperienceRatePercent", "Chapter", "Money", "MinDifficultyController", "SharedStash" } },
+            { QuestBookType, new HashSet<string>(StringComparer.Ordinal) { "Facts" } },
+            { QuestType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint", "m_State", "PersistentObjectives" } },
+            { QuestObjectiveType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint", "m_State" } },
+            { DetectiveSystemType, new HashSet<string>(StringComparer.Ordinal) { "m_Cases", "m_Clues", "m_Conclusions" } },
+            { PartyInventoryType, new HashSet<string>(StringComparer.Ordinal) { "m_Collection" } },
+            { ItemsCollectionType, new HashSet<string>(StringComparer.Ordinal) { "m_Items", "ForceStackable" } },
+            { DifficultyControllerType, new HashSet<string>(StringComparer.Ordinal) { "MinDifficulty" } },
+            { DifficultyPresetType, new HashSet<string>(StringComparer.Ordinal) { "GameDifficulty", "RespecAllowed", "OnlyOneSave", "SkillCheckModifier" } },
+            { UnitUiSettingsType, new HashSet<string>(StringComparer.Ordinal) { "m_Portrait" } },
             { SceneEntitiesStateType, new HashSet<string>(StringComparer.Ordinal) { "m_EntityData" } },
-            { UnitEntityType, new HashSet<string>(StringComparer.Ordinal) { "Facts", "Parts", "m_Blueprint", "CustomName" } },
+            { UnitEntityType, new HashSet<string>(StringComparer.Ordinal) { "Facts", "Parts", "m_Blueprint", "CustomName", "m_UniqueId", "UniqueId" } },
             { EntityPartsManagerType, new HashSet<string>(StringComparer.Ordinal) { "Container" } },
             { EntityFactsManagerType, new HashSet<string>(StringComparer.Ordinal) { "m_Facts" } },
-            { PartUnitMainCharacterType, new HashSet<string>(StringComparer.Ordinal) { "m_Portrait" } },
-            { PartUnitCompanionType, new HashSet<string>(StringComparer.Ordinal) { "InParty", "ExCompanion", "m_Portrait" } },
+            { PartUnitCompanionType, new HashSet<string>(StringComparer.Ordinal) { "State", "ExState" } },
             { PartUnitProgressionType, new HashSet<string>(StringComparer.Ordinal) { "CharacterLevel", "Experience", "m_Selections" } },
+            { PartUnitDescriptionType, new HashSet<string>(StringComparer.Ordinal) { "CustomName", "m_CustomName" } },
+            { PartUnitBodyType, new HashSet<string>(W40KDHGameUnitBodyModel.BodySlotFields, StringComparer.Ordinal)
+                { "m_HandsEquipmentSets", "m_CurrentHandsEquipmentSetIndex", "QuickSlots" } },
+            { HandsEquipmentSetType, new HashSet<string>(StringComparer.Ordinal) { "PrimaryHand", "SecondaryHand" } },
+            { ItemReferenceType, new HashSet<string>(StringComparer.Ordinal) { "Id" } },
             { PartHealthType, new HashSet<string>(StringComparer.Ordinal) { "m_MissingHpFraction" } },
             { PartStatsContainerType, new HashSet<string>(StringComparer.Ordinal) { "Container", "m_Container", "m_List" } },
             { PartStatsAttributesType, new HashSet<string>(StringComparer.Ordinal) { "Container", "m_Container", "m_List" } },
@@ -98,8 +134,12 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             { StatsContainerType, new HashSet<string>(StringComparer.Ordinal) { "m_Container", "Container", "AllStats" } },
             { ModifiableValueType, new HashSet<string>(StringComparer.Ordinal) { "m_Type", "Type", "m_BaseValue", "BaseValue", "m_ActualBaseValue", "ActualBaseValue", "m_ModifiedValue", "ModifiedValue", "m_PermanentValue", "PermanentValue", "m_Value", "Value" } },
             { ModifiableValueAttributeStatType, new HashSet<string>(StringComparer.Ordinal) { "m_Type", "Type", "m_BaseValue", "BaseValue", "m_ActualBaseValue", "ActualBaseValue", "m_ModifiedValue", "ModifiedValue", "m_PermanentValue", "PermanentValue", "m_Value", "Value" } },
-            { FeatureSelectionDataType, new HashSet<string>(StringComparer.Ordinal) { "Feature", "Rank" } },
-            { FeatureFactType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint", "Rank" } },
+            { FeatureSelectionDataType, new HashSet<string>(StringComparer.Ordinal) { "Feature", "Rank", "Level" } },
+            { BlueprintedFactType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint" } },
+            { UnitFactType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint" } },
+            { AbilityFactType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint", "IsActive" } },
+            { BuffFactType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint", "IsActive" } },
+            { FeatureFactType, new HashSet<string>(StringComparer.Ordinal) { "m_Blueprint", "Rank", "IsActive" } },
         };
         private static readonly (string Token, string Name)[] CharacteristicNameTokens = new[] {
             ("WeaponSkill", "Weapon Skill"),
@@ -203,12 +243,14 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             private ReadOnlySpan<byte> _span;
             private int _position;
             private readonly int _baseOffset;
+            public int ObjectDepth { get; set; }
 
-            public SpanReader(ReadOnlySpan<byte> span, int baseOffset = 0)
+            public SpanReader(ReadOnlySpan<byte> span, int baseOffset = 0, int objectDepth = 0)
             {
                 _span = span;
                 _position = 0;
                 _baseOffset = baseOffset;
+                ObjectDepth = objectDepth;
             }
 
             public int Position
@@ -313,97 +355,248 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             }
         }
 
-        public static IReadOnlyList<W40KDHParsedUnitStats> ReadUnitStats(byte[] bytes)
+        public static W40KDHPlayerData ReadPlayer(byte[] bytes)
         {
-            if (bytes is null || bytes.Length < 4) return Array.Empty<W40KDHParsedUnitStats>();
+            var entities = ReadSceneEntities(bytes, out var references, out _, out _);
+            var player = FindSceneEntity(entities, references, PlayerType)
+                ?? throw new InvalidDataException("The OWL player entry has no player entity.");
+            var money = ResolveRef(GetValue(player, "Money"), references) as PrimitiveValue;
+            var difficultyController = ResolveRef(GetValue(player, "MinDifficultyController"), references) as Dictionary<string, object>;
+            var difficulty = ResolveRef(GetValue(difficultyController, "MinDifficulty"), references) as Dictionary<string, object>;
+            return new W40KDHPlayerData(
+                AsInt(GetValue(player, "ExperienceRatePercent"), references),
+                AsInt(GetValue(player, "Chapter"), references),
+                money?.Value is long ? money.ValueOffset : null,
+                money?.Value as long?,
+                AsString(GetValue(difficulty, "GameDifficulty"), references),
+                AsBool(GetValue(difficulty, "RespecAllowed"), references),
+                AsBool(GetValue(difficulty, "OnlyOneSave"), references),
+                AsInt(GetValue(difficulty, "SkillCheckModifier"), references),
+                ReadInventory(GetValue(player, "SharedStash"), references),
+                ReadQuests(FindSceneEntity(entities, references, QuestBookType), references),
+                ReadInvestigations(FindSceneEntity(entities, references, DetectiveSystemType), references));
+        }
 
-            try {
-                var reader = new SpanReader(bytes);
-                if (!HasOwlHeader(ref reader)) return Array.Empty<W40KDHParsedUnitStats>();
+        private static IReadOnlyList<W40KDHQuest> ReadQuests(Dictionary<string, object> questBook, IReadOnlyDictionary<uint, object> references)
+        {
+            var facts = ResolveRef(GetValue(questBook, "Facts"), references) as Dictionary<string, object>;
+            if (ResolveRef(GetValue(facts, "m_Facts"), references) is not List<object> quests) return null;
 
-                var references = new Dictionary<uint, object>();
-                var types = ReadTypeLibrary(ref reader, references);
-                if (types.Count == 0) return Array.Empty<W40KDHParsedUnitStats>();
+            var result = new List<W40KDHQuest>(quests.Count);
+            foreach (var item in quests) {
+                if (ResolveRef(item, references) is not Dictionary<string, object> quest || !TypeEq(quest, QuestType)) continue;
+                var blueprint = ExtractBlueprintGuid(GetValue(quest, "m_Blueprint"), references);
+                if (!blueprint.HasValue()) continue;
 
-                var root = ReadObject(ref reader, references, types, expectedTypeHint: null);
-                if (ResolveRef(root, references) is not Dictionary<string, object> rootObject) return Array.Empty<W40KDHParsedUnitStats>();
-                if (!TypeEq(rootObject, SceneEntitiesStateType)) return Array.Empty<W40KDHParsedUnitStats>();
-
-                if (ResolveRef(GetValue(rootObject, "m_EntityData"), references) is not List<object> entities) {
-                    return Array.Empty<W40KDHParsedUnitStats>();
+                var objectives = ResolveRef(GetValue(quest, "PersistentObjectives"), references) as List<object>;
+                var entries = new List<W40KDHQuestObjective>();
+                if (objectives is not null) {
+                    foreach (var objectiveRef in objectives) {
+                        if (ResolveRef(objectiveRef, references) is not Dictionary<string, object> objective
+                            || !TypeEq(objective, QuestObjectiveType)) continue;
+                        var objectiveBlueprint = ExtractBlueprintGuid(GetValue(objective, "m_Blueprint"), references);
+                        if (objectiveBlueprint.HasValue()) {
+                            entries.Add(new W40KDHQuestObjective(objectiveBlueprint, AsString(GetValue(objective, "m_State"), references)));
+                        }
+                    }
                 }
+                result.Add(new W40KDHQuest(blueprint, AsString(GetValue(quest, "m_State"), references), entries));
+            }
+            return result;
+        }
 
-                var result = new List<W40KDHParsedUnitStats>();
-                for (var entityIndex = 0; entityIndex < entities.Count; entityIndex++) {
-                    try {
-                        var entityValue = entities[entityIndex];
-                        var resolved = ResolveRef(entityValue, references);
-                        if (resolved is not Dictionary<string, object> entity) continue;
-                        if (!TypeEq(entity, UnitEntityType)) continue;
+        private static W40KDHInvestigationCounts ReadInvestigations(Dictionary<string, object> state, IReadOnlyDictionary<uint, object> references)
+        {
+            int? Count(string field) => (ResolveRef(GetValue(state, field), references) as List<object>)?.Count;
+            return new W40KDHInvestigationCounts(Count("m_Cases"), Count("m_Clues"), Count("m_Conclusions"));
+        }
 
-                        var stats = new W40KDHParsedUnitStats {
-                            EntityIndex = entityIndex,
-                            UnitBlueprint = ExtractBlueprintGuid(GetValue(entity, "m_Blueprint"), references),
-                            CustomName = AsString(GetValue(entity, "CustomName"), references),
-                        };
+        private static List<object> ReadSceneEntities(byte[] bytes, out Dictionary<uint, object> references,
+            out IReadOnlyDictionary<ushort, TypeDef> types, out OwlFieldRange scene)
+        {
+            ValidateVersion(bytes);
+            var reader = new SpanReader(bytes) { Position = 4 };
+            references = new Dictionary<uint, object>();
+            types = ReadTypeLibrary(ref reader, references);
+            if (types.Count == 0) throw new InvalidDataException("The OWL entry has no type library.");
 
-                        ExtractFeatureFactsAsSelections(stats, entity, references);
+            var root = ReadObject(ref reader, references, types, expectedTypeHint: null);
+            if (ResolveRef(root, references) is not Dictionary<string, object> record || !TypeEq(record, SceneEntitiesStateType)) {
+                throw new InvalidDataException("The OWL entry has no scene-entities root.");
+            }
+            if (ResolveRef(GetValue(record, "m_EntityData"), references) is not List<object> entities) {
+                throw new InvalidDataException("The OWL entry has no readable entity list.");
+            }
+            scene = GetValue(record, "$range:m_EntityData") as OwlFieldRange;
+            return entities;
+        }
 
-                        var partsValue = ResolveRef(GetValue(entity, "Parts"), references);
-                        if (partsValue is Dictionary<string, object> parts && TypeEq(parts, EntityPartsManagerType)) {
-                            var containerValue = ResolveRef(GetValue(parts, "Container"), references);
-                            if (containerValue is List<object> partList) {
-                                foreach (var partRef in partList) {
-                                    var partValue = ResolveRef(partRef, references);
-                                    if (partValue is not Dictionary<string, object> part) continue;
-                                    if (!TryGetType(part, out var partType)) continue;
+        public static W40KDHPartyData ReadParty(byte[] bytes)
+        {
+            var entities = ReadSceneEntities(bytes, out var references, out var types, out var scene);
+            var result = new List<W40KDHParsedUnitStats>();
+            for (var entityIndex = 0; entityIndex < entities.Count; entityIndex++) {
+                try {
+                    var entityValue = entities[entityIndex];
+                    var resolved = ResolveRef(entityValue, references);
+                    if (resolved is not Dictionary<string, object> entity) continue;
+                    if (!TypeEq(entity, UnitEntityType)) continue;
 
-                                    if (partType == PartUnitMainCharacterType) {
-                                        stats.IsMainCharacter = true;
-                                        stats.PortraitBlueprint = stats.PortraitBlueprint.OrIfEmpty(ExtractBlueprintGuid(GetValue(part, "m_Portrait"), references));
-                                    }
-                                    else if (partType == PartUnitCompanionType) {
-                                        stats.IsCompanion = true;
-                                        stats.InParty = AsBool(GetValue(part, "InParty"), references);
-                                        stats.ExCompanion = AsBool(GetValue(part, "ExCompanion"), references);
-                                        stats.PortraitBlueprint = stats.PortraitBlueprint.OrIfEmpty(ExtractBlueprintGuid(GetValue(part, "m_Portrait"), references));
-                                    }
-                                    else if (partType == PartUnitProgressionType) {
-                                        stats.CharacterLevel = AsInt(GetValue(part, "CharacterLevel"), references);
-                                        stats.CharacterLevelOffset = AsIntOffset(GetValue(part, "CharacterLevel"), references);
-                                        stats.Experience = AsInt(GetValue(part, "Experience"), references);
-                                        stats.ExperienceOffset = AsIntOffset(GetValue(part, "Experience"), references);
-                                        ExtractProgressionSelections(stats, part, references);
-                                    }
-                                    else if (partType == PartHealthType) {
-                                        stats.MissingHpFraction = AsFloat(GetValue(part, "m_MissingHpFraction"), references);
-                                    }
-                                    else if (partType == PartStatsContainerType
-                                             || partType == PartStatsAttributesType
-                                             || partType == PartStatsSkillsType) {
-                                        ExtractCharacteristics(stats, part, references);
-                                    }
+                    var stats = new W40KDHParsedUnitStats {
+                        EntityIndex = entityIndex,
+                        EntityId = AsString(GetValue(entity, "m_UniqueId"), references)
+                            .OrIfEmpty(AsString(GetValue(entity, "UniqueId"), references)),
+                        UnitBlueprint = ExtractBlueprintGuid(GetValue(entity, "m_Blueprint"), references),
+                        CustomName = AsString(GetValue(entity, "CustomName"), references),
+                    };
+
+                    ExtractFacts(stats, entity, references, bytes, scene);
+
+                    var partsValue = ResolveRef(GetValue(entity, "Parts"), references);
+                    if (partsValue is Dictionary<string, object> parts && TypeEq(parts, EntityPartsManagerType)) {
+                        var containerValue = ResolveRef(GetValue(parts, "Container"), references);
+                        if (containerValue is List<object> partList) {
+                            foreach (var partRef in partList) {
+                                var partValue = ResolveRef(partRef, references);
+                                if (partValue is not Dictionary<string, object> part) continue;
+                                if (!TryGetType(part, out var partType)) continue;
+
+                                if (partType == PartUnitMainCharacterType) {
+                                    stats.IsMainCharacter = true;
+                                }
+                                else if (partType == PartUnitCompanionType) {
+                                    stats.CompanionState = AsString(GetValue(part, "State"), references);
+                                    stats.FormerCompanionState = AsString(GetValue(part, "ExState"), references);
+                                }
+                                else if (partType == PartUnitProgressionType) {
+                                    stats.CharacterLevel = AsInt(GetValue(part, "CharacterLevel"), references);
+                                    stats.Experience = AsInt(GetValue(part, "Experience"), references);
+                                    ExtractProgressionSelections(stats, part, references);
+                                }
+                                else if (partType == PartUnitDescriptionType) {
+                                    stats.CustomName = stats.CustomName.OrIfEmpty(AsString(GetValue(part, "CustomName"), references))
+                                        .OrIfEmpty(AsString(GetValue(part, "m_CustomName"), references));
+                                }
+                                else if (partType == UnitUiSettingsType) {
+                                    stats.PortraitBlueprint = ExtractBlueprintGuid(GetValue(part, "m_Portrait"), references);
+                                }
+                                else if (partType == PartUnitBodyType) {
+                                    stats.Body = ReadBody(part, references);
+                                }
+                                else if (partType == PartHealthType) {
+                                    stats.MissingHpFraction = AsFloat(GetValue(part, "m_MissingHpFraction"), references);
+                                }
+                                else if (partType == PartStatsContainerType
+                                         || partType == PartStatsAttributesType
+                                         || partType == PartStatsSkillsType) {
+                                    ExtractCharacteristics(stats, part, references);
                                 }
                             }
                         }
-
-                        if (stats.IsMainCharacter
-                            || stats.IsCompanion
-                            || stats.CharacterLevel.HasValue
-                            || stats.Experience.HasValue
-                            || stats.MissingHpFraction.HasValue) {
-                            result.Add(stats);
-                        }
                     }
-                    catch {
-                        continue;
+
+                    if (stats.IsMainCharacter
+                        || stats.IsCompanion
+                        || stats.CharacterLevel.HasValue
+                        || stats.Experience.HasValue
+                        || stats.MissingHpFraction.HasValue) {
+                        result.Add(stats);
                     }
                 }
-
-                return result;
+                catch {
+                    continue;
+                }
             }
-            catch {
-                return Array.Empty<W40KDHParsedUnitStats>();
+
+            var inventory = FindSceneEntity(entities, references, PartyInventoryType);
+            return new W40KDHPartyData(result, ReadInventory(GetValue(inventory, "m_Collection"), references),
+                scene, ReadWritableFeatureTypes(types));
+        }
+
+        private static IReadOnlyDictionary<string, OwlWritableType> ReadWritableFeatureTypes(IReadOnlyDictionary<ushort, TypeDef> types)
+        {
+            var result = new Dictionary<string, OwlWritableType>(StringComparer.Ordinal);
+            foreach (var (name, fields) in W40KDHOwlFeatureWriter.Layout) {
+                if (!TryAdd(name, fields)) return null;
+            }
+            TryAdd(W40KDHOwlFeatureWriter.AttributeType, new[] { "Guid" });
+            TryAdd(W40KDHOwlFeatureWriter.SkillType, new[] { "Guid" });
+            return result;
+
+            bool TryAdd(string name, string[] fields)
+            {
+                var matches = types.Where(type => type.Value.Name == name && type.Value.Fields.Count == fields.Length
+                    && type.Value.Fields.Select(field => field.Name).ToHashSet(StringComparer.Ordinal).SetEquals(fields)).ToArray();
+                if (matches.Length != 1) return false;
+                var (id, type) = matches[0];
+                var indices = type.Fields.Select((field, index) => (field.Name, Index: checked((byte)index)))
+                    .ToDictionary(field => field.Name, field => field.Index, StringComparer.Ordinal);
+                result.Add(name, new OwlWritableType(id, fields.Select(field => indices[field]).ToArray()));
+                return true;
+            }
+        }
+
+        private static Dictionary<string, object> FindSceneEntity(IEnumerable<object> entities,
+            IReadOnlyDictionary<uint, object> references, string expectedType)
+        {
+            return entities.Select(entity => ResolveRef(entity, references)).OfType<Dictionary<string, object>>()
+                .SingleOrDefault(entity => TypeEq(entity, expectedType));
+        }
+
+        private static W40KDHInventoryData ReadInventory(object inventory, IReadOnlyDictionary<uint, object> references)
+        {
+            if (ResolveRef(inventory, references) is not Dictionary<string, object> collection
+                || !TypeEq(collection, ItemsCollectionType)
+                || ResolveRef(GetValue(collection, "m_Items"), references) is not List<object> items) {
+                return null;
+            }
+
+            var result = new List<W40KDHItem>(items.Count);
+            foreach (var item in items) {
+                if (ResolveRef(item, references) is not Dictionary<string, object> record
+                    || !TryGetType(record, out var type) || !type.StartsWith(ItemTypePrefix, StringComparison.Ordinal)) {
+                    continue;
+                }
+                var countField = ResolveRef(GetValue(record, "m_Count"), references);
+                var countOffset = countField is PrimitiveValue { Value: int } count ? count.ValueOffset : (int?)null;
+                var chargesField = ResolveRef(GetValue(record, "Charges"), references);
+                var chargesOffset = chargesField is PrimitiveValue { Value: int } charges ? charges.ValueOffset : (int?)null;
+                result.Add(new W40KDHItem(
+                    AsString(GetValue(record, "UniqueId"), references),
+                    ExtractBlueprintGuid(GetValue(record, "m_Blueprint"), references),
+                    type,
+                    AsInt(countField, references),
+                    countOffset,
+                    AsInt(chargesField, references),
+                    chargesOffset));
+            }
+            return new W40KDHInventoryData(result, AsBool(GetValue(collection, "ForceStackable"), references) == true);
+        }
+
+        private static W40KDHGameUnitBodyModel ReadBody(Dictionary<string, object> body, IReadOnlyDictionary<uint, object> references)
+        {
+            var slots = W40KDHGameUnitBodyModel.BodySlotFields
+                .ToDictionary(name => name, name => ReadSlot(GetValue(body, name)), StringComparer.Ordinal);
+            var hands = ReadList("m_HandsEquipmentSets").Select(value => {
+                var set = ResolveRef(value, references) as Dictionary<string, object>;
+                return (IGameUnitHandsEquippedEntry)new W40KDHGameUnitHandsEquippedEntry(
+                    ReadSlot(GetValue(set, "PrimaryHand")), ReadSlot(GetValue(set, "SecondaryHand")));
+            }).ToArray();
+            var quickSlots = ReadList("QuickSlots").Select(ReadSlot).ToArray();
+            return new W40KDHGameUnitBodyModel(slots, hands, quickSlots,
+                AsInt(GetValue(body, "m_CurrentHandsEquipmentSetIndex"), references));
+
+            IReadOnlyList<object> ReadList(string name) =>
+                ResolveRef(GetValue(body, name), references) as IReadOnlyList<object> ?? Array.Empty<object>();
+
+            IGameUnitEquippedEntry ReadSlot(object value)
+            {
+                if (ResolveRef(value, references) is not Dictionary<string, object> slot
+                    || !TryGetType(slot, out var type) || !type.StartsWith(ItemSlotTypePrefix, StringComparison.Ordinal)) return null;
+
+                var itemRef = ResolveRef(GetValue(slot, "m_ItemRef"), references) as Dictionary<string, object>;
+                var id = AsString(GetValue(itemRef, "Id"), references);
+                return id.HasValue() ? new W40KDHGameUnitEquippedEntry(id) : null;
             }
         }
 
@@ -426,18 +619,16 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
 
                 unitStats.ProgressionSelections.Add(new W40KDHParsedProgressionSelection {
                     FeatureBlueprint = featureInfo.Guid ?? string.Empty,
-                    FeatureBlueprintOffset = featureInfo.Offset,
-                    FeatureBlueprintLength = featureInfo.Length,
+                    Level = AsInt(GetValue(selectionObj, "Level"), references),
                     Rank = rank.Value,
-                    RankOffset = AsIntOffset(GetValue(selectionObj, "Rank"), references),
                 });
             }
         }
 
-        private static void ExtractFeatureFactsAsSelections(
+        private static void ExtractFacts(
             W40KDHParsedUnitStats unitStats,
             Dictionary<string, object> unitEntity,
-            IReadOnlyDictionary<uint, object> references)
+            IReadOnlyDictionary<uint, object> references, byte[] bytes, OwlFieldRange scene)
         {
             var factsValue = ResolveRef(GetValue(unitEntity, "Facts"), references);
             if (factsValue is not Dictionary<string, object> factsManager) return;
@@ -445,28 +636,39 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
 
             var factsListValue = ResolveRef(GetValue(factsManager, "m_Facts"), references);
             if (factsListValue is not List<object> factsList) return;
-            unitStats.DebugFactCount += factsList.Count;
+            if (scene is not null && GetValue(unitEntity, "$range:Facts") is OwlFieldRange manager
+                && GetValue(factsManager, "$range:m_Facts") is OwlFieldRange list && list.Length >= 11
+                && list.LengthOffset >= manager.PayloadOffset && list.End <= manager.End
+                && manager.LengthOffset >= scene.PayloadOffset && manager.End <= scene.End
+                && bytes[scene.PayloadOffset] == ObjectKindObject && bytes[manager.PayloadOffset] == ObjectKindObject
+                && bytes[list.PayloadOffset] == ObjectKindObject
+                && BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(list.PayloadOffset + 7, sizeof(int))) == factsList.Count) {
+                unitStats.FactList = new OwlFactList(manager, list, factsList.Count);
+            }
 
             foreach (var factRef in factsList) {
                 var factValue = ResolveRef(factRef, references);
                 if (factValue is not Dictionary<string, object> factObj) continue;
-                if (TryGetType(factObj, out var factType)) {
-                    if (!unitStats.DebugFactTypes.TryGetValue(factType, out var count)) count = 0;
-                    unitStats.DebugFactTypes[factType] = count + 1;
+                if (TypeEq(factObj, AbilityFactType) || TypeEq(factObj, BuffFactType)) {
+                    var blueprint = ExtractBlueprintGuid(GetValue(factObj, "m_Blueprint"), references);
+                    if (blueprint.HasValue() && AsBool(GetValue(factObj, "IsActive"), references) is bool active) {
+                        var category = TypeEq(factObj, AbilityFactType) ? "Abilities" : "Buffs";
+                        unitStats.FactStatuses.Add(new W40KDHFactStatus(category, blueprint, active));
+                    }
+                    continue;
                 }
                 if (!TypeEq(factObj, FeatureFactType)) continue;
-                unitStats.DebugFeatureFactCount++;
 
                 var featureInfo = ExtractBlueprintInfo(GetValue(factObj, "m_Blueprint"), references);
-                var rank = AsInt(GetValue(factObj, "Rank"), references);
-                if (!featureInfo.Guid.HasValue() || !rank.HasValue || rank.Value < 0) continue;
+                var rankField = ResolveRef(GetValue(factObj, "Rank"), references) as PrimitiveValue;
+                if (!featureInfo.Guid.HasValue() || rankField?.Value is not int rank || rank < 0) continue;
+                var isActive = AsBool(GetValue(factObj, "IsActive"), references) == true;
 
                 unitStats.ProgressionSelections.Add(new W40KDHParsedProgressionSelection {
                     FeatureBlueprint = featureInfo.Guid,
-                    FeatureBlueprintOffset = featureInfo.Offset,
-                    FeatureBlueprintLength = featureInfo.Length,
-                    Rank = rank.Value,
-                    RankOffset = AsIntOffset(GetValue(factObj, "Rank"), references),
+                    IsFeatureFact = true,
+                    Rank = rank,
+                    ActiveFactRankOffset = isActive ? rankField.ValueOffset : null,
                 });
             }
         }
@@ -476,35 +678,30 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             Dictionary<string, object> root,
             IReadOnlyDictionary<uint, object> references)
         {
-            var visited = new HashSet<int>();
-            Visit(root);
+            var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+            var pending = new Stack<object>();
+            pending.Push(root);
 
-            void Visit(object node)
-            {
-                node = ResolveRef(node, references);
-                if (node is Dictionary<string, object> obj) {
-                    var id = obj.TryGetValue("$id", out var idRaw) ? idRaw?.GetHashCode() ?? RuntimeHelpers.GetHashCode(obj) : RuntimeHelpers.GetHashCode(obj);
-                    if (!visited.Add(id)) return;
+            while (pending.TryPop(out var candidate)) {
+                var node = ResolveRef(candidate, references);
+                if (node is null || !visited.Add(node)) continue;
 
-                    if (TryReadCharacteristic(obj, references, out var characteristic)) {
-                        unitStats.Characteristics[characteristic.Name] = characteristic;
-                    }
-
-                    foreach (var kv in obj) {
-                        if (kv.Key.StartsWith("$", StringComparison.Ordinal)) continue;
-                        Visit(kv.Value);
-                    }
-                    return;
-                }
-
-                if (node is List<object> list) {
-                    foreach (var item in list) Visit(item);
-                    return;
-                }
-
-                if (node is KeyValuePair<object, object> kvp) {
-                    Visit(kvp.Key);
-                    Visit(kvp.Value);
+                switch (node) {
+                    case Dictionary<string, object> fields:
+                        if (TryReadCharacteristic(fields, references, out var characteristic)) {
+                            unitStats.Characteristics[characteristic.Name] = characteristic;
+                        }
+                        foreach (var field in fields) {
+                            if (!field.Key.StartsWith("$", StringComparison.Ordinal)) pending.Push(field.Value);
+                        }
+                        break;
+                    case List<object> list:
+                        foreach (var item in list) pending.Push(item);
+                        break;
+                    case KeyValuePair<object, object> pair:
+                        pending.Push(pair.Key);
+                        pending.Push(pair.Value);
+                        break;
                 }
             }
         }
@@ -554,28 +751,15 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
                 ?? rawValue2;
             if (!selected.HasValue) return false;
 
-            characteristic = new W40KDHParsedCharacteristic(characteristicName, selected.Value.Value, selected.Value.Offset);
+            characteristic = new W40KDHParsedCharacteristic(characteristicName, selected.Value);
             return true;
         }
 
-        private static (int Value, int? Offset)? ReadIntField(
-            Dictionary<string, object> obj,
-            string fieldName,
-            IReadOnlyDictionary<uint, object> references)
-        {
-            var raw = GetValue(obj, fieldName);
-            var value = AsInt(raw, references);
-            if (!value.HasValue) return null;
-            return (value.Value, AsIntOffset(raw, references));
-        }
+        private static int? ReadIntField(Dictionary<string, object> obj, string fieldName, IReadOnlyDictionary<uint, object> references) =>
+            AsInt(GetValue(obj, fieldName), references);
 
-        private static (int Value, int? Offset)? FirstNonZero(params (int Value, int? Offset)?[] candidates)
-        {
-            foreach (var candidate in candidates) {
-                if (candidate.HasValue && candidate.Value.Value != 0) return candidate;
-            }
-            return null;
-        }
+        private static int? FirstNonZero(params int?[] candidates) =>
+            candidates.FirstOrDefault(candidate => candidate.HasValue && candidate.Value != 0);
 
         private static string MapCharacteristicName(object statTypeRaw, IReadOnlyDictionary<uint, object> references)
         {
@@ -594,14 +778,14 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
                 : null;
         }
 
-        private static bool HasOwlHeader(ref SpanReader reader)
+        private static void ValidateVersion(ReadOnlySpan<byte> bytes)
         {
-            if (reader.Remaining < 4) return false;
-            var h0 = reader.ReadByte();
-            var h1 = reader.ReadByte();
-            var h2 = reader.ReadByte();
-            _ = reader.ReadByte(); // version
-            return h0 == (byte)'O' && h1 == (byte)'W' && h2 == (byte)'L';
+            if (bytes.Length < 4 || !bytes[..3].SequenceEqual("OWL"u8)) {
+                throw new InvalidDataException("The save entry does not have an OWL header.");
+            }
+            if (bytes[3] != 3) {
+                throw new NotSupportedException($"OWL version {bytes[3]} is unsupported. Dark Heresy requires OWL version 3.");
+            }
         }
 
         private static IReadOnlyDictionary<ushort, TypeDef> ReadTypeLibrary(ref SpanReader reader, IDictionary<uint, object> references)
@@ -710,6 +894,26 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             IReadOnlyDictionary<ushort, TypeDef> types,
             string expectedTypeHint)
         {
+            const int MaximumObjectDepth = 128;
+            if (reader.ObjectDepth >= MaximumObjectDepth) {
+                throw new InvalidDataException("The OWL object nesting limit was exceeded.");
+            }
+
+            reader.ObjectDepth++;
+            try {
+                return ReadObjectPayload(ref reader, references, types, expectedTypeHint);
+            }
+            finally {
+                reader.ObjectDepth--;
+            }
+        }
+
+        private static object ReadObjectPayload(
+            ref SpanReader reader,
+            IDictionary<uint, object> references,
+            IReadOnlyDictionary<ushort, TypeDef> types,
+            string expectedTypeHint)
+        {
             var header = ReadObjectHeader(ref reader);
             if (header.Kind == ObjectKindNull) return null;
             if (header.Kind == ObjectKindRef) return new ObjRef(header.ObjectId);
@@ -738,16 +942,21 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             foreach (var _ in typeDef.Fields) {
                 if (reader.Remaining <= 0) break;
                 var fieldId = reader.ReadByte();
+                var lengthOffset = reader.AbsolutePosition;
                 var size = Read7BitEncodedInt(ref reader);
                 var payload = reader.ReadSpan(size, out var payloadOffset);
                 if (fieldId >= typeDef.Fields.Count) continue;
 
                 var fieldDef = typeDef.Fields[fieldId];
+                if ((typeDef.Name, fieldDef.Name) is (SceneEntitiesStateType, "m_EntityData")
+                    or (UnitEntityType, "Facts") or (EntityFactsManagerType, "m_Facts")) {
+                    obj["$range:" + fieldDef.Name] = new OwlFieldRange(lengthOffset, payloadOffset, size);
+                }
                 if (!ShouldReadField(typeDef.Name, fieldDef.Name)) {
                     continue;
                 }
 
-                var payloadReader = new SpanReader(payload, payloadOffset);
+                var payloadReader = new SpanReader(payload, payloadOffset, reader.ObjectDepth);
                 try {
                     obj[fieldDef.Name] = ReadFieldPayload(ref payloadReader, references, types, fieldDef.TypeName);
                 }
@@ -762,6 +971,12 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
         {
             if (string.IsNullOrWhiteSpace(typeName) || string.IsNullOrWhiteSpace(fieldName)) return false;
             if (IsBlueprintGuidField(typeName, fieldName)) return true;
+            if (typeName.StartsWith(ItemTypePrefix, StringComparison.Ordinal)) {
+                return fieldName is "Facts" or "m_Blueprint" or "UniqueId" or "m_Count" or "Charges";
+            }
+            if (typeName.StartsWith(ItemSlotTypePrefix, StringComparison.Ordinal)) {
+                return fieldName == "m_ItemRef";
+            }
             if (!TryGetRelevantFields(typeName, out var relevantFields)) {
                 return IsStatsContainerRelatedType(typeName);
             }
@@ -824,7 +1039,8 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             if (IsDictionaryType(shortTypeName)) {
                 var count = reader.ReadInt32();
                 var (keyType, valueType) = GetDictionaryGenericArgs(shortTypeName);
-                var dictEntries = new List<object>(Math.Max(0, count));
+                ValidateCollectionCount(count, reader.Remaining);
+                var dictEntries = new List<object>();
                 for (var i = 0; i < count; i++) {
                     _ = reader.ReadByte();
                     var key = ReadFieldPayload(ref reader, references, types, keyType);
@@ -837,7 +1053,8 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             if (IsListLikeType(shortTypeName) || shortTypeName == "Array" || shortTypeName == "System.Array" || shortTypeName.EndsWith("[]", StringComparison.Ordinal)) {
                 var count = reader.ReadInt32();
                 var elementType = GetElementTypeForCollection(shortTypeName, expectedTypeHint);
-                var list = new List<object>(Math.Max(0, count));
+                ValidateCollectionCount(count, reader.Remaining);
+                var list = new List<object>();
                 for (var i = 0; i < count; i++) {
                     list.Add(ReadFieldPayload(ref reader, references, types, elementType));
                 }
@@ -845,6 +1062,13 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             }
 
             return ReadUnknownExternalObject(ref reader);
+        }
+
+        private static void ValidateCollectionCount(int count, int remainingBytes)
+        {
+            if (count < 0 || count > remainingBytes) {
+                throw new InvalidDataException("OWL collection count exceeds its available payload.");
+            }
         }
 
         private static object ReadUnknownExternalObject(ref SpanReader reader)
@@ -951,8 +1175,11 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
                 return primitive;
             }
 
-            if (shortType.Contains("StatType", StringComparison.Ordinal)) {
-                try { return ReadEnumPayload(ref reader); } catch { }
+            if (shortType is "Kingmaker.Settings.GameDifficultyOption" or "Kingmaker.AreaLogic.QuestSystem.QuestState"
+                    or "Kingmaker.AreaLogic.QuestSystem.QuestObjectiveState"
+                    or "Kingmaker.UnitLogic.Parts.CompanionState" or "Kingmaker.UnitLogic.Parts.CompanionExState"
+                || shortType.Contains("StatType", StringComparison.Ordinal)) {
+                return ReadEnumPayload(ref reader);
             }
 
             return ReadObject(ref reader, references, types, shortType);
@@ -981,28 +1208,35 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
         private static bool TryReadPrimitivePayload(ref SpanReader reader, string expectedType, out object value, bool expectNullable = false)
         {
             value = null;
-            var startPos = reader.Position;
-            var startAbs = reader.AbsolutePosition;
-            try {
-                var typeId = reader.ReadUInt16();
-                var valueOffset = startAbs + 2;
-                if (expectNullable) {
-                    var hasValue = reader.ReadByte();
-                    if (hasValue == 0) return true;
-                    typeId = (ushort)(typeId & ~NullableBit);
-                    valueOffset++;
-                }
+            ushort? expectedTypeId = expectedType switch {
+                "System.Byte" => 0,
+                "System.SByte" => 1,
+                "System.Int16" => 2,
+                "System.UInt16" => 3,
+                "System.Int32" => 4,
+                "System.UInt32" => 5,
+                "System.Int64" => 6,
+                "System.UInt64" => 7,
+                "System.Single" => 8,
+                "System.Double" => 9,
+                "System.Char" => 10,
+                "System.Boolean" => 11,
+                _ => null,
+            };
+            if (!expectedTypeId.HasValue) return false;
 
-                if (TryReadPrimitiveByTypeId(ref reader, typeId, out var primitive, out var primitiveLength)) {
-                    value = new PrimitiveValue(primitive, valueOffset, primitiveLength);
-                    return true;
-                }
+            // An object header can start with the same bytes as a primitive tag.
+            // Only inspect the tag after the schema identifies a primitive field.
+            var typeId = reader.ReadUInt16();
+            var expectedTag = expectNullable ? expectedTypeId.Value | NullableBit : expectedTypeId.Value;
+            if (typeId != expectedTag) throw new InvalidDataException($"Unexpected OWL primitive tag {typeId} for {expectedType}.");
+            if (expectNullable && reader.ReadByte() == 0) return true;
+            var valueOffset = reader.AbsolutePosition;
+            if (!TryReadPrimitiveByTypeId(ref reader, expectedTypeId.Value, out var primitive, out var primitiveLength)) {
+                throw new InvalidDataException($"Unsupported OWL primitive type {expectedType}.");
             }
-            catch {
-            }
-
-            reader.Position = startPos;
-            return false;
+            value = new PrimitiveValue(primitive, valueOffset, primitiveLength);
+            return true;
         }
 
         private static object ReadTypedPrimitivePayload(ref SpanReader reader)
@@ -1042,6 +1276,8 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
                 var hasValue = reader.ReadByte();
                 if (hasValue == 0) return null;
             }
+            // OWL v3 uses a zero encoding marker for an enum written by name.
+            if (reader.ReadByte() != 0) throw new InvalidDataException("Unsupported OWL enum encoding.");
             var length = Read7BitEncodedInt(ref reader);
             var payload = reader.ReadSpan(length, out _);
             return Encoding.UTF8.GetString(payload);
@@ -1083,14 +1319,13 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
         private static int Read7BitEncodedInt(ref SpanReader reader)
         {
             var value = 0;
-            var shift = 0;
-            while (true) {
-                var b = reader.ReadByte();
-                value |= (b & 0x7F) << shift;
-                if ((b & 0x80) == 0) return value;
-                shift += 7;
-                if (shift > 35) throw new InvalidOperationException("Invalid 7-bit integer payload.");
+            for (var shift = 0; shift <= 28; shift += 7) {
+                var next = reader.ReadByte();
+                if (shift == 28 && next > 7) break;
+                value |= (next & 0x7F) << shift;
+                if ((next & 0x80) == 0) return value;
             }
+            throw new InvalidDataException("Invalid OWL length.");
         }
 
         private static bool IsListLikeType(string typeName)
@@ -1117,7 +1352,11 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
                 if (end > 0) return content.Substring(0, end);
             }
 
-            return expectedTypeHint.OrIfEmpty("System.Object");
+            if (expectedTypeHint?.EndsWith("[]", StringComparison.Ordinal) == true) {
+                return expectedTypeHint.Substring(0, expectedTypeHint.Length - 2);
+            }
+
+            return "System.Object";
         }
 
         private static (string KeyType, string ValueType) GetDictionaryGenericArgs(string dictionaryTypeName)
@@ -1145,7 +1384,7 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
 
         private static object GetValue(Dictionary<string, object> obj, string key)
         {
-            return obj.TryGetValue(key, out var value) ? value : null;
+            return obj is not null && obj.TryGetValue(key, out var value) ? value : null;
         }
 
         private static bool TypeEq(Dictionary<string, object> obj, string shortTypeName)
@@ -1191,20 +1430,6 @@ namespace Arcemi.Models.Warhammer40KDarkHeresy
             if (value is long l && l <= int.MaxValue && l >= int.MinValue) return (int)l;
             if (value is short s) return s;
             if (value is byte b) return b;
-            return null;
-        }
-
-        private static int? AsIntOffset(object value, IReadOnlyDictionary<uint, object> references)
-        {
-            value = ResolveRef(value, references);
-            if (value is PrimitiveValue primitive) {
-                if (primitive.Value is int
-                    || primitive.Value is short
-                    || primitive.Value is byte
-                    || primitive.Value is long l && l <= int.MaxValue && l >= int.MinValue) {
-                    return primitive.ValueOffset;
-                }
-            }
             return null;
         }
 

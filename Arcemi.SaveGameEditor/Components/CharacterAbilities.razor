@@ -37,14 +37,14 @@
             <label class="form-label">@ability.DisplayName</label>
         </div>
         <div class="col-md-2">
-            <Switch @bind-IsChecked="ability.IsActive" />
+            <Switch @bind-IsChecked="ability.IsActive" IsReadOnly="@ability.IsReadOnly" />
         </div>
         <div class="col-md-2">
         </div>
         <div class="col-md-1">
         </div>
         <div class="col-md-3">
-            <button class="btn btn-sm btn-danger" title="Remove feature" @onclick="() => RemoveAbility(ability)">
+            <button class="btn btn-sm btn-danger" title="Remove ability" disabled="@(!Unit.Abilities.IsRemoveEnabled)" @onclick="() => RemoveAbility(ability)">
                 <span class="oi oi-trash"></span>
             </button>
         </div>
@@ -73,7 +73,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">Ability</label>
-                            <select class="form-control" @bind="AddBlueprint">
+                            <select class="form-select" @bind="AddBlueprint">
                                 <option value="">Select ability...</option>
                                 @foreach (var blueprint in Available) {
                                     <option value="@blueprint.Id" title="@string.Concat(blueprint.Name.Original, ' ', '(', blueprint.Id, ')')">@blueprint.DisplayName</option>
@@ -86,10 +86,10 @@
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddIsInvalid" @onclick="AddAsync">
+        <button type="button" class="btn btn-primary" disabled="@AddIsInvalid" @onclick="AddAsync">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAdd.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAdd.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 

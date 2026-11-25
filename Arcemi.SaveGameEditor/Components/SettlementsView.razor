@@ -43,7 +43,7 @@ else {
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">@Name.Singular</label>
-                            <select class="form-control" @bind="AddPlaceBlueprint">
+                            <select class="form-select" @bind="AddPlaceBlueprint">
                                 <option value="">Select @Name.Singular...</option>
                                 @foreach (var blueprint in Places.AvailableEntries) {
                                     <option value="@blueprint.Id">@blueprint.DisplayName</option>
@@ -56,10 +56,10 @@ else {
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="AddPlaceAsync" disabled="@AddPlaceIsInvalid">
+        <button type="button" class="btn btn-primary" @onclick="AddPlaceAsync" disabled="@AddPlaceIsInvalid">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddPlace.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAddPlace.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 

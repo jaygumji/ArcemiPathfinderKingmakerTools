@@ -17,22 +17,17 @@ else {
         }
     </div>
 
-    <div class="form-list">
-        <div class="row">
-            <div class="col-md-4">
-                <label class="form-label">Name</label>
-            </div>
-            <div class="col-md-1">
-                <label class="form-label">Type</label>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Stack</label>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Charges</label>
-            </div>
-            <div class="col-md-3">
-            </div>
+    @if (_quantityError.HasValue()) {
+        <div class="alert alert-warning" role="alert">@_quantityError</div>
+    }
+    var actionSlots = 1 + (Inventory.Items.IsRemoveEnabled ? 1 : 0) + (Inventory.Items.Any(item => item.CanEdit) ? 1 : 0);
+    <div class="form-list inventory-list" style="--inventory-action-slots: @actionSlots">
+        <div class="inventory-row">
+            <div>Name</div>
+            <div class="inventory-type">Type</div>
+            <div>Stack</div>
+            <div>Charges</div>
+            <div></div>
         </div>
         @if (!Items.Any()) {
             <div class="row">
@@ -43,27 +38,27 @@ else {
         }
         else {
             @foreach (var item in Items) {
-            <div class="row">
-                <div class="col-md-4 overflow-hidden">
-                    <label class="form-label">@item.Name</label>
+            var type = item.Type.OrIfEmpty("Item");
+            <div class="inventory-row">
+                <div class="text-truncate" title="@item.Name">@item.Name</div>
+                <div class="inventory-type" title="@type">
+                    <img src="@item.GetIconUrl()" alt="@type" width="24" height="24" />
                 </div>
-                <div class="col-md-1">
-                    <img src="@item.IconUrl" alt="@item.Type" />
-                </div>
-                <div class="col-md-2">
+                <div>
                     @if (item.IsStackable) {
-                        <input class="form-control" type="number" @bind="item.Count" />
+                        <input class="form-control" type="number" min="@item.MinimumCount" readonly="@(!item.CanEditQuantity)"
+                               aria-label="@($"Stack size for {item.Name}")"
+                               @bind:get="item.Count" @bind:set="count => SetCount(item, count)" />
                     }
                 </div>
-                <div class="col-md-2">
+                <div>
                     @if (item.IsChargable) {
-                        <input class="form-control" type="number" @bind="item.Charges" />
+                        <input class="form-control" type="number" min="@item.MinimumCharges" readonly="@(!item.CanEditCharges)"
+                               aria-label="@($"Charges for {item.Name}")"
+                               @bind:get="item.Charges" @bind:set="charges => SetCharges(item, charges)" />
                     }
                 </div>
-                <div class="col-md-3">
-    @*                <button class="btn btn-sm btn-secondary" title="Duplicate" disabled="@IsDisabledType(item.ItemType)" @onclick="() => Duplicate(item)">
-                        <span class="oi oi-fork"></span>
-                    </button>*@
+                <div class="inventory-actions">
                     <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(item)">
                         <span class="oi oi-paperclip"></span>
                     </button>
@@ -91,6 +86,18 @@ else {
     public IGameItemSection Inventory { get; set; }
 
     private InventoryEditItemModal editItemModal;
+    private string _quantityError;
+
+    private void SetCount(IGameItemEntry item, int count)
+    {
+        _quantityError = item.TrySetCount(count) ? null : $"Enter a stack size of at least {item.MinimumCount}.";
+    }
+
+
+    private void SetCharges(IGameItemEntry item, int charges)
+    {
+        _quantityError = item.TrySetCharges(charges) ? null : $"Enter a charge count of at least {item.MinimumCharges}.";
+    }
 
     private void RemoveItem(IGameItemEntry item)
     {

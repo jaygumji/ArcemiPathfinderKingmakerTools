@@ -1,6 +1,6 @@
-﻿<div class="custom-control custom-switch">
-    <input id="@Id" type="checkbox" class="custom-control-input" @oninput="OnIsCheckedChangedAsync" @bind="IsCheckedBind" disabled="@IsReadOnly" />
-    <label for="@Id" class="custom-control-label">@Label</label>
+﻿<div class="form-check form-switch">
+    <input id="@Id" type="checkbox" class="form-check-input" @oninput="OnIsCheckedChangedAsync" @bind="IsCheckedBind" disabled="@IsReadOnly" />
+    <label for="@Id" class="form-check-label">@Label</label>
 </div>
 
 @code {

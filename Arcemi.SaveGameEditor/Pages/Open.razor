@@ -6,11 +6,9 @@
 @inject StateManager State
 @inject EditorConfiguration Config
 
-<fieldset class="form-controller" disabled="@State.IsBusy">
-
 <div class="row">
     <div class="col-md-6">
-        <button class="btn btn-info" @onclick="OpenFile">
+        <button type="button" class="btn btn-info" disabled="@State.IsBusy" @onclick="OpenFile">
             <span class="oi oi-file"></span>
             Open file dialog
         </button>
@@ -21,7 +19,7 @@
     <SaveFileToolbar Context="header">
         <div class="row">
             <div class="col-md-12">
-                <button class="btn btn-sm btn-info w-100" @onclick="() => OpenFile(header)">
+                <button type="button" class="btn btn-sm btn-info w-100" disabled="@State.IsBusy" @onclick="() => OpenFile(header)">
                     <span class="oi oi-file"></span>
                     Open
                 </button>
@@ -29,8 +27,6 @@
         </div>
     </SaveFileToolbar>
 </SaveGamesView>
-
-</fieldset>
 
 @code {
     async Task OpenFile()
@@ -41,7 +37,7 @@
             var options = new ElectronNET.API.Entities.OpenDialogOptions {
                 Title = "Select the save game file",
                 Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openFile},
-                Filters = new[] { new ElectronNET.API.Entities.FileFilter { Extensions = new[] { "*.zks" } } },
+                Filters = new[] { new ElectronNET.API.Entities.FileFilter { Name = "Owlcat saves", Extensions = new[] { "zks" } } },
                 DefaultPath = null
             };
             var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);

@@ -3,7 +3,7 @@
 <div class="character-equipment-slot">
     <div class="row">
         <div class="col-md-2 item-icon">
-            <img src="@(ItemEntry is object ? ItemEntry.IconUrl : ItemType.GetIconUrl())" alt="@(ItemEntry is object ? ItemEntry.Name : ItemType.DisplayName)" />
+            <img src="@(ItemEntry is object ? ItemEntry.GetIconUrl() : ItemType.GetIconUrl())" alt="@(ItemEntry is object ? ItemEntry.Name : ItemType.DisplayName)" />
         </div>
         <div class="col-md-10">
             <div class="data-header">
@@ -17,10 +17,12 @@
                                 <button class="btn btn-sm btn-secondary" title="Copy blueprint" @onclick="() => CopyBlueprintIdentifier(ItemEntry)">
                                     <span class="oi oi-paperclip"></span>
                                 </button>
-                                <button class="btn btn-sm btn-secondary" title="@(ItemEntry.IsLocked ? "Unlock" : "Lock")" @onclick="() => ItemEntry.IsLocked = !ItemEntry.IsLocked">
-                                    <span class="oi @(ItemEntry.IsLocked ? "oi-lock-locked" : "oi-lock-unlocked")"></span>
-                                </button>
-                                @if (ItemEntry.CanEdit) {
+                                @if (!IsReadOnly) {
+                                    <button class="btn btn-sm btn-secondary" title="@(ItemEntry.IsLocked ? "Unlock" : "Lock")" @onclick="() => ItemEntry.IsLocked = !ItemEntry.IsLocked">
+                                        <span class="oi @(ItemEntry.IsLocked ? "oi-lock-locked" : "oi-lock-unlocked")"></span>
+                                    </button>
+                                }
+                                @if (!IsReadOnly && ItemEntry.CanEdit) {
                                     <button class="btn btn-sm btn-secondary" title="Edit item" @onclick="() => Callback?.Invoke(this, new CharacterEquipmentSlotItemExecuteArgs(ItemEntry, isEdit: true))">
                                         <span class="oi oi-pencil"></span>
                                     </button>
@@ -31,7 +33,7 @@
                 </div>
             </div>
             <div class="data-content">
-                @((ItemEntry?.Name) ?? (Slot?.ItemRef) ?? "-")
+                @ItemName
             </div>
             @if (ItemEntry?.IsChargable ?? false) {
                 <div class="data-footer">
@@ -40,7 +42,12 @@
                             <label>Charges</label>
                         </div>
                         <div class="col-md-6">
-                            <input class="form-control" type="number" @bind="ItemEntry.Charges" />
+                            @if (IsReadOnly || !ItemEntry.CanEditCharges) {
+                                <span>@ItemEntry.Charges</span>
+                            }
+                            else {
+                                <input class="form-control" type="number" @bind="ItemEntry.Charges" />
+                            }
                         </div>
                     </div>
                 </div>
@@ -64,6 +71,8 @@
 
     private BlueprintType ItemType;
     private IGameItemEntry ItemEntry;
+    private bool IsReadOnly => Slot?.IsReadOnly == true;
+    private string ItemName => ItemEntry?.Name ?? (Slot?.ItemRef is { } itemRef ? IsReadOnly ? "Item unavailable" : itemRef.ToString() : "-");
 
     [Parameter]
     public Func<CharacterEquipmentSlot, CharacterEquipmentSlotItemExecuteArgs, Task> Callback { get; set; }

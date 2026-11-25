@@ -4,7 +4,7 @@
             @if (ShowHeader) {
                 <label class="form-label">@optData.Label</label>
             }
-            <select class="form-control" @bind="optData.Value" disabled="@optData.IsReadOnly">
+            <select class="form-select" @bind="optData.Value" disabled="@optData.IsReadOnly">
                 @foreach (var option in optData.Options) {
                     <option value="@option.Id">@option.Name</option>
                 }
@@ -15,7 +15,7 @@
 else if (Data is IGameDataAction action){
     <div class="@SizeClass">
         <div class="form-group">
-            <button class="btn @ActionClass(action)" type="button" disabled="@(!action.IsEnabled)" @onclick="() => action.Invoke()">
+            <button class="btn @ActionClass(action)" type="button" disabled="@(!action.IsEnabled)" @onclick="() => InvokeActionAsync(action)">
                 @if (action.Type != GameDataActionType.Normal){
                     <i class="oi @ActionIconClass(action)"></i>
                 }
@@ -153,7 +153,7 @@ else if (Data is IGameDataList listData) {
                             <div class="@SizeClassOf(rowListData.NameSize)">@listEntry.Name</div>
                             @foreach (var index in props) {
                                 var prop = listEntry.Properties[index];
-                                <GameData Data="@prop" Parent="@listData" ShowHeader="false"></GameData>
+                                <GameData Data="@prop" Parent="@listData" ActionInvoked="NotifyActionInvokedAsync" ShowHeader="false"></GameData>
                             }
                             @if (listData.Entries.IsRemoveEnabled) {
                                 <div class="col-md-2">
@@ -172,7 +172,7 @@ else if (Data is IGameDataList listData) {
                 @foreach (var listEntry in listData.Entries.Where(e => !Term.HasValue() || listData.SearchPredicate is null || listData.SearchPredicate(e, Term))) {
                     <Accordion HeaderText="@listEntry.Name" IsRemoveEnabled="listData.Entries.IsRemoveEnabled" OnRemove="() => OnListDataRemoveClicked(listData, listEntry)">
                         <div class="row">
-                            <GameData Data="@listEntry" Parent="@listData" ShowHeader="false"></GameData>
+                            <GameData Data="@listEntry" Parent="@listData" ActionInvoked="NotifyActionInvokedAsync" ShowHeader="false"></GameData>
                         </div>
                     </Accordion>
                 }
@@ -187,7 +187,7 @@ else if (Data is IGameDataObject objData) {
                 <Accordion HeaderText="@objData.Name">
                     <div class="row">
                         @foreach (var propData in objData.Properties) {
-                            <GameData Data="@propData" Parent="@objData"></GameData>
+                            <GameData Data="@propData" Parent="@objData" ActionInvoked="NotifyActionInvokedAsync"></GameData>
                         }
                     </div>
                 </Accordion>
@@ -201,7 +201,7 @@ else if (Data is IGameDataObject objData) {
             }
             <div class="row">
                 @foreach (var propData in objData.Properties) {
-                    <GameData Data="@propData" Parent="@objData"></GameData>
+                    <GameData Data="@propData" Parent="@objData" ActionInvoked="NotifyActionInvokedAsync"></GameData>
                 }
             </div>
         }
@@ -227,7 +227,7 @@ else if (Data is IGameDataObject objData) {
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">@CurrentListItemName</label>
-                                <select class="form-control" @bind="AddListEntryBlueprint">
+                                <select class="form-select" @bind="AddListEntryBlueprint">
                                     <option value="">Select @CurrentListItemName...</option>
                                     @foreach (var blueprint in CurrentList.AvailableEntries) {
                                         <option value="@blueprint.Id">@blueprint.DisplayName</option>
@@ -241,15 +241,18 @@ else if (Data is IGameDataObject objData) {
         }
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="AddListEntryAsync" disabled="@SelectedListEntryIsInvalid">
+        <button type="button" class="btn btn-primary" @onclick="AddListEntryAsync" disabled="@SelectedListEntryIsInvalid">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddListEntry.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAddListEntry.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 
 
 @code {
+    [Parameter]
+    public EventCallback ActionInvoked { get; set; }
+
     [Parameter]
     public IGameData Data { get; set; }
 
@@ -258,6 +261,14 @@ else if (Data is IGameDataObject objData) {
 
     [Parameter]
     public bool ShowHeader { get; set; } = true;
+
+    private async Task InvokeActionAsync(IGameDataAction action)
+    {
+        action.Invoke();
+        await NotifyActionInvokedAsync();
+    }
+
+    private Task NotifyActionInvokedAsync() => ActionInvoked.InvokeAsync();
 
     private string Term;
 

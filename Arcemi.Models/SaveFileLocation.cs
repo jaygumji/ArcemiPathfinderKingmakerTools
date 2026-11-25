@@ -16,7 +16,7 @@ namespace Arcemi.Models
             Name = Path.GetFileNameWithoutExtension(path);
             Extension = Path.GetExtension(path);
             if (string.Equals(Extension, ".zks", StringComparison.OrdinalIgnoreCase)) {
-                FileName = Name?.Replace(' ', '_');
+                FileName = File.Exists(path) ? Name : Name?.Replace(' ', '_');
             }
             else {
                 Name += Extension;

@@ -90,7 +90,7 @@ else {
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">Spell</label>
-                            <select class="form-control" @bind="AddSpellBlueprint">
+                            <select class="form-select" @bind="AddSpellBlueprint">
                                 <option value="">Select spell...</option>
                                 @foreach (var blueprint in AvailableSpells) {
                                     <option value="@blueprint.Id">@blueprint.DisplayName</option>
@@ -113,10 +113,10 @@ else {
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AcceptSpellIsInvalid" @onclick="() => AcceptEditSpellAsync()">
+        <button type="button" class="btn btn-primary" disabled="@AcceptSpellIsInvalid" @onclick="() => AcceptEditSpellAsync()">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditSpell.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalEditSpell.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 
@@ -127,7 +127,7 @@ else {
             <div class="row">
                 <div class="col-md-4">
                     <label class="form-label">School</label>
-                    <select class="form-control" @bind="Spell.SpellSchool">
+                    <select class="form-select" @bind="Spell.SpellSchool">
                         @foreach (var option in Spell.SpellSchools) {
                             <option value="@option.Id">@option.Name</option>
                         }
@@ -135,7 +135,7 @@ else {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Saving throw</label>
-                    <select class="form-control" @bind="Spell.SavingThrowType">
+                    <select class="form-select" @bind="Spell.SavingThrowType">
                         @foreach (var option in Spell.SavingThrowTypes) {
                             <option value="@option.Id">@option.Name</option>
                         }
@@ -143,7 +143,7 @@ else {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Target type</label>
-                    <select class="form-control" @bind="Spell.SpellTargetType">
+                    <select class="form-select" @bind="Spell.SpellTargetType">
                         @foreach (var option in Spell.SpellTargetTypes) {
                             <option value="@option.Id">@option.Name</option>
                         }
@@ -153,7 +153,7 @@ else {
 @*             <div class="row">
                 <div class="col-md-4">
                     <label class="form-label">Deliver spell</label>
-                    <select class="form-control" @bind="Spell.DeliverBlueprint">
+                    <select class="form-select" @bind="Spell.DeliverBlueprint">
                         <option value="@Spell.Spell1Blueprint">@Spell.Spell1Name</option>
                         <option value="@Spell.Spell2Blueprint">@Spell.Spell2Name</option>
                     </select>
@@ -162,7 +162,7 @@ else {
  *@        }
     </Body>
     <Footer>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditSpellModifiers.CloseAsync()">Done</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalEditSpellModifiers.CloseAsync()">Done</button>
     </Footer>
 </Modal>
 

@@ -83,7 +83,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="form-label">Spell</label>
-                                <select class="form-control" @bind="AddSpellBlueprint">
+                                <select class="form-select" @bind="AddSpellBlueprint">
                                     <option value="">Select spell...</option>
                                     @foreach (var blueprint in AvailableSpells) {
                                         <option value="@blueprint.Id">@blueprint.DisplayName</option>
@@ -108,10 +108,10 @@
         </TabControl>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@AddSpellIsInvalid" @onclick="AddSpellAsync">
+        <button type="button" class="btn btn-primary" disabled="@AddSpellIsInvalid" @onclick="AddSpellAsync">
             Confirm
         </button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddSpell.CloseAsync()">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="() => modalAddSpell.CloseAsync()">Cancel</button>
     </Footer>
 </Modal>
 

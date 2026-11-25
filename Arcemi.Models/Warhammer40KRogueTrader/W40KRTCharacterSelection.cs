@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace Arcemi.Models.Warhammer40KRogueTrader
 {
@@ -26,69 +25,67 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
 
         protected virtual void OnSelect(IGameUnitSelectionProgressionEntry selectionEntry)
         {
-            var @ref = (W40KRTGameUnitSelectionProgressionEntry)selectionEntry;
-            var owner = @ref.Owner;
-            var selection = @ref.Ref;
-            var oldFeature = selection.Feature;
+            var entry = (W40KRTGameUnitSelectionProgressionEntry)selectionEntry;
+            var owner = entry.Owner;
+            var selection = entry.Ref;
+            if (selection.Feature.Eq(Id)) {
+                if (selection.Selection.Eq(W40KRTForgeWorldAugments.Selection)) {
+                    upgrade?.Invoke(new W40KRTCharacterSelectionUpgradeArgs(this, owner));
+                }
+                return;
+            }
+
+            if (W40KRTCharacterSelection.TryGet(selection.Selection, out var definition)) {
+                var oldOption = definition.Options.FirstOrDefault(o => o.Id.Eq(entry.Feature));
+                oldOption?.Remove(entry, this);
+            }
+
             selection.Feature = Id;
-            if (selection.Feature.HasValue()) {
-                var count = owner.Progression.Selections.Count(x => x.Feature.Eq(Id));
-                var feat = owner.Feats.FirstOrDefault(f => f.Blueprint.Eq(Id)) ?? owner.Feats.AddByBlueprint(Id);
-                feat.Rank = count;
-            }
-            foreach (var newExtraFeat in Feats) {
-                owner.Feats.AddByBlueprint(newExtraFeat);
-            }
+            W40KRTProgressionFacts.AddSelectionRank(owner, selection);
 
-            if (oldFeature.HasValue()) {
-                var oldCount = owner.Progression.Selections.Count(x => x.Feature.Eq(oldFeature));
-                var feat = owner.Feats.FirstOrDefault(f => f.Blueprint.Eq(oldFeature));
-                if (feat is object) {
-                    if (oldCount == 0)
-                        owner.Feats.Remove(feat);
-                    else
-                        feat.Rank = oldCount;
+            foreach (var id in Feats) {
+                if (!owner.Feats.Any(f => f.Blueprint.Eq(id))) {
+                    owner.Feats.AddByBlueprint(id);
                 }
-
-                void RemoveOldOption(string selectionId, string featureId)
-                {
-                    if (W40KRTCharacterSelection.TryGet(selectionId, out var charSel)) {
-                        var option = charSel.Options.FirstOrDefault(o => o.Id.Eq(featureId));
-                        if (option is object) {
-                            if (option.SubSelectionId.HasValue()) {
-                                var subSelection = owner.Progression.Selections.FirstOrDefault(s => ((W40KRTGameUnitSelectionProgressionEntry)s).Ref.Selection.Eq(option.SubSelectionId));
-                                if (subSelection is object) {
-                                    RemoveOldOption(option.SubSelectionId, subSelection.Feature);
-                                    owner.Progression.Selections.Remove(subSelection);
-                                    var subSelectionFeat = owner.Feats.FirstOrDefault(f => f.Blueprint.Eq(subSelection.Feature));
-                                    if (subSelectionFeat is object) {
-                                        owner.Feats.Remove(subSelectionFeat);
-                                    }
-                                }
-                            }
-                            foreach (var extraFeatId in option.Feats) {
-                                var extraFeat = owner.Feats.FirstOrDefault(f => f.Blueprint.Eq(extraFeatId));
-                                if (extraFeat is object) {
-                                    owner.Feats.Remove(extraFeat);
-                                }
-                            }
-
-                            option.downgrade?.Invoke(new W40KRTCharacterSelectionDowngradeArgs(option, owner));
-                        }
-                    }
-                }
-                RemoveOldOption(selection.Selection, oldFeature);
             }
-            if (SubSelectionId.HasValue()) {
-                var subSelection = owner.Progression.Selections.FirstOrDefault(s => ((W40KRTGameUnitSelectionProgressionEntry)s).Ref.Selection.Eq(SubSelectionId));
-                if (subSelection is null) {
-                    if (W40KRTCharacterSelection.TryGet(SubSelectionId, out var subCharSel)) {
-                        var index = owner.Progression.Selections.IndexOf(selectionEntry);
-                        subSelection = owner.Progression.Selections.InsertByBlueprint(index + 1, SubSelectionId, subCharSel.Options.First().Id);
-                    }
+
+            if (SubSelectionId.HasValue() && W40KRTCharacterSelection.TryGet(SubSelectionId, out var child)) {
+                var nested = owner.Progression.Selections.OfType<W40KRTGameUnitSelectionProgressionEntry>()
+                    .FirstOrDefault(s => s.Ref.Selection.Eq(SubSelectionId));
+                if (nested is null) {
+                    var index = owner.Progression.Selections.IndexOf(entry);
+                    nested = (W40KRTGameUnitSelectionProgressionEntry)owner.Progression.Selections.InsertByBlueprint(index + 1, SubSelectionId, selection);
+                    child.Options[0].Select(nested);
                 }
             }
             upgrade?.Invoke(new W40KRTCharacterSelectionUpgradeArgs(this, owner));
+        }
+
+        private void Remove(W40KRTGameUnitSelectionProgressionEntry entry, W40KRTCharacterSelectionOption replacement = null)
+        {
+            var owner = entry.Owner;
+            W40KRTProgressionFacts.RollbackDependentChoices(owner, Id);
+            if (SubSelectionId.HasValue() && !SubSelectionId.Eq(replacement?.SubSelectionId)
+                && W40KRTCharacterSelection.TryGet(SubSelectionId, out var child)) {
+                var children = owner.Progression.Selections.OfType<W40KRTGameUnitSelectionProgressionEntry>()
+                    .Where(s => s.Ref.Selection.Eq(SubSelectionId)).ToArray();
+                foreach (var nested in children) {
+                    child.Options.FirstOrDefault(o => o.Id.Eq(nested.Feature))?.Remove(nested);
+                    owner.Progression.Selections.Remove(nested);
+                }
+            }
+            if (Id.Eq(W40KRTForgeWorldAugments.Homeworld)) {
+                W40KRTForgeWorldAugments.Remove((W40KRTGameUnitModel)owner);
+            }
+            downgrade?.Invoke(new W40KRTCharacterSelectionDowngradeArgs(this, owner));
+            W40KRTProgressionFacts.RemoveSelectionRank(owner, entry.Ref, removeDuplicates: true);
+            foreach (var id in Feats.Except(replacement?.Feats ?? Array.Empty<string>(), StringComparer.Ordinal)) {
+                if (owner.Progression.Selections.Any(s => !ReferenceEquals(s, entry) && s.Feature.Eq(id))) continue;
+                foreach (var feat in owner.Feats.Where(f => f.Blueprint.Eq(id)).ToArray()) {
+                    var model = ((W40KRTGameUnitFeatEntry)feat).Model;
+                    if (!W40KRTProgressionFacts.HasSources(model)) owner.Feats.Remove(feat);
+                }
+            }
         }
 
         public string SubSelectionId { get; }
@@ -177,11 +174,8 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             })
         });
 
-        public static W40KRTCharacterSelection ForgeWorld { get; } = new W40KRTCharacterSelection("Forge World", 0, "38a36879cbe44b9d982a9014cf9e29ed", new[] {
-            new W40KRTCharacterSelectionOption("96fd88d5d1fe4ba1a35746cde88aaf3c", "Analytics System"), // ForgeWorld_ForgedForPurpose_AnalyticsSystem_Feature
-            new W40KRTCharacterSelectionOption("eda2be0dda7841ce9cce6186ef6e0ce1", "Locomotion System"), // ForgeWorld_ForgedForPurpose_LocomotionSystem_Feature
-            new W40KRTCharacterSelectionOption("08d6f8a4ebe143fe995582bb5c02072b", "Subskin Armour"), // ForgeWorld_ForgedForPurpose_SubskinArmour_Feature
-        });
+        public static W40KRTCharacterSelection ForgeWorld { get; } = new W40KRTCharacterSelection(
+            "Forge World", 0, W40KRTForgeWorldAugments.Selection, W40KRTForgeWorldAugments.CreateOptions());
 
         public static W40KRTCharacterSelection ImperialWorld { get; } = new W40KRTCharacterSelection("Imperial World", 0, "c45cef90b495464591b2fab45f5dc527", new[] {
             new W40KRTCharacterSelectionOption("c4d908b662184bc9b6d110ef5abba8ba", "Humanity's Finest - Strength"),
@@ -225,6 +219,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             }),
             new W40KRTCharacterSelectionOption("d840a5dc947546e0b4ac939287191fd8", "Ministorum Priest", feats: new[] {
                 "33638b28fa5e49748f4a7a5eed5ec035", // War Hymn
+                "171462027afe4bc6be83799f44fa9995", // Ecclesiarchy starting feature
             }),
             new W40KRTCharacterSelectionOption("962c310fd1664ae996c759e4d11a2d88", "Navy Officer", feats: new[] {
                 "2f973dbd24184ef5bf5240d2512ccf70", // Brace for Impact!
@@ -298,11 +293,14 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
                 "a6a38016b90148878593d977d96b8264", // Sanctic Powers
                 "3a7f9607c84d4f2caa97e59b2b5e2afe", // Sanctic > Word of the Emperor
             }),
-            new W40KRTCharacterSelectionOption("3180fee0775146bc905322a318e93600", "Telepath", feats: new[] {
+            new W40KRTCharacterSelectionOption("3bc17e7685f343a39b6a800f7f95a623", "Telepath", feats: new[] {
                 "c074bd8a210743f48cbb536e3c7c677f", // Telepathy
                 "b78dfb1ac4984a8298369004019e95d7", // Telepathy > Psychic Scream
             }),
-            //new W40KRTCharacterSelectionOption("3bc17e7685f343a39b6a800f7f95a623", "Telepathy"), //???
+            new W40KRTCharacterSelectionOption("3180fee0775146bc905322a318e93600", "Telepath (Legacy)", feats: new[] {
+                "c074bd8a210743f48cbb536e3c7c677f", // Telepathy
+                "b78dfb1ac4984a8298369004019e95d7", // Psychic Scream
+            }),
         });
 
         private const string ArbitratorDeathSentenceId = "6a4c3b65dff840e0aab5966ffe8aa7ba";

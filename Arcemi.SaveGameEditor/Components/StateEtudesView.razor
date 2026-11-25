@@ -9,7 +9,7 @@
 @if (OrderedBase == null) {
     <div class="d-flex justify-content-center">
       <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
 }
@@ -40,7 +40,7 @@ else {
                     <Content>
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <select class="form-control" @bind="SelectedEtude">
+                                <select class="form-select" @bind="SelectedEtude">
                                     <option value="">Select etude...</option>
                                     @foreach (var type in AddableEtudes) {
                                         <option value="@type.Id">@type.DisplayName</option>
@@ -53,8 +53,8 @@ else {
             </TabControl>
         </Body>
         <Footer>
-            <button type="button" class="btn btn-primary" data-dismiss="modal" disabled="@(string.IsNullOrEmpty(SelectedEtude))" @onclick="() => AddEtudeAsync()">Confirm</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalAddEtude.CloseAsync()">Cancel</button>
+            <button type="button" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(SelectedEtude))" @onclick="() => AddEtudeAsync()">Confirm</button>
+            <button type="button" class="btn btn-secondary" @onclick="() => modalAddEtude.CloseAsync()">Cancel</button>
         </Footer>
     </Modal>
     <div class="form-list">
@@ -98,7 +98,7 @@ else {
             @if (EtudeState != null) {
                 <div class="row">
                     <div class="col-md-4">
-                        <select class="form-control" @bind="EtudeState.Value">
+                        <select class="form-select" @bind="EtudeState.Value">
                             @foreach (var state in EtudeStates.All){
                                 <option value="@state">@state</option>
                             }
@@ -148,7 +148,7 @@ else {
             }
         </Body>
         <Footer>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modalEditEtude.CloseAsync()">Done</button>
+            <button type="button" class="btn btn-secondary" @onclick="() => modalEditEtude.CloseAsync()">Done</button>
         </Footer>
     </Modal>
 }

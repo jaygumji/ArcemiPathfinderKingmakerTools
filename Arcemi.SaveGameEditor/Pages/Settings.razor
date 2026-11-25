@@ -1,4 +1,5 @@
 ﻿@page "/Settings"
+@using System.IO
 @inject EditorConfiguration Config
 @inject StateManager State
 
@@ -16,10 +17,32 @@
         <hr />
     }
     @if (Games is object) {
+        <h3>Save backups</h3>
+        <label for="backup-folder" class="form-label">Backup folder</label>
+        <div class="input-group mb-2">
+            <input id="backup-folder" class="form-control" type="text" value="@Config.Instance.BackupFolder"
+                   placeholder="@Config.DefaultBackupFolder" @onchange="e => SetBackupFolder(e.Value?.ToString())" />
+            <button type="button" class="btn btn-info" @onclick="SelectBackupFolder">Browse</button>
+        </div>
+        <p>Leave this blank to use the local editor data folder.</p>
+        @if (!string.IsNullOrEmpty(BackupFolderError)) {
+            <p class="text-danger" role="alert">@BackupFolderError</p>
+        }
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="backup-fallback" @bind="AllowSaveFolderFallback" />
+            <label class="form-check-label" for="backup-fallback">Allow backups in the game's save folder if the backup folder is unwritable</label>
+        </div>
+        <p>Launchers may sync backups that are stored in a game's save folder.</p>
+        <button type="button" class="btn btn-secondary" @onclick="MoveLegacyBackups">Move existing backups</button>
+        <p class="mt-2" role="status">@(BackupMoveStatus ?? "Moves Arcemi backups from configured game save folders. If a backup already exists at the destination, both copies are kept.")</p>
+        <hr />
         <TabControl>
             @foreach (var game in Games) {
                 <Tab Name="@game.Definition.Name">
                     <Content>
+                        @if (game.HasMissingFolders) {
+                            <button type="button" class="btn btn-secondary mb-3" @onclick="game.DetectMissingFolders">Detect missing folders</button>
+                        }
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label">App Data Folder</label>
@@ -30,7 +53,7 @@
                                     <input class="form-control" type="text" @bind="game.AppDataFolder" />
                                     <button class="btn btn-info" @onclick="() => SelectAppDataFolder(game)">...</button>
                                 </div>
-                                <p>The path to the application data folder. There should be 2 folders inside ("Saved Games" and "Portraits").</p>
+                                <p>Choose the application data folder that contains Saved Games.</p>
                             </div>
                         </div>
                         @if (game.Definition.IsReadingGameFolder) {
@@ -45,8 +68,10 @@
                                         <button class="btn btn-info" @onclick="() => SelectGameFolder(game)">...</button>
                                     </div>
                                     <p>
-                                        The path to the game folder where the game is installed.
-                                        It enables the editor to lookup names for identifiers. example C:\Program Files\Steam\steamapps\@game.Definition.Name
+                                        Choose the installation that contains Bundles/cheatdata.json.
+                                        @if (OperatingSystem.IsMacOS()) {
+                                            <span>You can select the game's .app bundle directly.</span>
+                                        }
                                     </p>
                                 </div>
                             </div>
@@ -67,6 +92,75 @@
 
 @code {
     private IReadOnlyList<EditorConfigurationGameView> Games { get; set; }
+
+    private string BackupFolderError { get; set; }
+    private string BackupMoveStatus { get; set; }
+
+    private bool AllowSaveFolderFallback
+    {
+        get => Config.Instance.AllowSaveFolderBackupFallback;
+        set {
+            Config.Instance.AllowSaveFolderBackupFallback = value;
+            Config.SaveBackupSettings();
+        }
+    }
+
+    private void SetBackupFolder(string value)
+    {
+        BackupFolderError = null;
+        BackupMoveStatus = null;
+        try {
+            value = value?.Trim();
+            if (string.IsNullOrEmpty(value)) {
+                Config.Instance.BackupFolder = null;
+            }
+            else {
+                if (!Path.IsPathFullyQualified(value)) {
+                    BackupFolderError = "Enter an absolute path or leave the field blank.";
+                    return;
+                }
+                Config.Instance.BackupFolder = Path.GetFullPath(value);
+            }
+            Config.SaveBackupSettings();
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException) {
+            BackupFolderError = "Enter a valid backup folder path.";
+        }
+    }
+
+    private Task SelectBackupFolder()
+    {
+        return State.ExecuteAsync(async () => {
+            var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
+            var options = new ElectronNET.API.Entities.OpenDialogOptions {
+                Title = "Select the save backup folder",
+                Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory },
+                DefaultPath = Config.Backups.Folder
+            };
+            var folders = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);
+            if (folders?.FirstOrDefault() is { } folder) SetBackupFolder(folder);
+        });
+    }
+
+    private Task MoveLegacyBackups()
+    {
+        return State.ExecuteAsync(() => {
+            var backups = Config.Backups;
+            var folders = Config.Instance.Games.Where(game => game.ValidateAppDataFolder())
+                .Select(game => game.GetSaveGamesFolder())
+                .Distinct(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+            var moved = 0;
+            var skipped = 0;
+            foreach (var folder in folders) {
+                foreach (var legacy in Directory.GetFiles(folder, "*.zks.bck")) {
+                    var save = Path.ChangeExtension(legacy, null);
+                    if (backups.MoveLegacyBackup(save)) moved++;
+                    else skipped++;
+                }
+            }
+            BackupMoveStatus = $"Backups moved: {moved}. Backups kept in game folders: {skipped}.";
+        });
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,8 +192,14 @@
         await State.ExecuteAsync(async () => {
             var window = ElectronNET.API.Electron.WindowManager.BrowserWindows.First();
             var options = new ElectronNET.API.Entities.OpenDialogOptions {
-                    Title = "Select the game folder",
-                    Properties = new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory },
+                    Title = "Select the game installation",
+                    Properties = OperatingSystem.IsMacOS()
+                        ? new[] {
+                            ElectronNET.API.Entities.OpenDialogProperty.openFile,
+                            ElectronNET.API.Entities.OpenDialogProperty.openDirectory,
+                            ElectronNET.API.Entities.OpenDialogProperty.treatPackageAsDirectory
+                        }
+                        : new[] { ElectronNET.API.Entities.OpenDialogProperty.openDirectory },
                     DefaultPath = game.GameFolder
                 };
             var files = await ElectronNET.API.Electron.Dialog.ShowOpenDialogAsync(window, options);

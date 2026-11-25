@@ -18,6 +18,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
         public string CustomName { get => RefDescriptor?.CustomName; set => RefDescriptor.CustomName = value; }
         public bool IsSupported => RefDescriptor is object;
 
+        internal W40KRTUnitMediator Mediator { get; }
         public UnitEntityModel Ref { get; }
         public UnitDescriptionPartItemModel RefDescriptor { get; }
         public PartItemModel RefInventory { get; }
@@ -44,6 +45,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             : base(unit.GetAccessor())
         {
             Ref = unit;
+            Mediator = mediator;
             foreach (var part in unit.Parts.Container) {
                 var type = part.GetAccessor().TypeValue();
                 if (part is UnitDescriptionPartItemModel descriptor) {
@@ -89,7 +91,7 @@ namespace Arcemi.Models.Warhammer40KRogueTrader
             if (Body is null) Body = new W40KRTGameUnitBodyModel(this, null);
 
             SpellCaster = new W40KRTGameUnitSpellCasterModel(this, Ref);
-            Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitFeatEntry(x), x => x is W40KRTFeatFactItemModel, new W40KRTGameModelFeatCollectionWriter(Ref.UniqueId));
+            Feats = new GameModelCollection<IGameUnitFeatEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitFeatEntry(x), x => x is W40KRTFeatFactItemModel, new W40KRTGameModelFeatCollectionWriter(this));
             Abilities = new GameModelCollection<IGameUnitAbilityEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitAbilityEntry(x), x => x is W40KRTAbilityFactItemModel, new W40KRTGameModelAbilityCollectionWriter());
             Buffs = new GameModelCollection<IGameUnitBuffEntry, FactItemModel>(Ref.Facts.Items, x => new W40KRTGameUnitBuffEntry(x), x => x is W40KRTBuffFactItemModel, new W40KRTGameModelBuffCollectionWriter());
 

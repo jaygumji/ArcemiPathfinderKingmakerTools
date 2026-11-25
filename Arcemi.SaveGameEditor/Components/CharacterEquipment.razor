@@ -18,7 +18,20 @@
                 <CharacterEquipmentSlot Name="Wrist" Slot="Unit.Body.Wrist" ItemTypeId="BlueprintTypeId.ItemEquipmentWrist" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
                 <CharacterEquipmentSlot Name="Feet" Slot="Unit.Body.Feet" ItemTypeId="BlueprintTypeId.ItemEquipmentFeet" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
             </div>
-            <h3>Weapon Sets</h3>
+            @if (Unit.Body.AdditionalSlots.ToArray() is { Length: > 0 } additionalSlots) {
+                <h3>Augments</h3>
+                <div class="character-equipment-grid">
+                    @foreach (var slot in additionalSlots) {
+                        <CharacterEquipmentSlot Name="@slot.Name" Slot="slot.Slot" ItemTypeId="slot.ItemType" />
+                    }
+                </div>
+            }
+            <h3>
+                Weapon Sets
+                @if (Unit.Body.ActiveHandsEquipmentSetIndex is int activeSet) {
+                    <small class="text-muted">Set #@(activeSet + 1) active</small>
+                }
+            </h3>
             <div class="character-equipment-grid">
                 @for (var iSet = 0; iSet < Unit.Body.HandsEquipmentSets.Count; iSet++) {
                     <CharacterEquipmentSlot Name="@("Set #" + (iSet+1) + " Primary")" Slot="Unit.Body.HandsEquipmentSets[iSet].Primary" ItemTypeId="BlueprintTypeId.ItemWeapon" Callback="(s, e) => OnItemExecuteAsync(s, e)" />
